@@ -1,0 +1,5 @@
+command,class,tags,syntax,help
+esr_defaultUpgradeCosts,extrasystemreloaded.commands.esr_defaultUpgradeCosts,"dialog,campaign,market",esr_defaultUpgradeCosts (no arguments),"Extra System Reloaded upgrades now require resources"
+esr_removeUpgradeCosts,extrasystemreloaded.commands.esr_removeUpgradeCosts,"dialog,campaign,market",esr_removeUpgradeCosts (no arguments),"Extra System Reloaded upgrades are now FREE"
+esr_clearAllData,extrasystemreloaded.commands.esr_clearAllData,"campaign",esr_clearAllData (no arguments),"Clear all Extra System Reloaded data"
+esr_reloadconfig,extrasystemreloaded.commands.esr_reloadconfig,"dialog,campaign,market",esr_reloadconfig (no arguments),"Reloads the configuration for Extra System Reloaded."

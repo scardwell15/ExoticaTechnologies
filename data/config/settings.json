@@ -1,0 +1,58 @@
+{
+	#base settings for everything ESR related
+
+	"upgradeAlwaysSucceed":true, #does upgrading always succeed?
+		"baseFailureMinFactor":0.4, #a multiplier applied to the chance to fail. the first upgrade always succeeds, but failure chance increases for every upgrade after.
+	"shipsKeepUpgradesOnDeath":true, #whether ships keep upgrades if they are disabled/destroyed in battle.
+
+	"useRandomBandwidth":true, #bandwidth based on fleet member ID
+		"baseBandwidth":0, #flat bandwidth used if the above value is false
+	"maxBandwidth":300, #max bandwidth for any ship
+
+
+	# below settings used to determine upgrade costs. see upgrade_resource_ratio.csv for item ratios used for each upgrade.
+
+	"hullCostBaseFactor": 0.25,	# how much of the base value of a ship is used to determine upgrade costs, without any diminishing returns. do not set above 1
+	#setting the above setting higher results in a much, much steeper upgrade cost curve for ships that are worth more.
+
+	"hullCostDiminishingMaximum": 50000.0, # at what point does the diminishing returns for the base value of a ship end
+	#setting the above setting higher results in a greater upgrade cost curve for ships that are worth more.
+
+	"upgradeCostMinFactor":0.05,	# base value of an upgrade. used to determine the base cost of an upgrade not considering levels. setting this to 0 results in a free first upgrade.
+	# setting the above setting higher results in a greater base value to all upgrades.
+
+	"upgradeCostMaxFactor":0.85, # value of an upgrade beyond its base value. used to determine the cost of an upgrade using the ratio of its level to its maximum.
+	# setting the above setting higher results in a much greater cost to higher-level upgrades.
+
+	"upgradeCostDividingRatio": 1.0, # dividing ratio to final upgrade cost
+
+	#below settings determine max upgrades for upgrades that do not have a max defined.
+	"frigateMaxUpgrades": 10,
+	"destroyerMaxUpgrades": 10,
+	"cruiserMaxUpgrades": 10,
+	"capitalMaxUpgrades": 10,
+	#the amount each upgrade contributes will scale to these values (so frigate at max level gets same buff as capital at max)
+
+	# do not touch.
+	"ruleCommandPackages":[
+		"extrasystemreloaded.campaign.rulecmd"
+	],
+	"plugins": {
+		"ESCampaignPlugin":"extrasystemreloaded.campaign.listeners.ESCampaignPlugin"
+	},
+	"graphics": {
+		"exotics": {
+			"AlphaSubcore": "graphics/icons/exotics/alphasubcore.png",
+			"DriveFluxVent": "graphics/icons/exotics/drivefluxvent.png",
+			"EqualizerCore": "graphics/icons/exotics/equalizercore.png",
+			"HackedMissileForge": "graphics/icons/exotics/hangarforgemissiles.png",
+			"HangarForge": "graphics/icons/exotics/hangarforge.png",
+			"PhasefieldEngine": "graphics/icons/exotics/phasefieldengine.png",
+			"PlasmaFluxCatalyst": "graphics/icons/exotics/plasmacatalyst.png",
+			"SpooledFeeders": "graphics/icons/exotics/spooledfeeders.png",
+			"SubsumedAlphaCore": "graphics/icons/exotics/subsumedalphacore.png",
+			"SubsumedBetaCore": "graphics/icons/exotics/subsumedbetacore.png",
+			"SubsumedGammaCore": "graphics/icons/exotics/subsumedgammacore.png",
+		}
+	}
+}

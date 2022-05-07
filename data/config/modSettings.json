@@ -1,0 +1,93 @@
+{
+  "extrasystemsreloaded": {
+    "industryBandwidthBonuses": {
+      "heavyindustry": 0.5,
+      "orbitalworks": 1.0,
+      "IndEvo_Scrapyard": 0.25,
+      "IndEvo_EngHub": 0.25,
+      "ms_modularFac": 0.25,
+      "ms_massIndustry": 0.25,
+      "ms_militaryProduction": 0.5,
+      "ms_orbitalShipyard": 1.0
+    },
+
+    # average bandwidth weight multiplier
+    "factionBandwidthMult": {
+      "omega": 3.0,
+      "remnant": 1.5,
+      "derelict": 0.75
+    },
+
+    # chance to add any amount of upgrades to a ship
+    # default chance is 0.4 (40%)
+    "factionUpgradeChances": {
+      "omega": 1.0,
+      "remnant": 0.6
+    },
+
+    # chance to add any amount of exotics to a ship
+    # default chance is 0.1 (10%)
+    "factionExoticChances": {
+      "omega": 1.0,
+      "remnant": 0.3
+    },
+
+    # multiplier to chance to add any exotic to the ship, given the above is true.
+    "factionPerExoticMult": {
+      "omega": 20.0,
+      "remnant": 3.0,
+      "derelict": 6.0
+    },
+
+    # multiplier to chance to add any upgrade to the ship, given the above is true.
+    "factionPerUpgradeMult": {
+      "omega": 20.0,
+      "remnant": 3.5,
+      "derelict": 10.0
+    },
+
+
+    # below are global whitelists for exotics that can generate on any fleet.
+    # if a faction whitelist exists, it will be used instead.
+    "rngExoticWhitelist": [
+      "PlasmaFluxCatalyst",
+      "EqualizerCore",
+      "DriveFluxVent",
+      "HangarForge",
+      "HangarForgeMissiles",
+      "PhasefieldEngine",
+      "SpooledFeeders"
+    ],
+    "rngUpgradeWhitelist": [
+      "Afterburners",
+      "ForcedOvertime",
+      "HyperactiveCapacitors",
+      "OverchargedShields",
+      "WeldedArmor"
+    ],
+
+    # below are faction whitelists. the way to go about this is to follow omega example
+    # factionId_ExoticWhitelist and factionId_UpgradeWhitelist
+    "omega_ExoticWhitelist": [
+      "PlasmaFluxCatalyst",
+      "DriveFluxVent",
+      "HangarForgeMissiles",
+      "SpooledFeeders",
+      "SubsumedAlphaCore",
+      "SubsumedBetaCore",
+      "SubsumedGammaCore"
+    ],
+    "omega_UpgradeWhitelist": [
+      "AdvancedFluxCoils"
+    ],
+
+    "remnant_UpgradeWhitelist": [
+      "AdvancedFluxCoils",
+      "Afterburners",
+      "ForcedOvertime",
+      "HyperactiveCapacitors",
+      "OverchargedShields",
+      "WeldedArmor"
+    ]
+  }
+}

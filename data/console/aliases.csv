@@ -1,0 +1,4 @@
+alias,command
+esr_ruc,esr_removeUpgradeCosts
+esr_duc,esr_defaultUpgradeCosts
+esr_reload,esr_reloadconfig

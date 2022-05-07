@@ -1,0 +1,57 @@
+id,trigger,conditions,script,text,options,notes
+# default starport interaction,,,,,,
+ESMainDialog,PopulateOptions,"$hasMarket
+$menuState == main
+$tradeMode == OPEN
+RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider upgrading your ships (ExtraSystem)",
+ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","$menuState = ESMainMenu
+ESInteractionDialogPlugin","The Extra Systems engineering team welcomes you! They ask you to pick a ship.","15:ESShipList:Consider an overhaul to a ship
+90:ESDialogBack:Back",
+,,,,,,
+ESDialogBack,DialogOptionSelected,"$option==ESDialogBack","ShowDefaultVisual
+$menuState = main 0
+FireAll PopulateOptions
+unset $ExtraUpgradePageIndex",,,
+,,,,,,
+ESFleetEncounterDialog,BeginFleetEncounter,"!$player.esrBeganFleetEncounter
+ESHasUpgrades score:9999998","$player.esrBeganFleetEncounter = true 0
+FireBest BeginFleetEncounter
+FireBest GeneratedESForFleet",,,
+ESFleetEncounterGenerated,GeneratedESForFleet,"ESHasUpgrades score:9999998
+!$ziggurat
+$customType != coronal_tap","$player.esrScanFleetOnCommsLinkOpen = true 0
+Highlight ""extra systems""","The other fleet appears to have modified some of their ships with extra systems. They can be scanned through a small change to how a comms link is initialized.",,
+ESOmegaEncounterGenerated,TriggerAutomatedDefenses,"!$esrHasDrawnTextForOmega
+ESHasUpgrades score:9999998
+$customType == coronal_tap","$esrHasDrawnTextForOmega = true 0
+FireBest TriggerAutomatedDefenses
+$player.esrScanFleetOnCommsLinkOpen = true 0
+AddText ""The sensors tell you that there are extra systems present on whatever those things are, and that most of them appear to be subsumed alpha, beta and gamma-level AI cores. The sensors don't explain why you can hear the subsumed AI cores crying, or why it almost sounds like music.""
+Highlight ""extra systems"" ""crying""
+ESScanOmegas",,,
+ESFleetEncounterDialogZiggurat,BeginFleetEncounter2,"ESHasUpgrades score:9999998
+$ziggurat
+!$esrHasDrawnTextForZigg","$esrHasDrawnTextForZigg = true 0
+FireBest BeginFleetEncounter2
+AddText ""Your sensor lead informs you that, whatever that thing is, it has the trace signature of some kind of extra systems modifications. They can be scanned through a small change to how a comms link is initialized.""
+Highlight ""extra systems modifications""
+$player.esrScanFleetOnCommsLinkOpen = true 0",,,
+ESOpenScanDialog,OpenCommLink,"$player.esrScanFleetOnCommsLinkOpen score:9999998","FireAll PreCommLinkOption
+Highlight ""extra systems modifications""","The extra systems modifications can be scanned before the communications link is fully established.",,
+ESReopenScanDialog,OpenCommLink,"$player.esrReopenESScanDialog score:9999998","unset $player.esrReopenESScanDialog
+FireAll PreCommLinkOption",,,
+ESScanFleetOption,PreCommLinkOption,,"AddOption 1 ESScanFleet ""Scan the other fleet for extra system modifications.""",,,
+ESScanFleet,DialogOptionSelected,"$option==ESScanFleet","$player.esrReopenESScanDialog = true 0
+ESScanFleet",,,
+ESOpenCommsLinkOption,PreCommLinkOption,,"AddOption 99 ESOpenCommsLink ""Continue opening the comms link.""",,,
+ESOpenCommsLink,DialogOptionSelected,"$option==ESOpenCommsLink","unset $player.esrReopenESScanDialog
+unset $player.esrScanFleetOnCommsLinkOpen
+FireBest OpenCommLink",,,
+,,,,,,
+ESDerelictShipDialog,PopulateSalvageOptions2,"$customType == wreck
+ESHasUpgrades score:9999998","Highlight ""extra systems modifications""","Upon closer inspection, the derelict appears to have signs of extra systems modifications.","11:ESScanDerelict:Scan the derelict for extra systems modifications.",
+ESScanDerelict,DialogOptionSelected,"$option==ESScanDerelict",ESScanDerelict,,,
+ESDebrisFieldGen,PopulateSalvageOptions1,"$customType == debris_field_shared
+!$entity.esrGeneratedESForDebrisField","ESGenerateForDebrisField
+$entity.esrGeneratedESForDebrisField = true 0",,15:ESScanDebrisField:Scan the debris field for extra systems modifications.,
+ESScanDebrisField,DialogOptionSelected,"$option==ESScanDebrisField",ESScanDebrisField,,,

@@ -1,0 +1,8 @@
+commodity,group,freq
+item_esr_ammospool,esr_exotic,8
+item_esr_plasmacatalyst,esr_exotic,4
+item_esr_drivevent,esr_exotic,8
+item_esr_hangarforge,esr_exotic,4
+item_esr_equalizercore,esr_exotic,5
+item_esr_phaseengine,esr_exotic,6
+nothing,esr_exotic,70%

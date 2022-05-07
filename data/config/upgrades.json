@@ -1,0 +1,71 @@
+{
+  #upgrade settings
+  "WeldedArmor": {
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.WeldedArmor",
+    "resourceRatios": {
+      "volatiles": 1.0,
+      "metals": 3.5,
+      "rare_metals": 3.0,
+      "heavy_machinery": 0.5
+    }
+  },
+  "CommissionedCrews": {
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.CommissionedCrews",
+    "resourceRatios": {
+      "supplies": 3.0,
+      "volatiles": 1.0,
+      "metals": 2.0,
+      "rare_metals": 1.5,
+      "heavy_machinery": 1.0
+    }
+  },
+  "InfernalEngines": {
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.InfernalEngines",
+    "resourceRatios": {
+      "volatiles": 3.0,
+      "organics": 1.0,
+      "metals": 1.0,
+      "rare_metals": 0.25,
+      "heavy_machinery": 1.5
+    }
+  },
+  "ForcedOvertime": {
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.ForcedOvertime",
+    "resourceRatios": {
+      "supplies": 3.0,
+      "organics": 2.0,
+      "heavy_machinery": 1.5
+    }
+  },
+  "HyperactiveCapacitors": {
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.HyperactiveCapacitors",
+    "resourceRatios": {
+      "supplies": 1.0,
+      "volatiles": 2.0,
+      "organics": 2.0,
+      "metals": 2.0,
+      "rare_metals": 3.0,
+      "heavy_machinery": 1.0
+    }
+  },
+  "OverchargedShields": {
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.OverchargedShields",
+    "resourceRatios": {
+      "supplies": 2.0,
+      "volatiles": 1.0,
+      "metals": 1.0,
+      "rare_metals": 3.0,
+      "heavy_machinery": 2.0
+    }
+  },
+  "AdvancedFluxCoils": {
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.AdvancedFluxCoils",
+    "resourceRatios": {
+    },
+    "allowedFactions": [
+        "remnant",
+        "omega",
+        "derelict"
+    ]
+  }
+}

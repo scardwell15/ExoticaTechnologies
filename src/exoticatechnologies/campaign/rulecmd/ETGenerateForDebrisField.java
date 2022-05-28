@@ -57,6 +57,8 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
 
                         ShipVariantAPI var = shipData.getVariant();
 
+                        if (var == null) continue;
+
                         long hash = var.hashCode();
                         if (var.getHullVariantId() != null) {
                             hash = var.getHullVariantId().hashCode();

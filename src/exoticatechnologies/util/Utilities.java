@@ -245,7 +245,6 @@ public class Utilities {
         }
     }
 
-
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id, int level) {
         SpecialItemSpecAPI specialSpec = Global.getSettings().getSpecialItemSpec(Upgrade.ITEM);
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
@@ -272,5 +271,52 @@ public class Utilities {
                 cargo.removeStack(stack);
             }
         }
+    }
+
+    public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id) {
+        SpecialItemSpecAPI specialSpec = Global.getSettings().getSpecialItemSpec(Upgrade.ITEM);
+
+        CargoStackAPI winner = null;
+        int winningLevel = 0;
+
+        for(CargoStackAPI stack : cargo.getStacksCopy()) {
+            if(stack.isSpecialStack() && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
+                UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
+                if (upgradeItem.getUpgradeId().equals(id) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
+                    winningLevel = upgradeItem.getUpgradeLevel();
+                    winner = stack;
+                }
+            }
+        }
+
+        return winner;
+    }
+
+    public static boolean hasUpgradeChip(CargoAPI cargo, String id) {
+        return getUpgradeChip(cargo, id) != null;
+    }
+
+    public static void takeUpgradeChip(CargoAPI cargo, String id) {
+        CargoStackAPI stack = getUpgradeChip(cargo, id);
+        if (stack != null) {
+            stack.subtract(1);
+            if (stack.getSize() == 0) {
+                cargo.removeStack(stack);
+            }
+        }
+    }
+
+    public static CargoStackAPI getSpecialStack(CargoAPI cargo, String id, String params) {
+        SpecialItemSpecAPI specialSpec = Global.getSettings().getSpecialItemSpec(Upgrade.ITEM);
+
+        for(CargoStackAPI stack : cargo.getStacksCopy()) {
+            if(stack.isSpecialStack()) {
+                if (stack.getSpecialDataIfSpecial().getId().equals(id) && stack.getSpecialDataIfSpecial().getData().equals(params)) {
+                    return stack;
+                }
+            }
+        }
+
+        return null;
     }
 }

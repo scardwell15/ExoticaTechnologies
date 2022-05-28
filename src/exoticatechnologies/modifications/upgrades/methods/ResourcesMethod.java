@@ -14,8 +14,6 @@ import java.util.Map;
 
 
 public class ResourcesMethod implements UpgradeMethod {
-    private static final String OPTION = "ESShipExtraUpgradeApplyResources";
-
     @Override
     public String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
         return StringUtils.getString("UpgradeMethods", "ResourcesOption");

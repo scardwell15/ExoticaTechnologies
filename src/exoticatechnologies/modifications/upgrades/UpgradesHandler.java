@@ -10,10 +10,7 @@ import data.scripts.util.MagicSettings;
 import exoticatechnologies.ETModSettings;
 import exoticatechnologies.dialog.modifications.SystemOptionsHandler;
 import exoticatechnologies.modifications.upgrades.dialog.UpgradesPickerState;
-import exoticatechnologies.modifications.upgrades.methods.CreditsMethod;
-import exoticatechnologies.modifications.upgrades.methods.RecoverMethod;
-import exoticatechnologies.modifications.upgrades.methods.ResourcesMethod;
-import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
+import exoticatechnologies.modifications.upgrades.methods.*;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
@@ -41,6 +38,7 @@ public class UpgradesHandler {
         UPGRADE_METHODS.clear();
         UPGRADE_METHODS.add(new CreditsMethod());
         UPGRADE_METHODS.add(new ResourcesMethod());
+        UPGRADE_METHODS.add(new ChipMethod());
         UPGRADE_METHODS.add(new RecoverMethod());
 
         SystemOptionsHandler.addOption(UPGRADE_PICKER_DIALOG);

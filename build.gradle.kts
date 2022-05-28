@@ -59,6 +59,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.22")
     annotationProcessor("org.projectlombok:lombok:1.18.22")
 
+
     //////////////////////////////////////////
     // SECTION D.1: VANILLA STARSECTOR JARS AND VANILLA DEPENDENCIES
     implementation("com.thoughtworks.xstream:xstream:1.4.10")
@@ -247,6 +248,7 @@ kotlin.sourceSets.main {
 plugins {
     kotlin("jvm") version "1.5.0"
     java
+    id("io.freefair.lombok") version "6.4.3"
 }
 
 version = modVersion

@@ -1,8 +1,10 @@
 package exoticatechnologies.campaign.rulecmd;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -22,9 +24,9 @@ import exoticatechnologies.dialog.*;
 import exoticatechnologies.dialog.modifications.SystemPickerState;
 import exoticatechnologies.dialog.shippicker.ShipPickerOption;
 import exoticatechnologies.modifications.ShipModFactory;
+import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
-import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
@@ -123,7 +125,6 @@ public class ETInteractionDialogPlugin extends BaseCommandPlugin implements Inte
                 resourceCosts.put(resource, 0f);
             }
 
-            currentState.modifyResourcesPanel(dialog, this, resourceCosts);
 
             //draw ship
             SpriteAPI sprite = Global.getSettings().getSprite(fm.getHullSpec().getSpriteName());
@@ -139,6 +140,9 @@ public class ETInteractionDialogPlugin extends BaseCommandPlugin implements Inte
             StringUtils.getTranslation("CommonOptions", "BandwidthForShip")
                     .format("shipBandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth))
                     .addToTooltip(resourcesTooltip, new Color[]{Bandwidth.getBandwidthColor(bandwidth)});
+
+
+            currentState.modifyResourcesPanel(dialog, this, resourceCosts);
 
             float used = getExtraSystems().getUsedBandwidth();
             if (resourceCosts.containsKey(Bandwidth.BANDWIDTH_RESOURCE)) {
@@ -190,23 +194,50 @@ public class ETInteractionDialogPlugin extends BaseCommandPlugin implements Inte
                         resourcesTooltip.setParaFont(RESOURCE_BOLD_FONT);
                     }
 
-                    String name = Utilities.getItemName(id);
-                    float quantity = Global.getSector().getPlayerFleet().getCargo().getCommodityQuantity(id);
-                    if (cost > 0) {
-                        StringUtils.getTranslation("CommonOptions", "ResourceTextWithCost")
-                                .format("name", name)
-                                .format("amount", Misc.getWithDGS(quantity))
-                                .format("cost", Misc.getWithDGS(cost))
-                                .addToTooltip(resourcesTooltip);
-                    } else {
-                        String quantityText = "-";
-                        if(quantity > 0) {
-                            quantityText = Misc.getWithDGS(quantity);
+                    if (isSpecialItemId(id)) {
+                        String specialId = getSpecialItemId(id);
+                        String specialParams = getSpecialItemParams(id);
+
+                        CargoStackAPI stack = Utilities.getSpecialStack(Global.getSector().getPlayerFleet().getCargo(), specialId, specialParams);
+                        if (stack != null) {
+                            String name = stack.getDisplayName();
+                            float quantity = stack.getSize();
+                            if (cost > 0) {
+                                StringUtils.getTranslation("CommonOptions", "SpecialItemTextWithCost")
+                                        .format("name", name)
+                                        .format("amount", Misc.getWithDGS(quantity))
+                                        .format("cost", Misc.getWithDGS(cost))
+                                        .addToTooltip(resourcesTooltip);
+                            } else {
+                                String quantityText = "-";
+                                if (quantity > 0) {
+                                    quantityText = Misc.getWithDGS(quantity);
+                                }
+                                StringUtils.getTranslation("CommonOptions", "ResourceText")
+                                        .format("name", name)
+                                        .format("amount", quantityText)
+                                        .addToTooltip(resourcesTooltip);
+                            }
                         }
-                        StringUtils.getTranslation("CommonOptions", "ResourceText")
-                                .format("name", name)
-                                .format("amount", quantityText)
-                                .addToTooltip(resourcesTooltip);
+                    } else {
+                        String name = Utilities.getItemName(id);
+                        float quantity = Global.getSector().getPlayerFleet().getCargo().getCommodityQuantity(id);
+                        if (cost > 0) {
+                            StringUtils.getTranslation("CommonOptions", "ResourceTextWithCost")
+                                    .format("name", name)
+                                    .format("amount", Misc.getWithDGS(quantity))
+                                    .format("cost", Misc.getWithDGS(cost))
+                                    .addToTooltip(resourcesTooltip);
+                        } else {
+                            String quantityText = "-";
+                            if (quantity > 0) {
+                                quantityText = Misc.getWithDGS(quantity);
+                            }
+                            StringUtils.getTranslation("CommonOptions", "ResourceText")
+                                    .format("name", name)
+                                    .format("amount", quantityText)
+                                    .addToTooltip(resourcesTooltip);
+                        }
                     }
                 }
             }
@@ -311,5 +342,34 @@ public class ETInteractionDialogPlugin extends BaseCommandPlugin implements Inte
     @Override
     public Object getContext() {
         return null;
+    }
+
+    public static String formatSpecialItem(SpecialItemData data) {
+        return formatSpecialItem(data.getId(), data.getData());
+    }
+
+    public static String formatSpecialItem(String id, Object... data) {
+        StringBuilder paramBuilder = new StringBuilder();
+        for (int i = 0; i < data.length; i++) {
+            paramBuilder.append(data[i]);
+            if (i < data.length - 1) {
+                paramBuilder.append(",");
+            }
+        }
+
+        return String.format("$%s(%s)", id, paramBuilder.toString());
+    }
+
+    public static String getSpecialItemId(String specialKey) {
+        return specialKey.substring(1, specialKey.indexOf("("));
+    }
+
+    public static String getSpecialItemParams(String specialKey) {
+        String params = specialKey.substring(specialKey.indexOf("(") + 1, specialKey.lastIndexOf(")"));
+        return params;
+    }
+
+    public static boolean isSpecialItemId(String key) {
+        return key.startsWith("$");
     }
 }

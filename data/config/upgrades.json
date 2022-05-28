@@ -70,6 +70,12 @@
   "AdvancedFluxCoils": {
     "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.AdvancedFluxCoils",
     "resourceRatios": {
+      "supplies": 1.5,
+      "volatiles": 2.0,
+      "organics": 1.0,
+      "metals": 1.0,
+      "rare_metals": 4.0,
+      "heavy_machinery": 2.0
     },
     "allowedFactions": [
         "remnant",

@@ -30,6 +30,8 @@
 		"CreditsTextWithCost": "*${credits}* (=-${cost}=)",
 		"ResourceText": "${name}: *${amount}*",
 		"ResourceTextWithCost": "${name}: *${amount}* (=-${cost}=)",
+		"SpecialItemText": "&${name}&: *${amount}*",
+		"SpecialItemTextWithCost": "&${name}&: *${amount}* (=-${cost}=)",
 		"BandwidthForShip": "Bandwidth: *${shipBandwidth}*",
 		"BandwidthUsed": "*${usedBandwidth}* used",
 		"BandwidthUsedWithUpgrade": "*${usedBandwidth}* used (=+${upgradeBandwidth}= for upgrade)"
@@ -95,7 +97,7 @@
 		"UpgradeSuccessChance": "The upgrade has a ${successChance} chance of success. The engineering team stresses that there are no refunds if there are no notable results, however.",
 		"UpgradePerformedSuccessfully": "Your chief engineer reports that the *${name}* upgrade was a success. It is now *level ${level}*.",
 		"UpgradePerformedFailure": "After a few expletives, your chief engineer reports that the upgrade was a failure.",
-		"UpgradeRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. They say this with the slightest disbelief, as if the plan wasn't expected to work."
+		"UpgradeRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. They say this with the slightest disbelief, as if surprised that the plan worked at all."
 	},
 	"UpgradeMethods": {
 		"ResourcesOption": "Craft with basic resources.",
@@ -107,8 +109,10 @@
 		"IndEvoComponentsTooltip": "Upgrades using ship components are 12.5% more efficient than using other resources.\nYou have ${components} ship components.",
 		"IndEvoRelicsOption": "Craft with ${relics} relic components.",
 		"IndEvoRelicsTooltip": "Upgrades using relic components are 37.5% more efficient than using other resources.\nYou have ${relics} relic components.",
-		"RecoverOption": "Recover the upgrade from the ship.",
-		"RecoverOptionTooltip": "This option recovers a schematic of the upgrade that can be used to apply it to another ship."
+		"RecoverOption": "Recover the upgrade from the ship for ${credits} credits.",
+		"RecoverOptionTooltip": "This option recovers a schematic of the upgrade that can be used to apply it to another ship. Installing the chip will incur another cost, and the total cost of recovering and using any chip is always less than any other method.",
+		"ChipOption": "Use an upgrade chip for ${credits} credits.",
+		"ChipOptionTooltip": "This option uses an existing ship modification chip to upgrade the ship. It will prioritize using the one with the highest level. The total cost of recovering and using any chip is always less than any other method."
 	},
 	"SpooledFeeders": {
 		"name": "Spooled Feeders",

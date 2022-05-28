@@ -15,6 +15,7 @@ import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
+import exoticatechnologies.modifications.upgrades.methods.ChipMethod;
 import exoticatechnologies.modifications.upgrades.methods.RecoverMethod;
 import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.modifications.ShipModifications;
@@ -79,9 +80,13 @@ public class ChosenUpgradeState extends DialogState {
 
     private void addUpgradeMethodOptions(OptionPanelAPI options, ETInteractionDialogPlugin plugin, FleetMemberAPI fm, ShipModifications es, MarketAPI market) {
         RecoverMethod recovery = null;
+        ChipMethod chip = null;
         for (UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
             if (method instanceof RecoverMethod) {
                 recovery = (RecoverMethod) method;
+                continue;
+            } else if (method instanceof ChipMethod) {
+                chip = (ChipMethod) method;
                 continue;
             }
 
@@ -114,6 +119,19 @@ public class ChosenUpgradeState extends DialogState {
             } else {
                 option = new UpgradeMethodOption(recovery, upgrade);
                 upgradeMethodOptionList.put(recovery, option);
+            }
+
+            option.addToOptions(options, plugin, fm, es);
+        }
+
+        //add recovery option after all others
+        if (chip.canShow(fm, es, upgrade, market)) {
+            UpgradeMethodOption option;
+            if (upgradeMethodOptionList.containsKey(chip)) {
+                option = upgradeMethodOptionList.get(chip);
+            } else {
+                option = new UpgradeMethodOption(chip, upgrade);
+                upgradeMethodOptionList.put(chip, option);
             }
 
             option.addToOptions(options, plugin, fm, es);

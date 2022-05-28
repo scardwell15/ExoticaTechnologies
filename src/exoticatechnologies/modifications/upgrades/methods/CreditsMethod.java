@@ -16,8 +16,6 @@ import java.util.Map;
 
 
 public class CreditsMethod implements UpgradeMethod {
-    private static final String OPTION = "ESShipExtraUpgradeApplyCredits";
-
     @Override
     public String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
         int level = es.getUpgrade(upgrade);

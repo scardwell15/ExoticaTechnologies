@@ -75,10 +75,11 @@ public class StringUtils {
     static {
         adaptiveHighlightCharacterMap.put('*', Misc.getHighlightColor());
         adaptiveHighlightCharacterMap.put('=', Misc.getNegativeHighlightColor());
+        adaptiveHighlightCharacterMap.put('&', Misc.getEnergyMountColor());
     }
 
     private static Pattern regularHighlightPattern = Pattern.compile("[\\*]([^\\*]*)[\\*]");
-    private static Pattern adaptiveHighlightsPattern = Pattern.compile("[=\\*]([^=\\*]*)[=\\*]");
+    private static Pattern adaptiveHighlightsPattern = Pattern.compile("[=\\*&]([^=\\*&]*)[=\\*&]");
 
     /**
      * can match for positive (*) and negative (=) highlights
@@ -125,7 +126,7 @@ public class StringUtils {
 
     public static void addToTooltip(TooltipMakerAPI tooltip, String translated, float pad) {
         Pair<String[], Color[]> highlights = getAdaptiveHighlights(translated);
-        tooltip.addPara(getPad(pad) + translated.replaceAll("[=\\*]", ""),
+        tooltip.addPara(getPad(pad) + translated.replaceAll("[=\\*&]", ""),
                 2f,
                 highlights.two,
                 highlights.one);
@@ -133,7 +134,7 @@ public class StringUtils {
 
     public static void addToTooltip(TooltipMakerAPI tooltip, String translated, float pad, Color[] colors) {
         String[] highlights = getHighlights(translated);
-        tooltip.addPara(getPad(pad) + translated.replaceAll("[\\*]", ""),
+        tooltip.addPara(getPad(pad) + translated.replaceAll("[\\*&]", ""),
                 2f,
                 colors,
                 highlights);
@@ -141,7 +142,7 @@ public class StringUtils {
 
     public static void addToTextPanel(TextPanelAPI textPanel, String translated) {
         Pair<String[], Color[]> highlights = getAdaptiveHighlights(translated);
-        textPanel.addPara(translated.replaceAll("[=\\*]", "").replaceAll("%%", "%"));
+        textPanel.addPara(translated.replaceAll("[=\\*&]", "").replaceAll("%%", "%"));
         textPanel.highlightInLastPara(highlights.one);
         textPanel.setHighlightColorsInLastPara(highlights.two);
     }

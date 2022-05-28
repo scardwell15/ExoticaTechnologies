@@ -1,7 +1,7 @@
 {
   #upgrade settings
   "WeldedArmor": {
-    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.WeldedArmor",
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.WeldedArmor",
     "resourceRatios": {
       "volatiles": 1.0,
       "metals": 3.5,
@@ -10,7 +10,7 @@
     }
   },
   "CommissionedCrews": {
-    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.CommissionedCrews",
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.CommissionedCrews",
     "resourceRatios": {
       "supplies": 3.0,
       "volatiles": 1.0,
@@ -20,7 +20,7 @@
     }
   },
   "InfernalEngines": {
-    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.InfernalEngines",
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.InfernalEngines",
     "resourceRatios": {
       "volatiles": 3.0,
       "organics": 1.0,
@@ -30,7 +30,7 @@
     }
   },
   "ForcedOvertime": {
-    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.ForcedOvertime",
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.ForcedOvertime",
     "resourceRatios": {
       "supplies": 3.0,
       "organics": 2.0,
@@ -38,7 +38,7 @@
     }
   },
   "HyperactiveCapacitors": {
-    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.HyperactiveCapacitors",
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.HyperactiveCapacitors",
     "resourceRatios": {
       "supplies": 1.0,
       "volatiles": 2.0,
@@ -49,7 +49,7 @@
     }
   },
   "OverchargedShields": {
-    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.OverchargedShields",
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.OverchargedShields",
     "resourceRatios": {
       "supplies": 2.0,
       "volatiles": 1.0,
@@ -58,8 +58,17 @@
       "heavy_machinery": 2.0
     }
   },
+  "TracerRecoilCalculator": {
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.TracerRecoilCalculator",
+    "resourceRatios": {
+      "hand_weapons": 2.5,
+      "volatiles": 1.0,
+      "rare_metals": 1.0,
+      "heavy_machinery": 2.0
+    }
+  },
   "AdvancedFluxCoils": {
-    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.AdvancedFluxCoils",
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.AdvancedFluxCoils",
     "resourceRatios": {
     },
     "allowedFactions": [

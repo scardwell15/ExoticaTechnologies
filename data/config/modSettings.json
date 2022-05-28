@@ -1,5 +1,5 @@
 {
-  "extrasystemsreloaded": {
+  "exoticatechnologies": {
     "industryBandwidthBonuses": {
       "heavyindustry": 0.5,
       "orbitalworks": 1.0,
@@ -14,36 +14,61 @@
     # average bandwidth weight multiplier
     "factionBandwidthMult": {
       "omega": 3.0,
-      "remnant": 1.5,
-      "derelict": 0.75
+      "remnant": 1.66,
+      "derelict": 0.75,
+      "hegemony": 1.25,
+      "persean_league": 0.9,
+      "tritachyon": 1.4,
+      "pirates": 0.75,
+      "luddic_path": 0.75,
     },
 
     # chance to add any amount of upgrades to a ship
     # default chance is 0.4 (40%)
     "factionUpgradeChances": {
       "omega": 1.0,
-      "remnant": 0.6
-    },
-
-    # chance to add any amount of exotics to a ship
-    # default chance is 0.1 (10%)
-    "factionExoticChances": {
-      "omega": 1.0,
-      "remnant": 0.3
-    },
-
-    # multiplier to chance to add any exotic to the ship, given the above is true.
-    "factionPerExoticMult": {
-      "omega": 20.0,
-      "remnant": 3.0,
-      "derelict": 6.0
+      "remnant": 0.75,
+      "derelict": 0.5,
+      "persean_league": 0.5,
+      "pirates": 0.52,
+      "mercenary": 0.45,
+      "luddic_church": 0.0,
+      "luddic_path": 0.1,
+      "tritachyon": 0.2,
+      "scavengers": 0.75
     },
 
     # multiplier to chance to add any upgrade to the ship, given the above is true.
     "factionPerUpgradeMult": {
       "omega": 20.0,
       "remnant": 3.5,
-      "derelict": 10.0
+      "derelict": 10.0,
+      "persean_league": 2.0,
+      "mercenary": 3.0,
+      "luddic_path": 6.6,
+      "tritachyon": 1.25,
+      "scavengers": 0.5
+    },
+
+    # chance to add any amount of exotics to a ship
+    # default chance is 0.1 (10%)
+    "factionExoticChances": {
+      "omega": 1.0,
+      "remnant": 0.3,
+      "pirates": 0.125,
+      "luddic_church": 0.0,
+      "persean_league": 0.15,
+      "tritachyon": 0.2,
+      "scavengers": 0.25
+    },
+
+    # multiplier to chance to add any exotic to the ship, given the above is true.
+    "factionPerExoticMult": {
+      "omega": 20.0,
+      "remnant": 3.0,
+      "derelict": 6.0,
+      "tritachyon": 2.0,
+      "scavengers": 0.5
     },
 
 
@@ -63,7 +88,8 @@
       "ForcedOvertime",
       "HyperactiveCapacitors",
       "OverchargedShields",
-      "WeldedArmor"
+      "WeldedArmor",
+      "TracerRecoilCalculator"
     ],
 
     # below are faction whitelists. the way to go about this is to follow omega example
@@ -78,7 +104,8 @@
       "SubsumedGammaCore"
     ],
     "omega_UpgradeWhitelist": [
-      "AdvancedFluxCoils"
+      "AdvancedFluxCoils",
+      "TracerRecoilCalculator"
     ],
 
     "remnant_UpgradeWhitelist": [
@@ -87,7 +114,8 @@
       "ForcedOvertime",
       "HyperactiveCapacitors",
       "OverchargedShields",
-      "WeldedArmor"
+      "WeldedArmor",
+      "TracerRecoilCalculator"
     ]
   }
 }

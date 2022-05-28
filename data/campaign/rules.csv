@@ -1,57 +1,64 @@
 id,trigger,conditions,script,text,options,notes
 # default starport interaction,,,,,,
-ESMainDialog,PopulateOptions,"$hasMarket
+ETMainDialog,PopulateOptions,"$hasMarket
 $menuState == main
 $tradeMode == OPEN
-RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider upgrading your ships (ExtraSystem)",
-ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","$menuState = ESMainMenu
-ESInteractionDialogPlugin","The Extra Systems engineering team welcomes you! They ask you to pick a ship.","15:ESShipList:Consider an overhaul to a ship
-90:ESDialogBack:Back",
+RepairAvailable","SetShortcut ETMainMenu ""U"" true",,"25:ETMainMenu:Consider upgrading your ships (ExtraSystem)",
+ETMainMenu,DialogOptionSelected,"$option==ETMainMenu","$menuState = ETMainMenu
+ETInteractionDialogPlugin","The Exotica engineering team welcomes you! They ask you to pick a ship.","15:ETShipList:Consider an overhaul to a ship
+90:ETDialogBack:Back",
 ,,,,,,
-ESDialogBack,DialogOptionSelected,"$option==ESDialogBack","ShowDefaultVisual
+ETDialogBack,DialogOptionSelected,"$option==ETDialogBack","ShowDefaultVisual
 $menuState = main 0
 FireAll PopulateOptions
-unset $ExtraUpgradePageIndex",,,
+unset $UpgradePageIndex",,,
 ,,,,,,
-ESFleetEncounterDialog,BeginFleetEncounter,"!$player.esrBeganFleetEncounter
-ESHasUpgrades score:9999998","$player.esrBeganFleetEncounter = true 0
+ETFleetEncounterDialog,BeginFleetEncounter,"!$player.etBeganFleetEncounter
+ETHasUpgrades score:9999998","$player.etBeganFleetEncounter = true 0
 FireBest BeginFleetEncounter
 FireBest GeneratedESForFleet",,,
-ESFleetEncounterGenerated,GeneratedESForFleet,"ESHasUpgrades score:9999998
+ETFleetEncounterGenerated,GeneratedESForFleet,"ETHasUpgrades score:9999998
 !$ziggurat
-$customType != coronal_tap","$player.esrScanFleetOnCommsLinkOpen = true 0
-Highlight ""extra systems""","The other fleet appears to have modified some of their ships with extra systems. They can be scanned through a small change to how a comms link is initialized.",,
-ESOmegaEncounterGenerated,TriggerAutomatedDefenses,"!$esrHasDrawnTextForOmega
-ESHasUpgrades score:9999998
-$customType == coronal_tap","$esrHasDrawnTextForOmega = true 0
+$customType != coronal_tap","$player.etScanFleetOnCommsLinkOpen = true 0
+Highlight ""Exotica technologies""","The other fleet appears to have modified some of their ships with Exotica technologies. They can be scanned through a small change to how a comms link is initialized.",,
+ETOmegaEncounterGenerated,TriggerAutomatedDefenses,"!$etHasDrawnTextForOmega
+ETHasUpgrades score:9999998
+$customType == coronal_tap","$etHasDrawnTextForOmega = true 0
 FireBest TriggerAutomatedDefenses
-$player.esrScanFleetOnCommsLinkOpen = true 0
-AddText ""The sensors tell you that there are extra systems present on whatever those things are, and that most of them appear to be subsumed alpha, beta and gamma-level AI cores. The sensors don't explain why you can hear the subsumed AI cores crying, or why it almost sounds like music.""
-Highlight ""extra systems"" ""crying""
-ESScanOmegas",,,
-ESFleetEncounterDialogZiggurat,BeginFleetEncounter2,"ESHasUpgrades score:9999998
+$player.etScanFleetOnCommsLinkOpen = true 0
+AddText ""The sensors tell you that there are Exotica technologies present on whatever those things are, and that most of them appear to be subsumed alpha, beta and gamma-level AI cores. The sensors don't explain why you can hear the subsumed AI cores crying, or why it almost sounds like music.""
+Highlight ""Exotica technologies"" ""crying""
+ETScanOmegas",,,
+ETFleetEncounterDialogZiggurat,BeginFleetEncounter2,"ETHasUpgrades score:9999998
 $ziggurat
-!$esrHasDrawnTextForZigg","$esrHasDrawnTextForZigg = true 0
+!$etHasDrawnTextForZigg","$etHasDrawnTextForZigg = true 0
 FireBest BeginFleetEncounter2
-AddText ""Your sensor lead informs you that, whatever that thing is, it has the trace signature of some kind of extra systems modifications. They can be scanned through a small change to how a comms link is initialized.""
-Highlight ""extra systems modifications""
-$player.esrScanFleetOnCommsLinkOpen = true 0",,,
-ESOpenScanDialog,OpenCommLink,"$player.esrScanFleetOnCommsLinkOpen score:9999998","FireAll PreCommLinkOption
-Highlight ""extra systems modifications""","The extra systems modifications can be scanned before the communications link is fully established.",,
-ESReopenScanDialog,OpenCommLink,"$player.esrReopenESScanDialog score:9999998","unset $player.esrReopenESScanDialog
+AddText ""Your sensor lead informs you that, whatever that thing is, it has the trace signature of some kind of Exotica technologies. They can be scanned through a small change to how a comms link is initialized.""
+Highlight ""Exotica technologies""
+$player.etScanFleetOnCommsLinkOpen = true 0",,,
+ETOpenScanDialog,OpenCommLink,"$player.etScanFleetOnCommsLinkOpen score:9999998","FireAll PreCommLinkOption
+Highlight ""Exotica technologies""","The Exotica technologies can be scanned before the communications link is fully established.",,
+ETReopenScanDialog,OpenCommLink,"$player.etReopenScanDialog score:9999998","unset $player.etReopenScanDialog
 FireAll PreCommLinkOption",,,
-ESScanFleetOption,PreCommLinkOption,,"AddOption 1 ESScanFleet ""Scan the other fleet for extra system modifications.""",,,
-ESScanFleet,DialogOptionSelected,"$option==ESScanFleet","$player.esrReopenESScanDialog = true 0
-ESScanFleet",,,
-ESOpenCommsLinkOption,PreCommLinkOption,,"AddOption 99 ESOpenCommsLink ""Continue opening the comms link.""",,,
-ESOpenCommsLink,DialogOptionSelected,"$option==ESOpenCommsLink","unset $player.esrReopenESScanDialog
-unset $player.esrScanFleetOnCommsLinkOpen
+ETScanFleetOption,PreCommLinkOption,,"AddOption 1 ETScanFleet ""Scan the other fleet for Exotica technologies.""",,,
+ETScanFleet,DialogOptionSelected,"$option==ETScanFleet","$player.etReopenScanDialog = true 0
+ETScanFleet",,,
+ETOpenCommsLinkOption,PreCommLinkOption,,"AddOption 98 ETOpenCommsLink ""Continue opening the comms link.""
+AddOption 99 ETCutCommLink ""Cut the comms link.""
+SetShortcut ETCutCommLink ""ESCAPE""",,,
+ETOpenCommsLink,DialogOptionSelected,"$option==ETOpenCommsLink","unset $player.etReopenScanDialog
+unset $player.etScanFleetOnCommsLinkOpen
 FireBest OpenCommLink",,,
+ETCutCommLink,DialogOptionSelected,"$option==ETCutCommLink","unset $player.etReopenScanDialog
+$option=cutCommLink
+FireBest DialogOptionSelected
+FireAll UpdateEngagementChoice",,,
 ,,,,,,
-ESDerelictShipDialog,PopulateSalvageOptions2,"$customType == wreck
-ESHasUpgrades score:9999998","Highlight ""extra systems modifications""","Upon closer inspection, the derelict appears to have signs of extra systems modifications.","11:ESScanDerelict:Scan the derelict for extra systems modifications.",
-ESScanDerelict,DialogOptionSelected,"$option==ESScanDerelict",ESScanDerelict,,,
-ESDebrisFieldGen,PopulateSalvageOptions1,"$customType == debris_field_shared
-!$entity.esrGeneratedESForDebrisField","ESGenerateForDebrisField
-$entity.esrGeneratedESForDebrisField = true 0",,15:ESScanDebrisField:Scan the debris field for extra systems modifications.,
-ESScanDebrisField,DialogOptionSelected,"$option==ESScanDebrisField",ESScanDebrisField,,,
+ETDerelictShipDialog,PopulateSalvageOptions2,"$customType == wreck
+ETHasUpgrades score:9999998","Highlight ""Exotica technologies""","Upon closer inspection, the derelict appears to have signs of Exotica technologies.","11:ETScanDerelict:Scan the derelict for Exotica technologies.",
+ETScanDerelict,DialogOptionSelected,"$option==ETScanDerelict",ETScanDerelict,,,
+ETDebrisFieldGen,PopulateSalvageOptions1,"$customType == debris_field_shared
+!$entity.etGeneratedForDebrisField","AddOption 2 ETScanDebrisField Scan the debris field for Exotica technologies.
+ETGenerateForDebrisField
+$entity.etGeneratedForDebrisField = true 0",,,
+ETScanDebrisField,DialogOptionSelected,"$option==ETScanDebrisField",ETScanDebrisField,,,

@@ -1,0 +1,131 @@
+package exoticatechnologies.modifications.upgrades;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import data.scripts.util.MagicSettings;
+import exoticatechnologies.ETModSettings;
+import exoticatechnologies.dialog.modifications.SystemOptionsHandler;
+import exoticatechnologies.modifications.upgrades.dialog.UpgradesPickerState;
+import exoticatechnologies.modifications.upgrades.methods.CreditsMethod;
+import exoticatechnologies.modifications.upgrades.methods.RecoverMethod;
+import exoticatechnologies.modifications.upgrades.methods.ResourcesMethod;
+import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
+import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.util.StringUtils;
+import lombok.extern.log4j.Log4j;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.*;
+
+@Log4j
+public class UpgradesHandler {
+    private static int UPGRADE_OPTION_ORDER = 1;
+    public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
+    public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
+    public static final UpgradesPickerState UPGRADE_PICKER_DIALOG = new UpgradesPickerState();
+
+    public static Set<UpgradeMethod> UPGRADE_METHODS = new LinkedHashSet<UpgradeMethod>();
+
+
+    public static void addUpgradeMethod(UpgradeMethod method) {
+        UPGRADE_METHODS.add(method);
+    }
+
+    public static void initialize() {
+        UPGRADE_METHODS.clear();
+        UPGRADE_METHODS.add(new CreditsMethod());
+        UPGRADE_METHODS.add(new ResourcesMethod());
+        UPGRADE_METHODS.add(new RecoverMethod());
+
+        SystemOptionsHandler.addOption(UPGRADE_PICKER_DIALOG);
+        UpgradesHandler.populateUpgrades();
+    }
+
+    public static void populateUpgrades() {
+        try {
+            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/upgrades.json", "extra_system_reloaded");
+
+            Iterator upgIterator = settings.keys();
+            while(upgIterator.hasNext()) {
+                String upgKey = (String) upgIterator.next();
+
+                if(UPGRADES.containsKey(upgKey)) continue;
+
+                JSONObject upgObj = (JSONObject) settings.getJSONObject(upgKey);
+
+                Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(upgObj.getString("upgradeClass"));
+                Upgrade upgrade = (Upgrade) clzz.newInstance();
+
+                if(upgrade.shouldLoad()) {
+                    upgrade.setKey(upgKey);
+                    upgrade.setName(StringUtils.getString(upgKey, "name"));
+                    upgrade.setDescription(StringUtils.getString(upgKey, "description"));
+                    upgrade.setConfig(upgObj);
+
+                    UpgradesHandler.addUpgrade(upgrade);
+                }
+            }
+        } catch (JSONException | IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static void loadConfigs() {
+        try {
+            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/upgrades.json", "exoticatechnologies");
+
+            for (Upgrade upgrade : UPGRADES_LIST) {
+                if (!settings.has(upgrade.getKey())) {
+                    continue;
+                }
+
+                upgrade.setConfig(settings.getJSONObject(upgrade.getKey()));
+            }
+        } catch (JSONException | IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static void addUpgrade(Upgrade upgrade) {
+        if(UPGRADES.containsKey(upgrade.getKey())) return;
+
+        UPGRADES.put(upgrade.getKey(),upgrade);
+        UPGRADES_LIST.add(upgrade);
+    }
+
+    //can upgrade
+    public static boolean canUseUpgradeMethods(FleetMemberAPI fm, ShipModifications mods, ShipAPI.HullSize hullSize, Upgrade upgrade, CampaignFleetAPI fleet, MarketAPI currMarket) {
+        if(mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidth(fm)) {
+            return false;
+        }
+
+        for (UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+            if (method.canShow(fm, mods, upgrade, currMarket)
+                    && method.canUse(fm, mods, upgrade, currMarket)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //upgrade whitelist for faction
+    public static List<String> getWhitelistForFaction(String faction) {
+        List<String> factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", "rngUpgradeWhitelist");
+        try {
+            if(MagicSettings.modSettings.getJSONObject("exoticatechnologies").has(faction + "_UpgradeWhitelist")) {
+                factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", faction + "_UpgradeWhitelist");
+            }
+        } catch (JSONException ex) {
+            log.info("ESR modSettings object doesn't exist. Is this a bug in MagicLib, or did you remove it?");
+            log.info("The actual exception follows.", ex);
+        }
+        return factionAllowedUpgrades;
+    }
+}

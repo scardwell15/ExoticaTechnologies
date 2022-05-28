@@ -1,2 +1,0 @@
-name,id,hotkey,inTime,activeTime,outTime,cooldownTime,isToggle,fluxPerSecondPercentMaxCapacity,fluxPerSecondFlat
-Spooled Feeders,esr_spooledfeeder,,0.1,,4,5,true,0,0

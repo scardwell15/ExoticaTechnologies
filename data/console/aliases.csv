@@ -1,4 +1,3 @@
 alias,command
-esr_ruc,esr_removeUpgradeCosts
-esr_duc,esr_defaultUpgradeCosts
-esr_reload,esr_reloadconfig
+et_ruc,et_removecosts
+et_duc,et_resetcosts

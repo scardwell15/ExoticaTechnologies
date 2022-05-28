@@ -15,11 +15,14 @@
 		"normal":"(normal)",
 		"good":"(good)",
 		"superior":"(superior)",
+		"pristine":"(pristine)",
 		"ultimate":"(ultimate)",
-		"perfect":"(perfect)",
 		"domain":"(domain)"
 	},
 	"CommonOptions": {
+		"ExpandExotics": "Press F1 to show more exotic information.",
+		"ExpandUpgrades": "Press F2 to show more upgrade information.",
+		"UnexpandInfo": "Press any key to show less information.",
 		"PreviousPage": "Previous page",
 		"NextPage": "Next page",
 		"ResourcesHeader": "Resources",
@@ -35,7 +38,7 @@
 		"ShipHasBandwidth": "*${name}* has an outstanding bandwidth of *${bandwidth}*. It doesn't have any modifications that use it.",
 		"ShipHasUpgrades": "*${name}* has a usable bandwidth of *${bandwidth}*. It also has other modifications, which are listed below. You can hover over one of them to see a description of the modification.",
 		"UpgradeNameWithLevelAndMax": "*${upgradeName}* (${level}/${max})",
-		"DebrisFieldHasNotableExtraSystems": "Upon closer inspection, the ships in the debris field appear to have signs of *extra systems modifications*.",
+		"DebrisFieldHasNotableMods": "Upon closer inspection, the ships in the debris field appear to have signs of *Exotica technologies*.",
 		"ExoticHeader": "Exotics",
 		"UpgradeHeader": "Upgrades"
 	},
@@ -76,7 +79,7 @@
 		"InstallExoticOption": "Have the modification installed.",
 		"ExoticInstalledSuccessfully": "Your chief engineer reports that the modification was installed successfully.",
 		"ExoticDestroyedSuccessfully": "Your chief engineer reports that the modification was removed from the ship, but it could not be recovered.",
-		"ExoticRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. You could swear he thinks you're threatning his salary."
+		"ExoticRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. With the tone and look on their face, you could swear they think you're threatening their salary."
 	},
 	"UpgradesDialog": {
 		"OpenUpgradeOptions": "Upgrades",
@@ -91,7 +94,8 @@
 		"UpgradeBandwidthCost": "The upgrade will use *${bandwidthCost}* bandwidth from your ship, which has *${freeBandwidth}* free to use.",
 		"UpgradeSuccessChance": "The upgrade has a ${successChance} chance of success. The engineering team stresses that there are no refunds if there are no notable results, however.",
 		"UpgradePerformedSuccessfully": "Your chief engineer reports that the *${name}* upgrade was a success. It is now *level ${level}*.",
-		"UpgradePerformedFailure": "After a few expletives, your chief engineer reports that the upgrade was a failure."
+		"UpgradePerformedFailure": "After a few expletives, your chief engineer reports that the upgrade was a failure.",
+		"UpgradeRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. They say this with the slightest disbelief, as if the plan wasn't expected to work."
 	},
 	"UpgradeMethods": {
 		"ResourcesOption": "Craft with basic resources.",
@@ -102,7 +106,9 @@
 		"IndEvoComponentsOption": "Craft with ${components} ship components.",
 		"IndEvoComponentsTooltip": "Upgrades using ship components are 12.5% more efficient than using other resources.\nYou have ${components} ship components.",
 		"IndEvoRelicsOption": "Craft with ${relics} relic components.",
-		"IndEvoRelicsTooltip": "Upgrades using relic components are 37.5% more efficient than using other resources.\nYou have ${relics} relic components."
+		"IndEvoRelicsTooltip": "Upgrades using relic components are 37.5% more efficient than using other resources.\nYou have ${relics} relic components.",
+		"RecoverOption": "Recover the upgrade from the ship.",
+		"RecoverOptionTooltip": "This option recovers a schematic of the upgrade that can be used to apply it to another ship."
 	},
 	"SpooledFeeders": {
 		"name": "Spooled Feeders",
@@ -123,7 +129,7 @@
 		"needItem": "You need an ${itemName} to install this.",
 		"longDescription": "Reduces ordnance costs by *${large}/${medium}/${small}* for weapons, and *${fighters}/${bombers}* for fighters and bombers. Increases bandwidth by *50 TB/s*."
 	},
-	"PlasmaCatalyst": {
+	"PlasmaFluxCatalyst": {
 		"name": "Plasma Flux Catalyst",
 		"description": "A Plasma Flux Catalyst can be used to vastly decrease the amount of equipment needed to provide power to a ship thanks to its ability to extract that energy from any number of capacitors in parallel. The space saved allows for more complicated weaponry to be installed, although the resulting heat from such a system is dreadful if too many capacitors or flux vents are installed.",
 		"tooltip": "Improve flux capacitors and vents. Reduce CR if too many are installed.",
@@ -223,6 +229,7 @@
 		"hullRepair": "Hull repair rate after battle: *${percent}%%* (${finalValue})",
 		"fuelConsumption": "Fuel consumption: *${percent}%%* (${finalValue}, or ${creditsSavedPerMonth} credits saved per month)",
 		"supplyConsumption": "Supply consumption: *${percent}%%* (${finalValue}, or ${creditsSavedPerMonth} credits saved per month)",
+		"supplyConsumptionAutomated": "Supply consumption: =${percent}%%= (${finalValue}, or ${creditsSavedPerMonth} credits per month)",
 		"suppliesToRecover": "Supplies to recover: *${percent}%%* (${finalValue})"
 	},
 	"HyperactiveCapacitors": {
@@ -240,6 +247,12 @@
 		"shieldUpkeep": "Shield upkeep: =${percent}%%= (${finalValue})",
 		"shieldUnfoldRate": "Shield unfold rate: =${percent}%%=",
 		"shieldTurnRate": "Shield turn rate: =${percent}%%="
+	},
+	"TracerRecoilCalculator": {
+		"name": "Tracer Recoil Calculator",
+		"description": "Loading weapons with a special kind of tracer round allows this subsystem to make trajectory adjustments to reduce recoil and inaccuracy at the cost of projectile speed.",
+		"recoil": "Recoil: *{percent}*",
+		"projSpeed": "Projectile speed: =${percent}="
 	},
 	"AdvancedFluxCoils": {
 		"name": "Advanced Flux Coils",

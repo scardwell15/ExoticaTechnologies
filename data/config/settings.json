@@ -35,24 +35,34 @@
 
 	# do not touch.
 	"ruleCommandPackages":[
-		"extrasystemreloaded.campaign.rulecmd"
+		"exoticatechnologies.campaign.rulecmd"
 	],
 	"plugins": {
-		"ESCampaignPlugin":"extrasystemreloaded.campaign.listeners.ESCampaignPlugin"
+		"ESCampaignPlugin":"exoticatechnologies.campaign.listeners.ETCampaignPlugin"
 	},
 	"graphics": {
 		"exotics": {
+			"PlasmaFluxCatalyst": "graphics/icons/exotics/plasmafluxcatalyst.png",
+			"SpooledFeeders": "graphics/icons/exotics/spooledfeeders.png",
 			"AlphaSubcore": "graphics/icons/exotics/alphasubcore.png",
 			"DriveFluxVent": "graphics/icons/exotics/drivefluxvent.png",
 			"EqualizerCore": "graphics/icons/exotics/equalizercore.png",
 			"HackedMissileForge": "graphics/icons/exotics/hangarforgemissiles.png",
 			"HangarForge": "graphics/icons/exotics/hangarforge.png",
 			"PhasefieldEngine": "graphics/icons/exotics/phasefieldengine.png",
-			"PlasmaFluxCatalyst": "graphics/icons/exotics/plasmacatalyst.png",
-			"SpooledFeeders": "graphics/icons/exotics/spooledfeeders.png",
 			"SubsumedAlphaCore": "graphics/icons/exotics/subsumedalphacore.png",
 			"SubsumedBetaCore": "graphics/icons/exotics/subsumedbetacore.png",
-			"SubsumedGammaCore": "graphics/icons/exotics/subsumedgammacore.png",
+			"SubsumedGammaCore": "graphics/icons/exotics/subsumedgammacore.png"
+		},
+		"upgrades": {
+			"AdvancedFluxCoils": "graphics/icons/upgrades/advancedfluxcoils.png",
+			"CommissionedCrews": "graphics/icons/upgrades/commissionedcrews.png",
+			"ForcedOvertime": "graphics/icons/upgrades/forcedovertime.png",
+			"HyperactiveCapacitors": "graphics/icons/upgrades/hyperactivecapacitors.png",
+			"InfernalEngines": "graphics/icons/upgrades/infernalengines.png",
+			"OverchargedShields": "graphics/icons/upgrades/overchargedshields.png",
+			"WeldedArmor": "graphics/icons/upgrades/weldedarmor.png",
+			"TracerRecoilCalculator": "graphics/icons/upgrades/tracerrecoilcalculator.png"
 		}
 	}
 }

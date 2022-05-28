@@ -23,6 +23,12 @@
       "luddic_path": 0.75,
     },
 
+    # takes the manufacturer of the ship instead, but otherwise acts the same as above.
+    # note that these stack!
+    "manufacturerBandwidthMult": {
+      "Sindrian Fuel Company": 0.75
+    },
+
     # chance to add any amount of upgrades to a ship
     # default chance is 0.4 (40%)
     "factionUpgradeChances": {

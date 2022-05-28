@@ -54,6 +54,7 @@ public class ShipModFactory {
         }
 
         ShipModifications mods = new ShipModifications(seed);
+
         mods.generate(seed, var, faction);
 
         return mods;
@@ -94,12 +95,18 @@ public class ShipModFactory {
 
             if (fm.getFleetData() != null) {
                 String faction = getFaction(fm);
+                String manufacturer = fm.getHullSpec().getManufacturer();
 
                 Map<String, Float> factionBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "factionBandwidthMult");
+                Map<String, Float> manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult");
 
                 float mult = 1.0f;
                 if (factionBandwidthMult.containsKey(faction)) {
                     mult = factionBandwidthMult.get(faction);
+                }
+
+                if (manufacturerBandwidthMult.containsKey(manufacturer)) {
+                    mult = manufacturerBandwidthMult.get(faction);
                 }
 
                 return Bandwidth.generate(seed, mult).getRandomInRange();

@@ -29,11 +29,11 @@ public class TracerRecoilCalculator extends Upgrade {
         if (expand) {
             tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-            this.addIncreaseToTooltip(tooltip,
+            this.addDecreaseToTooltip(tooltip,
                     "recoil",
                     fm.getStats().getRecoilPerShotMult().getMultStatMod(this.getBuffId()).getValue());
 
-            this.addIncreaseToTooltip(tooltip,
+            this.addDecreaseToTooltip(tooltip,
                     "projSpeed",
                     fm.getStats().getProjectileSpeedMult().getMultStatMod(this.getBuffId()).getValue());
         } else {

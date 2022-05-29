@@ -67,8 +67,8 @@ public class PlasmaFluxCatalyst extends Exotic {
 
                 StringUtils.getTranslation(this.getKey(), "longDescription")
                         .format("exoticName", this.getName())
-                        .format("capacitorLimit", maxCaps / 3)
-                        .format("ventLimit", maxVents / 3)
+                        .format("capacitorLimit", Math.ceil(maxCaps / 3))
+                        .format("ventLimit", Math.ceil(maxVents / 3))
                         .format("crDecrease", 1)
                         .addToTooltip(tooltip, tooltipColors);
             } else {
@@ -99,12 +99,12 @@ public class PlasmaFluxCatalyst extends Exotic {
         int maxVents = (int) fm.getFleetCommander().getStats().getMaxVentsBonus().computeEffective(MAX_FLUX_EQUIPMENT.get(fm.getHullSpec().getHullSize()));
 
         int crReduction = 0;
-        if(numCapsStats > maxCaps / 3) {
-            crReduction += numCapsStats - (maxCaps / 3);
+        if(numCapsStats > Math.ceil(maxCaps / 3)) {
+            crReduction += numCapsStats - Math.ceil(maxCaps / 3);
         }
 
-        if(numVentsStats > maxVents / 3) {
-            crReduction += numVentsStats - (maxVents / 3);
+        if(numVentsStats > Math.ceil(maxVents / 3)) {
+            crReduction += numVentsStats - Math.ceil(maxVents / 3);
         }
 
         if(crReduction > 0) {

@@ -40,13 +40,13 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
         if (dialog == null) return false;
 
         SectorEntityToken entity = dialog.getInteractionTarget();
+        boolean notableModsGenerated = false;
         if (entity != null) {
             if (entity.getCustomEntityType().equals(Entities.DEBRIS_FIELD_SHARED)
                     && entity.getMemoryWithoutUpdate().contains(MemFlags.SALVAGE_SPECIAL_DATA)
                     && entity.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SPECIAL_DATA) instanceof ShipRecoverySpecial.ShipRecoverySpecialData) {
                 ShipRecoverySpecial.ShipRecoverySpecialData data = (ShipRecoverySpecial.ShipRecoverySpecialData) entity.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SPECIAL_DATA);
 
-                boolean notableModsGenerated = false;
                 if (data.ships != null
                         && !data.ships.isEmpty()) {
 
@@ -84,17 +84,16 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
 
                     Global.getSector().addTransientScript(new DerelictsEFScript(derelictVariantMap));
                 }
-
-                if(notableModsGenerated) {
-                    StringUtils.getTranslation("FleetScanner", "DebrisFieldHasNotableMods")
-                            .addToTextPanel(dialog.getTextPanel());
-                    dialog.getOptionPanel().setEnabled("ETScanDebrisField", true);
-                } else {
-                    dialog.getOptionPanel().setEnabled("ETScanDebrisField", false);
-                }
             }
         }
 
+        if(notableModsGenerated) {
+            StringUtils.getTranslation("FleetScanner", "DebrisFieldHasNotableMods")
+                    .addToTextPanel(dialog.getTextPanel());
+            dialog.getOptionPanel().setEnabled("ETScanDebrisField", true);
+        } else {
+            dialog.getOptionPanel().setEnabled("ETScanDebrisField", false);
+        }
         return false;
     }
 }

@@ -58,7 +58,7 @@ ETDerelictShipDialog,PopulateSalvageOptions2,"$customType == wreck
 ETHasUpgrades score:9999998","Highlight ""Exotica technologies""","Upon closer inspection, the derelict appears to have signs of Exotica technologies.","11:ETScanDerelict:Scan the derelict for Exotica technologies.",
 ETScanDerelict,DialogOptionSelected,"$option==ETScanDerelict",ETScanDerelict,,,
 ETDebrisFieldGen,PopulateSalvageOptions1,"$customType == debris_field_shared
-!$entity.etGeneratedForDebrisField","AddOption 2 ETScanDebrisField Scan the debris field for Exotica technologies.
+!$entity.etGeneratedForDebrisField","AddOption 2 ETScanDebrisField ""Scan the debris field for Exotica technologies.""
 ETGenerateForDebrisField
 $entity.etGeneratedForDebrisField = true 0",,,
 ETScanDebrisField,DialogOptionSelected,"$option==ETScanDebrisField",ETScanDebrisField,,,

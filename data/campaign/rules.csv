@@ -3,7 +3,7 @@ id,trigger,conditions,script,text,options,notes
 ETMainDialog,PopulateOptions,"$hasMarket
 $menuState == main
 $tradeMode == OPEN
-RepairAvailable","SetShortcut ETMainMenu ""U"" true",,"25:ETMainMenu:Consider upgrading your ships (ExtraSystem)",
+RepairAvailable","SetShortcut ETMainMenu ""U"" true",,"25:ETMainMenu:Visit the local Exotica Technologies branch.",
 ETMainMenu,DialogOptionSelected,"$option==ETMainMenu","$menuState = ETMainMenu
 ETInteractionDialogPlugin","The Exotica engineering team welcomes you! They ask you to pick a ship.","15:ETShipList:Consider an overhaul to a ship
 90:ETDialogBack:Back",

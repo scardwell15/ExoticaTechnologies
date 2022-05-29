@@ -35,6 +35,8 @@ public class ScanUtils {
     public static List<FleetMemberAPI> getNotableFleetMembers(CampaignFleetAPI fleet) {
         List<FleetMemberAPI> notableMembers = new ArrayList<>();
 
+        if (fleet == null) return notableMembers;
+
         for (FleetMemberAPI fm : fleet.getMembersWithFightersCopy()) {
             if (fm.isFighterWing()) continue;
             if (isFleetMemberNotable(fm)) {

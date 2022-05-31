@@ -14,7 +14,7 @@ public class WeldedArmor extends Upgrade {
     private static float HULL_MAX = 30f;
     private static float ARMOR_MAX = 10f;
 
-    private static float EMP_TAKEN_MAX = 25f;
+    private static float EMP_TAKEN_MAX = 20f;
     private static float ENGINE_HEALTH_MAX = -15f;
     private static float WEAPON_HEALTH_MAX = -15f;
 

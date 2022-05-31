@@ -255,8 +255,8 @@
 	"TracerRecoilCalculator": {
 		"name": "Tracer Recoil Calculator",
 		"description": "Loading weapons with a special kind of tracer round allows this subsystem to make trajectory adjustments to reduce recoil and inaccuracy at the cost of projectile speed.",
-		"recoil": "Recoil: *${percent}*",
-		"projSpeed": "Projectile speed: =${percent}="
+		"recoil": "Recoil: *${percent}%%*",
+		"projSpeed": "Projectile speed: =${percent}%%="
 	},
 	"AdvancedFluxCoils": {
 		"name": "Advanced Flux Coils",

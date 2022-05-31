@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications.upgrades.impl;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -33,9 +34,13 @@ public class OverchargedShields extends Upgrade {
         StatUtils.setStatMult(stats.getShieldDamageTakenMult(), this.getBuffId(), level, FLUX_PER_DAM_MAX, maxLevel);
         StatUtils.setStatPercent(stats.getShieldArcBonus(), this.getBuffId(), level, ARC_MAX, maxLevel);
 
-        StatUtils.setStatPercent(stats.getShieldUpkeepMult(), this.getBuffId(), level, UPKEEP_MAX, maxLevel);
-        StatUtils.setStatMult(stats.getShieldUnfoldRateMult(), this.getBuffId(), level, UNFOLD_MAX, maxLevel);
-        StatUtils.setStatMult(stats.getShieldTurnRateMult(), this.getBuffId(), level, TURNRATE_MAX, maxLevel);
+
+
+        if (level >= 3) {
+            StatUtils.setStatPercent(stats.getShieldUpkeepMult(), this.getBuffId(), level - 2, UPKEEP_MAX, maxLevel - 2);
+            StatUtils.setStatMult(stats.getShieldUnfoldRateMult(), this.getBuffId(), level - 2, UNFOLD_MAX, maxLevel - 2);
+            StatUtils.setStatMult(stats.getShieldTurnRateMult(), this.getBuffId(), level - 2, TURNRATE_MAX, maxLevel - 2);
+        }
     }
 
     @Override
@@ -59,18 +64,37 @@ public class OverchargedShields extends Upgrade {
                         fm.getStats().getShieldArcBonus().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getHullSpec().getShieldSpec().getArc());
 
+                MutableStat.StatMod shieldUpkeepStat = fm.getStats().getShieldUpkeepMult().getMultStatMod(this.getBuffId());
+                float shieldUpkeepBonus = 0f;
+                if (shieldUpkeepStat != null) {
+                    shieldUpkeepBonus = shieldUpkeepStat.getValue();
+                }
+
                 this.addIncreaseWithFinalToTooltip(tooltip,
                         "shieldUpkeep",
-                        fm.getStats().getShieldUpkeepMult().getPercentStatMod(this.getBuffId()).getValue(),
+                        shieldUpkeepBonus,
                         fm.getHullSpec().getShieldSpec().getUpkeepCost());
+
+                MutableStat.StatMod shieldUnfoldStat = fm.getStats().getShieldUnfoldRateMult().getMultStatMod(this.getBuffId());
+                float shieldUnfoldBonus = 1f;
+                if (shieldUnfoldStat != null) {
+                    shieldUnfoldBonus = shieldUnfoldStat.getValue();
+                }
 
                 this.addDecreaseToTooltip(tooltip,
                         "shieldUnfoldRate",
-                        fm.getStats().getShieldUnfoldRateMult().getMultStatMod(this.getBuffId()).getValue());
+                        shieldUnfoldBonus);
+
+
+                MutableStat.StatMod shieldTurnStat = fm.getStats().getShieldTurnRateMult().getMultStatMod(this.getBuffId());
+                float shieldTurnBonus = 1f;
+                if (shieldTurnStat != null) {
+                    shieldTurnBonus = shieldTurnStat.getValue();
+                }
 
                 this.addDecreaseToTooltip(tooltip,
                         "shieldTurnRate",
-                        fm.getStats().getShieldTurnRateMult().getMultStatMod(this.getBuffId()).getValue());
+                        shieldTurnBonus);
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
             }

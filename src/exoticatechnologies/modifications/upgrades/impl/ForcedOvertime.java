@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications.upgrades.impl;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -16,7 +17,7 @@ public class ForcedOvertime extends Upgrade {
 
     private static float REQUIRED_CREW_MAX = 20f;
     private static float PEAK_CR_MAX = 20f;
-    private static float CR_LOSS_MAX = -20f;
+    private static float CR_LOSS_MAX = 20f;
 
     private static float FRIGATE_MULT = 8f;
     private static float DESTROYER_MULT = 3f;
@@ -41,8 +42,11 @@ public class ForcedOvertime extends Upgrade {
         StatUtils.setStatMult(stats.getCRPerDeploymentPercent(), this.getBuffId(), level, CR_TO_DEPLOY_MAX, maxLevel);
 
         StatUtils.setStatPercent(stats.getMinCrewMod(), this.getBuffId(), level, REQUIRED_CREW_MAX, maxLevel);
-        StatUtils.setStatMult(stats.getCRLossPerSecondPercent(), this.getBuffId(), level, CR_LOSS_MAX, maxLevel);
-        StatUtils.setStatMult(stats.getBaseCRRecoveryRatePercentPerDay(), this.getBuffId(), level, CR_RECOVERY_RATE_MAX, maxLevel);
+
+        if (level >= 3) {
+            StatUtils.setStatPercent(stats.getCRLossPerSecondPercent(), this.getBuffId(), level - 2, CR_LOSS_MAX, maxLevel - 2);
+            StatUtils.setStatMult(stats.getBaseCRRecoveryRatePercentPerDay(), this.getBuffId(), level - 2, CR_RECOVERY_RATE_MAX, maxLevel - 2);
+        }
     }
 
     @Override
@@ -63,19 +67,31 @@ public class ForcedOvertime extends Upgrade {
                     crPerDeploymentMult,
                     fm.getHullSpec().getCRToDeploy());
 
-            this.addDecreaseWithFinalToTooltip(tooltip,
-                    "crRecoveryRate",
-                    fm.getStats().getBaseCRRecoveryRatePercentPerDay().getMultStatMod(this.getBuffId()).getValue(),
-                    fm.getStats().getBaseCRRecoveryRatePercentPerDay().getBaseValue());
-
-            this.addIncreaseToTooltip(tooltip,
-                    "crDegradation",
-                    fm.getStats().getCRLossPerSecondPercent().getMultBonus(this.getBuffId()).getValue());
-
             this.addIncreaseWithFinalToTooltip(tooltip,
                     "requiredCrew",
                     fm.getStats().getMinCrewMod().getPercentBonus(this.getBuffId()).getValue(),
                     fm.getHullSpec().getMinCrew());
+
+            MutableStat.StatMod baseCRRecoveryStat = fm.getStats().getBaseCRRecoveryRatePercentPerDay().getMultStatMod(this.getBuffId());
+            float baseCRRecoveryBonus = 1f;
+            if (baseCRRecoveryStat != null) {
+                baseCRRecoveryBonus = baseCRRecoveryStat.getValue();
+            }
+
+            this.addDecreaseWithFinalToTooltip(tooltip,
+                    "crRecoveryRate",
+                    baseCRRecoveryBonus,
+                    fm.getStats().getBaseCRRecoveryRatePercentPerDay().getBaseValue());
+
+            MutableStat.StatMod crDegradationStat = fm.getStats().getCRLossPerSecondPercent().getPercentBonus(this.getBuffId());
+            float crDegradationBonus = 0f;
+            if (crDegradationStat != null) {
+                crDegradationBonus = crDegradationStat.getValue();
+            }
+
+            this.addIncreaseToTooltip(tooltip,
+                    "crDegradation",
+                    crDegradationBonus);
         } else {
             tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
         }

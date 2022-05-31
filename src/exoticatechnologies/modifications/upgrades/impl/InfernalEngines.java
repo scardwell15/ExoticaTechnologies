@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications.upgrades.impl;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.modifications.ShipModifications;
@@ -29,8 +30,11 @@ public class InfernalEngines extends Upgrade {
 
         StatUtils.setStatPercent(stats.getMaxBurnLevel(), this.getBuffId(), level, BURN_LEVEL_MAX, maxLevel);
 
-        StatUtils.setStatMult(stats.getDeceleration(), this.getBuffId(), level, DECELERATION_MAX, maxLevel);
-        StatUtils.setStatPercent(stats.getFuelUseMod(), this.getBuffId(), level, FUEL_USE_MAX, maxLevel);
+
+        if (level >= 3) {
+            StatUtils.setStatMult(stats.getDeceleration(), this.getBuffId(), level - 2, DECELERATION_MAX, maxLevel - 2);
+            StatUtils.setStatPercent(stats.getFuelUseMod(), this.getBuffId(), level - 2, FUEL_USE_MAX, maxLevel - 2);
+        }
     }
 
     @Override
@@ -59,13 +63,27 @@ public class InfernalEngines extends Upgrade {
                         fm.getStats().getMaxBurnLevel().getPercentStatMod(this.getBuffId()).getValue(),
                         fm.getStats().getMaxBurnLevel().getBaseValue());
 
+
+
+                MutableStat.StatMod decelerationStat = fm.getStats().getDeceleration().getPercentStatMod(this.getBuffId());
+                float decelerationBonus = 0f;
+                if (decelerationStat != null) {
+                    decelerationBonus = decelerationStat.getValue();
+                }
+
                 this.addDecreaseToTooltip(tooltip,
                         "deceleration",
-                        fm.getStats().getDeceleration().getMultStatMod(this.getBuffId()).getValue());
+                        decelerationBonus);
+
+                MutableStat.StatMod fuelUseStat = fm.getStats().getFuelUseMod().getPercentBonus(this.getBuffId());
+                float fuelUseBonus = 0f;
+                if (fuelUseStat != null) {
+                    fuelUseBonus = fuelUseStat.getValue();
+                }
 
                 this.addIncreaseWithFinalToTooltip(tooltip,
                         "fuelUse",
-                        fm.getStats().getFuelUseMod().getPercentBonus(this.getBuffId()).getValue(),
+                        fuelUseBonus,
                         fm.getHullSpec().getFuelPerLY());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));

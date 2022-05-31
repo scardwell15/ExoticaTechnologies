@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications.upgrades.impl;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.modifications.ShipModifications;
@@ -19,7 +20,9 @@ public class TracerRecoilCalculator extends Upgrade {
         StatUtils.setStatPercent(stats.getRecoilPerShotMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
         StatUtils.setStatPercent(stats.getMaxRecoilMult(), this.getBuffId(), level, RECOIL_REDUCTION / 2, maxLevel);
 
-        StatUtils.setStatPercent(stats.getProjectileSpeedMult(), this.getBuffId(), level, PROJ_SPEED, maxLevel);
+        if (level >= 3) {
+            StatUtils.setStatPercent(stats.getProjectileSpeedMult(), this.getBuffId(), level - 2, PROJ_SPEED, maxLevel - 2);
+        }
     }
 
     @Override
@@ -33,9 +36,16 @@ public class TracerRecoilCalculator extends Upgrade {
                     "recoil",
                     fm.getStats().getRecoilPerShotMult().getMultStatMod(this.getBuffId()).getValue());
 
+
+            MutableStat.StatMod projSpeedStat = fm.getStats().getProjectileSpeedMult().getMultStatMod(this.getBuffId());
+            float projSpeedBonus = 1f;
+            if (projSpeedStat != null) {
+                projSpeedBonus = projSpeedStat.getValue();
+            }
+
             this.addDecreaseToTooltip(tooltip,
                     "projSpeed",
-                    fm.getStats().getProjectileSpeedMult().getMultStatMod(this.getBuffId()).getValue());
+                    projSpeedBonus);
         } else {
             tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
         }

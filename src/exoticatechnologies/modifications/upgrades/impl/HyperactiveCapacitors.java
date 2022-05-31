@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications.upgrades.impl;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.modifications.upgrades.Upgrade;
@@ -19,9 +20,11 @@ public class HyperactiveCapacitors extends Upgrade {
         StatUtils.setStatMult(stats.getFluxCapacity(), this.getBuffId(), level, CAPACITY_MAX, maxLevel);
         StatUtils.setStatPercent(stats.getVentRateMult(), this.getBuffId(), level, VENT_SPEED_MAX, maxLevel);
 
-        StatUtils.setStatPercent(stats.getBallisticWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
-        StatUtils.setStatPercent(stats.getEnergyWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
-        StatUtils.setStatPercent(stats.getMissileWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
+        if (level >= 3) {
+            StatUtils.setStatPercent(stats.getBallisticWeaponFluxCostMod(), this.getBuffId(), level - 2, WEAPON_FLUX_MAX, maxLevel - 2);
+            StatUtils.setStatPercent(stats.getEnergyWeaponFluxCostMod(), this.getBuffId(), level - 2, WEAPON_FLUX_MAX, maxLevel - 2);
+            StatUtils.setStatPercent(stats.getMissileWeaponFluxCostMod(), this.getBuffId(), level - 2, WEAPON_FLUX_MAX, maxLevel - 2);
+        }
     }
 
     @Override
@@ -40,9 +43,16 @@ public class HyperactiveCapacitors extends Upgrade {
                         "ventSpeed",
                         fm.getStats().getVentRateMult().getPercentStatMod(this.getBuffId()).getValue());
 
+
+                MutableStat.StatMod weaponFluxStat = fm.getStats().getBallisticWeaponFluxCostMod().getPercentBonus(this.getBuffId());
+                float weaponFluxBonus = 0f;
+                if (weaponFluxStat != null) {
+                    weaponFluxBonus = weaponFluxStat.getValue();
+                }
+
                 this.addIncreaseToTooltip(tooltip,
                         "weaponFluxCosts",
-                        fm.getStats().getBallisticWeaponFluxCostMod().getPercentBonus(this.getBuffId()).getValue());
+                        weaponFluxBonus);
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
             }

@@ -2,3 +2,7 @@ this project uses some assets created in part using a UIIconLib made by Harmful 
 i additionally used some icons from https://game-icons.net, which distributes them under the CC 3.0 license.
 
 this mod was originally named Extra System Reloaded, which had been developed first by Originem and then updated by Iridicens.
+
+thanks to Ms. Vella from the Unofficial Starsector Chat discord for making the plasma flux catalyst cargo item icon
+thanks to Thyrork, Phearlock, Ishman, Strb 103D for being a beta tester for the mod
+thanks to Thyrork for releasing a post-release guide for the mod

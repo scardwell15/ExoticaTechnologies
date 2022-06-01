@@ -90,7 +90,7 @@ public class ShipModFactory {
 
             long seed = fm.getId().hashCode();
             if (fm.getHullId().contains("ziggurat")) {
-                seed = fm.getHullSpec().getBaseHullId().hashCode() + Global.getSector().getSeedString().hashCode();
+                seed = fm.getHullId().hashCode() + Global.getSector().getSeedString().hashCode();
             }
 
             if (fm.getFleetData() != null) {

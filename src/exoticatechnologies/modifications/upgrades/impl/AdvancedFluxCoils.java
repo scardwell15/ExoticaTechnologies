@@ -72,7 +72,7 @@ public class AdvancedFluxCoils extends Upgrade {
 
                 this.addDecreaseToTooltip(tooltip,
                         "weaponFluxCosts",
-                        fm.getStats().getBallisticWeaponFluxCostMod().getPercentBonus(this.getBuffId()).getValue());
+                        fm.getStats().getBallisticWeaponFluxCostMod().getMultBonus(this.getBuffId()).getValue());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
             }

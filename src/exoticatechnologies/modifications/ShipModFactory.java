@@ -20,14 +20,19 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ShipModFactory {
     public static ShipModifications getForFleetMember(FleetMemberAPI fm) {
-        boolean ziggurat = fm.getHullId().contains("ziggurat");
-        if (ETModPlugin.hasData(fm.getId())) {
+        log.info(String.format("Loading ship mods for fleet member [%s] named [%s]", fm.getId(), fm.getShipName()));
+
+        if (fm.getHullId().contains("ziggurat")) {
+            if (ETModPlugin.getZigguratDuplicateId() != null && ETModPlugin.hasData(ETModPlugin.getZigguratDuplicateId())) {
+                return ETModPlugin.getData(ETModPlugin.getZigguratDuplicateId());
+            } else {
+                ShipModifications mods = generateRandom(fm);
+                mods.save(fm);
+                return mods;
+            }
+        } else if (ETModPlugin.hasData(fm.getId())) {
             return ETModPlugin.getData(fm.getId());
-        } else if (ziggurat) {
-            ShipModifications mods = generateRandom(fm);
-            mods.save(fm);
-            return mods;
-        } else {
+        } else  {
             ShipModifications mods = new ShipModifications(fm);
             mods.save(fm);
             return mods;
@@ -87,10 +92,13 @@ public class ShipModFactory {
     public static float generateBandwidth(FleetMemberAPI fm) {
 
         if (ETModSettings.getBoolean(ETModSettings.RANDOM_BANDWIDTH)) {
-
+            log.info(String.format("Generating bandwidth for fm ID [%s]", fm.getId()));
             long seed = fm.getId().hashCode();
+
+            //ziggurat generates new fleet member ID when recovered.
             if (fm.getHullId().contains("ziggurat")) {
-                seed = fm.getHullId().hashCode() + Global.getSector().getSeedString().hashCode();
+                String sectorSeed = Global.getSector().getSeedString();
+                seed = fm.getHullId().hashCode() + sectorSeed.hashCode();
             }
 
             if (fm.getFleetData() != null) {

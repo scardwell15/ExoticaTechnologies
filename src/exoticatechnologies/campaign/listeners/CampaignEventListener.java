@@ -32,11 +32,19 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     @Getter
     private static List<CampaignFleetAPI> activeFleets = new ArrayList<>();
 
+    private boolean appliedData = false;
     private IntervalUtil interval = new IntervalUtil(2f, 2f);
     private IntervalUtil cleaningInterval = new IntervalUtil(15f, 15f);
 
     public CampaignEventListener(boolean permaRegister) {
         super(permaRegister);
+    }
+
+    /**
+     * Apply ship modifications to everything in the next frame.
+     */
+    public void invalidateShipModifications() {
+        appliedData = false;
     }
 
     @Override
@@ -206,6 +214,34 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
     @Override
     public void advance(float v) {
+        if (!appliedData) {
+            appliedData = true;
+            for (String fmId : ETModPlugin.getShipModificationMap().keySet()) {
+                FleetMemberAPI fm = CampaignEventListener.findFM(fmId);
+
+                if (fm != null) {
+                    log.info(String.format("found fm [%s] for id [%s]", fm.getShipName(), fmId));
+                    ExoticaTechHM.addToFleetMember(fm);
+                } else {
+                    log.info(String.format("could not find for id [%s]", fmId));
+                }
+            }
+
+            for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getMembersWithFightersCopy()) {
+                String fmId = fm.getId();
+                if (ETModPlugin.hasData(fmId)) {
+                    ExoticaTechHM.addToFleetMember(fm);
+                } else {
+                    if (fm.getHullId().contains("ziggurat") && ETModPlugin.getZigguratDuplicateId() != null) {
+                        fmId = ETModPlugin.getZigguratDuplicateId();
+                        if (ETModPlugin.hasData(fmId)) {
+                            ExoticaTechHM.addToFleetMember(fm);
+                        }
+                    }
+                }
+            }
+        }
+
         if (Global.getSector().getCampaignUI().getCurrentCoreTab() != CoreUITabId.REFIT) {
             FleetMemberUtils.moduleMap.clear();
         }

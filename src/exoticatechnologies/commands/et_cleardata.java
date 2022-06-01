@@ -13,7 +13,7 @@ public class et_cleardata implements BaseCommand {
         if ( context.isInCampaign() )
         {
             ETModPlugin.removeHullmodsFromEveryVariant();
-            Global.getSector().getPersistentData().remove(ETModPlugin.ES_PERSISTENTUPGRADEMAP);
+            Global.getSector().getPersistentData().remove(ETModPlugin.ET_PERSISTENTUPGRADEMAP);
 
             return CommandResult.SUCCESS;
         } else {

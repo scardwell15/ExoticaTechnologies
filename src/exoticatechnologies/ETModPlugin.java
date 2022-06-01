@@ -9,7 +9,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exoticatechnologies.dialog.modifications.SystemOptionsHandler;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
-import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
@@ -17,18 +16,16 @@ import exoticatechnologies.modifications.bandwidth.BandwidthHandler;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.FleetMemberUtils;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.console.Console;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 @Log4j
 public class ETModPlugin extends BaseModPlugin {
-	public static final String ES_PERSISTENTUPGRADEMAP = "ET_MODMAP";
-	private static Map<String, ShipModifications> SHIP_MODIFICATION_MAP;
+	public static final String ET_PERSISTENTUPGRADEMAP = "ET_MODMAP";
+	private static Map<String, ShipModifications> SHIP_MODIFICATION_MAP = null;
 	private static boolean debugUpgradeCosts = false;
 
 	private static CampaignEventListener campaignListener = null;
@@ -59,18 +56,26 @@ public class ETModPlugin extends BaseModPlugin {
 	}
 
 	public static void loadModificationData() {
-		if(Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP)==null) {
-			Global.getSector().getPersistentData().put(ES_PERSISTENTUPGRADEMAP, new HashMap<String, ShipModifications>());
+		if(Global.getSector().getPersistentData().get(ET_PERSISTENTUPGRADEMAP)==null) {
+			Global.getSector().getPersistentData().put(ET_PERSISTENTUPGRADEMAP, new HashMap<String, ShipModifications>());
 		}
-		SHIP_MODIFICATION_MAP = (Map<String, ShipModifications>) Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP);
 
-		for (String fmId : SHIP_MODIFICATION_MAP.keySet()) {
-			FleetMemberAPI fm = CampaignEventListener.findFM(fmId);
+		SHIP_MODIFICATION_MAP = (Map<String, ShipModifications>) Global.getSector().getPersistentData().get(ET_PERSISTENTUPGRADEMAP);
 
-			if (fm != null) {
-				ExoticaTechHM.addToFleetMember(fm);
-			}
+		if (campaignListener != null) {
+			campaignListener.invalidateShipModifications();
 		}
+	}
+
+	public static void setZigguratDuplicateId(String ziggId) {
+		Global.getSector().getPersistentData().put("ET_zigguratId", ziggId);
+	}
+
+	public static String getZigguratDuplicateId() {
+		if (Global.getSector().getPersistentData().containsKey("ET_zigguratId")) {
+			return String.valueOf(Global.getSector().getPersistentData().get("ET_zigguratId"));
+		}
+		return null;
 	}
 
 	public static ShipModifications getData(String shipId) {
@@ -98,6 +103,8 @@ public class ETModPlugin extends BaseModPlugin {
 	}
 
 	public static void removeData(String shipId) {
+		if (shipId.equals(ETModPlugin.getZigguratDuplicateId())) return;
+
 		if(SHIP_MODIFICATION_MAP == null) {
 			loadModificationData();
 		}

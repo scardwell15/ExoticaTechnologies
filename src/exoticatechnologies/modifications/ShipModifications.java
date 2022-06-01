@@ -27,16 +27,33 @@ public class ShipModifications {
     protected transient FleetMemberAPI fm;
 
     ShipModifications(long bandwidthSeed) {
-        this.upgrades = new ETUpgrades();
-        this.exotics = new ETExotics();
-        this.bandwidth = Bandwidth.generate(bandwidthSeed).getRandomInRange();
+        if (upgrades == null) {
+            this.upgrades = new ETUpgrades();
+        }
+
+        if (exotics == null) {
+            this.exotics = new ETExotics();
+        }
+
+        if (bandwidth == -1) {
+            this.bandwidth = Bandwidth.generate(bandwidthSeed).getRandomInRange();
+        }
     }
 
     ShipModifications(FleetMemberAPI fm) {
         this.fm = fm;
-        this.upgrades = new ETUpgrades();
-        this.exotics = new ETExotics();
-        this.bandwidth = ShipModFactory.generateBandwidth(fm);
+
+        if (upgrades == null) {
+            this.upgrades = new ETUpgrades();
+        }
+
+        if (exotics == null) {
+            this.exotics = new ETExotics();
+        }
+
+        if (bandwidth == -1) {
+            this.bandwidth = ShipModFactory.generateBandwidth(fm);
+        }
     }
 
     public boolean shouldApplyHullmod() {
@@ -46,6 +63,14 @@ public class ShipModifications {
 
     public void save(FleetMemberAPI fm) {
         ETModPlugin.saveData(fm.getId(), this);
+
+        if (fm.getHullId().contains("ziggurat")) {
+            if (ETModPlugin.getZigguratDuplicateId() == null) {
+                ETModPlugin.setZigguratDuplicateId(fm.getId());
+            } else {
+                ETModPlugin.saveData(ETModPlugin.getZigguratDuplicateId(), this);
+            }
+        }
     }
 
     /**
@@ -116,7 +141,7 @@ public class ShipModifications {
     }
 
     //exotics
-    protected ETExotics exotics;
+    protected ETExotics exotics = null;
 
     protected ETExotics getExotics() {
         return exotics;
@@ -149,7 +174,7 @@ public class ShipModifications {
     }
 
     //upgrades
-    private ETUpgrades upgrades;
+    private ETUpgrades upgrades = null;
     protected ETUpgrades getUpgrades() {
         return upgrades;
     }

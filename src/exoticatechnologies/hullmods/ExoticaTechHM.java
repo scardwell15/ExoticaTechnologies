@@ -116,13 +116,11 @@ public class ExoticaTechHM extends BaseHullMod {
 
     @Override
     public void advanceInCampaign(FleetMemberAPI fm, float amount) {
-        if (!ETModPlugin.hasData(fm.getId())) {
+        ShipModifications mods = this.getModifications(fm);
+        if(mods == null) {
             fm.getVariant().removePermaMod("exoticatech");
             return;
         }
-
-        ShipModifications mods = this.getModifications(fm);
-        if(mods == null) return;
 
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);

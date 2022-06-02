@@ -164,12 +164,6 @@ public class ShipModifications {
     }
 
     public void removeExotic(Exotic exotic) {
-
-        //hard-coded. todo - add remove method on exotics
-        if (exotic.getKey().equals("AlphaSubcore")) {
-            fm.getVariant().removeMod("AlphaSubcoreHM");
-        }
-
         exotics.removeExotic(exotic);
     }
 

@@ -71,6 +71,8 @@ public class UpgradesPickerState extends SystemState {
         ShipModifications mods = ShipModFactory.getForFleetMember(fm);
         MarketAPI market = plugin.getMarket();
 
+        options.clearOptions();
+
         List<Upgrade> sortedUpgradesList = getSortedUpgradeList(fm, mods, market);
         boolean paginated = sortedUpgradesList.size() >= MIN_CHOICES_FOR_PAGINATION;
         int pages = 1;

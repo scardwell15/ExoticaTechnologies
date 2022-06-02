@@ -5,7 +5,10 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.upgrades.methods.ChipMethod;
+import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.util.StatUtils;
+import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONArray;
@@ -34,6 +37,12 @@ public class AdvancedFluxCoils extends Upgrade {
             return canApply(fm.getVariant());
         }
 
+        if (fm.getFleetData() != null && fm.getFleetData().getFleet() != null) {
+            if (Utilities.hasUpgradeChip(fm.getFleetData().getFleet().getCargo(), this.getKey())) {
+                return canApply(fm.getVariant());
+            }
+        }
+
         return false;
     }
 
@@ -43,6 +52,14 @@ public class AdvancedFluxCoils extends Upgrade {
         for (int i = 0; i < allowedFactions.length(); i++) {
             this.allowedFactions.add(allowedFactions.getString(i));
         }
+    }
+
+    @Override
+    public boolean canUseUpgradeMethod(FleetMemberAPI fm, ShipModifications mods, UpgradeMethod method) {
+        if (mods.hasUpgrade(this)) {
+            return true;
+        }
+        return method instanceof ChipMethod;
     }
 
     @Override

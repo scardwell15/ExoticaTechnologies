@@ -80,7 +80,7 @@ public class ShipModFactory {
         //to make sure it still generates the same upgrades, we use its hull ID as seed.
         boolean ziggurat = fm.getHullId().contains("ziggurat");
         if (ziggurat) {
-            seed = fm.getHullSpec().getBaseHullId().hashCode() + Global.getSector().getSeedString().hashCode();
+            seed = fm.getHullId().hashCode() + ETModPlugin.getSectorSeedString().hashCode();
         }
 
         mods.generate(seed, faction);
@@ -98,7 +98,7 @@ public class ShipModFactory {
             //ziggurat generates new fleet member ID when recovered.
             if (fm.getHullId().contains("ziggurat")) {
                 String sectorSeed = Global.getSector().getSeedString();
-                seed = fm.getHullId().hashCode() + sectorSeed.hashCode();
+                seed = fm.getHullId().hashCode() + ETModPlugin.getSectorSeedString().hashCode();
             }
 
             if (fm.getFleetData() != null) {
@@ -109,11 +109,11 @@ public class ShipModFactory {
                 Map<String, Float> manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult");
 
                 float mult = 1.0f;
-                if (factionBandwidthMult.containsKey(faction)) {
+                if (factionBandwidthMult != null && factionBandwidthMult.containsKey(faction)) {
                     mult = factionBandwidthMult.get(faction);
                 }
 
-                if (manufacturerBandwidthMult.containsKey(manufacturer)) {
+                if (manufacturerBandwidthMult != null && manufacturerBandwidthMult.containsKey(manufacturer)) {
                     mult = manufacturerBandwidthMult.get(faction);
                 }
 

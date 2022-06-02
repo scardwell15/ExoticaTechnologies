@@ -37,6 +37,12 @@ public class ExoticRemoveOption extends DialogOption {
 
         ShipAPI.HullSize hullSize = fm.getHullSpec().getHullSize();
 
+        if (exotic.getKey().equals("AlphaSubcore")) {
+            if (fm.getVariant() != null) {
+                fm.getVariant().removeMod("AlphaSubcoreHM");
+            }
+        }
+
         mods.removeExotic(exotic);
         mods.save(fm);
         ExoticaTechHM.addToFleetMember(fm);

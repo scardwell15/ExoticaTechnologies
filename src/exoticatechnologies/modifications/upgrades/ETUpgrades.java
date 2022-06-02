@@ -60,6 +60,10 @@ public class ETUpgrades {
         this.upgrades.put(key, level);
     }
 
+    public void addUpgrades(String key, int level) {
+        this.putUpgrade(key, this.getUpgrade(key) + level);
+    }
+
     public boolean hasUpgrades() {
         return !this.upgrades.isEmpty();
     }

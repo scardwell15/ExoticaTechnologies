@@ -9,6 +9,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModSettings;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
@@ -54,6 +55,10 @@ public abstract class Upgrade {
 
     public boolean canApply(FleetMemberAPI fm) {
         return canApply(fm.getVariant());
+    }
+
+    public boolean canUseUpgradeMethod(FleetMemberAPI fm, ShipModifications mods, UpgradeMethod method) {
+        return true;
     }
 
     public Color getColor() {

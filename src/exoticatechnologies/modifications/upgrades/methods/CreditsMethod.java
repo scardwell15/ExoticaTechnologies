@@ -38,6 +38,8 @@ public class CreditsMethod implements UpgradeMethod {
 
     @Override
     public boolean canUse(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+        if (upgrade.getResourceRatios().isEmpty()) return false;
+
         int level = es.getUpgrade(upgrade);
         int creditCost = getFinalCreditCost(fm, upgrade, level, market);
 

@@ -78,10 +78,12 @@ public class ChosenUpgradeState extends DialogState {
         UpgradesHandler.UPGRADE_PICKER_DIALOG.addToOptions(options, plugin, fm, mods, Keyboard.KEY_ESCAPE);
     }
 
-    private void addUpgradeMethodOptions(OptionPanelAPI options, ETInteractionDialogPlugin plugin, FleetMemberAPI fm, ShipModifications es, MarketAPI market) {
+    private void addUpgradeMethodOptions(OptionPanelAPI options, ETInteractionDialogPlugin plugin, FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
         RecoverMethod recovery = null;
         ChipMethod chip = null;
         for (UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+            if (!upgrade.canUseUpgradeMethod(fm, mods, method)) continue;
+
             if (method instanceof RecoverMethod) {
                 recovery = (RecoverMethod) method;
                 continue;
@@ -90,7 +92,7 @@ public class ChosenUpgradeState extends DialogState {
                 continue;
             }
 
-            if (method.canShow(fm, es, upgrade, market)) {
+            if (method.canShow(fm, mods, upgrade, market)) {
                 UpgradeMethodOption option;
                 if (upgradeMethodOptionList.containsKey(method)) {
                     option = upgradeMethodOptionList.get(method);
@@ -99,12 +101,12 @@ public class ChosenUpgradeState extends DialogState {
                     upgradeMethodOptionList.put(method, option);
                 }
 
-                option.addToOptions(options, plugin, fm, es);
+                option.addToOptions(options, plugin, fm, mods);
 
-                if (es.isMaxLevel(fm, upgrade)) {
+                if (mods.isMaxLevel(fm, upgrade)) {
                     options.setTooltip(option, null);
                     options.setEnabled(option, false);
-                } else if (es.getUsedBandwidth() + upgrade.getBandwidthUsage() > es.getBandwidth(fm)) {
+                } else if (mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidth(fm)) {
                     options.setTooltip(option, null);
                     options.setEnabled(option, false);
                 }
@@ -112,7 +114,7 @@ public class ChosenUpgradeState extends DialogState {
         }
 
         //add recovery option after all others
-        if (recovery.canShow(fm, es, upgrade, market)) {
+        if (recovery != null && recovery.canShow(fm, mods, upgrade, market)) {
             UpgradeMethodOption option;
             if (upgradeMethodOptionList.containsKey(recovery)) {
                 option = upgradeMethodOptionList.get(recovery);
@@ -121,11 +123,11 @@ public class ChosenUpgradeState extends DialogState {
                 upgradeMethodOptionList.put(recovery, option);
             }
 
-            option.addToOptions(options, plugin, fm, es);
+            option.addToOptions(options, plugin, fm, mods);
         }
 
         //add recovery option after all others
-        if (chip.canShow(fm, es, upgrade, market)) {
+        if (chip != null && chip.canShow(fm, mods, upgrade, market)) {
             UpgradeMethodOption option;
             if (upgradeMethodOptionList.containsKey(chip)) {
                 option = upgradeMethodOptionList.get(chip);
@@ -134,7 +136,7 @@ public class ChosenUpgradeState extends DialogState {
                 upgradeMethodOptionList.put(chip, option);
             }
 
-            option.addToOptions(options, plugin, fm, es);
+            option.addToOptions(options, plugin, fm, mods);
         }
     }
 

@@ -18,6 +18,7 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.FleetMemberUtils;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.console.Console;
+import org.lazywizard.lazylib.MathUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,14 @@ public class ETModPlugin extends BaseModPlugin {
 
 	public static Map<String, ShipModifications> getShipModificationMap() {
 		return SHIP_MODIFICATION_MAP;
+	}
+
+	@Override
+	public void onApplicationLoad() throws Exception {
+		ETModSettings.loadModSettings();
+		BandwidthHandler.initialize();
+		UpgradesHandler.initialize();
+		ExoticsHandler.initialize();
 	}
 
 	@Override
@@ -65,6 +74,13 @@ public class ETModPlugin extends BaseModPlugin {
 		if (campaignListener != null) {
 			campaignListener.invalidateShipModifications();
 		}
+	}
+
+	public static String getSectorSeedString() {
+		if (!Global.getSector().getPersistentData().containsKey("ET_seedString")) {
+			Global.getSector().getPersistentData().put("ET_seedString", String.valueOf(MathUtils.getRandomNumberInRange(1000,10000)).hashCode());
+		}
+		return String.valueOf(Global.getSector().getPersistentData().get("ET_seedString"));
 	}
 
 	public static void setZigguratDuplicateId(String ziggId) {

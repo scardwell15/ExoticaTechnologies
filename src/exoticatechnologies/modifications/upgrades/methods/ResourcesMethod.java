@@ -26,6 +26,8 @@ public class ResourcesMethod implements UpgradeMethod {
 
     @Override
     public boolean canUse(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+        if (upgrade.getResourceRatios().isEmpty()) return false;
+
         Map<String, Integer> upgradeCosts = upgrade.getResourceCosts(fm, es.getUpgrade(upgrade));
         Map<String, Integer> totalStacks = Utilities.getTotalResources(fm.getFleetData().getFleet(), market, upgradeCosts.keySet());
 

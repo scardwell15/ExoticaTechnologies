@@ -49,6 +49,12 @@ public class ExoticRecoverOption extends DialogOption {
             fleet.getCargo().addSpecial(new SpecialItemData(Exotic.ITEM, exotic.getKey()), 1);
         }
 
+        if (exotic.getKey().equals("AlphaSubcore")) {
+            if (fm.getVariant() != null) {
+                fm.getVariant().removeMod("AlphaSubcoreHM");
+            }
+        }
+
         mods.removeExotic(exotic);
         mods.save(fm);
         ExoticaTechHM.addToFleetMember(fm);

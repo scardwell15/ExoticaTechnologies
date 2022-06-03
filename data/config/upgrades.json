@@ -82,5 +82,18 @@
         "omega",
         "derelict"
     ]
+  },
+  "DerelictWeaponAssistant": {
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.DerelictWeaponAssistant",
+    "resourceRatios": {
+      "hand_weapons": 3.0,
+      "supplies": 1.0,
+      "volatiles": 1.5,
+      "rare_metals": 2.0,
+      "heavy_machinery": 2.0
+    },
+    "allowedFactions": [
+      "derelict"
+    ]
   }
 }

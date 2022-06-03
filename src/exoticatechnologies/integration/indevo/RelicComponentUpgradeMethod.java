@@ -49,7 +49,7 @@ public class RelicComponentUpgradeMethod implements UpgradeMethod {
     @Override
     public void apply(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, ShipModifications mods, Upgrade upgrade, MarketAPI market, FleetMemberAPI fm) {
         int level = mods.getUpgrade(upgrade);
-        int upgradeCost = IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, level);
+        int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, level);
         int totalComponents = getTotalComponents(fm.getFleetData().getFleet(), market);
 
         if (market != null

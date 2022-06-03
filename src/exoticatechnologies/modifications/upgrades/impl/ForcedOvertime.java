@@ -10,6 +10,8 @@ import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import lombok.Getter;
 
+import java.awt.*;
+
 public class ForcedOvertime extends Upgrade {
     @Getter protected final float bandwidthUsage = 5f;
     private static float CR_TO_DEPLOY_MAX = -20f;
@@ -23,6 +25,12 @@ public class ForcedOvertime extends Upgrade {
     private static float DESTROYER_MULT = 3f;
     private static float CRUISER_MULT = 1.5f;
     private static float CAPITAL_MULT = 1f;
+    private static Color COLOR = new Color(124, 124, 124);
+
+    @Override
+    public Color getColor() {
+        return COLOR;
+    }
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {

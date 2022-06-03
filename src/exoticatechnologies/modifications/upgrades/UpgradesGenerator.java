@@ -106,7 +106,10 @@ public class UpgradesGenerator {
                     break;
                 }
 
-                upgrades.addUpgrades(upgrade, 1);
+                if (random.nextFloat() <= upgrade.getSpawnChance()) {
+                    upgrades.addUpgrades(upgrade, 1);
+                }
+
                 bandwidth = bandwidth - upgrade.getBandwidthUsage();
             }
         }

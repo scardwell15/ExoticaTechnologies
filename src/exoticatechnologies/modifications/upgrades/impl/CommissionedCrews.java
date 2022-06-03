@@ -20,6 +20,8 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 
+import java.awt.*;
+
 public class CommissionedCrews extends Upgrade {
     @Getter protected final float bandwidthUsage = 5f;
     private static int COST_PER_CREW_MAX = 25; //in addition to base crew salary (10 credits)
@@ -27,6 +29,12 @@ public class CommissionedCrews extends Upgrade {
     private static float SUPPLIES_RECOVERY_MAX = 20f;
     private static float REPAIR_RATE_MAX = 20f;
     private static float FUEL_USE_MAX = -20f;
+    private static Color COLOR = new Color(231, 203, 24);
+
+    @Override
+    public Color getColor() {
+        return COLOR;
+    }
 
     private static boolean isAutomated(FleetMemberAPI fm) {
         return Misc.isAutomated(fm) || fm.getMinCrew() <= 0;

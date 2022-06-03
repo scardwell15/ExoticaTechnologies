@@ -12,6 +12,8 @@ import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 
+import java.awt.*;
+
 public class OverchargedShields extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
     private static float FLUX_PER_DAM_MAX = -25f;
@@ -19,6 +21,12 @@ public class OverchargedShields extends Upgrade {
     private static float UPKEEP_MAX = 30f;
     private static float UNFOLD_MAX = -25f;
     private static float TURNRATE_MAX = -25f;
+    private static Color COLOR = new Color(56, 187, 166);
+
+    @Override
+    public Color getColor() {
+        return COLOR;
+    }
 
     @Override
     public boolean canApply(ShipVariantAPI var) {

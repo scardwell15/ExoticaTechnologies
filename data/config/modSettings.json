@@ -111,17 +111,23 @@
     ],
     "omega_UpgradeWhitelist": [
       "AdvancedFluxCoils",
-      "TracerRecoilCalculator"
+      "DerelictWeaponAssistant"
     ],
 
     "remnant_UpgradeWhitelist": [
       "AdvancedFluxCoils",
       "Afterburners",
-      "ForcedOvertime",
-      "HyperactiveCapacitors",
       "OverchargedShields",
       "WeldedArmor",
       "TracerRecoilCalculator"
+    ],
+
+    "derelict_UpgradeWhitelist": [
+      "Afterburners",
+      "HyperactiveCapacitors",
+      "OverchargedShields",
+      "WeldedArmor",
+      "DerelictWeaponAssistant"
     ]
   }
 }

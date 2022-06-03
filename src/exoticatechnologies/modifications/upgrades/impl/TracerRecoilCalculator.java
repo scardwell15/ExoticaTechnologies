@@ -9,11 +9,18 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.StatUtils;
 import lombok.Getter;
 
+import java.awt.*;
+
 public class TracerRecoilCalculator extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
-    private static float RECOIL_REDUCTION = -30f;
-
+    private static float RECOIL_REDUCTION = -20f;
     private static float PROJ_SPEED = -20f;
+    private static Color COLOR = new Color(213, 129, 60);
+
+    @Override
+    public Color getColor() {
+        return COLOR;
+    }
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {

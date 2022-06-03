@@ -62,7 +62,7 @@ public enum Bandwidth {
         }
 
         MathUtils.getRandom().setSeed(seed);
-        int chosen = (int) (MathUtils.getRandomNumberInRange(80 * (mult - 1), highNumber + (30 * mult)));
+        int chosen = (int) (MathUtils.getRandomNumberInRange(80 * (mult - 1), highNumber));
         for(Bandwidth b : values()) {
             chosen -= b.getWeight();
 

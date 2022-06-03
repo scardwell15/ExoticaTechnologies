@@ -9,11 +9,19 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StatUtils;
 import lombok.Getter;
 
+import java.awt.*;
+
 public class HyperactiveCapacitors extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
     private static float CAPACITY_MAX = 25f;
     private static float VENT_SPEED_MAX = 50f;
     private static float WEAPON_FLUX_MAX = 30f;
+    private static Color COLOR = new Color(41, 130, 178);
+
+    @Override
+    public Color getColor() {
+        return COLOR;
+    }
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {

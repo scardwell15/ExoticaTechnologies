@@ -1,16 +1,17 @@
 package exoticatechnologies.modifications.upgrades.impl;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exoticatechnologies.modifications.upgrades.Upgrade;
+import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.methods.ChipMethod;
 import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -18,14 +19,13 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Log4j
-public class AdvancedFluxCoils extends Upgrade {
-    @Getter protected final float bandwidthUsage = 30f;
-    private static float CAPACITY_MAX = 25f;
-    private static float VENT_SPEED_MAX = 25f;
-    private static float WEAPON_FLUX_MAX = -10f;
+public class DerelictWeaponAssistant extends Upgrade {
+    @Getter protected final float bandwidthUsage = 10f;
+    private static float RECOIL_REDUCTION = -25f;
+    private static float PROJ_SPEED = 20f;
+    private static float FIRERATE_BONUS = 10f;
     private Set<String> allowedFactions = new HashSet<>();
-    private static Color COLOR = new Color(105, 74, 227);
+    private static Color COLOR = new Color(170, 200, 75);
 
     @Override
     public Color getColor() {
@@ -34,10 +34,6 @@ public class AdvancedFluxCoils extends Upgrade {
 
     @Override
     public boolean canApply(FleetMemberAPI fm) {
-        if (fm.getHullId().contains("ziggurat")) {
-            return canApply(fm.getVariant());
-        }
-
         if (fm.getFleetData() == null
                 || fm.getFleetData().getFleet() == null
                 || allowedFactions.contains(fm.getFleetData().getFleet().getFaction().toString())) {
@@ -71,35 +67,32 @@ public class AdvancedFluxCoils extends Upgrade {
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {
-        StatUtils.setStatMult(stats.getFluxCapacity(), this.getBuffId(), level, CAPACITY_MAX, maxLevel);
-        StatUtils.setStatPercent(stats.getVentRateMult(), this.getBuffId(), level, VENT_SPEED_MAX, maxLevel);
-        StatUtils.setStatMult(stats.getBallisticWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
-        StatUtils.setStatMult(stats.getEnergyWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
-        StatUtils.setStatMult(stats.getMissileWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
+        StatUtils.setStatPercent(stats.getRecoilPerShotMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
+        StatUtils.setStatPercent(stats.getMaxRecoilMult(), this.getBuffId(), level, RECOIL_REDUCTION / 2, maxLevel);
+        StatUtils.setStatPercent(stats.getProjectileSpeedMult(), this.getBuffId(), level, PROJ_SPEED, maxLevel);
+        StatUtils.setStatPercent(stats.getBallisticRoFMult(), this.getBuffId(), level, FIRERATE_BONUS, maxLevel);
     }
 
     @Override
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
         int level = systems.getUpgrade(this);
 
-        if (level > 0) {
-            if(expand) {
-                tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
+        if (expand) {
+            tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-                this.addIncreaseToTooltip(tooltip,
-                        "fluxCapacity",
-                        (fm.getStats().getFluxCapacity().getMultStatMod(this.getBuffId()).getValue() - 1f) * 100f);
+            this.addDecreaseToTooltip(tooltip,
+                    "recoil",
+                    fm.getStats().getRecoilPerShotMult().getMultStatMod(this.getBuffId()).getValue());
 
-                this.addIncreaseToTooltip(tooltip,
-                        "ventSpeed",
-                        fm.getStats().getVentRateMult().getPercentStatMod(this.getBuffId()).getValue());
+            this.addIncreaseToTooltip(tooltip,
+                    "projSpeed",
+                    fm.getStats().getProjectileSpeedMult().getPercentStatMod(this.getBuffId()).getValue());
 
-                this.addDecreaseToTooltip(tooltip,
-                        "weaponFluxCosts",
-                        fm.getStats().getBallisticWeaponFluxCostMod().getMultBonus(this.getBuffId()).getValue());
-            } else {
-                tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
-            }
+            this.addIncreaseToTooltip(tooltip,
+                    "ballisticFirerate",
+                    fm.getStats().getProjectileSpeedMult().getPercentStatMod(this.getBuffId()).getValue());
+        } else {
+            tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
         }
     }
 }

@@ -67,6 +67,8 @@ public class UpgradesHandler {
                     upgrade.setConfig(upgObj);
 
                     UpgradesHandler.addUpgrade(upgrade);
+
+                    log.info(String.format("loaded upgrade [%s]", upgrade.getName()));
                 }
             }
         } catch (JSONException | IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
@@ -121,7 +123,7 @@ public class UpgradesHandler {
                 factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", faction + "_UpgradeWhitelist");
             }
         } catch (JSONException ex) {
-            log.info("ESR modSettings object doesn't exist. Is this a bug in MagicLib, or did you remove it?");
+            log.info("ET modSettings object doesn't exist. Is this a bug in MagicLib, or did you remove it?");
             log.info("The actual exception follows.", ex);
         }
         return factionAllowedUpgrades;

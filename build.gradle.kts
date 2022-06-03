@@ -24,7 +24,7 @@ val modFolderName = modName.replace(" ", "-")
 /** Set below to `true` to automatically create mod_info.json and Version Checker files. */
 val shouldAutomaticallyCreateMetadataFiles = true
 // Then, if above is set to true, update the rest of the information below in SECTION B.
-val modVersion = "1.0.6"
+val modVersion = "1.0.7"
 val jarFileName = "${modName.replace(" ", "-")}.jar"
 val modId = "exoticatechnologies"
 val modAuthor = "President Matt Damon"
@@ -89,6 +89,7 @@ dependencies {
         compileOnly(fileTree("$starsectorModDirectory/MagicLib/jars") { include("*.jar") })
         compileOnly(fileTree("$starsectorModDirectory/Console Commands/jars") { include("*.jar") })
         compileOnly(fileTree("$starsectorModDirectory/DroneLib/jars") { include("*.jar") })
+        compileOnly(fileTree("$starsectorModDirectory/Apex Design Collective/jars") { include("*.jar") })
         compileOnly(fileTree("$starsectorModDirectory/Nexerelin/jars") { include("*.jar") })
     } else {
         println("$starsectorModDirectory did not exist, not adding mod folder dependencies.")

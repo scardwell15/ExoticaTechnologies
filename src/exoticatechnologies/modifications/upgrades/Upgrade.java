@@ -130,7 +130,7 @@ public abstract class Upgrade {
     }
 
     public float getSpawnChance() {
-        return 0.1f;
+        return 0.9f;
     }
 
     public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand);

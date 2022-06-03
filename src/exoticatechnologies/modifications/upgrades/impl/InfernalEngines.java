@@ -9,6 +9,8 @@ import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import lombok.Getter;
 
+import java.awt.*;
+
 public class InfernalEngines extends Upgrade {
     @Getter protected final float bandwidthUsage = 10f;
     private static float SPEED_MULT = 15f;
@@ -18,6 +20,12 @@ public class InfernalEngines extends Upgrade {
 
     private static float DECELERATION_MAX = -30f;
     private static float FUEL_USE_MAX = 16f;
+    private static Color COLOR = new Color(192, 35, 35);
+
+    @Override
+    public Color getColor() {
+        return COLOR;
+    }
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {

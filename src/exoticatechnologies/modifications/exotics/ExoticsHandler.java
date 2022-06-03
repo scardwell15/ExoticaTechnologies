@@ -47,6 +47,8 @@ public class ExoticsHandler {
                     exotic.setConfig(augObj);
 
                     ExoticsHandler.addExotic(exotic);
+
+                    log.info(String.format("loaded exotic [%s]", exotic.getName()));
                 }
             }
         } catch (JSONException | IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {

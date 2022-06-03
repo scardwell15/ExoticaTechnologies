@@ -32,7 +32,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     @Getter
     private static List<CampaignFleetAPI> activeFleets = new ArrayList<>();
 
-    private boolean appliedData = false;
+    @Getter private static boolean appliedData = false;
     private IntervalUtil interval = new IntervalUtil(2f, 2f);
     private IntervalUtil cleaningInterval = new IntervalUtil(15f, 15f);
 

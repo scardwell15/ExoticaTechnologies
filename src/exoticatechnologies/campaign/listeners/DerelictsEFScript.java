@@ -47,8 +47,6 @@ public class DerelictsEFScript implements EveryFrameScript {
         if (!Global.getSector().getCampaignUI().isShowingDialog()) {
             done = true;
 
-            log.info("started linking derelicts");
-
             //get new fleet members
             List<FleetMemberAPI> newFleetMembers = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
             newFleetMembers.removeAll(fleetSnapshot);
@@ -57,8 +55,6 @@ public class DerelictsEFScript implements EveryFrameScript {
             if (!newFleetMembers.isEmpty()) {
                 linkDerelictsToNewMembers(newFleetMembers);
             }
-
-            log.info("finished linking derelicts");
         }
     }
 
@@ -68,8 +64,6 @@ public class DerelictsEFScript implements EveryFrameScript {
                 ShipModifications mods = derelictVariantMap.get(fm.getVariant().getHullVariantId());
                 mods.save(fm);
                 ExoticaTechHM.addToFleetMember(fm);
-
-                log.info(String.format("linked [%s] to [%s]", fm.getVariant().getHullVariantId(), fm.getShipName()));
             }
         }
     }

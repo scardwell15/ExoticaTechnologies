@@ -264,5 +264,12 @@
 		"fluxCapacity": "Flux capacity: *${percent}%%*",
 		"ventSpeed": "Vent speed: *${percent}%%*",
 		"weaponFluxCosts": "Weapon flux costs: *${percent}%%*"
+	},
+	"DerelictWeaponAssistant": {
+		"name": "Derelict Weapon Assistant",
+		"description": "Reduces recoil and inaccuracy, and increases projectile speed and ballistic weapon firerate.",
+		"recoil": "Recoil: *${percent}%%*",
+		"projSpeed": "Projectile speed: *${percent}%%*",
+		"ballisticFirerate": "Ballistic weapon firerate: *${percent}%%*"
 	}
 }

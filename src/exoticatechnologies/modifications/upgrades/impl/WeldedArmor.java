@@ -9,6 +9,8 @@ import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import lombok.Getter;
 
+import java.awt.*;
+
 public class WeldedArmor extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
     private static float HULL_MAX = 30f;
@@ -17,6 +19,12 @@ public class WeldedArmor extends Upgrade {
     private static float EMP_TAKEN_MAX = 20f;
     private static float ENGINE_HEALTH_MAX = -15f;
     private static float WEAPON_HEALTH_MAX = -15f;
+    private static Color COLOR = new Color(88, 225, 61);
+
+    @Override
+    public Color getColor() {
+        return COLOR;
+    }
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {

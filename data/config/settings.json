@@ -62,7 +62,8 @@
 			"InfernalEngines": "graphics/icons/upgrades/infernalengines.png",
 			"OverchargedShields": "graphics/icons/upgrades/overchargedshields.png",
 			"WeldedArmor": "graphics/icons/upgrades/weldedarmor.png",
-			"TracerRecoilCalculator": "graphics/icons/upgrades/tracerrecoilcalculator.png"
+			"TracerRecoilCalculator": "graphics/icons/upgrades/tracerrecoilcalculator.png",
+			"DerelictWeaponAssistant": "graphics/icons/upgrades/derelictweaponassistant.png"
 		}
 	}
 }

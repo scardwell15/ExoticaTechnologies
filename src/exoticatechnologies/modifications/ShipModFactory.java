@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.ETModSettings;
+import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
@@ -27,14 +28,22 @@ public class ShipModFactory {
                 return ETModPlugin.getData(ETModPlugin.getZigguratDuplicateId());
             } else {
                 ShipModifications mods = generateRandom(fm);
-                mods.save(fm);
+
+                if (CampaignEventListener.isAppliedData()) {
+                    mods.save(fm);
+                }
+
                 return mods;
             }
         } else if (ETModPlugin.hasData(fm.getId())) {
             return ETModPlugin.getData(fm.getId());
         } else  {
             ShipModifications mods = new ShipModifications(fm);
-            mods.save(fm);
+
+            if (CampaignEventListener.isAppliedData()) {
+                mods.save(fm);
+            }
+
             return mods;
         }
     }
@@ -84,7 +93,10 @@ public class ShipModFactory {
         }
 
         mods.generate(seed, faction);
-        mods.save(fm);
+
+        if (CampaignEventListener.isAppliedData()) {
+            mods.save(fm);
+        }
 
         return mods;
     }
@@ -114,7 +126,7 @@ public class ShipModFactory {
                 }
 
                 if (manufacturerBandwidthMult != null && manufacturerBandwidthMult.containsKey(manufacturer)) {
-                    mult = manufacturerBandwidthMult.get(faction);
+                    mult = manufacturerBandwidthMult.get(manufacturer);
                 }
 
                 return Bandwidth.generate(seed, mult).getRandomInRange();

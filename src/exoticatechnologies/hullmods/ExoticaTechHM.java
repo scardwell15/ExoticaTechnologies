@@ -11,7 +11,6 @@ import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
@@ -138,7 +137,7 @@ public class ExoticaTechHM extends BaseHullMod {
         if(mods == null) return;
 
         ShipAPI.HullSize hullSize = ship.getHullSize();
-        float bandwidth = mods.getBandwidth(fm);
+        float bandwidth = mods.getBandwidthWithExotics(fm);
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);
             if(level <= 0) continue;
@@ -179,7 +178,7 @@ public class ExoticaTechHM extends BaseHullMod {
             return;
         }
 
-        float bandwidth = mods.getBandwidth(fm);
+        float bandwidth = mods.getBandwidthWithExotics(fm);
 
         for(Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if(!mods.hasExotic(exotic)) continue;
@@ -203,7 +202,7 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = this.getModifications(fm);
         if(mods == null) return;
 
-        float bandwidth = mods.getBandwidth(fm);
+        float bandwidth = mods.getBandwidthWithExotics(fm);
 
         for(Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if(!mods.hasExotic(exotic)) continue;
@@ -237,7 +236,7 @@ public class ExoticaTechHM extends BaseHullMod {
 
         ShipModifications mods = this.getModifications(fm);
         if (mods == null) return;
-        float bandwidth = mods.getBandwidth(fm);
+        float bandwidth = mods.getBandwidthWithExotics(fm);
         String bandwidthString = BandwidthUtil.getFormattedBandwidthWithName(bandwidth);
 
         hullmodTooltip.addPara("The ship has %s bandwidth.", 0, Bandwidth.getBandwidthColor(bandwidth),  bandwidthString);

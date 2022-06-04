@@ -4,10 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
-import exoticatechnologies.ETModSettings;
 import exoticatechnologies.dialog.modifications.SystemOptionsHandler;
 import exoticatechnologies.modifications.upgrades.dialog.UpgradesPickerState;
 import exoticatechnologies.modifications.upgrades.methods.*;
@@ -101,7 +99,7 @@ public class UpgradesHandler {
 
     //can upgrade
     public static boolean canUseUpgradeMethods(FleetMemberAPI fm, ShipModifications mods, ShipAPI.HullSize hullSize, Upgrade upgrade, CampaignFleetAPI fleet, MarketAPI currMarket) {
-        if(mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidth(fm)) {
+        if(mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidthWithExotics(fm)) {
             return false;
         }
 

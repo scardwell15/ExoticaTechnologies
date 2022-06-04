@@ -52,9 +52,9 @@ public class ETScanFleet extends BaseCommandPlugin {
                             fm.getShipName(),
                             mods.hasUpgrades(),
                             mods.hasExotics(),
-                            mods.getBandwidth(fm)));
+                            mods.getBandwidthWithExotics(fm)));
 
-                    if (mods.hasUpgrades() || mods.hasExotics() || mods.getBandwidth(fm) >= NOTABLE_BANDWIDTH) {
+                    if (mods.hasUpgrades() || mods.hasExotics() || mods.getBandwidthWithExotics(fm) >= NOTABLE_BANDWIDTH) {
                         validSelectionList.add(fm);
                     }
                 }

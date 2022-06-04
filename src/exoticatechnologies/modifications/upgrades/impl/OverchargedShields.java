@@ -16,10 +16,10 @@ import java.awt.*;
 
 public class OverchargedShields extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
-    private static float FLUX_PER_DAM_MAX = -25f;
+    private static float FLUX_PER_DAM_MAX = -20f;
     private static float ARC_MAX = 40f;
-    private static float UPKEEP_MAX = 30f;
-    private static float UNFOLD_MAX = -25f;
+    private static float UPKEEP_MAX = 36f;
+    private static float UNFOLD_MAX = -30f;
     private static float TURNRATE_MAX = -25f;
     private static Color COLOR = new Color(56, 187, 166);
 
@@ -42,9 +42,11 @@ public class OverchargedShields extends Upgrade {
         StatUtils.setStatMult(stats.getShieldDamageTakenMult(), this.getBuffId(), level, FLUX_PER_DAM_MAX, maxLevel);
         StatUtils.setStatPercent(stats.getShieldArcBonus(), this.getBuffId(), level, ARC_MAX, maxLevel);
 
-
-
         if (level >= 3) {
+            if (fm.getHullSpec().getShieldSpec().getUpkeepCost() >= 300) {
+                UPKEEP_MAX = UPKEEP_MAX * 0.66f;
+            }
+
             StatUtils.setStatPercent(stats.getShieldUpkeepMult(), this.getBuffId(), level - 2, UPKEEP_MAX, maxLevel - 2);
             StatUtils.setStatMult(stats.getShieldUnfoldRateMult(), this.getBuffId(), level - 2, UNFOLD_MAX, maxLevel - 2);
             StatUtils.setStatMult(stats.getShieldTurnRateMult(), this.getBuffId(), level - 2, TURNRATE_MAX, maxLevel - 2);
@@ -72,7 +74,7 @@ public class OverchargedShields extends Upgrade {
                         fm.getStats().getShieldArcBonus().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getHullSpec().getShieldSpec().getArc());
 
-                MutableStat.StatMod shieldUpkeepStat = fm.getStats().getShieldUpkeepMult().getMultStatMod(this.getBuffId());
+                MutableStat.StatMod shieldUpkeepStat = fm.getStats().getShieldUpkeepMult().getPercentStatMod(this.getBuffId());
                 float shieldUpkeepBonus = 0f;
                 if (shieldUpkeepStat != null) {
                     shieldUpkeepBonus = shieldUpkeepStat.getValue();

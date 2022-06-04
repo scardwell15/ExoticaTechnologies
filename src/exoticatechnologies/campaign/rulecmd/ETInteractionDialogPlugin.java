@@ -135,7 +135,7 @@ public class ETInteractionDialogPlugin extends BaseCommandPlugin implements Inte
             resourcesTooltip.addImage(fm.getHullSpec().getSpriteName(), shipSize, 6f);
 
             //show bandwidth and usage, and show used bandwidth from upgrade
-            float bandwidth = getExtraSystems().getBandwidth(fm);
+            float bandwidth = getExtraSystems().getBandwidthWithExotics(fm);
 
             StringUtils.getTranslation("CommonOptions", "BandwidthForShip")
                     .format("shipBandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth))

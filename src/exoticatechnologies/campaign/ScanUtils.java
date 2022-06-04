@@ -57,7 +57,7 @@ public class ScanUtils {
                     fm.getShipName(),
                     mods.hasUpgrades(),
                     mods.hasExotics(),
-                    mods.getBandwidth(fm)));
+                    mods.getBandwidthWithExotics(fm)));
 
             return doesEntityHaveNotableMods(mods);
         }

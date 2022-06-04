@@ -6,15 +6,16 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.combat.listeners.WeaponBaseRangeModifier;
 import com.fs.starfarer.api.combat.listeners.WeaponRangeModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
-import exoticatechnologies.modifications.exotics.Exotic;
 import lombok.Getter;
 import org.json.JSONException;
 
@@ -111,39 +112,22 @@ public class EqualizerCore extends Exotic {
     }
 
     // Our range listener
-    private class ESR_EqualizerCoreListener implements WeaponRangeModifier {
+    private class ESR_EqualizerCoreListener implements WeaponBaseRangeModifier {
 
         @Override
-        public float getWeaponRangePercentMod(ShipAPI ship, WeaponAPI weapon) {
+        public float getWeaponBaseRangePercentMod(ShipAPI ship, WeaponAPI weapon) {
             return 0f;
         }
 
         @Override
-        public float getWeaponRangeMultMod(ShipAPI ship, WeaponAPI weapon) {
+        public float getWeaponBaseRangeMultMod(ShipAPI ship, WeaponAPI weapon) {
             return 1f;
         }
 
         @Override
-        public float getWeaponRangeFlatMod(ShipAPI ship, WeaponAPI weapon) {
+        public float getWeaponBaseRangeFlatMod(ShipAPI ship, WeaponAPI weapon) {
             if (weapon.getType() == WeaponAPI.WeaponType.MISSILE) {
                 return 0f;
-            }
-
-            //Stolen from Nicke. Thx buddy
-            float percentRangeIncreases = 0f;
-            if (weapon.getType() == WeaponAPI.WeaponType.ENERGY) {
-                percentRangeIncreases = ship.getMutableStats().getEnergyWeaponRangeBonus().getPercentMod();
-            } else if (weapon.getType() == WeaponAPI.WeaponType.BALLISTIC) {
-                percentRangeIncreases = ship.getMutableStats().getBallisticWeaponRangeBonus().getPercentMod();
-            }
-            if (ship.hasListenerOfClass(WeaponRangeModifier.class)) {
-                for (WeaponRangeModifier listener : ship.getListeners(WeaponRangeModifier.class)) {
-                    //Should not be needed, but good practice: no infinite loops allowed here, no
-                    if (listener == this) {
-                        continue;
-                    }
-                    percentRangeIncreases += listener.getWeaponRangePercentMod(ship, weapon);
-                }
             }
 
             float baseRangeMod = 0;
@@ -153,7 +137,7 @@ public class EqualizerCore extends Exotic {
                 baseRangeMod = RANGE_BOTTOM_BUFF;
             }
 
-            return baseRangeMod * (1f + (percentRangeIncreases / 100f));
+            return baseRangeMod;
         }
     }
 }

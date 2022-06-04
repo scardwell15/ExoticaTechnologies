@@ -90,8 +90,8 @@ public class ShipModifications {
      * @param faction
      */
     public void generate(long seed, String faction) {
-        this.exotics = ExoticsGenerator.generate(fm, seed, faction, this.getBandwidth());
-        this.upgrades = UpgradesGenerator.generate(fm, seed, faction, this.getBandwidth());
+        this.exotics = ExoticsGenerator.generate(fm, seed, faction, this.getBandwidth(fm));
+        this.upgrades = UpgradesGenerator.generate(fm, seed, faction, this.getBandwidthWithExotics(fm));
     }
 
     //bandwidth
@@ -101,11 +101,28 @@ public class ShipModifications {
         this.bandwidth = bandwidth;
     }
 
+    /**
+     * Use this only if bandwidth has already been generated. The Exotica dialog WILL generate bandwidth.
+     * @return
+     */
     public float getBandwidth() {
         return Math.max(this.bandwidth, 0f);
     }
 
+    /**
+     * Will generate bandwidth if not already generated.
+     * @param fm
+     * @return
+     */
     public float getBandwidth(FleetMemberAPI fm) {
+        if(bandwidth < 0f) {
+            bandwidth = ShipModFactory.generateBandwidth(fm);
+        }
+
+        return Math.max(this.bandwidth, 0f);
+    }
+
+    public float getBandwidthWithExotics(FleetMemberAPI fm) {
         if(bandwidth < 0f) {
             bandwidth = ShipModFactory.generateBandwidth(fm);
         }

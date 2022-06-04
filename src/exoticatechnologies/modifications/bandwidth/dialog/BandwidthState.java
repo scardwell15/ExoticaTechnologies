@@ -28,7 +28,7 @@ public class BandwidthState extends SystemState {
         ShipModifications mods = ShipModFactory.getForFleetMember(fm);
         MarketAPI market = plugin.getMarket();
 
-        float shipBandwidth = mods.getBandwidth(fm);
+        float shipBandwidth = mods.getBandwidthWithExotics(fm);
 
         String shipBandwidthText = BandwidthUtil.getFormattedBandwidthWithName(shipBandwidth);
         String usedBandwidthText = BandwidthUtil.getFormattedBandwidth(mods.getUsedBandwidth());
@@ -70,7 +70,7 @@ public class BandwidthState extends SystemState {
         float upgradeBandwidthMult = BandwidthHandler.getMarketBandwidthMult(plugin.getMarket());
         float estimatedOverhaulCost = BandwidthHandler.getBandwidthUpgradePrice(fm, shipBandwidth, upgradeBandwidthMult);
 
-        String shipBandwidthText = BandwidthUtil.getFormattedBandwidthWithName(shipBandwidth);
+        String shipBandwidthText = BandwidthUtil.getFormattedBandwidthWithName(mods.getBandwidthWithExotics(fm));
         String usedBandwidthText = BandwidthUtil.getFormattedBandwidth(mods.getUsedBandwidth());
         StringUtils.getTranslation("BandwidthDialog", "BandwidthForShip")
                 .format("bandwidth", shipBandwidthText)

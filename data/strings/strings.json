@@ -152,9 +152,9 @@
 	"EqualizerCore": {
 		"name": "Equalizer Core",
 		"description": "This core is dedicated to managing weaponry to an degree that rivals even Alpha Cores given control of weapon arrays, with one unique quirk: effective ordnance ranges of non-missile weapons are equalized to a certain degree. The core, in its Terms of Use, swears by its Stronger than an Alpha trademark, and it can't be used for anything but weapons.. supposedly.",
-		"tooltip": "Improve recoil control and weapon turn rate. Equalizes weapon ranges to a middle-ground range.",
+		"tooltip": "Improve recoil control and weapon turn rate. Equalizes weapon base ranges to a middle-ground range.",
 		"needItem": "You need an ${itemName} to install this.",
-		"longDescription": "*${exoticName}*: Reduces recoil by *${recoilReduction}%%*. Increases weapon turn rate by *${weaponTurnBonus}%%*. Autofire leading is *nearly perfected*. Weapons with at most *${lowRangeThreshold} range* have it increased by *${rangeBonus}*. Weapons with at least *${highRangeThreshold} range* have it reduced by *${rangeMalus}*."
+		"longDescription": "*${exoticName}*: Reduces recoil by *${recoilReduction}%%*. Increases weapon turn rate by *${weaponTurnBonus}%%*. Autofire leading is *nearly perfected*. Weapons with at most *${lowRangeThreshold} base range* have it increased by *${rangeBonus}*. Weapons with at least *${highRangeThreshold} base range* have it reduced by *${rangeMalus}*."
 	},
 	"HangarForge": {
 		"name": "Hangar Forge",
@@ -245,7 +245,7 @@
 	},
 	"OverchargedShields": {
 		"name": "Overcharged Shields",
-		"description": "Improve shield efficiency and arc, but increase shield upkeep and reduce shield unfold and turn rate.",
+		"description": "Improve shield efficiency and arc, but increase shield upkeep and reduce shield unfold and turn rate. If shield upkeep is over 300 flux/sec, the upkeep increase is reduced",
 		"shieldEfficiency": "Shield efficiency: *${percent}%%* (${finalValue})",
 		"shieldArc": "Shield arc: *${percent}%%* (${finalValue})",
 		"shieldUpkeep": "Shield upkeep: =${percent}%%= (${finalValue})",

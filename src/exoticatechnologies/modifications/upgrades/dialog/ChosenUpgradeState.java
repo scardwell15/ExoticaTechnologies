@@ -67,7 +67,7 @@ public class ChosenUpgradeState extends DialogState {
 
         if (mods.isMaxLevel(fm, upgrade)) {
             StringUtils.getTranslation("UpgradesDialog", "CannotPerformUpgradeMaxLevel").addToTextPanel(textPanel);
-        } else if (mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidth(fm)) {
+        } else if (mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidthWithExotics(fm)) {
             StringUtils.getTranslation("UpgradesDialog", "CannotPerformUpgradeBandwidth").addToTextPanel(textPanel);
         } else {
             StringUtils.getTranslation("UpgradesDialog", "CanPerformUpgradePicked").addToTextPanel(textPanel);
@@ -106,7 +106,7 @@ public class ChosenUpgradeState extends DialogState {
                 if (mods.isMaxLevel(fm, upgrade)) {
                     options.setTooltip(option, null);
                     options.setEnabled(option, false);
-                } else if (mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidth(fm)) {
+                } else if (mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidthWithExotics(fm)) {
                     options.setTooltip(option, null);
                     options.setEnabled(option, false);
                 }
@@ -159,7 +159,7 @@ public class ChosenUpgradeState extends DialogState {
         FleetMemberAPI fm = plugin.getShip();
         MarketAPI market = plugin.getMarket();
         ShipModifications mods = ShipModFactory.getForFleetMember(fm);
-        float bandwidth = mods.getBandwidth(fm);
+        float bandwidth = mods.getBandwidthWithExotics(fm);
 
         if (fm != null && upgrade != null) {
             ShipAPI.HullSize hullSize = fm.getHullSpec().getHullSize();

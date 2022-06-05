@@ -137,7 +137,7 @@ public class ShipModifications {
     }
 
     public boolean canUpgradeBandwidth(FleetMemberAPI fm) {
-        float maxBandwidth = ETModSettings.getFloat(ETModSettings.MAX_BANDWIDTH);
+        float maxBandwidth = Bandwidth.MAX_BANDWIDTH;
         for(Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if(this.hasExotic(exotic)) {
                 maxBandwidth += exotic.getExtraBandwidthPurchaseable(fm, this);

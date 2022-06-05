@@ -22,6 +22,7 @@ public enum Bandwidth {
     ULTIMATE(250f, "ultimate", new Color(255,100,255), 4),
     DOMAIN(300f, "domain", new Color(200,255,255), 1);
     public static final String BANDWIDTH_RESOURCE = "Bandwidth";
+    public static float MAX_BANDWIDTH = DOMAIN.bandwidth;
     private static Map<Float, Bandwidth> BANDWIDTH_MAP = null;
     private static List<Bandwidth> BANDWIDTH_LIST = Arrays.asList(values());
     @Getter private final float bandwidth;

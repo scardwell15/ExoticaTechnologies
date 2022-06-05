@@ -49,7 +49,7 @@ public class BandwidthDialogOption extends DialogOption {
                 float estimatedOverhaulCost = BandwidthHandler.getBandwidthUpgradePrice(fm, shipBandwidth, upgradeBandwidthMult);
                 float bonusBandwidth = BANDWIDTH_STEP * upgradeBandwidthMult;
                 float newBandwidth = Math.round(shipBandwidth + bonusBandwidth);
-                newBandwidth = Math.min(newBandwidth, ETModSettings.getFloat(ETModSettings.MAX_BANDWIDTH));
+                newBandwidth = Math.min(newBandwidth, Bandwidth.MAX_BANDWIDTH);
 
                 mods.putBandwidth(newBandwidth);
                 mods.save(fm);
@@ -71,7 +71,7 @@ public class BandwidthDialogOption extends DialogOption {
                     upgradeBandwidthMult = BandwidthHandler.getMarketBandwidthMult(market);
                     bonusBandwidth = Math.min(
                             BANDWIDTH_STEP * upgradeBandwidthMult,
-                            ETModSettings.getFloat(ETModSettings.MAX_BANDWIDTH) - newBandwidth);
+                            Bandwidth.MAX_BANDWIDTH - newBandwidth);
                     estimatedOverhaulCost = BandwidthHandler.getBandwidthUpgradePrice(fm, newBandwidth, upgradeBandwidthMult);
 
                     String needCredits = Misc.getFormat().format(estimatedOverhaulCost);

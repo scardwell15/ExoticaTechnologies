@@ -16,6 +16,8 @@ import exoticatechnologies.modifications.bandwidth.BandwidthHandler;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.FleetMemberUtils;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.console.Console;
 import org.lazywizard.lazylib.MathUtils;
@@ -26,18 +28,15 @@ import java.util.Map;
 @Log4j
 public class ETModPlugin extends BaseModPlugin {
 	public static final String ET_PERSISTENTUPGRADEMAP = "ET_MODMAP";
-	private static Map<String, ShipModifications> SHIP_MODIFICATION_MAP = null;
+	@Getter private static Map<String, ShipModifications> shipModificationMap = null;
 	private static boolean debugUpgradeCosts = false;
 
 	private static CampaignEventListener campaignListener = null;
 	private static SalvageListener salvageListener = null;
 
-	public static Map<String, ShipModifications> getShipModificationMap() {
-		return SHIP_MODIFICATION_MAP;
-	}
-
 	@Override
 	public void onApplicationLoad() throws Exception {
+
 		ETModSettings.loadModSettings();
 		BandwidthHandler.initialize();
 		UpgradesHandler.initialize();
@@ -69,7 +68,7 @@ public class ETModPlugin extends BaseModPlugin {
 			Global.getSector().getPersistentData().put(ET_PERSISTENTUPGRADEMAP, new HashMap<String, ShipModifications>());
 		}
 
-		SHIP_MODIFICATION_MAP = (Map<String, ShipModifications>) Global.getSector().getPersistentData().get(ET_PERSISTENTUPGRADEMAP);
+		shipModificationMap = (Map<String, ShipModifications>) Global.getSector().getPersistentData().get(ET_PERSISTENTUPGRADEMAP);
 
 		if (campaignListener != null) {
 			campaignListener.invalidateShipModifications();
@@ -95,37 +94,37 @@ public class ETModPlugin extends BaseModPlugin {
 	}
 
 	public static ShipModifications getData(String shipId) {
-		if(SHIP_MODIFICATION_MAP == null) {
+		if(shipModificationMap == null) {
 			loadModificationData();
 		}
 
-		return SHIP_MODIFICATION_MAP.get(shipId);
+		return shipModificationMap.get(shipId);
 	}
 
 	public static boolean hasData(String shipId) {
-		if(SHIP_MODIFICATION_MAP == null) {
+		if(shipModificationMap == null) {
 			loadModificationData();
 		}
 
-		return SHIP_MODIFICATION_MAP.containsKey(shipId);
+		return shipModificationMap.containsKey(shipId);
 	}
 
 	public static void saveData(String shipId, ShipModifications systems) {
-		if(SHIP_MODIFICATION_MAP == null) {
+		if(shipModificationMap == null) {
 			loadModificationData();
 		}
 
-		SHIP_MODIFICATION_MAP.put(shipId, systems);
+		shipModificationMap.put(shipId, systems);
 	}
 
 	public static void removeData(String shipId) {
 		if (shipId.equals(ETModPlugin.getZigguratDuplicateId())) return;
 
-		if(SHIP_MODIFICATION_MAP == null) {
+		if(shipModificationMap == null) {
 			loadModificationData();
 		}
 
-		SHIP_MODIFICATION_MAP.remove(shipId);
+		shipModificationMap.remove(shipId);
 	}
 
 	@Override

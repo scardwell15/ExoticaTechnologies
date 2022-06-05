@@ -21,8 +21,6 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ShipModFactory {
     public static ShipModifications getForFleetMember(FleetMemberAPI fm) {
-        log.info(String.format("Loading ship mods for fleet member [%s] named [%s]", fm.getId(), fm.getShipName()));
-
         if (fm.getHullId().contains("ziggurat")) {
             if (ETModPlugin.getZigguratDuplicateId() != null && ETModPlugin.hasData(ETModPlugin.getZigguratDuplicateId())) {
                 return ETModPlugin.getData(ETModPlugin.getZigguratDuplicateId());
@@ -92,7 +90,7 @@ public class ShipModFactory {
             seed = fm.getHullId().hashCode() + ETModPlugin.getSectorSeedString().hashCode();
         }
 
-        mods.generate(seed, faction);
+        mods.generate(fm, seed, faction);
 
         if (CampaignEventListener.isAppliedData()) {
             mods.save(fm);

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -197,6 +198,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
         fms.addAll(playerResult.getDestroyed());
 
         for (FleetMemberAPI fm : fms) {
+            dlog("Removed FM [%s] because it died in combat", fm.getId());
             ExoticaTechHM.removeFromFleetMember(fm);
             ETModPlugin.removeData(fm.getId());
         }
@@ -220,10 +222,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                 FleetMemberAPI fm = CampaignEventListener.findFM(fmId);
 
                 if (fm != null) {
-                    log.info(String.format("found fm [%s] for id [%s]", fm.getShipName(), fmId));
+                    dlog("found fm [%s] for id [%s]", fm.getShipName(), fmId);
                     ExoticaTechHM.addToFleetMember(fm);
                 } else {
-                    log.info(String.format("could not find for id [%s]", fmId));
+                    dlog("could not find for id [%s]", fmId);
                 }
             }
 
@@ -279,19 +281,18 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     }
 
     public static FleetMemberAPI findFM(String fmId) {
-        FleetMemberAPI fm = checkNearbyFleetsForFM(fmId);
+        if (Global.getSector().getPlayerFleet() != null) {
+            for (FleetMemberAPI playerFm : Global.getSector().getPlayerFleet().getMembersWithFightersCopy()) {
+                if (playerFm.getId().equals(fmId)) {
+                    return playerFm;
+                }
+            }
+        }
 
+        FleetMemberAPI fm = checkNearbyFleetsForFM(fmId);
         if (fm != null) {
             return fm;
         } else {
-
-            if (Global.getSector().getPlayerFleet() != null) {
-                for (FleetMemberAPI playerFm : Global.getSector().getPlayerFleet().getMembersWithFightersCopy()) {
-                    if (playerFm.getId().equals(fmId)) {
-                        return playerFm;
-                    }
-                }
-            }
             return checkStorageMarketsForFM(fmId);
         }
     }
@@ -311,14 +312,17 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
     private static FleetMemberAPI checkStorageMarketsForFM(String fmId) {
         for (MarketAPI market : Global.getSector().getEconomy().getMarketsCopy()) {
-            CargoAPI storage = Misc.getStorageCargo(market);
-            if (storage != null
-                    && storage.getMothballedShips() != null
-                    && storage.getMothballedShips().getMembersListWithFightersCopy() != null) {
+            for (SubmarketAPI submarket : market.getSubmarketsCopy()) {
+                if (submarket.getCargoNullOk() != null) {
+                    CargoAPI storage = submarket.getCargoNullOk();
+                    if (storage.getMothballedShips() != null
+                            && storage.getMothballedShips().getMembersListWithFightersCopy() != null) {
 
-                for (FleetMemberAPI fm : storage.getMothballedShips().getMembersListWithFightersCopy()) {
-                    if (fm.getId().equals(fmId)) {
-                        return fm;
+                        for (FleetMemberAPI fm : storage.getMothballedShips().getMembersListWithFightersCopy()) {
+                            if (fm.getId().equals(fmId)) {
+                                return fm;
+                            }
+                        }
                     }
                 }
             }
@@ -333,6 +337,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
         for (Iterator<CampaignFleetAPI> it = activeFleets.iterator(); it.hasNext(); ) {
             CampaignFleetAPI fleet = it.next();
+            if (fleet.equals(playerFleet)) continue;
 
             if (fleet == null
                     || !fleet.isAlive()
@@ -370,7 +375,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
         for (Iterator<FleetMemberAPI> it = fleet.getFleetData().getMembersListCopy().iterator(); it.hasNext(); ) {
             FleetMemberAPI fm = it.next();
-            if (!isInFleet(fm, Global.getSector().getPlayerFleet())) {
+            if (!isInFleet(fm.getId(), Global.getSector().getPlayerFleet())) {
                 dlog(String.format("Removed mods for member %s", fm.getId()));
                 ETModPlugin.removeData(fm.getId());
             }

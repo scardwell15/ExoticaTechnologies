@@ -24,8 +24,6 @@ public class ShipModifications {
     //per fleet member!
     private static float CHANCE_OF_UPGRADES = 0.4f;
 
-    protected transient FleetMemberAPI fm;
-
     ShipModifications(long bandwidthSeed) {
         if (upgrades == null) {
             this.upgrades = new ETUpgrades();
@@ -41,8 +39,6 @@ public class ShipModifications {
     }
 
     ShipModifications(FleetMemberAPI fm) {
-        this.fm = fm;
-
         if (upgrades == null) {
             this.upgrades = new ETUpgrades();
         }
@@ -85,11 +81,11 @@ public class ShipModifications {
     }
 
     /**
-     * for using the fleet member assigned to the object by the constructor.
+     * for a fleet member
      * @param seed
      * @param faction
      */
-    public void generate(long seed, String faction) {
+    public void generate(FleetMemberAPI fm, long seed, String faction) {
         this.exotics = ExoticsGenerator.generate(fm, seed, faction, this.getBandwidth(fm));
         this.upgrades = UpgradesGenerator.generate(fm, seed, faction, this.getBandwidthWithExotics(fm));
     }
@@ -116,6 +112,7 @@ public class ShipModifications {
      */
     public float getBandwidth(FleetMemberAPI fm) {
         if(bandwidth < 0f) {
+            log.info(String.format("Bandwidth was below zero for fm [%s]", fm.getId()));
             bandwidth = ShipModFactory.generateBandwidth(fm);
         }
 
@@ -124,6 +121,7 @@ public class ShipModifications {
 
     public float getBandwidthWithExotics(FleetMemberAPI fm) {
         if(bandwidth < 0f) {
+            log.info(String.format("Bandwidth with exotics was below zero for fm [%s]", fm.getId()));
             bandwidth = ShipModFactory.generateBandwidth(fm);
         }
 

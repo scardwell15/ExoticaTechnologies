@@ -80,9 +80,9 @@ public class SalvageListener implements ShowLootListener {
             int value = -1;
             //rare_tech is more valuable tech-wise than rare_tech_low
             if (data.group.equals("rare_tech")) {
-                value = data.value;
+                value = Math.round(data.value * 0.3f);
             } else if (data.group.equals("rare_tech_low")) {
-                value = Math.round(data.value * 0.75f);
+                value = Math.round(data.value * 0.1f);
             }
 
             if(value != -1) {
@@ -109,9 +109,9 @@ public class SalvageListener implements ShowLootListener {
             int chances = -1;
             //rare_tech is more valuable tech-wise than rare_tech_low
             if (data.group.equals("rare_tech")) {
-                chances = data.chances * 4;
+                chances = Math.round(data.chances * 1.5f);
             } else if (data.group.equals("rare_tech_low")) {
-                chances = (int) Math.round(data.chances * 2f);
+                chances = Math.round(data.chances * 0.5f);
             }
 
             if(chances != -1) {

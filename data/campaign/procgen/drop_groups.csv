@@ -1,8 +1,8 @@
 commodity,group,freq
 item_et_ammospool,et_exotic,8
-item_et_plasmacatalyst,et_exotic,4
+item_et_plasmacatalyst,et_exotic,5
 item_et_drivevent,et_exotic,8
 item_et_hangarforge,et_exotic,4
 item_et_equalizercore,et_exotic,5
-item_et_phaseengine,et_exotic,6
-nothing,et_exotic,70%
+item_et_phaseengine,et_exotic,4
+nothing,et_exotic,75%

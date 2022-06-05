@@ -27,8 +27,8 @@ public class DriveFluxVent extends Exotic {
     private static final Color[] tooltipColors = {new Color(0x9D62C4), ExoticaTechHM.infoColor};
 
     private static float VENT_SPEED_INCREASE = 30f;
-    private static int FORWARD_SPEED_INCREASE = 30;
-    private static float FLUX_LEVEL_REQUIRED = 50f;
+    private static int FORWARD_SPEED_INCREASE = 50;
+    private static float FLUX_LEVEL_REQUIRED = 40f;
     private static float SPEED_BUFF_TIME = 4f;
 
     @Getter private final Color mainColor = new Color(0x9D62C4);

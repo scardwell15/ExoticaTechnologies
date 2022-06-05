@@ -7,7 +7,6 @@
 
 	"useRandomBandwidth":true, #bandwidth based on fleet member ID
 		"baseBandwidth":0, #flat bandwidth used if the above value is false
-	"maxBandwidth":300, #max bandwidth for any ship
 
 
 	# below settings used to determine upgrade costs. see upgrade_resource_ratio.csv for item ratios used for each upgrade.

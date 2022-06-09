@@ -248,9 +248,9 @@ public class Utilities {
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id, int level) {
         SpecialItemSpecAPI specialSpec = Global.getSettings().getSpecialItemSpec(Upgrade.ITEM);
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
-            if(stack.isSpecialStack() && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
+            if(stack.isSpecialStack() && stack.getPlugin() != null && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
                 UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
-                if (upgradeItem.getUpgradeId().equals(id) && upgradeItem.getUpgradeLevel() == level) {
+                if (id.equals(upgradeItem.getUpgradeId()) && upgradeItem.getUpgradeLevel() == level) {
                     return stack;
                 }
             }
@@ -280,9 +280,9 @@ public class Utilities {
         int winningLevel = 0;
 
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
-            if(stack.isSpecialStack() && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
+            if(stack.isSpecialStack() && stack.getPlugin() != null && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
                 UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
-                if (upgradeItem.getUpgradeId().equals(id) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
+                if (id.equals(upgradeItem.getUpgradeId()) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
                     winningLevel = upgradeItem.getUpgradeLevel();
                     winner = stack;
                 }

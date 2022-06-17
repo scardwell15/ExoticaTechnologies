@@ -45,25 +45,26 @@ public class ETHasUpgrades extends BaseCommandPlugin {
                 }
             }
 
-            if (entity.getCustomEntityType().equals(Entities.DEBRIS_FIELD_SHARED)
-                    && entity.getMemoryWithoutUpdate().contains(MemFlags.SALVAGE_SPECIAL_DATA)
-                    && entity.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SPECIAL_DATA) instanceof ShipRecoverySpecial.ShipRecoverySpecialData) {
-                ShipRecoverySpecial.ShipRecoverySpecialData data = (ShipRecoverySpecial.ShipRecoverySpecialData) entity.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SPECIAL_DATA);
+            if (entity.getCustomEntityType() != null) {
+                if (entity.getCustomEntityType().equals(Entities.DEBRIS_FIELD_SHARED)
+                        && entity.getMemoryWithoutUpdate().contains(MemFlags.SALVAGE_SPECIAL_DATA)
+                        && entity.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SPECIAL_DATA) instanceof ShipRecoverySpecial.ShipRecoverySpecialData) {
+                    ShipRecoverySpecial.ShipRecoverySpecialData data = (ShipRecoverySpecial.ShipRecoverySpecialData) entity.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SPECIAL_DATA);
 
-                if (data.ships != null
-                        && !data.ships.isEmpty()) {
-                    int i = 0;
-                    for (ShipRecoverySpecial.PerShipData shipData : data.ships) {
-                        String entityId = entity.getId() + String.valueOf(++i);
-                        log.info(String.format("searching for entity ID [%s]", entityId));
-                        if (ETModPlugin.hasData(entityId)
-                            && ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entityId))) {
-                            return true;
+                    if (data.ships != null
+                            && !data.ships.isEmpty()) {
+                        int i = 0;
+                        for (ShipRecoverySpecial.PerShipData shipData : data.ships) {
+                            String entityId = entity.getId() + String.valueOf(++i);
+                            log.info(String.format("searching for entity ID [%s]", entityId));
+                            if (ETModPlugin.hasData(entityId)
+                                    && ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entityId))) {
+                                return true;
+                            }
                         }
                     }
                 }
             }
-
 
             CampaignFleetAPI defenderFleet = entity.getMemoryWithoutUpdate().getFleet("$defenderFleet");
             if (defenderFleet != null) {

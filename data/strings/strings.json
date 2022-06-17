@@ -165,11 +165,11 @@
 	},
 	"HangarForgeMissiles": {
 		"name": "Hacked Missile Forge",
-		"description": "Corrupting a hangar microforge to fabricate the most delicate components of missiles is possible, given a few engineers skilled with Domain technology. Their services don't come cheap, however.",
-		"tooltip": "Reloads some of all limited missile's ammunition capacity periodically.",
+		"description": "Corrupting a hangar microforge to fabricate the most delicate components of missiles is possible, given a few engineers skilled with Domain technology. Their services don't come cheap, however, and the forge itself takes up a lot of space.",
+		"tooltip": "Reloads some of all non-reloading missile's ammunition capacity periodically. Reduces non-reloading missile capacity.",
 		"needCredits": "You need ${credits} to install this.",
 		"needItem": "You need a ${itemName} to install this.",
-		"longDescription": "*${exoticName}*: Reloads *${reloadSize}%%* of limited missile's ammunition capacity every *${reloadTime} seconds*.",
+		"longDescription": "*${exoticName}*: Reduces non-reloading missile capacity to =${reloadSize}%%=, or to a minimum of one burst. Reloads all of any non-reloading missile's ammunition capacity every *${reloadTime} seconds*.",
 		"statusReloaded": "Reloaded weapons!"
 	},
 	"PhasefieldEngine": {

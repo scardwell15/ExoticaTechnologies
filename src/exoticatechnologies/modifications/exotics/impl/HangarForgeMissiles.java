@@ -27,7 +27,7 @@ public class HangarForgeMissiles extends Exotic {
     private static final Color[] tooltipColors = {new Color(0xFF8902), ExoticaTechHM.infoColor, ExoticaTechHM.infoColor};
 
     private static float COST_CREDITS = 150000;
-    private static int SECONDS_PER_RELOAD = 90;
+    private static int SECONDS_PER_RELOAD = 60;
     private static float PERCENT_RELOADED = 50f;
 
     @Getter private final Color mainColor = new Color(0xFF8902);
@@ -114,21 +114,39 @@ public class HangarForgeMissiles extends Exotic {
         IntervalUtil reloadInterval = getReloadInterval(ship);
         if (reloadInterval == null) {
             reloadInterval = createReloadInterval(ship);
+
+            //set up weapons
+            for(WeaponAPI weapon : ship.getAllWeapons()) {
+                if(weapon.getAmmoTracker() != null && weapon.getAmmoTracker().usesAmmo() && weapon.getAmmoTracker().getAmmoPerSecond() == 0f) {
+                    int wepMaxAmmo = Math.min(weapon.getMaxAmmo(), weapon.getMaxAmmo());
+
+                    int newMaxAmmo = (int) Math.ceil(wepMaxAmmo * PERCENT_RELOADED / 100f);
+                    if (weapon.getSpec().getBurstSize() > 0) {
+                        newMaxAmmo = Math.max(newMaxAmmo, weapon.getSpec().getBurstSize());
+                    }
+
+                    weapon.setMaxAmmo(newMaxAmmo);
+                    weapon.getAmmoTracker().setMaxAmmo(newMaxAmmo);
+
+                    int newAmmo = Math.min(newMaxAmmo, weapon.getAmmoTracker().getAmmo());
+                    weapon.setAmmo(newAmmo);
+                    weapon.getAmmoTracker().setAmmo(newAmmo);
+                }
+            }
         }
 
         reloadInterval.advance(amount);
 
         if(reloadInterval.intervalElapsed()) {
-
             boolean addedAmmo = false;
             for(WeaponAPI weapon : ship.getAllWeapons()) {
                 if(weapon.getAmmoTracker() != null && weapon.getAmmoTracker().usesAmmo() && weapon.getAmmoTracker().getAmmoPerSecond() == 0f) {
-
                     int ammo = weapon.getAmmoTracker().getAmmo();
                     int maxAmmo = weapon.getAmmoTracker().getMaxAmmo();
 
                     if(ammo < maxAmmo) {
-                        weapon.getAmmoTracker().setAmmo((int) Math.min(maxAmmo, ammo + maxAmmo * PERCENT_RELOADED / 100f));
+                        int ammoToReload = ammo + (int) Math.ceil(maxAmmo * PERCENT_RELOADED / 100f);
+                        weapon.getAmmoTracker().setAmmo((int) Math.min(maxAmmo, ammoToReload));
                         addedAmmo = true;
                     }
                 }

@@ -3,6 +3,7 @@ package exoticatechnologies.modifications.upgrades.impl;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.methods.ChipMethod;
@@ -44,7 +45,7 @@ public class AdvancedFluxCoils extends Upgrade {
             return canApply(fm.getVariant());
         }
 
-        if (fm.getFleetData() != null && fm.getFleetData().getFleet() != null) {
+        if (Misc.isPlayerOrCombinedContainingPlayer(fm.getFleetData().getFleet())) {
             if (Utilities.hasUpgradeChip(fm.getFleetData().getFleet().getCargo(), this.getKey())) {
                 return canApply(fm.getVariant());
             }

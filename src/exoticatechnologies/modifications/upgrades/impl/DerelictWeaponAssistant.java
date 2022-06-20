@@ -40,7 +40,7 @@ public class DerelictWeaponAssistant extends Upgrade {
             return canApply(fm.getVariant());
         }
 
-        if (fm.getFleetData() != null && fm.getFleetData().getFleet() != null) {
+        if (Misc.isPlayerOrCombinedContainingPlayer(fm.getFleetData().getFleet())) {
             if (Utilities.hasUpgradeChip(fm.getFleetData().getFleet().getCargo(), this.getKey())) {
                 return canApply(fm.getVariant());
             }

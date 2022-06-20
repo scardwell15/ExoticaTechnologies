@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.hullmods.ExoticaTechHM;
@@ -43,7 +44,7 @@ public class AlphaSubcore extends Exotic {
             return canApply(fm.getVariant());
         }
 
-        if (!fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
+        if (!Misc.isPlayerOrCombinedContainingPlayer(fm.getFleetData().getFleet())) {
             if(fm.getFleetData().getFleet().getFaction().equals(Factions.HEGEMONY)
                     || fm.getFleetData().getFleet().getFaction().equals(Factions.LUDDIC_CHURCH)
                     || fm.getFleetData().getFleet().getFaction().equals(Factions.LUDDIC_PATH)) {

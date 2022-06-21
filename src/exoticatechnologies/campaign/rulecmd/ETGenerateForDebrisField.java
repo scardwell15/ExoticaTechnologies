@@ -52,30 +52,19 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
 
                     Map<String, ShipModifications> derelictVariantMap = new LinkedHashMap<>();
 
-                    int i = 0;
-                    for (ShipRecoverySpecial.PerShipData shipData : data.ships) {
+                    for (int i = 0; i < data.ships.size(); i++) {
+                        ShipRecoverySpecial.PerShipData shipData = data.ships.get(i);
+                        Long seed = ScanUtils.getPerShipDataSeed(shipData, i);
+                        if (seed == null) continue;
 
                         ShipVariantAPI var = shipData.getVariant();
-
-                        if (var == null) continue;
-
-                        long hash = var.hashCode();
-                        if (var.getHullVariantId() != null) {
-                            hash = var.getHullVariantId().hashCode();
-                        }
-
-                        long seed = hash + (i++);
-                        if (shipData.fleetMemberId != null) {
-                            seed = shipData.fleetMemberId.hashCode();
-                        }
-
                         //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                         //it will never find one.
                         ShipModifications mods = ShipModFactory.generateRandom(var, seed, null);
-                        String entityId = entity.getId() + String.valueOf(i);
+                        String entityId = ScanUtils.getPerShipDataId(shipData, i);
                         ETModPlugin.saveData(entityId, mods);
 
-                        derelictVariantMap.put(var.getHullVariantId(), mods);
+                        derelictVariantMap.put(entityId, mods);
 
                         if(ScanUtils.doesEntityHaveNotableMods(mods)) {
                             notableModsGenerated = true;

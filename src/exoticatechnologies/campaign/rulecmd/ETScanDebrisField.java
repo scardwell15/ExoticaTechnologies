@@ -50,9 +50,11 @@ public class ETScanDebrisField extends BaseCommandPlugin {
     }
 
     private static void scanMultipleShips(final InteractionDialogAPI dialog, final List<ShipRecoverySpecial.PerShipData> shipsData) {
-        //oh no.
         final List<FleetMemberAPI> validSelectionList = new ArrayList<>();
-        for(ShipRecoverySpecial.PerShipData shipData : shipsData) {
+        for (int i = 0; i < shipsData.size(); i++) {
+            ShipRecoverySpecial.PerShipData shipData = shipsData.get(i);
+            if (!ScanUtils.isPerShipDataNotable(shipData, i)) continue;
+
             FleetMemberAPI fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
             validSelectionList.add(fm);
         }
@@ -82,7 +84,7 @@ public class ETScanDebrisField extends BaseCommandPlugin {
     }
 
     private static void scanPerShipData(int index, ShipRecoverySpecial.PerShipData shipData, InteractionDialogAPI dialog) {
-        String entityId = dialog.getInteractionTarget().getId() + String.valueOf(index + 1);
+        String entityId = ScanUtils.getPerShipDataId(shipData, index);
 
         ScanUtils.addModificationsToTextPanel(dialog.getTextPanel(),
                 shipData.shipName != null ? shipData.shipName : "???",

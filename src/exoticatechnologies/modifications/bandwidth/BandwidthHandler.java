@@ -49,6 +49,6 @@ public class BandwidthHandler {
         }
         float bandwidthMultFactor = 1 - (upgradeBandwidthMult / (upgradeBandwidthMult + 10));
 
-        return Math.round(shipBaseValue * (float) Math.pow(shipBandwidth / 70f, 2.25) / (2f + 5f * bandwidthMultFactor) * 100f) / 100f;
+        return Math.round(shipBaseValue * (float) Math.pow(shipBandwidth / 70f, 2) / (2f + 6f * bandwidthMultFactor) * 100f) / 100f;
     }
 }

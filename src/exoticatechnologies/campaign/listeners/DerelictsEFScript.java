@@ -2,7 +2,9 @@ package exoticatechnologies.campaign.listeners;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
 import lombok.Getter;
@@ -60,8 +62,39 @@ public class DerelictsEFScript implements EveryFrameScript {
 
     private void linkDerelictsToNewMembers(List<FleetMemberAPI> newMembers) {
         for (FleetMemberAPI fm : newMembers) {
-            if (derelictVariantMap.containsKey(fm.getVariant().getHullVariantId())) {
-                ShipModifications mods = derelictVariantMap.get(fm.getVariant().getHullVariantId());
+            ShipModifications mods = null;
+
+            String fmIdHash = String.valueOf(fm.getId().hashCode());
+            if (derelictVariantMap.containsKey(fmIdHash)) {
+                mods = derelictVariantMap.get(fmIdHash);
+            } else {
+                ShipVariantAPI var = fm.getVariant();
+                if (var == null) continue;
+
+                for (int i = 0; i < derelictVariantMap.size(); i++) {
+                    String varHash = String.valueOf(var.hashCode() + i);
+                    String hullVarHash = String.valueOf(var.getHullVariantId().hashCode() + i);
+                    if (derelictVariantMap.containsKey(hullVarHash)) {
+                        mods = derelictVariantMap.get(hullVarHash);
+                        break;
+                    } else if (derelictVariantMap.containsKey(varHash)) {
+                        mods = derelictVariantMap.get(varHash);
+                        break;
+                    } else {
+                        varHash = String.valueOf(var.hashCode() + fm.getShipName().hashCode() + i);
+                        hullVarHash = String.valueOf(var.getHullVariantId().hashCode() + fm.getShipName().hashCode() + i);
+                        if (derelictVariantMap.containsKey(hullVarHash)) {
+                            mods = derelictVariantMap.get(hullVarHash);
+                            break;
+                        } else if (derelictVariantMap.containsKey(varHash)) {
+                            mods = derelictVariantMap.get(varHash);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (mods != null) {
                 mods.save(fm);
                 ExoticaTechHM.addToFleetMember(fm);
             }

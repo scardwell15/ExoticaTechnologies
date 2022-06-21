@@ -3,7 +3,9 @@ package exoticatechnologies.campaign;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.BaseTooltipCreator;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -31,6 +33,47 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ScanUtils {
     private static float NOTABLE_BANDWIDTH = 180f;
+
+    public static Long getPerShipDataSeed(ShipRecoverySpecial.PerShipData shipData, int i) {
+        ShipVariantAPI var = shipData.getVariant();
+        if (var == null) return null;
+
+        long seed = -1;
+        if (shipData.fleetMemberId != null) {
+            seed = shipData.fleetMemberId.hashCode();
+        } else {
+            long hash = var.hashCode();
+            if (var.getHullVariantId() != null) {
+                hash = var.getHullVariantId().hashCode();
+            }
+
+            seed = hash + i;
+
+            if (shipData.shipName != null) {
+                seed = seed + shipData.shipName.hashCode();
+            }
+        }
+
+        return seed;
+    }
+
+    public static String getPerShipDataId(ShipRecoverySpecial.PerShipData shipData, int i) {
+        Long seed = getPerShipDataSeed(shipData, i);
+        if (seed == null) return null;
+        return String.valueOf(seed);
+    }
+
+    public static boolean isPerShipDataNotable(ShipRecoverySpecial.PerShipData shipData, int i) {
+        String entityId = getPerShipDataId(shipData, i);
+        if (entityId == null) return false;
+
+        log.info(String.format("searching for entity ID [%s]", entityId));
+        if (ETModPlugin.hasData(entityId)
+                && ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entityId))) {
+            return true;
+        }
+        return false;
+    }
 
     public static List<FleetMemberAPI> getNotableFleetMembers(CampaignFleetAPI fleet) {
         List<FleetMemberAPI> notableMembers = new ArrayList<>();

@@ -38,7 +38,7 @@ public class RelicComponentUpgradeMethod implements UpgradeMethod {
         int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, level);
         int totalComponents = getTotalComponents(fm.getFleetData().getFleet(), market);
 
-        return (totalComponents - upgradeCost) > 0;
+        return (totalComponents - upgradeCost) >= 0;
     }
 
     @Override

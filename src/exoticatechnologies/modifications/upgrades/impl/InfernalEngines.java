@@ -73,7 +73,7 @@ public class InfernalEngines extends Upgrade {
 
 
 
-                MutableStat.StatMod decelerationStat = fm.getStats().getDeceleration().getPercentStatMod(this.getBuffId());
+                MutableStat.StatMod decelerationStat = fm.getStats().getDeceleration().getMultStatMod(this.getBuffId());
                 float decelerationBonus = 1f;
                 if (decelerationStat != null) {
                     decelerationBonus = decelerationStat.getValue();

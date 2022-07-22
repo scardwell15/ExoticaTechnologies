@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Items;
 import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.dialog.DialogOption;
 import exoticatechnologies.hullmods.ExoticaTechHM;
@@ -46,7 +45,7 @@ public class ExoticRecoverOption extends DialogOption {
         if (stack != null) {
             stack.add(1);
         } else {
-            fleet.getCargo().addSpecial(new SpecialItemData(Exotic.ITEM, exotic.getKey()), 1);
+            fleet.getCargo().addSpecial(exotic.getNewSpecialItemData(), 1);
         }
 
         if (exotic.getKey().equals("AlphaSubcore")) {

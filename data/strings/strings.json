@@ -271,5 +271,18 @@
 		"recoil": "Recoil: *${percent}%%*",
 		"projSpeed": "Projectile speed: *${percent}%%*",
 		"ballisticFirerate": "Ballistic weapon firerate: *${percent}%%*"
+	},
+	"AuxiliarySensors": {
+		"name": "Auxiliary Sensors",
+		"description": "Increases sensor strength, but also increases sensor profile and minimum required crew to service the arrays.",
+		"sensorStrength": "Sensor strength: *${percent}%%* (${finalValue})",
+		"sensorProfile": "Sensor profile: =${percent}%%* (${finalValue})",
+		"requiredCrew": "Required crew: =${percent}%%* (${finalValue})"
+	},
+	"InterferenceShielding": {
+		"name": "Interference Shielding",
+		"description": "Decreases sensor profile significantly, but increases supply consumption.",
+		"sensorProfile": "Sensor profile: *${percent}%%* (${finalValue})",
+		"supplyConsumption": "Supply consumption: =${percent}%%* (${finalValue})",
 	}
 }

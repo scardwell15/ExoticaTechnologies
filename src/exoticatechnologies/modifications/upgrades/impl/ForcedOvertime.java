@@ -104,4 +104,8 @@ public class ForcedOvertime extends Upgrade {
             tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
         }
     }
+    @Override
+    public float getSpawnChance() {
+        return super.getSpawnChance() * 0.5f;
+    }
 }

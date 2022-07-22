@@ -3,6 +3,7 @@ package exoticatechnologies.modifications.exotics;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -35,6 +36,10 @@ public abstract class Exotic {
     protected String tooltip;
     @Getter
     protected JSONObject exoticSettings;
+
+    public static Exotic get(String exoticKey) {
+        return ExoticsHandler.EXOTICS.get(exoticKey);
+    }
 
     public abstract Color getMainColor();
 
@@ -134,6 +139,10 @@ public abstract class Exotic {
 
     public float getSpawnChance(float chanceMult) {
         return 0.05f * chanceMult;
+    }
+
+    public SpecialItemData getNewSpecialItemData() {
+        return new SpecialItemData(Exotic.ITEM, this.getKey());
     }
 
     public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand);

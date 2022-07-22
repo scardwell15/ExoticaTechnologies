@@ -2,7 +2,12 @@ package exoticatechnologies.modifications.exotics;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
 import data.scripts.util.MagicSettings;
+import exoticatechnologies.modifications.ShipModFactory;
+import exoticatechnologies.modifications.upgrades.Upgrade;
+import exoticatechnologies.modifications.upgrades.UpgradesHandler;
+import exoticatechnologies.util.Utilities;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
 
@@ -14,9 +19,8 @@ import java.util.Random;
 public class ExoticsGenerator {
     //per fleet member!
     private static float CHANCE_OF_EXOTICS = 0.1f;
-    private static Random random = new Random();
 
-    public static ETExotics generate(ShipVariantAPI var, long seed, String faction, float bandwidth) {
+    public static ETExotics generate(ShipVariantAPI var, String faction, float bandwidth) {
         Map<String, Float> factionExoticChances = MagicSettings.getFloatMap("exoticatechnologies", "factionExoticChances");
         Map<String, Float> factionPerExoticMult = MagicSettings.getFloatMap("exoticatechnologies", "factionPerExoticMult");
 
@@ -27,18 +31,22 @@ public class ExoticsGenerator {
 
         ETExotics exotics = new ETExotics();
 
-        random.setSeed(seed);
-
         float exoticChance = CHANCE_OF_EXOTICS;
         if (factionExoticChances.containsKey(faction)) {
             exoticChance = factionExoticChances.get(faction);
         }
 
-        if (random.nextFloat() < exoticChance) {
+        exoticChance *= (1 + Utilities.getSModCount(var));
+
+
+        Random random = ShipModFactory.getRandom();
+        float rolledChance = random.nextFloat();
+        if (rolledChance < exoticChance) {
             float perExoticMult = 1.0f;
             if (factionPerExoticMult.containsKey(faction)) {
                 perExoticMult = factionPerExoticMult.get(faction);
             }
+            perExoticMult *= (1 + Utilities.getSModCount(var) * 0.5f);
 
             for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
                 if (!factionAllowedExotics.contains(exotic.getKey())) {
@@ -56,7 +64,7 @@ public class ExoticsGenerator {
         return exotics;
     }
 
-    public static ETExotics generate(FleetMemberAPI fm, long seed, String faction, float bandwidth) {
+    public static ETExotics generate(FleetMemberAPI fm, String faction, float bandwidth) {
         Map<String, Float> factionExoticChances = MagicSettings.getFloatMap("exoticatechnologies", "factionExoticChances");
         Map<String, Float> factionPerExoticMult = MagicSettings.getFloatMap("exoticatechnologies", "factionPerExoticMult");
 
@@ -67,18 +75,23 @@ public class ExoticsGenerator {
 
         ETExotics exotics = new ETExotics();
 
-        random.setSeed(seed);
-
         float exoticChance = CHANCE_OF_EXOTICS;
         if (factionExoticChances.containsKey(faction)) {
             exoticChance = factionExoticChances.get(faction);
         }
 
-        if (random.nextFloat() < exoticChance) {
+        int smodCount = Utilities.getSModCount(fm);
+        exoticChance *= (1 + smodCount);
+
+
+        Random random = ShipModFactory.getRandom();
+        float rolledChance = random.nextFloat();
+        if (rolledChance < exoticChance) {
             float perExoticMult = 1.0f;
             if (factionPerExoticMult.containsKey(faction)) {
                 perExoticMult = factionPerExoticMult.get(faction);
             }
+            perExoticMult *= (1 + smodCount * 0.5f);
 
             for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
                 if (!factionAllowedExotics.contains(exotic.getKey())) {

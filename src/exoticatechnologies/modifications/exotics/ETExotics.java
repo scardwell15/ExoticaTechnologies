@@ -1,19 +1,12 @@
 package exoticatechnologies.modifications.exotics;
 
-import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import data.scripts.util.MagicSettings;
 import lombok.extern.log4j.Log4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 @Log4j
 public class ETExotics {
-    private static Random random = new Random();
-
     private final List<String> exotics;
 
     public ETExotics() {
@@ -26,6 +19,10 @@ public class ETExotics {
         } else {
             this.exotics = exotics;
         }
+    }
+
+    public List<String> getList() {
+        return exotics;
     }
 
     public boolean hasExotic(Exotic exotic) {

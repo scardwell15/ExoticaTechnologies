@@ -10,6 +10,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import data.scripts.util.MagicSettings;
 import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.hullmods.ExoticaTechHM;
@@ -19,8 +20,11 @@ import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import org.json.JSONException;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class HangarForgeMissiles extends Exotic {
     private static final String ITEM = "et_hangarforge";
@@ -30,12 +34,17 @@ public class HangarForgeMissiles extends Exotic {
     private static int SECONDS_PER_RELOAD = 60;
     private static float PERCENT_RELOADED = 50f;
 
+    private static Set<String> blacklistedWeapons = new HashSet<>();
+
     @Getter private final Color mainColor = new Color(0xFF8902);
 
     @Override
     public void loadConfig() throws JSONException {
         SECONDS_PER_RELOAD = (int) exoticSettings.getInt("secondsBetweenReloads");
         PERCENT_RELOADED = (float) exoticSettings.getDouble("percentReloaded");
+
+        List<String> blacklist = MagicSettings.getList("exoticatechnologies", "exotic_HangarForgeMissiles_weaponBlacklist");
+        blacklistedWeapons.addAll(blacklist);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class HyperactiveCapacitors extends Upgrade {
     private static float CAPACITY_MAX = 25f;
     private static float VENT_SPEED_MAX = 50f;
     private static float WEAPON_FLUX_MAX = 30f;
-    private static Color COLOR = new Color(41, 130, 178);
+    private static Color COLOR = new Color(143, 86, 182);
 
     @Override
     public Color getColor() {

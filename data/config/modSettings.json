@@ -1,5 +1,8 @@
 {
   "exoticatechnologies": {
+    "exotic_HangarForgeMissiles_weaponBlacklist": [
+      #"atropos_single"
+    ],
     "industryBandwidthBonuses": {
       "heavyindustry": 0.5,
       "orbitalworks": 1.0,
@@ -90,12 +93,14 @@
       "SpooledFeeders"
     ],
     "rngUpgradeWhitelist": [
-      "Afterburners",
       "ForcedOvertime",
       "HyperactiveCapacitors",
       "OverchargedShields",
       "WeldedArmor",
-      "TracerRecoilCalculator"
+      "TracerRecoilCalculator",
+      "InfernalEngines",
+      "AuxiliarySensors",
+      "InterferenceShielding"
     ],
 
     # below are faction whitelists. the way to go about this is to follow omega example
@@ -116,14 +121,14 @@
 
     "remnant_UpgradeWhitelist": [
       "AdvancedFluxCoils",
-      "Afterburners",
+      "InfernalEngines",
       "OverchargedShields",
       "WeldedArmor",
       "TracerRecoilCalculator"
     ],
 
     "derelict_UpgradeWhitelist": [
-      "Afterburners",
+      "InfernalEngines",
       "HyperactiveCapacitors",
       "OverchargedShields",
       "WeldedArmor",

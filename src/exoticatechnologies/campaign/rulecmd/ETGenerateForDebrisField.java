@@ -60,7 +60,10 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
                         ShipVariantAPI var = shipData.getVariant();
                         //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                         //it will never find one.
-                        ShipModifications mods = ShipModFactory.generateRandom(var, seed, null);
+
+                        ShipModFactory.getRandom().setSeed(seed);
+
+                        ShipModifications mods = ShipModFactory.generateRandom(var, null);
                         String entityId = ScanUtils.getPerShipDataId(shipData, i);
                         ETModPlugin.saveData(entityId, mods);
 

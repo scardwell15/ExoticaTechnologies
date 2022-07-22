@@ -16,11 +16,14 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.FireAll;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import exoticatechnologies.ETModSettings;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.FleetMemberUtils;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
@@ -108,11 +111,11 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             if (data.ship.fleetMemberId != null) {
                 seed = data.ship.fleetMemberId.hashCode();
             }
-
+            ShipModFactory.getRandom().setSeed(seed);
 
             //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
             //it will never find one.
-            ShipModifications mods = ShipModFactory.generateRandom(var, seed, null);
+            ShipModifications mods = ShipModFactory.generateRandom(var, null);
             ETModPlugin.saveData(interactionTarget.getId(), mods);
 
             Global.getSector().addTransientScript(new DerelictsEFScript(var.getHullVariantId(), mods));
@@ -144,8 +147,9 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     if (shipData.fleetMemberId != null) {
                         seed = shipData.fleetMemberId.hashCode();
                     }
+                    ShipModFactory.getRandom().setSeed(seed);
 
-                    ShipModifications mods = ShipModFactory.generateRandom(var, seed, null);
+                    ShipModifications mods = ShipModFactory.generateRandom(var, null);
                     //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                     //it will never find one.
                     ETModPlugin.saveData(interactionTarget.getId() + String.valueOf(i), mods);
@@ -187,21 +191,71 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
     @Override
     public void reportPlayerEngagement(EngagementResultAPI result) {
-        if (ETModSettings.getBoolean(ETModSettings.SHIPS_KEEP_UPGRADES_ON_DEATH)) return;
-
         EngagementResultForFleetAPI playerResult = result.didPlayerWin()
                 ? result.getWinnerResult()
                 : result.getLoserResult();
 
+        if (!ETModSettings.getBoolean(ETModSettings.SHIPS_KEEP_UPGRADES_ON_DEATH)) {
+            List<FleetMemberAPI> fms = new ArrayList<>();
+            fms.addAll(playerResult.getDisabled());
+            fms.addAll(playerResult.getDestroyed());
+
+            for (FleetMemberAPI fm : fms) {
+                ShipModifications mods = ETModPlugin.getData(fm.getId());
+                if (mods != null) {
+                    ExoticaTechHM.removeFromFleetMember(fm);
+                    ETModPlugin.removeData(fm.getId());
+                    dlog("Removed FM [%s] because it died in combat", fm.getId());
+                }
+            }
+        }
+
+        EngagementResultForFleetAPI otherResult = result.didPlayerWin()
+                ? result.getLoserResult()
+                : result.getWinnerResult();
+
         List<FleetMemberAPI> fms = new ArrayList<>();
-        fms.addAll(playerResult.getDisabled());
-        fms.addAll(playerResult.getDestroyed());
+        fms.addAll(otherResult.getDisabled());
+        fms.addAll(otherResult.getDestroyed());
+
+        Pair<Map<Upgrade, Map<Integer, Integer>>, Map<Exotic, Integer>> potentialDrops = getDrops(fms);
+        result.getBattle().getPrimary(result.getBattle().getNonPlayerSide()).getMemoryWithoutUpdate().set("$exotica_drops", potentialDrops, 0);
+    }
+
+    private static Pair<Map<Upgrade, Map<Integer, Integer>>, Map<Exotic, Integer>> getDrops(List<FleetMemberAPI> fms) {
+        Map<Upgrade, Map<Integer, Integer>> upgradesMap = new HashMap<>();
+        Map<Exotic, Integer> exotics = new HashMap<>();
 
         for (FleetMemberAPI fm : fms) {
-            dlog("Removed FM [%s] because it died in combat", fm.getId());
-            ExoticaTechHM.removeFromFleetMember(fm);
-            ETModPlugin.removeData(fm.getId());
+            ShipModifications mods = ETModPlugin.getData(fm.getId());
+            if (mods != null) {
+                for (Map.Entry<Upgrade, Integer> upgData : mods.getUpgradeMap().entrySet()) {
+                    Upgrade upgrade = upgData.getKey();
+                    int level = upgData.getValue();
+
+                    if (!upgradesMap.containsKey(upgrade)) {
+                        upgradesMap.put(upgrade, new HashMap<Integer, Integer>());
+                    }
+
+                    Map<Integer, Integer> perUpgradeMap = upgradesMap.get(upgrade);
+                    if (!perUpgradeMap.containsKey(level)) {
+                        perUpgradeMap.put(level, 1);
+                    } else {
+                        perUpgradeMap.put(level, perUpgradeMap.get(level) + 1);
+                    }
+                }
+
+                for (Exotic exotic : mods.getExoticSet()) {
+                    if (!exotics.containsKey(exotic)) {
+                        exotics.put(exotic, 1);
+                    } else {
+                        exotics.put(exotic, exotics.get(exotic) + 1);
+                    }
+                }
+            }
         }
+
+        return new Pair<>(upgradesMap, exotics);
     }
 
     @Override
@@ -383,6 +437,8 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     }
 
     private static void applyExtraSystemsToFleet(CampaignFleetAPI fleet) {
+        ShipModFactory.getRandom().setSeed(fleet.getId().hashCode());
+
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             if (fm.isFighterWing()) continue;
 

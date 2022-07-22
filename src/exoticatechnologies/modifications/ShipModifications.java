@@ -3,7 +3,6 @@ package exoticatechnologies.modifications;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exoticatechnologies.ETModSettings;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.modifications.exotics.ETExotics;
 import exoticatechnologies.modifications.exotics.Exotic;
@@ -16,39 +15,38 @@ import exoticatechnologies.modifications.upgrades.UpgradesGenerator;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import lombok.extern.log4j.Log4j;
 
-import java.util.Random;
+import java.util.*;
 
 @Log4j
 public class ShipModifications {
-    private static Random random = new Random();
     //per fleet member!
     private static float CHANCE_OF_UPGRADES = 0.4f;
 
-    ShipModifications(long bandwidthSeed) {
+    ShipModifications() {
+        if (bandwidth == -1) {
+            this.bandwidth = 1f;
+        }
+
         if (upgrades == null) {
             this.upgrades = new ETUpgrades();
         }
 
         if (exotics == null) {
             this.exotics = new ETExotics();
-        }
-
-        if (bandwidth == -1) {
-            this.bandwidth = Bandwidth.generate(bandwidthSeed).getRandomInRange();
         }
     }
 
     ShipModifications(FleetMemberAPI fm) {
+        if (bandwidth == -1) {
+            this.bandwidth = 1f;
+        }
+
         if (upgrades == null) {
             this.upgrades = new ETUpgrades();
         }
 
         if (exotics == null) {
             this.exotics = new ETExotics();
-        }
-
-        if (bandwidth == -1) {
-            this.bandwidth = ShipModFactory.generateBandwidth(fm);
         }
     }
 
@@ -75,9 +73,10 @@ public class ShipModifications {
      * @param var
      * @param faction
      */
-    public void generate(long seed, ShipVariantAPI var, String faction) {
-        this.exotics = ExoticsGenerator.generate(var, seed, faction, this.getBandwidth());
-        this.upgrades = UpgradesGenerator.generate(var, seed, faction, this.getBandwidth());
+    public void generate(ShipVariantAPI var, String faction) {
+        this.bandwidth = Bandwidth.generate().getRandomInRange();
+        this.exotics = ExoticsGenerator.generate(var, faction, this.getBandwidth());
+        this.upgrades = UpgradesGenerator.generate(var, faction, this.getBandwidth());
     }
 
     /**
@@ -85,9 +84,10 @@ public class ShipModifications {
      * @param seed
      * @param faction
      */
-    public void generate(FleetMemberAPI fm, long seed, String faction) {
-        this.exotics = ExoticsGenerator.generate(fm, seed, faction, this.getBandwidth(fm));
-        this.upgrades = UpgradesGenerator.generate(fm, seed, faction, this.getBandwidthWithExotics(fm));
+    public void generate(FleetMemberAPI fm, String faction) {
+        this.bandwidth = ShipModFactory.generateBandwidth(fm, faction);
+        this.exotics = ExoticsGenerator.generate(fm, faction, this.getBandwidth(fm));
+        this.upgrades = UpgradesGenerator.generate(fm, faction, this.getBandwidthWithExotics(fm));
     }
 
     //bandwidth
@@ -158,10 +158,18 @@ public class ShipModifications {
     //exotics
     protected ETExotics exotics = null;
 
-    protected ETExotics getExotics() {
+    public ETExotics getExotics() {
         return exotics;
     }
 
+    public Set<Exotic> getExoticSet() {
+        Set<Exotic> exoticSet = new HashSet<>();
+        for (String exotic : exotics.getList()) {
+            exoticSet.add(Exotic.get(exotic));
+        }
+
+        return exoticSet;
+    }
     public boolean hasExotic(String key) {
         return exotics.hasExotic(key);
     }
@@ -186,6 +194,15 @@ public class ShipModifications {
     private ETUpgrades upgrades = null;
     protected ETUpgrades getUpgrades() {
         return upgrades;
+    }
+
+    public Map<Upgrade, Integer> getUpgradeMap() {
+        Map<Upgrade, Integer> upgradeMap = new HashMap<>();
+        for (Map.Entry<String, Integer> upgrade : upgrades.getMap().entrySet()) {
+            upgradeMap.put(Upgrade.get(upgrade.getKey()), upgrade.getValue());
+        }
+
+        return upgradeMap;
     }
 
     public void putUpgrade(Upgrade upgrade) {

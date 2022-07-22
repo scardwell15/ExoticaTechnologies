@@ -95,5 +95,22 @@
     "allowedFactions": [
       "derelict"
     ]
+  },
+  "AuxiliarySensors": {
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.AuxiliarySensors",
+    "resourceRatios": {
+      "rare_metals": 3.0,
+      "metals": 2.0,
+      "heavy_machinery": 3.0
+    }
+  },
+  "InterferenceShielding": {
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.InterferenceShielding",
+    "resourceRatios": {
+      "rare_metals": 3.0,
+      "metals": 2.0,
+      "volatiles": 1.0,
+      "supplies": 2.5
+    }
   }
 }

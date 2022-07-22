@@ -16,7 +16,6 @@ import exoticatechnologies.modifications.bandwidth.BandwidthHandler;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.FleetMemberUtils;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.console.Console;

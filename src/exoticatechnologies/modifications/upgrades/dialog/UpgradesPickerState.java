@@ -1,20 +1,17 @@
 package exoticatechnologies.modifications.upgrades.dialog;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.dialog.DialogOption;
 import exoticatechnologies.dialog.PaginationOption;
 import exoticatechnologies.dialog.modifications.SystemState;
 import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
-import exoticatechnologies.modifications.exotics.dialog.ChosenExoticState;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
@@ -22,7 +19,6 @@ import exoticatechnologies.util.StringUtils;
 import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

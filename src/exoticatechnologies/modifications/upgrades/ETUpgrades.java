@@ -1,17 +1,11 @@
 package exoticatechnologies.modifications.upgrades;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import data.scripts.util.MagicSettings;
 import exoticatechnologies.ETModSettings;
 import lombok.extern.log4j.Log4j;
-import org.json.JSONException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 @Log4j
 public class ETUpgrades {
@@ -23,6 +17,10 @@ public class ETUpgrades {
 
     public ETUpgrades(Map<String, Integer> upgrades) {
         this.upgrades = upgrades;
+    }
+
+    public Map<String, Integer> getMap() {
+        return upgrades;
     }
 
     public float getHullSizeFactor(ShipAPI.HullSize hullSize) {

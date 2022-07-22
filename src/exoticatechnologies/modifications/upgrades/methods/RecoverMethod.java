@@ -59,7 +59,7 @@ public class RecoverMethod implements UpgradeMethod {
         if (stack != null) {
             stack.add(1);
         } else {
-            fleet.getCargo().addSpecial(new SpecialItemData(Upgrade.ITEM, String.format("%s,%s",upgrade.getKey(), mods.getUpgrade(upgrade))), 1);
+            fleet.getCargo().addSpecial(upgrade.getNewSpecialItemData(mods.getUpgrade(upgrade)), 1);
         }
 
         mods.removeUpgrade(upgrade);

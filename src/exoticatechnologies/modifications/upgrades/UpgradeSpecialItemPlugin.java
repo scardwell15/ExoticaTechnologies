@@ -7,8 +7,6 @@ import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.modifications.exotics.Exotic;
-import exoticatechnologies.modifications.exotics.ExoticsHandler;
 
 import java.awt.*;
 

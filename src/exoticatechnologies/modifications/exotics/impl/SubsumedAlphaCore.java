@@ -9,7 +9,6 @@ import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
-import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 
 import java.awt.*;

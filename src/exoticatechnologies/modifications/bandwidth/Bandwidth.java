@@ -1,10 +1,10 @@
 package exoticatechnologies.modifications.bandwidth;
 
 import com.fs.starfarer.api.Global;
+import exoticatechnologies.modifications.ShipModFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.lazywizard.lazylib.MathUtils;
 
 import java.awt.Color;
 import java.util.*;
@@ -35,17 +35,16 @@ public enum Bandwidth {
             return bandwidth;
         }
         float nextBandwidth = BANDWIDTH_LIST.get(BANDWIDTH_LIST.indexOf(this) + 1).getBandwidth();
-        return Math.round(MathUtils.getRandomNumberInRange(bandwidth, nextBandwidth));
+        return Math.round(ShipModFactory.getRandomNumberInRange(bandwidth, nextBandwidth));
     }
 
-    public static Bandwidth generate(long seed) {
+    public static Bandwidth generate() {
         int highNumber = 0;
         for(Bandwidth b : values()) {
             highNumber += b.getWeight();
         }
 
-        MathUtils.getRandom().setSeed(seed);
-        int chosen = MathUtils.getRandomNumberInRange(0, highNumber);
+        int chosen = ShipModFactory.getRandomNumberInRange(0, highNumber);
         for(Bandwidth b : values()) {
             chosen -= b.getWeight();
 
@@ -56,14 +55,13 @@ public enum Bandwidth {
         return DOMAIN;
     }
 
-    public static Bandwidth generate(long seed, float mult) {
+    public static Bandwidth generate(float mult) {
         int highNumber = 0;
         for(Bandwidth b : values()) {
             highNumber += b.getWeight();
         }
 
-        MathUtils.getRandom().setSeed(seed);
-        int chosen = (int) (MathUtils.getRandomNumberInRange(80 * (mult - 1), highNumber));
+        int chosen = (int) (ShipModFactory.getRandomNumberInRange(80 * (mult - 1), highNumber * (1 + (mult - 1) * 0.04f)));
         for(Bandwidth b : values()) {
             chosen -= b.getWeight();
 

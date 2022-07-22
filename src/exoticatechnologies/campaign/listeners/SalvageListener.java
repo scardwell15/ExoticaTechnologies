@@ -1,5 +1,6 @@
 package exoticatechnologies.campaign.listeners;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -10,6 +11,10 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageEntity;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
+import exoticatechnologies.ETModPlugin;
+import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.upgrades.Upgrade;
 import lombok.extern.log4j.Log4j;
 
 import java.util.*;
@@ -18,11 +23,58 @@ import java.util.*;
 public class SalvageListener implements ShowLootListener {
     @Override
     public void reportAboutToShowLootToPlayer(CargoAPI loot, InteractionDialogAPI dialog) {
-        SectorEntityToken entity = dialog.getInteractionTarget();
+        SectorEntityToken interactionTarget = dialog.getInteractionTarget();
+        if (interactionTarget == null) {
+            return;
+        }
 
-        List<SalvageEntityGenDataSpec.DropData> dropData = getDropDataFromEntity(entity);
+        if (interactionTarget instanceof CampaignFleetAPI) {
+            CampaignFleetAPI fleet = (CampaignFleetAPI) interactionTarget;
 
-        MemoryAPI memory = entity.getMemoryWithoutUpdate();
+            if (fleet.getMemoryWithoutUpdate().contains("$exotica_drops")) {
+
+                //yeah
+                Pair<Map<Upgrade, Map<Integer, Integer>>, Map<Exotic, Integer>> potentialDrops =
+                        (Pair<Map<Upgrade, Map<Integer, Integer>>, Map<Exotic, Integer>>) fleet.getMemoryWithoutUpdate().get("$exotica_drops");
+
+
+                Map<Upgrade, Map<Integer, Integer>> potentialUpgrades = potentialDrops.one;
+                Map<Exotic, Integer> potentialExotics = potentialDrops.two;
+                Random random = Misc.getRandom(ETModPlugin.getSectorSeedString().hashCode(), 100);
+
+                for (Map.Entry<Upgrade, Map<Integer, Integer>> potUpg : potentialUpgrades.entrySet()) {
+                    Upgrade upgrade = potUpg.getKey();
+
+                    for (Map.Entry<Integer, Integer> upgLvlQty : potUpg.getValue().entrySet()) {
+                        int level = upgLvlQty.getKey();
+                        int quantity = upgLvlQty.getValue();
+
+                        for (int i = 0; i < quantity; i++) {
+                            if (upgrade.getSpawnChance() > 0 && random.nextFloat() <= upgrade.getSpawnChance() * 4f) {
+                                //generate upgrade and add to loot
+                                loot.addSpecial(upgrade.getNewSpecialItemData(level), 1);
+                            }
+                        }
+                    }
+                }
+
+                for (Map.Entry<Exotic, Integer> potExotic : potentialExotics.entrySet()) {
+                    Exotic exotic = potExotic.getKey();
+                    int quantity = potExotic.getValue();
+
+                    for (int i = 0; i < quantity; i++) {
+                        if (exotic.getSpawnChance(4f) > 0 && random.nextFloat() <= exotic.getSpawnChance(4f)) {
+                            //generate exotic and add to loot
+                            loot.addSpecial(exotic.getNewSpecialItemData(), 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        List<SalvageEntityGenDataSpec.DropData> dropData = getDropDataFromEntity(interactionTarget);
+
+        MemoryAPI memory = interactionTarget.getMemoryWithoutUpdate();
         long randomSeed = memory.getLong(MemFlags.SALVAGE_SEED);
         Random random = Misc.getRandom(randomSeed, 100);
 

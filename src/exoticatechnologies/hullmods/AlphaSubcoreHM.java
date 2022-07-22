@@ -3,13 +3,8 @@ package exoticatechnologies.hullmods;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
-import exoticatechnologies.ETModPlugin;
-import exoticatechnologies.modifications.ShipModFactory;
-import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.impl.AlphaSubcore;
-import exoticatechnologies.util.FleetMemberUtils;
 
 public class AlphaSubcoreHM extends BaseHullMod {
 

@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.upgrades;
 
+import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -23,13 +24,17 @@ import java.util.Map;
 
 public abstract class Upgrade {
     public static String ITEM = "et_upgrade";
-
     @Getter @Setter public String key;
     @Getter @Setter protected String name;
     @Getter @Setter protected String description;
     @Getter @Setter protected String tooltip;
     @Getter protected JSONObject upgradeSettings;
     @Getter protected Map<String, Float> resourceRatios = new HashMap<>();
+
+    public static Upgrade get(String upgradeKey) {
+        return UpgradesHandler.UPGRADES.get(upgradeKey);
+    }
+
 
     public abstract float getBandwidthUsage();
 
@@ -160,6 +165,10 @@ public abstract class Upgrade {
         StringUtils.getTranslation(this.getKey(), translation)
                 .formatWithOneDecimalAndModifier("percent", -(1f - decrease) * 100f)
                 .addToTooltip(tooltip, 2f);
+    }
+
+    public SpecialItemData getNewSpecialItemData(int level) {
+        return new SpecialItemData(Upgrade.ITEM, String.format("%s,%s", this.getKey(), level));
     }
 
     public Map<String, Integer> getResourceCosts(FleetMemberAPI shipSelected, int level) {

@@ -1,6 +1,5 @@
 package exoticatechnologies.modifications;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
@@ -8,18 +7,21 @@ import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.ETModSettings;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
-import exoticatechnologies.modifications.upgrades.Upgrade;
-import exoticatechnologies.modifications.upgrades.UpgradesHandler;
+import exoticatechnologies.util.Utilities;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Log4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ShipModFactory {
+    @Getter
+    private static Random random = new Random();
+
     public static ShipModifications getForFleetMember(FleetMemberAPI fm) {
         if (fm.getHullId().contains("ziggurat")) {
             if (ETModPlugin.getZigguratDuplicateId() != null && ETModPlugin.hasData(ETModPlugin.getZigguratDuplicateId())) {
@@ -35,8 +37,9 @@ public class ShipModFactory {
             }
         } else if (ETModPlugin.hasData(fm.getId())) {
             return ETModPlugin.getData(fm.getId());
-        } else  {
+        } else {
             ShipModifications mods = new ShipModifications(fm);
+            mods.putBandwidth(ShipModFactory.generateBandwidth(fm));
 
             if (CampaignEventListener.isAppliedData()) {
                 mods.save(fm);
@@ -60,14 +63,10 @@ public class ShipModFactory {
         return fm.getFleetData().getFleet().getFaction().getId();
     }
 
-    public static ShipModifications generateRandom(ShipVariantAPI var, Long seed, String faction) {
-        if (seed == null) {
-            seed = (long) var.getHullVariantId().hashCode();
-        }
+    public static ShipModifications generateRandom(ShipVariantAPI var, String faction) {
+        ShipModifications mods = new ShipModifications();
 
-        ShipModifications mods = new ShipModifications(seed);
-
-        mods.generate(seed, var, faction);
+        mods.generate(var, faction);
 
         return mods;
     }
@@ -81,7 +80,7 @@ public class ShipModFactory {
 
         String faction = getFaction(fm);
 
-        long seed = fm.getId().hashCode();
+        long seed = fm.getFleetData().getFleet().getId().hashCode();
 
         //notes: ziggurat is one-of-a-kind in that it is completely regenerated in a special dialog after its battle.
         //to make sure it still generates the same upgrades, we use its hull ID as seed.
@@ -90,7 +89,7 @@ public class ShipModFactory {
             seed = fm.getHullId().hashCode() + ETModPlugin.getSectorSeedString().hashCode();
         }
 
-        mods.generate(fm, seed, faction);
+        mods.generate(fm, faction);
 
         if (CampaignEventListener.isAppliedData()) {
             mods.save(fm);
@@ -99,39 +98,55 @@ public class ShipModFactory {
         return mods;
     }
 
-    public static float generateBandwidth(FleetMemberAPI fm) {
-
-        if (ETModSettings.getBoolean(ETModSettings.RANDOM_BANDWIDTH)) {
-            log.info(String.format("Generating bandwidth for fm ID [%s]", fm.getId()));
-            long seed = fm.getId().hashCode();
-
-            //ziggurat generates new fleet member ID when recovered.
-            if (fm.getHullId().contains("ziggurat")) {
-                String sectorSeed = Global.getSector().getSeedString();
-                seed = fm.getHullId().hashCode() + ETModPlugin.getSectorSeedString().hashCode();
-            }
-
-            if (fm.getFleetData() != null) {
-                String faction = getFaction(fm);
-                String manufacturer = fm.getHullSpec().getManufacturer();
-
-                Map<String, Float> factionBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "factionBandwidthMult");
-                Map<String, Float> manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult");
-
-                float mult = 1.0f;
-                if (factionBandwidthMult != null && factionBandwidthMult.containsKey(faction)) {
-                    mult = factionBandwidthMult.get(faction);
-                }
-
-                if (manufacturerBandwidthMult != null && manufacturerBandwidthMult.containsKey(manufacturer)) {
-                    mult = manufacturerBandwidthMult.get(manufacturer);
-                }
-
-                return Bandwidth.generate(seed, mult).getRandomInRange();
-            }
-
-            return Bandwidth.generate(seed).getRandomInRange();
+    public static float generateBandwidth(FleetMemberAPI fm, String faction) {
+        if (!ETModSettings.getBoolean(ETModSettings.RANDOM_BANDWIDTH)) {
+            return ETModSettings.getFloat(ETModSettings.STARTING_BANDWIDTH);
         }
-        return ETModSettings.getFloat(ETModSettings.STARTING_BANDWIDTH);
+
+        String manufacturer = fm.getHullSpec().getManufacturer();
+
+        Map<String, Float> factionBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "factionBandwidthMult");
+        Map<String, Float> manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult");
+
+        float mult = 1.0f;
+        if (factionBandwidthMult != null && factionBandwidthMult.containsKey(faction)) {
+            mult = factionBandwidthMult.get(faction);
+        }
+
+        if (manufacturerBandwidthMult != null && manufacturerBandwidthMult.containsKey(manufacturer)) {
+            mult = manufacturerBandwidthMult.get(manufacturer);
+        }
+
+        mult += (Utilities.getSModCount(fm));
+
+        return Bandwidth.generate(mult).getRandomInRange();
+    }
+
+    public static float generateBandwidth(FleetMemberAPI fm) {
+        if (!ETModSettings.getBoolean(ETModSettings.RANDOM_BANDWIDTH)) {
+            return ETModSettings.getFloat(ETModSettings.STARTING_BANDWIDTH);
+        }
+
+        log.info(String.format("Generating bandwidth for fm ID [%s]", fm.getId()));
+
+        if (fm.getFleetData() != null) {
+            String faction = getFaction(fm);
+
+            return generateBandwidth(fm, faction);
+        }
+
+        return Bandwidth.generate().getRandomInRange();
+    }
+
+    public static float getRandomNumberInRange(float min, float max) {
+        return random.nextFloat() * (max - min) + min;
+    }
+
+    public static int getRandomNumberInRange(int min, int max) {
+        if (min >= max) {
+            return min == max ? min : random.nextInt(min - max + 1) + max;
+        } else {
+            return random.nextInt(max - min + 1) + min;
+        }
     }
 }

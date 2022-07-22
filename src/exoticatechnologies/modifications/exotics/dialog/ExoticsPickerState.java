@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.dialog.DialogOption;
 import exoticatechnologies.dialog.PaginationOption;
 import exoticatechnologies.dialog.modifications.SystemState;
@@ -20,7 +19,6 @@ import exoticatechnologies.util.Utilities;
 import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

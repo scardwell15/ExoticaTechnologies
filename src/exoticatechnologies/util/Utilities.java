@@ -4,14 +4,14 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
-import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
 
 import java.util.*;
-import java.util.List;
 
 public class Utilities {
 
@@ -30,6 +30,30 @@ public class Utilities {
 
     public static boolean isInside(float arg, float a, float b) {
         return (arg >= a && arg < b);
+    }
+
+    public static int getSModCount(ShipVariantAPI var) {
+        if (var.getSMods() != null) {
+            return var.getSMods().size();
+        }
+        return 0;
+    }
+
+    public static int getSModCount(FleetMemberAPI fm) {
+        if (fm.getVariant() != null) {
+            return getSModCount(fm.getVariant());
+        }
+        return 0;
+    }
+
+    public static int getSModCount(CampaignFleetAPI fleet) {
+        int smods = 0;
+        for (FleetMemberAPI fm : fleet.getMembersWithFightersCopy()) {
+            if (fm.isFighterWing()) continue;
+            smods += getSModCount(fm);
+        }
+
+        return smods;
     }
 
     public static String getItemName(String id) {
@@ -246,7 +270,6 @@ public class Utilities {
     }
 
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id, int level) {
-        SpecialItemSpecAPI specialSpec = Global.getSettings().getSpecialItemSpec(Upgrade.ITEM);
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
             if(stack.isSpecialStack() && stack.getPlugin() != null && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
                 UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
@@ -274,8 +297,6 @@ public class Utilities {
     }
 
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id) {
-        SpecialItemSpecAPI specialSpec = Global.getSettings().getSpecialItemSpec(Upgrade.ITEM);
-
         CargoStackAPI winner = null;
         int winningLevel = 0;
 
@@ -307,8 +328,6 @@ public class Utilities {
     }
 
     public static CargoStackAPI getSpecialStack(CargoAPI cargo, String id, String params) {
-        SpecialItemSpecAPI specialSpec = Global.getSettings().getSpecialItemSpec(Upgrade.ITEM);
-
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
             if(stack.isSpecialStack()) {
                 if (stack.getSpecialDataIfSpecial().getId().equals(id) && stack.getSpecialDataIfSpecial().getData().equals(params)) {

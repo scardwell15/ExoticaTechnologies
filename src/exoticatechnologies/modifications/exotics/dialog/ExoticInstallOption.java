@@ -11,7 +11,6 @@ import exoticatechnologies.dialog.DialogOption;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.ShipModifications;
-import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.AccessLevel;

@@ -24,6 +24,7 @@ import java.util.Map;
 @Log4j
 public class ETScanFleet extends BaseCommandPlugin {
     private static float NOTABLE_BANDWIDTH = 180f;
+    private static boolean USE_NEW_PANEL = true;
 
     @Override
     public boolean doesCommandAddOptions() {
@@ -63,6 +64,10 @@ public class ETScanFleet extends BaseCommandPlugin {
             log.info(String.format("Found [%s] notable modified ships.", validSelectionList.size()));
         }
 
+        if (USE_NEW_PANEL) {
+            ScanUtils.showNotableShipsPanel(dialog, validSelectionList);
+            return true;
+        }
 
         int rows = validSelectionList.size() > 8 ? (int) Math.ceil(validSelectionList.size() / 8f) : 1;
         int cols = Math.min(validSelectionList.size(), 10);

@@ -5,10 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
-import com.fs.starfarer.api.ui.Alignment;
-import com.fs.starfarer.api.ui.BaseTooltipCreator;
-import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.modifications.ShipModFactory;
@@ -19,11 +16,9 @@ import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.ui.TabbedCustomUIPanelPlugin;
 import exoticatechnologies.util.StringUtils;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.log4j.Log4j;
 import org.lwjgl.opengl.Display;
 
@@ -259,7 +254,10 @@ public class ScanUtils {
 
             ShipModifications mods = ShipModFactory.getForFleetMember(member);
 
-            CustomPanelAPI rowHolder = outer.createCustomPanel(panelWidth, NOTABLE_SHIPS_ROW_HEIGHT, null);
+            ScanCustomUIPanelPlugin scanMemberPanelPlugin = new ScanCustomUIPanelPlugin(mods, member.getHullSpec().getHullSize());
+            CustomPanelAPI rowHolder = outer.createCustomPanel(panelWidth, NOTABLE_SHIPS_ROW_HEIGHT, scanMemberPanelPlugin);
+            scanMemberPanelPlugin.setMyPanel(rowHolder);
+            scanMemberPanelPlugin.setMyTooltip(tooltip);
 
             // Ship image with tooltip of the ship class
             TooltipMakerAPI shipImg = rowHolder.createUIElement(NOTABLE_SHIPS_ROW_HEIGHT, NOTABLE_SHIPS_ROW_HEIGHT, false);
@@ -277,25 +275,6 @@ public class ScanUtils {
                     .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getBandwidthColor(bandwidth))
                     .addToTooltip(shipText, pad);
             rowHolder.addUIElement(shipText).rightOfTop(shipImg, pad);
-
-            // Draw icons for ship upgrades/exotics, with tooltips
-            if (mods.hasUpgrades() || mods.hasExotics()) {
-                // FIXME: no handling of the case where the ship has too many upgrades to fit on one row, if such a ship exists
-                TooltipMakerAPI lastImg = null;
-
-                for (int i = 0; i < UpgradesHandler.UPGRADES_LIST.size(); i++) {
-                    Upgrade upgrade = UpgradesHandler.UPGRADES_LIST.get(i);
-                    if (!mods.hasUpgrade(upgrade)) continue;
-
-                    TooltipMakerAPI upgIcon = rowHolder.createUIElement(64, 64, false);
-                    upgIcon.addImage(upgrade.getIcon(), 64, 0);
-                    upgIcon.addTooltipToPrevious(new UpgradeTooltip(upgrade, tooltip, mods, member.getHullSpec().getHullSize()),
-                            TooltipMakerAPI.TooltipLocation.BELOW);
-                    rowHolder.addUIElement(upgIcon).rightOfTop(lastImg == null ? shipText : lastImg, pad);
-
-                    lastImg = upgIcon;
-                }
-            }
 
             // done, add row to TooltipMakerAPI
             tooltip.addCustom(rowHolder, opad);
@@ -367,6 +346,120 @@ public class ScanUtils {
                     .format("max", upgrade.getMaxLevel(hullSize))
                     .addToTooltip(tooltip);
             tooltip.addPara(upgrade.getDescription(), 0f);
+        }
+    }
+
+    protected static class ScanCustomUIPanelPlugin extends TabbedCustomUIPanelPlugin {
+        private static int UPGRADES_INDEX = 0;
+        private static int EXOTICS_INDEX = 1;
+
+        private float SWITCHER_BUTTON_WIDTH = NOTABLE_SHIPS_ROW_HEIGHT + 4;
+        private float UPGRADES_TEXT_WIDTH = 64;
+        private float EXOTICS_TEXT_WIDTH = 45;
+
+        protected final ShipAPI.HullSize hullSize;
+        protected final ShipModifications mods;
+
+        public ScanCustomUIPanelPlugin(ShipModifications mods, ShipAPI.HullSize hullSize) {
+            this.mods = mods;
+            this.hullSize = hullSize;
+
+            if (this.mods.hasExotics() && !this.mods.hasUpgrades()) {
+                currentPanelIndex = EXOTICS_INDEX;
+            }
+        }
+
+        @Override
+        protected int getMaxPanelIndex() {
+            return EXOTICS_INDEX;
+        }
+
+        protected boolean shouldMakeSwitcher() {
+            return this.mods.hasUpgrades() || this.mods.hasExotics();
+        }
+
+        protected boolean canSwitch() {
+            if (this.mods.hasUpgrades() && !this.mods.hasExotics()) {
+                return false;
+            } else if (this.mods.hasExotics() && !this.mods.hasUpgrades()) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected String getSwitcherLabelText(int newPanelIndex) {
+            if (newPanelIndex == UPGRADES_INDEX) {
+                return StringUtils.getString("FleetScanner", "UpgradeHeader");
+            } else if (newPanelIndex == EXOTICS_INDEX) {
+                return StringUtils.getString("FleetScanner", "ExoticHeader");
+            }
+            throw new RuntimeException("Unexpected panel index");
+        }
+
+        @Override
+        protected float getSwitcherLabelWidth(int newPanelIndex) {
+            if (newPanelIndex == UPGRADES_INDEX) {
+                return UPGRADES_TEXT_WIDTH;
+            } else if (newPanelIndex == EXOTICS_INDEX) {
+                return EXOTICS_TEXT_WIDTH;
+            }
+            throw new RuntimeException("Unexpected panel index");
+        }
+
+        @Override
+        protected CustomPanelAPI createNewPanel(int newPanelIndex, float panelWidth, float panelHeight) {
+            if (newPanelIndex == UPGRADES_INDEX) {
+                return createUpgradesPanel(panelWidth, panelHeight);
+            } else if (newPanelIndex == EXOTICS_INDEX) {
+                return createExoticsPanel(panelWidth, panelHeight);
+            }
+            throw new RuntimeException("Unexpected panel index");
+        }
+
+        protected CustomPanelAPI createExoticsPanel(float panelWidth, float panelHeight) {
+            TooltipMakerAPI lastImg = null;
+            CustomPanelAPI iconPanel = myPanel.createCustomPanel(panelWidth, panelHeight, null);
+            for (Exotic exotic : mods.getExoticSet()) {
+                TooltipMakerAPI exoIcon = iconPanel.createUIElement(64, 64, false);
+                exoIcon.addImage(exotic.getIcon(), 64, 0);
+                exoIcon.addTooltipToPrevious(new ExoticTooltip(exotic, myTooltip),
+                        TooltipMakerAPI.TooltipLocation.BELOW);
+
+                if (lastImg == null) {
+                    iconPanel.addUIElement(exoIcon).inTL(0, 0);
+                } else {
+                    iconPanel.addUIElement(exoIcon).rightOfTop(lastImg, 3);
+                }
+
+                lastImg = exoIcon;
+            }
+
+            return iconPanel;
+        }
+
+        protected CustomPanelAPI createUpgradesPanel(float panelWidth, float panelHeight) {
+            TooltipMakerAPI lastImg = null;
+            CustomPanelAPI iconPanel = myPanel.createCustomPanel(panelWidth, panelHeight, null);
+            for (Upgrade upgrade : mods.getUpgradeMap().keySet()) {
+                TooltipMakerAPI upgIcon = iconPanel.createUIElement(64, 64, false);
+                upgIcon.addImage(upgrade.getIcon(), 64, 0);
+                UIComponentAPI imgComponent = upgIcon.getPrev();
+                upgIcon.addTooltipToPrevious(new UpgradeTooltip(upgrade, myTooltip, mods, hullSize),
+                        TooltipMakerAPI.TooltipLocation.BELOW);
+
+                upgIcon.addPara("LVL" + mods.getUpgrade(upgrade), 0).getPosition().rightOfTop(imgComponent, -32);
+
+                if (lastImg == null) {
+                    iconPanel.addUIElement(upgIcon).inTL(0, 0);
+                } else {
+                    iconPanel.addUIElement(upgIcon).rightOfTop(lastImg, 3);
+                }
+
+                lastImg = upgIcon;
+            }
+
+            return iconPanel;
         }
     }
 }

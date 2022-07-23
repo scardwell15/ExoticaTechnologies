@@ -40,6 +40,9 @@
 		"ESCampaignPlugin":"exoticatechnologies.campaign.listeners.ETCampaignPlugin"
 	},
 	"graphics": {
+		"ui": {
+			"shimmer": "graphics/fx/shimmer.png"
+		},
 		"exotics": {
 			"PlasmaFluxCatalyst": "graphics/icons/exotics/plasmafluxcatalyst.png",
 			"SpooledFeeders": "graphics/icons/exotics/spooledfeeders.png",

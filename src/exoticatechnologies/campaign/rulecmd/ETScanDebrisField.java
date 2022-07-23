@@ -40,11 +40,7 @@ public class ETScanDebrisField extends BaseCommandPlugin {
                 && interactionTarget.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SPECIAL_DATA) instanceof ShipRecoverySpecial.ShipRecoverySpecialData) {
             ShipRecoverySpecial.ShipRecoverySpecialData data = (ShipRecoverySpecial.ShipRecoverySpecialData) interactionTarget.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SPECIAL_DATA);
 
-            if(data.ships.size() > 1) {
-                scanMultipleShips(dialog, data.ships);
-            } else {
-                scanPerShipData(0, data.ships.get(0), dialog);
-            }
+            scanMultipleShips(dialog, data.ships);
         }
         return true;
     }
@@ -59,37 +55,6 @@ public class ETScanDebrisField extends BaseCommandPlugin {
             validSelectionList.add(fm);
         }
 
-        int rows = validSelectionList.size() > 8 ? (int) Math.ceil(validSelectionList.size() / 8f) : 1;
-        int cols = Math.min(validSelectionList.size(), 10);
-        cols = Math.max(cols, 4);
-
-        dialog.showFleetMemberPickerDialog(
-                StringUtils.getString("ShipListDialog", "SelectShip"),
-                StringUtils.getString("ShipListDialog", "Confirm"),
-                StringUtils.getString("ShipListDialog", "Cancel"),
-                rows,
-                cols, 88f, true, false, validSelectionList, new FleetMemberPickerListener() {
-                    @Override
-                    public void pickedFleetMembers(List<FleetMemberAPI> members) {
-                        if (members != null && !members.isEmpty()) {
-                            int index = validSelectionList.indexOf(members.get(0));
-                            scanPerShipData(index, shipsData.get(index), dialog);
-                        }
-                    }
-
-                    @Override
-                    public void cancelledFleetMemberPicking() {
-                    }
-                });
-    }
-
-    private static void scanPerShipData(int index, ShipRecoverySpecial.PerShipData shipData, InteractionDialogAPI dialog) {
-        String entityId = ScanUtils.getPerShipDataId(shipData, index);
-
-        ScanUtils.addModificationsToTextPanel(dialog.getTextPanel(),
-                shipData.shipName != null ? shipData.shipName : "???",
-                ETModPlugin.getData(entityId),
-                shipData.getVariant().getHullSize(),
-                null);
+        ScanUtils.showNotableShipsPanel(dialog, validSelectionList);
     }
 }

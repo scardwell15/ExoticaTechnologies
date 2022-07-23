@@ -24,7 +24,6 @@ import java.util.Map;
 @Log4j
 public class ETScanFleet extends BaseCommandPlugin {
     private static float NOTABLE_BANDWIDTH = 180f;
-    private static boolean USE_NEW_PANEL = true;
 
     @Override
     public boolean doesCommandAddOptions() {
@@ -64,45 +63,7 @@ public class ETScanFleet extends BaseCommandPlugin {
             log.info(String.format("Found [%s] notable modified ships.", validSelectionList.size()));
         }
 
-        if (USE_NEW_PANEL) {
-            ScanUtils.showNotableShipsPanel(dialog, validSelectionList);
-            return true;
-        }
-
-        int rows = validSelectionList.size() > 8 ? (int) Math.ceil(validSelectionList.size() / 8f) : 1;
-        int cols = Math.min(validSelectionList.size(), 10);
-        cols = Math.max(cols, 4);
-
-        dialog.showFleetMemberPickerDialog(
-                StringUtils.getString("ShipListDialog", "SelectShip"),
-                StringUtils.getString("ShipListDialog", "Confirm"),
-                StringUtils.getString("ShipListDialog", "Cancel"),
-                rows,
-                cols, 88f, true, false, validSelectionList, new FleetMemberPickerListener() {
-                    @Override
-                    public void pickedFleetMembers(List<FleetMemberAPI> members) {
-                        if (members != null && !members.isEmpty()) {
-                            finishPicking(members.get(0), dialog);
-                        } else {
-                            finishPicking(null, dialog);
-                        }
-                    }
-
-                    @Override
-                    public void cancelledFleetMemberPicking() {
-                        finishPicking(null, dialog);
-                    }
-                });
-
+        ScanUtils.showNotableShipsPanel(dialog, validSelectionList);
         return true;
-    }
-
-    private static void finishPicking(FleetMemberAPI fm, InteractionDialogAPI dialog) {
-        if (fm != null) {
-            ShipModifications mods = ShipModFactory.getForFleetMember(fm);
-            TextPanelAPI textPanel = dialog.getTextPanel();
-
-            ScanUtils.addModificationsToTextPanel(textPanel, fm.getShipName(), mods, fm.getVariant().getHullSize(), fm.getFleetData().getFleet().getFaction().getColor());
-        }
     }
 }

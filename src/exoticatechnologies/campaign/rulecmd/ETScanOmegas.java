@@ -29,16 +29,17 @@ public class ETScanOmegas extends BaseCommandPlugin {
     public boolean execute(final String ruleId, final InteractionDialogAPI dialog, final List<Misc.Token> params, final Map<String, MemoryAPI> memoryMap) {
         if (dialog == null) return false;
 
-        List<FleetMemberAPI> validSelectionList = new ArrayList<>();
 
         if (dialog.getInteractionTarget() != null) {
-            CampaignFleetAPI defenderFleet = (CampaignFleetAPI) dialog.getInteractionTarget();
+            List<FleetMemberAPI> validSelectionList = new ArrayList<>();
 
+            CampaignFleetAPI defenderFleet = (CampaignFleetAPI) dialog.getInteractionTarget();
             for (FleetMemberAPI fm : defenderFleet.getMembersWithFightersCopy()) {
                 if (fm.isFighterWing()) continue;
-
-                scanFleetMember(fm, dialog);
+                validSelectionList.add(fm);
             }
+
+            ScanUtils.showNotableShipsPanel(dialog, validSelectionList);
         }
         return true;
     }

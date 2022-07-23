@@ -37,12 +37,14 @@
 		"BandwidthUsedWithUpgrade": "*${usedBandwidth}* used (=+${upgradeBandwidth}= for upgrade)"
 	},
 	"FleetScanner": {
+		"ShipBandwidthShort": "Bandwidth: *${bandwidth}*",
 		"ShipHasBandwidth": "*${name}* has an outstanding bandwidth of *${bandwidth}*. It doesn't have any modifications that use it.",
 		"ShipHasUpgrades": "*${name}* has a usable bandwidth of *${bandwidth}*. It also has other modifications, which are listed below. You can hover over one of them to see a description of the modification.",
 		"UpgradeNameWithLevelAndMax": "*${upgradeName}* (${level}/${max})",
 		"DebrisFieldHasNotableMods": "Upon closer inspection, the ships in the debris field appear to have signs of *Exotica technologies*.",
 		"ExoticHeader": "Exotics",
-		"UpgradeHeader": "Upgrades"
+		"UpgradeHeader": "Upgrades",
+		"NotableShipsHeader": "Notable ships",
 	},
 	"MainMenu": {
 		"UpgradeShips": "Consider upgrading a ship.",

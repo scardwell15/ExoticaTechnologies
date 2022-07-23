@@ -1,16 +1,17 @@
 package exoticatechnologies.campaign;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.TextPanelAPI;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.BaseTooltipCreator;
+import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModPlugin;
+import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
@@ -24,6 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.lwjgl.opengl.Display;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ScanUtils {
     private static float NOTABLE_BANDWIDTH = 180f;
+    private static float NOTABLE_SHIPS_ROW_HEIGHT = 64;
 
     public static Long getPerShipDataSeed(ShipRecoverySpecial.PerShipData shipData, int i) {
         ShipVariantAPI var = shipData.getVariant();
@@ -196,6 +199,132 @@ public class ScanUtils {
                 augs++;
             }
             textPanel.addPara("");
+        }
+    }
+
+    public static void showNotableShipsPanel(InteractionDialogAPI dialog, List<FleetMemberAPI> members) {
+        float screenWidth = Display.getWidth();
+        float screenHeight = Display.getHeight();
+
+        float allRowsHeight = (NOTABLE_SHIPS_ROW_HEIGHT + 10) * members.size() + 3;
+
+        float panelHeight = Math.min(allRowsHeight + 20 + 16, screenHeight * 0.65f);
+        float panelWidth = screenWidth * 0.65f; // maybe could scale it to the largest number of icons we'll have to show?
+
+        NotableShipsDialogDelegate delegate = new NotableShipsDialogDelegate();
+        delegate.init(members, panelWidth, panelHeight, allRowsHeight);
+        dialog.showCustomDialog(panelWidth, panelHeight, delegate);
+    }
+
+    /**
+     * Handles drawing of the custom dialog that shows notable ships' info.
+     * @author Histidine
+     */
+    protected static class NotableShipsDialogDelegate implements CustomDialogDelegate {
+
+        protected float panelWidth;
+        protected float panelHeight;
+        protected float allRowsHeight;
+
+        protected List<FleetMemberAPI> members;
+
+        public void init(List<FleetMemberAPI> members, float panelWidth, float panelHeight, float allRowsHeight) {
+            this.members = members;
+            this.panelWidth = panelWidth;
+            this.panelHeight = panelHeight;
+            this.allRowsHeight = allRowsHeight;
+        }
+
+        @Override
+        public void createCustomDialog(CustomPanelAPI panel) {
+            TooltipMakerAPI tt = panel.createUIElement(panelWidth, panelHeight - 16, true);
+            String headerStr = StringUtils.getTranslation("FleetScanner", "NotableShipsHeader").toString();
+            tt.addSectionHeading(headerStr, Alignment.MID, 0);
+
+            for (FleetMemberAPI member : members) {
+                addRow(panel, tt, member);
+            }
+
+            panel.addUIElement(tt).inTL(0, 0);
+        }
+
+        /**
+         * Adds a row for the specified fleet member's info.
+         */
+        public void addRow(CustomPanelAPI outer, TooltipMakerAPI tooltip, FleetMemberAPI member) {
+            float pad = 3;
+            float opad = 10;
+            float textWidth = 240;
+            Color f = member.getCaptain().getFaction().getBaseUIColor();
+
+            ShipModifications mods = ShipModFactory.getForFleetMember(member);
+
+            CustomPanelAPI rowHolder = outer.createCustomPanel(panelWidth, NOTABLE_SHIPS_ROW_HEIGHT, null);
+
+            // Ship image with tooltip of the ship class
+            TooltipMakerAPI shipImg = rowHolder.createUIElement(NOTABLE_SHIPS_ROW_HEIGHT, NOTABLE_SHIPS_ROW_HEIGHT, false);
+            List<FleetMemberAPI> memberAsList = new ArrayList<>();
+            memberAsList.add(member);
+            shipImg.addShipList(1, 1, NOTABLE_SHIPS_ROW_HEIGHT, Misc.getBasePlayerColor(), memberAsList, 0);
+            rowHolder.addUIElement(shipImg).inTL(0, 0);
+
+            // Ship name, class, bandwidth
+            TooltipMakerAPI shipText = rowHolder.createUIElement(textWidth, NOTABLE_SHIPS_ROW_HEIGHT, false);
+            shipText.addPara(member.getShipName(), f, 0);
+            shipText.addPara(member.getHullSpec().getNameWithDesignationWithDashClass(), 0);
+            float bandwidth = mods.getBandwidth();
+            StringUtils.getTranslation("FleetScanner", "ShipBandwidthShort")
+                    .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getBandwidthColor(bandwidth))
+                    .addToTooltip(shipText, pad);
+            rowHolder.addUIElement(shipText).rightOfTop(shipImg, pad);
+
+            // Draw icons for ship upgrades/exotics, with tooltips
+            if (mods.hasUpgrades() || mods.hasExotics()) {
+                // FIXME: no handling of the case where the ship has too many upgrades to fit on one row, if such a ship exists
+                TooltipMakerAPI lastImg = null;
+
+                for (int i = 0; i < UpgradesHandler.UPGRADES_LIST.size(); i++) {
+                    Upgrade upgrade = UpgradesHandler.UPGRADES_LIST.get(i);
+                    if (!mods.hasUpgrade(upgrade)) continue;
+
+                    TooltipMakerAPI upgIcon = rowHolder.createUIElement(64, 64, false);
+                    upgIcon.addImage(upgrade.getIcon(), 64, 0);
+                    upgIcon.addTooltipToPrevious(new UpgradeTooltip(upgrade, tooltip, mods, member.getHullSpec().getHullSize()),
+                            TooltipMakerAPI.TooltipLocation.BELOW);
+                    rowHolder.addUIElement(upgIcon).rightOfTop(lastImg == null ? shipText : lastImg, pad);
+
+                    lastImg = upgIcon;
+                }
+            }
+
+            // done, add row to TooltipMakerAPI
+            tooltip.addCustom(rowHolder, opad);
+        };
+
+        @Override
+        public boolean hasCancelButton() {
+            return false;
+        }
+
+        @Override
+        public String getConfirmText() {
+            return null;
+        }
+
+        @Override
+        public String getCancelText() {
+            return null;
+        }
+
+        @Override
+        public void customDialogConfirm() {}
+
+        @Override
+        public void customDialogCancel() {}
+
+        @Override
+        public CustomUIPanelPlugin getCustomPanelPlugin() {
+            return null;    //new NotableShipsPanelPlugin();
         }
     }
 

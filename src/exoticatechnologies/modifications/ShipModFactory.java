@@ -78,6 +78,10 @@ public class ShipModFactory {
 
         ShipModifications mods = new ShipModifications(fm);
 
+        if (fm.getFleetData() == null || fm.getFleetData().getFleet() == null) {
+            return mods;
+        }
+
         String faction = getFaction(fm);
 
         long seed = fm.getFleetData().getFleet().getId().hashCode();

@@ -50,7 +50,7 @@ public class SalvageListener implements ShowLootListener {
                         int quantity = upgLvlQty.getValue();
 
                         for (int i = 0; i < quantity; i++) {
-                            if (upgrade.getSpawnChance() > 0 && random.nextFloat() <= upgrade.getSpawnChance() * 4f) {
+                            if (upgrade.getSpawnChance() > 0 && random.nextFloat() <= upgrade.getSpawnChance() * 1.5f) {
                                 //generate upgrade and add to loot
                                 loot.addSpecial(upgrade.getNewSpecialItemData(level), 1);
                             }
@@ -63,7 +63,7 @@ public class SalvageListener implements ShowLootListener {
                     int quantity = potExotic.getValue();
 
                     for (int i = 0; i < quantity; i++) {
-                        if (exotic.getSpawnChance(4f) > 0 && random.nextFloat() <= exotic.getSpawnChance(4f)) {
+                        if (exotic.getSpawnChance(1.5f) > 0 && random.nextFloat() <= exotic.getSpawnChance(1.5f)) {
                             //generate exotic and add to loot
                             loot.addSpecial(exotic.getNewSpecialItemData(), 1);
                         }

@@ -88,8 +88,6 @@ dependencies {
         compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
         compileOnly(fileTree("$starsectorModDirectory/MagicLib/jars") { include("*.jar") })
         compileOnly(fileTree("$starsectorModDirectory/Console Commands/jars") { include("*.jar") })
-        compileOnly(fileTree("$starsectorModDirectory/DroneLib/jars") { include("*.jar") })
-        compileOnly(fileTree("$starsectorModDirectory/Apex Design Collective/jars") { include("*.jar") })
         compileOnly(fileTree("$starsectorModDirectory/Nexerelin/jars") { include("*.jar") })
     } else {
         println("$starsectorModDirectory did not exist, not adding mod folder dependencies.")

@@ -23,9 +23,6 @@ public class ShipModifications {
     private static float CHANCE_OF_UPGRADES = 0.4f;
 
     ShipModifications() {
-        if (bandwidth == -1) {
-            this.bandwidth = 1f;
-        }
 
         if (upgrades == null) {
             this.upgrades = new ETUpgrades();
@@ -37,10 +34,6 @@ public class ShipModifications {
     }
 
     ShipModifications(FleetMemberAPI fm) {
-        if (bandwidth == -1) {
-            this.bandwidth = 1f;
-        }
-
         if (upgrades == null) {
             this.upgrades = new ETUpgrades();
         }
@@ -74,7 +67,10 @@ public class ShipModifications {
      * @param faction
      */
     public void generate(ShipVariantAPI var, String faction) {
-        this.bandwidth = Bandwidth.generate().getRandomInRange();
+        if (this.bandwidth == -1) {
+            this.bandwidth = Bandwidth.generate().getRandomInRange();
+        }
+
         this.exotics = ExoticsGenerator.generate(var, faction, this.getBandwidth());
         this.upgrades = UpgradesGenerator.generate(var, faction, this.getBandwidth());
     }
@@ -85,7 +81,14 @@ public class ShipModifications {
      * @param faction
      */
     public void generate(FleetMemberAPI fm, String faction) {
-        this.bandwidth = ShipModFactory.generateBandwidth(fm, faction);
+        if (this.bandwidth == -1) {
+            this.bandwidth = ShipModFactory.generateBandwidth(fm, faction);
+        }
+
+        if (fm.getFleetData() != null && fm.getFleetData().getFleet().isPlayerFleet()) {
+            return;
+        }
+
         this.exotics = ExoticsGenerator.generate(fm, faction, this.getBandwidth(fm));
         this.upgrades = UpgradesGenerator.generate(fm, faction, this.getBandwidthWithExotics(fm));
     }

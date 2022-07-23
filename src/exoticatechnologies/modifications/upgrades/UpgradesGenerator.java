@@ -69,11 +69,15 @@ public class UpgradesGenerator {
                     }
                 }
 
-                if (random.nextFloat() < (upgrade.getSpawnChance() * (1 + 0.2f * smodCount))) {
-                    upgrades.addUpgrades(upgrade, 1);
-                }
+                if (upgrade != null) {
+                    if (random.nextFloat() < (upgrade.getSpawnChance() * (1 + 0.2f * smodCount))) {
+                        upgrades.addUpgrades(upgrade, 1);
+                    }
 
-                bandwidth = bandwidth - upgrade.getBandwidthUsage();
+                    bandwidth = bandwidth - upgrade.getBandwidthUsage();
+                } else {
+                    break;
+                }
             }
         }
 
@@ -132,11 +136,15 @@ public class UpgradesGenerator {
                     }
                 }
 
-                if (random.nextFloat() < (upgrade.getSpawnChance() * (1 + 0.2f * smodCount))) {
-                    upgrades.addUpgrades(upgrade, 1);
-                }
+                if (upgrade != null) {
+                    if (random.nextFloat() < (upgrade.getSpawnChance() * (1 + 0.2f * smodCount))) {
+                        upgrades.addUpgrades(upgrade, 1);
+                    }
 
-                bandwidth = bandwidth - upgrade.getBandwidthUsage();
+                    bandwidth = bandwidth - upgrade.getBandwidthUsage();
+                } else {
+                    break;
+                }
             }
         }
 

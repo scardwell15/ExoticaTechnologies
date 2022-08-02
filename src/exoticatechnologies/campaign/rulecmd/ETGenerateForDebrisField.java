@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
@@ -54,10 +56,29 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
 
                     for (int i = 0; i < data.ships.size(); i++) {
                         ShipRecoverySpecial.PerShipData shipData = data.ships.get(i);
+
+                        if (shipData.getVariant() == null) continue;
+
+                        FleetMemberAPI fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
+                        if (shipData.fleetMemberId == null) {
+                            shipData.fleetMemberId = fm.getId();
+
+                            if (ETModPlugin.hasData(fm.getId())) {
+                                notableModsGenerated = true;
+                                break;
+                            }
+                        } else {
+                            fm.setId(shipData.fleetMemberId);
+                        }
+
                         Long seed = ScanUtils.getPerShipDataSeed(shipData, i);
                         if (seed == null) continue;
 
+
+                        log.info("debris field: generating for fmId " + shipData.fleetMemberId);
+
                         ShipVariantAPI var = shipData.getVariant();
+
                         //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                         //it will never find one.
 

@@ -40,8 +40,17 @@ public class ETHasUpgrades extends BaseCommandPlugin {
             }
 
             if (entity.getCustomPlugin() instanceof DerelictShipEntityPlugin) {
-                if (ETModPlugin.hasData(entity.getId())) {
-                    return ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entity.getId()));
+                DerelictShipEntityPlugin.DerelictShipData data = ((DerelictShipEntityPlugin) entity.getCustomPlugin()).getData();
+                ShipRecoverySpecial.PerShipData shipData = data.ship;
+
+                if (shipData.fleetMemberId != null) {
+                    if (ETModPlugin.hasData(shipData.fleetMemberId)) {
+                        return ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(shipData.fleetMemberId));
+                    }
+                } else {
+                    if (ETModPlugin.hasData(entity.getId())) {
+                        return ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entity.getId()));
+                    }
                 }
             }
 
@@ -55,11 +64,18 @@ public class ETHasUpgrades extends BaseCommandPlugin {
                             && !data.ships.isEmpty()) {
                         int i = 0;
                         for (ShipRecoverySpecial.PerShipData shipData : data.ships) {
-                            String entityId = entity.getId() + String.valueOf(++i);
-                            log.info(String.format("searching for entity ID [%s]", entityId));
-                            if (ETModPlugin.hasData(entityId)
-                                    && ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entityId))) {
-                                return true;
+                            if (shipData.fleetMemberId != null) {
+                                log.info(String.format("debris field: searching for fleet member ID [%s]", shipData.fleetMemberId));
+                                if (ETModPlugin.hasData(shipData.fleetMemberId)) {
+                                    return ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(shipData.fleetMemberId));
+                                }
+                            } else {
+                                String entityId = entity.getId() + String.valueOf(++i);
+                                log.info(String.format("debris field: searching for entity ID [%s]", entityId));
+                                if (ETModPlugin.hasData(entityId)
+                                        && ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entityId))) {
+                                    return true;
+                                }
                             }
                         }
                     }

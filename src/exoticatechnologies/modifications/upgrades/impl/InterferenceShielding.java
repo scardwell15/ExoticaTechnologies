@@ -7,15 +7,16 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.StatUtils;
+import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 
 import java.awt.*;
 
 public class InterferenceShielding extends Upgrade {
     @Getter protected final float bandwidthUsage = 10f;
-    private static float SENSOR_PROFILE_MULT = -50f;
-    private static float SUPPLY_CONSUMPTION_MULT = 20f;
-    private static Color COLOR = new Color(79, 207, 231);
+    private static final float SENSOR_PROFILE_MULT = -50f;
+    private static final float SUPPLY_CONSUMPTION_MULT = 20f;
+    private static final Color COLOR = new Color(93, 59, 210);
 
     @Override
     public Color getColor() {
@@ -29,6 +30,25 @@ public class InterferenceShielding extends Upgrade {
         if (level >= 3) {
             StatUtils.setStatPercent(stats.getSuppliesPerMonth(), this.getBuffId(), level, SUPPLY_CONSUMPTION_MULT, maxLevel);
         }
+    }
+
+    @Override
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "sensorProfile")
+                .formatWithOneDecimalAndModifier("percent", SENSOR_PROFILE_MULT / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", SENSOR_PROFILE_MULT)
+                .addToTooltip(tooltip);
+
+
+        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+                .format("level", 3)
+                .addToTooltip(tooltip);
+
+        //after level 3
+        StringUtils.getTranslation(this.getKey(), "supplyConsumption")
+                .formatWithOneDecimalAndModifier("percent", SUPPLY_CONSUMPTION_MULT / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", SUPPLY_CONSUMPTION_MULT)
+                .addToTooltip(tooltip);
     }
 
     @Override

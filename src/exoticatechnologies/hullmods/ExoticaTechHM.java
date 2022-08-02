@@ -10,6 +10,7 @@ import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.exotics.Exotic;
@@ -25,14 +26,13 @@ import lombok.extern.log4j.Log4j;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 @Log4j
 public class ExoticaTechHM extends BaseHullMod {
-    private static Color hullmodColor = new Color(94, 206, 226);
-    private static Color tooltipColor = Misc.getTextColor();
+    private static final Color hullmodColor = new Color(94, 206, 226);
+    private static final Color tooltipColor = Misc.getTextColor();
     public static Color infoColor = Misc.getPositiveHighlightColor();
 
     public static void addToFleetMember(FleetMemberAPI fm) {
@@ -58,15 +58,11 @@ public class ExoticaTechHM extends BaseHullMod {
 
             shipVariant.addPermaMod("exoticatech");
 
-            List<String> slots = shipVariant.getModuleSlots();
-
-            Iterator<String> moduleIterator = shipVariant.getStationModules().keySet().iterator();
-            while(moduleIterator.hasNext()) {
-                String moduleVariantId = moduleIterator.next();
+            for (String moduleVariantId : shipVariant.getStationModules().keySet()) {
                 ShipVariantAPI moduleVariant = shipVariant.getModuleVariant(moduleVariantId);
 
                 if (moduleVariant != null) {
-                    if(moduleVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
+                    if (moduleVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
                         moduleVariant = moduleVariant.clone();
                         moduleVariant.setOriginalVariant(null);
                         moduleVariant.setSource(VariantSource.REFIT);
@@ -130,6 +126,10 @@ public class ExoticaTechHM extends BaseHullMod {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
+        if (Global.getCombatEngine().isPaused()) {
+            return;
+        }
+
         FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
         if(fm == null) return;
 
@@ -252,6 +252,7 @@ public class ExoticaTechHM extends BaseHullMod {
             tooltip = customPanelAPI.createUIElement(width, 500f, true);
         }
 
+        UIComponentAPI lastLabel = null;
         boolean addedExoticSection = false;
         try {
             for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
@@ -260,8 +261,14 @@ public class ExoticaTechHM extends BaseHullMod {
                 if (!addedExoticSection) {
                     addedExoticSection = true;
                     tooltip.addSectionHeading(StringUtils.getString("FleetScanner", "ExoticHeader"), Alignment.MID, 6);
+                    lastLabel = tooltip.getPrev();
                 }
-                exotic.modifyToolTip(tooltip, fm, mods, exoticsExpand);
+
+                tooltip.addTitle(exotic.getName(), exotic.getMainColor()).getPosition().belowLeft(lastLabel, 3);
+                UIComponentAPI title = tooltip.getPrev();
+                exotic.modifyToolTip(tooltip, title, fm, mods, exoticsExpand);
+
+                lastLabel = tooltip.getPrev();
                 tooltip.setParaFontDefault();
                 tooltip.setParaFontColor(tooltipColor);
             }
@@ -308,8 +315,8 @@ public class ExoticaTechHM extends BaseHullMod {
         List<String> slots = v.getModuleSlots();
         if (slots == null || slots.isEmpty()) return;
 
-        for(int i = 0; i < slots.size(); ++i) {
-            ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+        for (String slot : slots) {
+            ShipVariantAPI module = v.getModuleVariant(slot);
             if (module != null) {
                 removeHullModFromVariant(module);
             }

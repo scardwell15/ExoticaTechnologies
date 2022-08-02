@@ -7,15 +7,16 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.StatUtils;
+import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 
 import java.awt.*;
 
 public class TracerRecoilCalculator extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
-    private static float RECOIL_REDUCTION = -20f;
-    private static float PROJ_SPEED = -20f;
-    private static Color COLOR = new Color(213, 129, 60);
+    private static final float RECOIL_REDUCTION = -20f;
+    private static final float PROJ_SPEED = -20f;
+    private static final Color COLOR = new Color(213, 129, 60);
 
     @Override
     public Color getColor() {
@@ -30,6 +31,25 @@ public class TracerRecoilCalculator extends Upgrade {
         if (level >= 3) {
             StatUtils.setStatPercent(stats.getProjectileSpeedMult(), this.getBuffId(), level - 2, PROJ_SPEED, maxLevel - 2);
         }
+    }
+
+
+    @Override
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "recoilWithFinal")
+                .formatWithOneDecimalAndModifier("percent", RECOIL_REDUCTION / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", RECOIL_REDUCTION)
+                .addToTooltip(tooltip);
+
+        //after level 3
+        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+                .format("level", 3)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "projSpeedWithFinal")
+                .formatWithOneDecimalAndModifier("percent", PROJ_SPEED / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", PROJ_SPEED)
+                .addToTooltip(tooltip);
     }
 
     @Override

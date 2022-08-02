@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ETModSettings {
-    public static String RANDOM_BANDWIDTH = "useRandomBandwidth";
-    public static String STARTING_BANDWIDTH = "baseBandwidth";
+    public static final String RANDOM_BANDWIDTH = "useRandomBandwidth";
+    public static final String STARTING_BANDWIDTH = "baseBandwidth";
     public static String MAX_BANDWIDTH = "maxBandwidth";
 
-    public static String SHIPS_KEEP_UPGRADES_ON_DEATH = "shipsKeepUpgradesOnDeath";
+    public static final String SHIPS_KEEP_UPGRADES_ON_DEATH = "shipsKeepUpgradesOnDeath";
     public static String UPGRADE_ALWAYS_SUCCEED = "upgradeAlwaysSucceed";
     public static String UPGRADE_FAILURE_CHANCE = "upgradeFailureMinFactor";
     public static String HULL_COST_BASE_FACTOR = "hullCostBaseFactor";
@@ -81,7 +81,7 @@ public class ETModSettings {
     }
 
     public static Map<ShipAPI.HullSize, Integer> getHullSizeToMaxLevel() {
-        if (HULLSIZE_TO_MAXLEVEL == null) {
+        if (HULLSIZE_TO_MAXLEVEL.isEmpty()) {
             loadModSettings();
         }
 
@@ -89,7 +89,7 @@ public class ETModSettings {
     }
 
     public static Map<ShipAPI.HullSize, Float> getHullSizeFactors() {
-        if (HULLSIZE_FACTOR == null) {
+        if (HULLSIZE_FACTOR.isEmpty()) {
             loadModSettings();
         }
 

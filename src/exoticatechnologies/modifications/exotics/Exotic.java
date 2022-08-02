@@ -2,7 +2,6 @@ package exoticatechnologies.modifications.exotics;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -10,8 +9,9 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONException;
@@ -21,7 +21,7 @@ import java.awt.*;
 import java.util.Map;
 
 public abstract class Exotic {
-    public static String ITEM = "et_exotic";
+    public static final String ITEM = "et_exotic";
     @Getter
     @Setter
     protected String key;
@@ -53,7 +53,7 @@ public abstract class Exotic {
     }
 
     protected void loadConfig() throws JSONException {
-    };
+    }
 
     public String getIcon() {
         return "graphics/icons/exotics/" + getKey().toLowerCase() + ".png";
@@ -64,12 +64,17 @@ public abstract class Exotic {
     }
 
     protected boolean isNPC(FleetMemberAPI fm) {
-        if (fm.getFleetData() == null
+        return fm.getFleetData() == null
                 || fm.getFleetData().getFleet() == null
-                || !fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
-            return true;
-        }
-        return false;
+                || !fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet());
+    }
+
+    public void onInstall(FleetMemberAPI fm) {
+
+    }
+
+    public void onDestroy(FleetMemberAPI fm) {
+
     }
 
     public abstract boolean canAfford(CampaignFleetAPI fleet, MarketAPI market);
@@ -96,12 +101,20 @@ public abstract class Exotic {
         return true;
     }
 
-    public void initialize() {
-        ExoticsHandler.addExotic(this);
+    public void printDescriptionToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "description")
+                .addToTooltip(tooltip);
     }
 
-    public void modifyResourcesPanel(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "longDescription")
+                .addToTooltip(tooltip);
     }
+
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
+        return null;
+    }
+
 
     /**
      * extra bandwidth allowed to be installed.
@@ -137,6 +150,10 @@ public abstract class Exotic {
 
     }
 
+    public boolean canDropFromFleets() {
+        return true;
+    }
+
     public float getSpawnChance(float chanceMult) {
         return 0.05f * chanceMult;
     }
@@ -145,5 +162,5 @@ public abstract class Exotic {
         return new SpecialItemData(Exotic.ITEM, this.getKey());
     }
 
-    public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand);
+    public abstract void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand);
 }

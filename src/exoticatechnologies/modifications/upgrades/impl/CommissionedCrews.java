@@ -24,12 +24,12 @@ import java.awt.*;
 
 public class CommissionedCrews extends Upgrade {
     @Getter protected final float bandwidthUsage = 5f;
-    private static int COST_PER_CREW_MAX = 25; //in addition to base crew salary (10 credits)
-    private static float SUPPLIES_MONTH_MAX = -30f;
-    private static float SUPPLIES_RECOVERY_MAX = 20f;
-    private static float REPAIR_RATE_MAX = 20f;
-    private static float FUEL_USE_MAX = -20f;
-    private static Color COLOR = new Color(231, 203, 24);
+    private static final int COST_PER_CREW_MAX = 25; //in addition to base crew salary (10 credits)
+    private static final float SUPPLIES_MONTH_MAX = -30f;
+    private static final float SUPPLIES_RECOVERY_MAX = 20f;
+    private static final float REPAIR_RATE_MAX = 20f;
+    private static final float FUEL_USE_MAX = -20f;
+    private static final Color COLOR = new Color(231, 203, 24);
 
     @Override
     public Color getColor() {
@@ -91,6 +91,40 @@ public class CommissionedCrews extends Upgrade {
     public void advanceInCampaign(FleetMemberAPI fm, int level, int maxLevel) {
         if(!doesEconomyHaveListener()) {
             Global.getSector().getListenerManager().addListener(new CommissionedSalaryListener());
+        }
+    }
+
+    @Override
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "crewSalaryShort")
+                .format("salaryIncrease", COST_PER_CREW_MAX / this.getMaxLevel(fm))
+                .format("finalValue", COST_PER_CREW_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "hullRepair")
+                .formatWithOneDecimalAndModifier("percent", REPAIR_RATE_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", REPAIR_RATE_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "fuelConsumptionInfo")
+                .formatWithOneDecimalAndModifier("percent", FUEL_USE_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", FUEL_USE_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "suppliesToRecover")
+                .format("percent", SUPPLIES_RECOVERY_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", SUPPLIES_RECOVERY_MAX)
+                .addToTooltip(tooltip);
+
+        if (isAutomated(fm)) {
+            StringUtils.getTranslation(this.getKey(), "supplyConsumptionInfoAutomated")
+                    .format("percent", 200)
+                    .addToTooltip(tooltip);
+        } else {
+            StringUtils.getTranslation(this.getKey(), "supplyConsumptionInfo")
+                    .format("percent", SUPPLIES_MONTH_MAX / this.getMaxLevel(fm))
+                    .formatPercWithOneDecimalAndModifier("finalValue", SUPPLIES_MONTH_MAX)
+                    .addToTooltip(tooltip);
         }
     }
 
@@ -216,6 +250,6 @@ public class CommissionedCrews extends Upgrade {
     }
 
     public static CommissionedCrews getInstance() {
-        return getInstance(CommissionedCrews.class);
+        return (CommissionedCrews) Upgrade.get("CommissionedCrews");
     }
 }

@@ -7,23 +7,57 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.modifications.upgrades.Upgrade;
+import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 
 import java.awt.*;
 
 public class WeldedArmor extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
-    private static float HULL_MAX = 30f;
-    private static float ARMOR_MAX = 10f;
+    private static final float HULL_MAX = 30f;
+    private static final float ARMOR_MAX = 10f;
 
-    private static float EMP_TAKEN_MAX = 20f;
-    private static float ENGINE_HEALTH_MAX = -15f;
-    private static float WEAPON_HEALTH_MAX = -15f;
-    private static Color COLOR = new Color(88, 225, 61);
+    private static final float EMP_TAKEN_MAX = 15f;
+    private static final float ENGINE_HEALTH_MAX = -15f;
+    private static final float WEAPON_HEALTH_MAX = -15f;
+    private static final Color COLOR = new Color(88, 225, 61);
 
     @Override
     public Color getColor() {
         return COLOR;
+    }
+
+    @Override
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "hull")
+                .formatWithOneDecimalAndModifier("percent", HULL_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", HULL_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "armor")
+                .formatWithOneDecimalAndModifier("percent", ARMOR_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", ARMOR_MAX)
+                .addToTooltip(tooltip);
+
+        //after level 3
+        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+                .format("level", 3)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "empDamageWithFinal")
+                .formatWithOneDecimalAndModifier("percent", EMP_TAKEN_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", EMP_TAKEN_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "engineHealthWithFinal")
+                .formatWithOneDecimalAndModifier("percent", ENGINE_HEALTH_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", ENGINE_HEALTH_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "weaponHealthWithFinal")
+                .formatWithOneDecimalAndModifier("percent", WEAPON_HEALTH_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", WEAPON_HEALTH_MAX)
+                .addToTooltip(tooltip);
     }
 
     @Override

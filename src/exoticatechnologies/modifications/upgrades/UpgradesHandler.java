@@ -6,8 +6,6 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
-import exoticatechnologies.dialog.modifications.SystemOptionsHandler;
-import exoticatechnologies.modifications.upgrades.dialog.UpgradesPickerState;
 import exoticatechnologies.modifications.upgrades.methods.*;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
@@ -20,12 +18,11 @@ import java.util.*;
 
 @Log4j
 public class UpgradesHandler {
-    private static int UPGRADE_OPTION_ORDER = 1;
+    private static final int UPGRADE_OPTION_ORDER = 1;
     public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
-    public static final UpgradesPickerState UPGRADE_PICKER_DIALOG = new UpgradesPickerState();
 
-    public static Set<UpgradeMethod> UPGRADE_METHODS = new LinkedHashSet<UpgradeMethod>();
+    public static final Set<UpgradeMethod> UPGRADE_METHODS = new LinkedHashSet<>();
 
 
     public static void addUpgradeMethod(UpgradeMethod method) {
@@ -39,7 +36,6 @@ public class UpgradesHandler {
         UPGRADE_METHODS.add(new ChipMethod());
         UPGRADE_METHODS.add(new RecoverMethod());
 
-        SystemOptionsHandler.addOption(UPGRADE_PICKER_DIALOG);
         UpgradesHandler.populateUpgrades();
     }
 

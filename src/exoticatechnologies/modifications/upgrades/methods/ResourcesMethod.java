@@ -1,15 +1,14 @@
 package exoticatechnologies.modifications.upgrades.methods;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -50,7 +49,7 @@ public class ResourcesMethod implements UpgradeMethod {
     }
 
     @Override
-    public void apply(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, ShipModifications mods, Upgrade upgrade, MarketAPI market, FleetMemberAPI fm) {
+    public String apply(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         Map<String, Integer> upgradeCosts = upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade));
 
         Utilities.takeResources(fm.getFleetData().getFleet(), market, upgradeCosts);
@@ -59,18 +58,22 @@ public class ResourcesMethod implements UpgradeMethod {
 
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
-        StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
+        return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
                 .format("name", upgrade.getName())
                 .format("level", mods.getUpgrade(upgrade))
-                .addToTextPanel(dialog.getTextPanel());
+                .toString();
     }
 
     @Override
-    public void modifyResourcesPanel(ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm, Upgrade upgrade, boolean hovered) {
-        if(hovered) {
-            for(Map.Entry<String, Integer> entry : upgrade.getResourceCosts(fm, plugin.getExtraSystems().getUpgrade(upgrade)).entrySet()) {
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
+        Map<String, Float> resourceCosts = new HashMap<>();
+
+        if (hovered) {
+            for(Map.Entry<String, Integer> entry : upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade)).entrySet()) {
                 resourceCosts.put(entry.getKey(), Float.valueOf(entry.getValue()));
             }
         }
+
+        return resourceCosts;
     }
 }

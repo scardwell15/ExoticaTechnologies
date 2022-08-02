@@ -18,9 +18,10 @@ import java.util.Map;
 public class DerelictsEFScript implements EveryFrameScript {
     private boolean done = false;
 
-    @Getter //map links derelict variant IDs to their generated modifications
+    @Getter
+    final //map links derelict variant IDs to their generated modifications
     Map<String, ShipModifications> derelictVariantMap = new LinkedHashMap<>();
-    private List<FleetMemberAPI> fleetSnapshot = new ArrayList<>();
+    private final List<FleetMemberAPI> fleetSnapshot = new ArrayList<>();
 
     public DerelictsEFScript(Map<String, ShipModifications> derelictVariantMap) {
         this.derelictVariantMap.putAll(derelictVariantMap);

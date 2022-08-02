@@ -7,16 +7,17 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StatUtils;
+import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 
 import java.awt.*;
 
 public class HyperactiveCapacitors extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
-    private static float CAPACITY_MAX = 25f;
-    private static float VENT_SPEED_MAX = 50f;
-    private static float WEAPON_FLUX_MAX = 30f;
-    private static Color COLOR = new Color(143, 86, 182);
+    private static final float CAPACITY_MAX = 25f;
+    private static final float VENT_SPEED_MAX = 50f;
+    private static final float WEAPON_FLUX_MAX = 30f;
+    private static final Color COLOR = new Color(143, 86, 182);
 
     @Override
     public Color getColor() {
@@ -33,6 +34,29 @@ public class HyperactiveCapacitors extends Upgrade {
             StatUtils.setStatPercent(stats.getEnergyWeaponFluxCostMod(), this.getBuffId(), level - 2, WEAPON_FLUX_MAX, maxLevel - 2);
             StatUtils.setStatPercent(stats.getMissileWeaponFluxCostMod(), this.getBuffId(), level - 2, WEAPON_FLUX_MAX, maxLevel - 2);
         }
+    }
+
+    @Override
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "fluxCapacityWithFinal")
+                .formatWithOneDecimalAndModifier("percent", CAPACITY_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", CAPACITY_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "ventSpeedWithFinal")
+                .formatWithOneDecimalAndModifier("percent", VENT_SPEED_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", VENT_SPEED_MAX)
+                .addToTooltip(tooltip);
+
+        //after level 3
+        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+                .format("level", 3)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "weaponFluxCostsWithFinal")
+                .formatWithOneDecimalAndModifier("percent", WEAPON_FLUX_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", WEAPON_FLUX_MAX)
+                .addToTooltip(tooltip);
     }
 
     @Override

@@ -10,7 +10,6 @@ import exoticatechnologies.util.Utilities;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -18,7 +17,7 @@ import java.util.Random;
 @Log4j
 public class UpgradesGenerator {
     //per fleet member!
-    private static float CHANCE_OF_UPGRADES = 0.4f;
+    private static final float CHANCE_OF_UPGRADES = 0.4f;
 
     public static ETUpgrades generate(ShipVariantAPI var, String faction, float bandwidth) {
         Map<String, Float> factionUpgradeChances = MagicSettings.getFloatMap("exoticatechnologies", "factionUpgradeChances");
@@ -142,7 +141,7 @@ public class UpgradesGenerator {
                     }
 
                     bandwidth = bandwidth - upgrade.getBandwidthUsage();
-                } else {
+                } else if (upgradePicker.isEmpty()) {
                     break;
                 }
             }

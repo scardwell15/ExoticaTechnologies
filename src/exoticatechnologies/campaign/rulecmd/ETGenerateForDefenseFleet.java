@@ -1,0 +1,56 @@
+package exoticatechnologies.campaign.rulecmd;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.FleetMemberType;
+import com.fs.starfarer.api.impl.campaign.ids.Entities;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
+import com.fs.starfarer.api.util.Misc;
+import exoticatechnologies.ETModPlugin;
+import exoticatechnologies.campaign.ScanUtils;
+import exoticatechnologies.campaign.listeners.CampaignEventListener;
+import exoticatechnologies.campaign.listeners.DerelictsEFScript;
+import exoticatechnologies.modifications.ShipModFactory;
+import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.util.StringUtils;
+import lombok.extern.log4j.Log4j;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * for some reason defense fleets stopped showing my ship modifications hullmod. i can only assume this means that
+ * it was never being applied, or i fucked somehting up somewhere and i'm not sure where.
+ * i know the mods are being applied, but they disappear when the fleet is shown. so here i am, re-generating them.
+ */
+@Log4j
+public class ETGenerateForDefenseFleet extends BaseCommandPlugin {
+
+    @Override
+    public boolean doesCommandAddOptions() {
+        return false;
+    }
+
+    @Override
+    public boolean execute(final String ruleId, final InteractionDialogAPI dialog, final List<Misc.Token> params, final Map<String, MemoryAPI> memoryMap) {
+        if (dialog == null) return false;
+
+        SectorEntityToken interactionTarget = dialog.getInteractionTarget();
+        CampaignFleetAPI defenderFleet = (CampaignFleetAPI) interactionTarget;
+        if (defenderFleet != null) {
+            String newId = interactionTarget.getId();
+            defenderFleet.setId(newId);
+            CampaignEventListener.applyExtraSystemsToFleet(defenderFleet);
+        }
+
+        return false;
+    }
+}

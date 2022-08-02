@@ -2,18 +2,16 @@ package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import data.scripts.util.MagicSettings;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.modifications.exotics.Exotic;
-import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -21,20 +19,16 @@ import lombok.Getter;
 import org.json.JSONException;
 
 import java.awt.Color;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class HangarForgeMissiles extends Exotic {
     private static final String ITEM = "et_hangarforge";
-    private static final Color[] tooltipColors = {new Color(0xFF8902), ExoticaTechHM.infoColor, ExoticaTechHM.infoColor};
 
-    private static float COST_CREDITS = 150000;
+    private static final float COST_CREDITS = 150000;
     private static int SECONDS_PER_RELOAD = 60;
     private static float PERCENT_RELOADED = 50f;
 
-    private static Set<String> blacklistedWeapons = new HashSet<>();
+    private static final Set<String> blacklistedWeapons = new HashSet<>();
 
     @Getter private final Color mainColor = new Color(0xFF8902);
 
@@ -80,23 +74,20 @@ public class HangarForgeMissiles extends Exotic {
     }
 
     @Override
-    public void modifyResourcesPanel(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
-        resourceCosts.put(ITEM, 1f);
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
+        Map<String, Float> resourceCosts = new HashMap<>();
+        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
         resourceCosts.put(Commodities.CREDITS, 150000f);
+        return resourceCosts;
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
-        if (systems.hasExotic(this.getKey())) {
-            if (expand) {
-                StringUtils.getTranslation(this.getKey(), "longDescription")
-                        .format("exoticName", this.getName())
-                        .format("reloadSize", PERCENT_RELOADED)
-                        .format("reloadTime", SECONDS_PER_RELOAD)
-                        .addToTooltip(tooltip, tooltipColors);
-            } else {
-                tooltip.addPara(this.getName(), tooltipColors[0], 5);
-            }
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+        if (expand) {
+            StringUtils.getTranslation(this.getKey(), "longDescription")
+                    .format("reloadSize", PERCENT_RELOADED)
+                    .format("reloadTime", SECONDS_PER_RELOAD)
+                    .addToTooltip(tooltip, title);
         }
     }
 
@@ -126,8 +117,13 @@ public class HangarForgeMissiles extends Exotic {
 
             //set up weapons
             for(WeaponAPI weapon : ship.getAllWeapons()) {
+
+                if (blacklistedWeapons.contains(weapon.getId())) {
+                    continue;
+                }
+
                 if(weapon.getAmmoTracker() != null && weapon.getAmmoTracker().usesAmmo() && weapon.getAmmoTracker().getAmmoPerSecond() == 0f) {
-                    int wepMaxAmmo = Math.min(weapon.getMaxAmmo(), weapon.getMaxAmmo());
+                    int wepMaxAmmo = weapon.getMaxAmmo();
 
                     int newMaxAmmo = (int) Math.ceil(wepMaxAmmo * PERCENT_RELOADED / 100f);
                     if (weapon.getSpec().getBurstSize() > 0) {

@@ -7,21 +7,20 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.modifications.exotics.Exotic;
-import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AlphaSubcore extends Exotic {
     private static final String ITEM = "alpha_core";
-    private static final Color[] tooltipColors = {Color.CYAN, ExoticaTechHM.infoColor};
 
     public static final int COST_REDUCTION_LG = 4;
     public static final int COST_REDUCTION_MED = 2;
@@ -44,9 +43,9 @@ public class AlphaSubcore extends Exotic {
         }
 
         if (!Misc.isPlayerOrCombinedContainingPlayer(fm.getFleetData().getFleet())) {
-            if(fm.getFleetData().getFleet().getFaction().equals(Factions.HEGEMONY)
-                    || fm.getFleetData().getFleet().getFaction().equals(Factions.LUDDIC_CHURCH)
-                    || fm.getFleetData().getFleet().getFaction().equals(Factions.LUDDIC_PATH)) {
+            if(fm.getFleetData().getFleet().getFaction().getId().equals(Factions.HEGEMONY)
+                    || fm.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_CHURCH)
+                    || fm.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_PATH)) {
                 return false;
             }
             return canApply(fm.getVariant());
@@ -74,33 +73,42 @@ public class AlphaSubcore extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
-        if (systems.hasExotic(this.getKey())) {
-            if (expand) {
-                StringUtils.getTranslation(this.getKey(), "longDescription")
-                        .format("exoticName", this.getName())
-                        .format("large", COST_REDUCTION_LG)
-                        .format("medium", COST_REDUCTION_MED)
-                        .format("small", COST_REDUCTION_SM)
-                        .format("fighters", COST_REDUCTION_FIGHTER)
-                        .format("bombers", COST_REDUCTION_BOMBER)
-                        .addToTooltip(tooltip, tooltipColors);
-            } else {
-                tooltip.addPara(this.getName(), tooltipColors[0], 5);
-            }
+    public void onInstall(FleetMemberAPI fm) {
+        if(fm.getVariant() != null && !fm.getVariant().hasHullMod("et_alphasubcore")) {
+            fm.getVariant().addMod("et_alphasubcore");
         }
     }
 
     @Override
-    public void modifyResourcesPanel(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
+    public void onDestroy(FleetMemberAPI fm) {
+        if (fm.getVariant() != null) {
+            fm.getVariant().removeMod("AlphaSubcoreHM");
+        }
+    }
+
+    @Override
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+        if (expand) {
+            StringUtils.getTranslation(this.getKey(), "longDescription")
+                    .format("large", COST_REDUCTION_LG)
+                    .format("medium", COST_REDUCTION_MED)
+                    .format("small", COST_REDUCTION_SM)
+                    .format("fighters", COST_REDUCTION_FIGHTER)
+                    .format("bombers", COST_REDUCTION_BOMBER)
+                    .addToTooltip(tooltip, title);
+        }
+    }
+
+    @Override
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
+        Map<String, Float> resourceCosts = new HashMap<>();
         resourceCosts.put(ITEM, 1f);
+        return resourceCosts;
     }
 
     @Override
     public void applyExoticToShip(FleetMemberAPI fm, ShipAPI ship, float bandwidth, String id) {
-        if(ship.getVariant() != null && !ship.getVariant().hasHullMod("et_alphasubcore")) {
-            ship.getVariant().addMod("et_alphasubcore");
-        }
+        onInstall(fm);
     }
 
     /**

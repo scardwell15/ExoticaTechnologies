@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Log4j
 public class ETScanOmegas extends BaseCommandPlugin {
-    private static float NOTABLE_BANDWIDTH = 180f;
+    private static final float NOTABLE_BANDWIDTH = 180f;
 
     @Override
     public boolean doesCommandAddOptions() {

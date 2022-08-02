@@ -20,7 +20,7 @@ import java.util.Random;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ShipModFactory {
     @Getter
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     public static ShipModifications getForFleetMember(FleetMemberAPI fm) {
         if (fm.getHullId().contains("ziggurat")) {
@@ -38,7 +38,7 @@ public class ShipModFactory {
         } else if (ETModPlugin.hasData(fm.getId())) {
             return ETModPlugin.getData(fm.getId());
         } else {
-            ShipModifications mods = new ShipModifications(fm);
+            ShipModifications mods = new ShipModifications();
             mods.putBandwidth(ShipModFactory.generateBandwidth(fm));
 
             if (CampaignEventListener.isAppliedData()) {
@@ -76,22 +76,13 @@ public class ShipModFactory {
             return ETModPlugin.getData(fm.getId());
         }
 
-        ShipModifications mods = new ShipModifications(fm);
+        ShipModifications mods = new ShipModifications();
 
         if (fm.getFleetData() == null || fm.getFleetData().getFleet() == null) {
             return mods;
         }
 
         String faction = getFaction(fm);
-
-        long seed = fm.getFleetData().getFleet().getId().hashCode();
-
-        //notes: ziggurat is one-of-a-kind in that it is completely regenerated in a special dialog after its battle.
-        //to make sure it still generates the same upgrades, we use its hull ID as seed.
-        boolean ziggurat = fm.getHullId().contains("ziggurat");
-        if (ziggurat) {
-            seed = fm.getHullId().hashCode() + ETModPlugin.getSectorSeedString().hashCode();
-        }
 
         mods.generate(fm, faction);
 
@@ -113,11 +104,11 @@ public class ShipModFactory {
         Map<String, Float> manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult");
 
         float mult = 1.0f;
-        if (factionBandwidthMult != null && factionBandwidthMult.containsKey(faction)) {
+        if (factionBandwidthMult.containsKey(faction)) {
             mult = factionBandwidthMult.get(faction);
         }
 
-        if (manufacturerBandwidthMult != null && manufacturerBandwidthMult.containsKey(manufacturer)) {
+        if (manufacturerBandwidthMult.containsKey(manufacturer)) {
             mult = manufacturerBandwidthMult.get(manufacturer);
         }
 

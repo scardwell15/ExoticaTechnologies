@@ -6,13 +6,11 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exoticatechnologies.dialog.modifications.SystemOptionsHandler;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
-import exoticatechnologies.modifications.bandwidth.BandwidthHandler;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.FleetMemberUtils;
@@ -34,10 +32,8 @@ public class ETModPlugin extends BaseModPlugin {
 	private static SalvageListener salvageListener = null;
 
 	@Override
-	public void onApplicationLoad() throws Exception {
-
+	public void onApplicationLoad() {
 		ETModSettings.loadModSettings();
-		BandwidthHandler.initialize();
 		UpgradesHandler.initialize();
 		ExoticsHandler.initialize();
 	}
@@ -45,11 +41,9 @@ public class ETModPlugin extends BaseModPlugin {
 	@Override
     public void onGameLoad(boolean newGame) {
 		FleetMemberUtils.moduleMap.clear();
-		SystemOptionsHandler.getValidSystemsOptions().clear();
 
 		ETModSettings.loadModSettings();
 
-		BandwidthHandler.initialize();
 		UpgradesHandler.initialize();
 		ExoticsHandler.initialize();
 

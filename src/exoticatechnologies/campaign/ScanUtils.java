@@ -29,14 +29,14 @@ import java.util.List;
 @Log4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ScanUtils {
-    private static float NOTABLE_BANDWIDTH = 180f;
-    private static float NOTABLE_SHIPS_ROW_HEIGHT = 64;
+    private static final float NOTABLE_BANDWIDTH = 180f;
+    private static final float NOTABLE_SHIPS_ROW_HEIGHT = 64;
 
     public static Long getPerShipDataSeed(ShipRecoverySpecial.PerShipData shipData, int i) {
         ShipVariantAPI var = shipData.getVariant();
         if (var == null) return null;
 
-        long seed = -1;
+        long seed;
         if (shipData.fleetMemberId != null) {
             seed = shipData.fleetMemberId.hashCode();
         } else {
@@ -65,12 +65,8 @@ public class ScanUtils {
         String entityId = getPerShipDataId(shipData, i);
         if (entityId == null) return false;
 
-        log.info(String.format("searching for entity ID [%s]", entityId));
-        if (ETModPlugin.hasData(entityId)
-                && ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entityId))) {
-            return true;
-        }
-        return false;
+        return ETModPlugin.hasData(entityId)
+                && ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entityId));
     }
 
     public static List<FleetMemberAPI> getNotableFleetMembers(CampaignFleetAPI fleet) {
@@ -106,10 +102,7 @@ public class ScanUtils {
     }
 
     public static boolean doesEntityHaveNotableMods(ShipModifications mods) {
-        if (mods.hasUpgrades() || mods.hasExotics() || mods.getBandwidth() >= NOTABLE_BANDWIDTH) {
-            return true;
-        }
-        return false;
+        return mods.hasUpgrades() || mods.hasExotics() || mods.getBandwidth() >= NOTABLE_BANDWIDTH;
     }
 
     public static void addModificationsToTextPanel(TextPanelAPI textPanel, String shipName, ShipModifications mods, ShipAPI.HullSize hullSize, Color color) {
@@ -206,8 +199,7 @@ public class ScanUtils {
         float panelHeight = Math.min(allRowsHeight + 20 + 16, screenHeight * 0.65f);
         float panelWidth = screenWidth * 0.65f; // maybe could scale it to the largest number of icons we'll have to show?
 
-        NotableShipsDialogDelegate delegate = new NotableShipsDialogDelegate();
-        delegate.init(members, panelWidth, panelHeight, allRowsHeight);
+        NotableShipsDialogDelegate delegate = new NotableShipsDialogDelegate(members, panelWidth, panelHeight, allRowsHeight);
         dialog.showCustomDialog(panelWidth, panelHeight, delegate);
     }
 
@@ -217,13 +209,13 @@ public class ScanUtils {
      */
     protected static class NotableShipsDialogDelegate implements CustomDialogDelegate {
 
-        protected float panelWidth;
-        protected float panelHeight;
-        protected float allRowsHeight;
+        protected final float panelWidth;
+        protected final float panelHeight;
+        protected final float allRowsHeight;
 
-        protected List<FleetMemberAPI> members;
+        protected final List<FleetMemberAPI> members;
 
-        public void init(List<FleetMemberAPI> members, float panelWidth, float panelHeight, float allRowsHeight) {
+        public NotableShipsDialogDelegate(List<FleetMemberAPI> members, float panelWidth, float panelHeight, float allRowsHeight) {
             this.members = members;
             this.panelWidth = panelWidth;
             this.panelHeight = panelHeight;
@@ -254,10 +246,9 @@ public class ScanUtils {
 
             ShipModifications mods = ShipModFactory.getForFleetMember(member);
 
-            ScanCustomUIPanelPlugin scanMemberPanelPlugin = new ScanCustomUIPanelPlugin(mods, member.getHullSpec().getHullSize());
+            ScanCustomUIPanelPlugin scanMemberPanelPlugin = new ScanCustomUIPanelPlugin(tooltip, panelWidth - 340, mods, member.getHullSpec().getHullSize());
             CustomPanelAPI rowHolder = outer.createCustomPanel(panelWidth, NOTABLE_SHIPS_ROW_HEIGHT, scanMemberPanelPlugin);
             scanMemberPanelPlugin.setMyPanel(rowHolder);
-            scanMemberPanelPlugin.setMyTooltip(tooltip);
 
             // Ship image with tooltip of the ship class
             TooltipMakerAPI shipImg = rowHolder.createUIElement(NOTABLE_SHIPS_ROW_HEIGHT, NOTABLE_SHIPS_ROW_HEIGHT, false);
@@ -278,7 +269,7 @@ public class ScanUtils {
 
             // done, add row to TooltipMakerAPI
             tooltip.addCustom(rowHolder, opad);
-        };
+        }
 
         @Override
         public boolean hasCancelButton() {
@@ -303,7 +294,7 @@ public class ScanUtils {
 
         @Override
         public CustomUIPanelPlugin getCustomPanelPlugin() {
-            return null;    //new NotableShipsPanelPlugin();
+            return null;
         }
     }
 
@@ -350,17 +341,19 @@ public class ScanUtils {
     }
 
     protected static class ScanCustomUIPanelPlugin extends TabbedCustomUIPanelPlugin {
-        private static int UPGRADES_INDEX = 0;
-        private static int EXOTICS_INDEX = 1;
+        private static final int UPGRADES_INDEX = 0;
+        private static final int EXOTICS_INDEX = 1;
 
-        private float SWITCHER_BUTTON_WIDTH = NOTABLE_SHIPS_ROW_HEIGHT + 4;
-        private float UPGRADES_TEXT_WIDTH = 64;
-        private float EXOTICS_TEXT_WIDTH = 45;
+        private final float SWITCHER_BUTTON_WIDTH = NOTABLE_SHIPS_ROW_HEIGHT + 4;
+        private final float UPGRADES_TEXT_WIDTH = 64;
+        private final float EXOTICS_TEXT_WIDTH = 45;
 
         protected final ShipAPI.HullSize hullSize;
         protected final ShipModifications mods;
 
-        public ScanCustomUIPanelPlugin(ShipModifications mods, ShipAPI.HullSize hullSize) {
+        public ScanCustomUIPanelPlugin(TooltipMakerAPI tooltip, float defaultSwitcherPanelWidth, ShipModifications mods, ShipAPI.HullSize hullSize) {
+            super(tooltip, defaultSwitcherPanelWidth);
+
             this.mods = mods;
             this.hullSize = hullSize;
 
@@ -374,10 +367,12 @@ public class ScanUtils {
             return EXOTICS_INDEX;
         }
 
+        @Override
         protected boolean shouldMakeSwitcher() {
             return this.mods.hasUpgrades() || this.mods.hasExotics();
         }
 
+        @Override
         protected boolean canSwitch() {
             if (this.mods.hasUpgrades() && !this.mods.hasExotics()) {
                 return false;
@@ -408,6 +403,11 @@ public class ScanUtils {
         }
 
         @Override
+        protected float getSwitcherButtonXOffset(int newPanelIndex) {
+            return 200 + getSwitcherButtonWidth(newPanelIndex);
+        }
+
+        @Override
         protected CustomPanelAPI createNewPanel(int newPanelIndex, float panelWidth, float panelHeight) {
             if (newPanelIndex == UPGRADES_INDEX) {
                 return createUpgradesPanel(panelWidth, panelHeight);
@@ -427,7 +427,7 @@ public class ScanUtils {
                         TooltipMakerAPI.TooltipLocation.BELOW);
 
                 if (lastImg == null) {
-                    iconPanel.addUIElement(exoIcon).inTL(0, 0);
+                    iconPanel.addUIElement(exoIcon).inTL(getSwitcherPanelUpperOffset(UPGRADES_INDEX) + 3, 0);
                 } else {
                     iconPanel.addUIElement(exoIcon).rightOfTop(lastImg, 3);
                 }
@@ -451,7 +451,7 @@ public class ScanUtils {
                 upgIcon.addPara("LVL" + mods.getUpgrade(upgrade), 0).getPosition().rightOfTop(imgComponent, -32);
 
                 if (lastImg == null) {
-                    iconPanel.addUIElement(upgIcon).inTL(0, 0);
+                    iconPanel.addUIElement(upgIcon).inTL(getSwitcherPanelUpperOffset(UPGRADES_INDEX) + 3, 0);
                 } else {
                     iconPanel.addUIElement(upgIcon).rightOfTop(lastImg, 3);
                 }

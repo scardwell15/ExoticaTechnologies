@@ -3,21 +3,18 @@ package exoticatechnologies.integration.indevo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
+import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
-import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ShipComponentUpgradeMethod implements UpgradeMethod {
-    private static final String OPTION = "ESShipExtraUpgradeApplyIndEvoComponents";
-
     @Override
     public String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
         return StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsOption")
@@ -47,10 +44,9 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
     }
 
     @Override
-    public void apply(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, ShipModifications mods, Upgrade upgrade, MarketAPI market, FleetMemberAPI fm) {
+    public String apply(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         int level = mods.getUpgrade(upgrade);
         int upgradeCost = IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, level);
-        int totalComponents = getTotalComponents(fm.getFleetData().getFleet(), market);
 
         if (market != null
                 && market.getSubmarket(Submarkets.SUBMARKET_STORAGE) != null
@@ -69,20 +65,23 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
         mods.putUpgrade(upgrade);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
-        StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
+        return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
                 .format("name", upgrade.getName())
                 .format("level", mods.getUpgrade(upgrade))
-                .addToTextPanel(dialog.getTextPanel());
+                .toString();
     }
 
     @Override
-    public void modifyResourcesPanel(ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm, Upgrade upgrade, boolean hovered) {
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
+        Map<String, Float> resourceCosts = new HashMap<>();
         float cost = 0;
         if (hovered) {
-            cost = IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, plugin.getExtraSystems().getUpgrade(upgrade));
+            cost = IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, mods.getUpgrade(upgrade));
         }
 
         resourceCosts.put(IndEvoUtil.SHIP_COMPONENT_ITEM_ID, cost);
+
+        return resourceCosts;
     }
 
     private Integer getTotalComponents(CampaignFleetAPI fleet, MarketAPI market) {
@@ -96,7 +95,6 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
     private int getComponentsFromStorageForUpgrade(MarketAPI market) {
         int result = 0;
 
-        boolean hasStorage = false;
         if (market != null
                 && market.getSubmarket(Submarkets.SUBMARKET_STORAGE) != null
                 && market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo() != null) {

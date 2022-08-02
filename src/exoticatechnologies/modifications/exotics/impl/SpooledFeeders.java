@@ -2,16 +2,13 @@ package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
-import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -21,11 +18,11 @@ import org.json.JSONException;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SpooledFeeders extends Exotic {
     private static final String ITEM = "et_ammospool";
-    private static final Color[] tooltipColors = {new Color(0xD93636), ExoticaTechHM.infoColor, ExoticaTechHM.infoColor, ExoticaTechHM.infoColor, ExoticaTechHM.infoColor, ExoticaTechHM.infoColor};
 
     private static float RATE_OF_FIRE_BUFF = 100f;
     private static float RATE_OF_FIRE_DEBUFF = -33f;
@@ -71,28 +68,23 @@ public class SpooledFeeders extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
+        Map<String, Float> resourceCosts = new HashMap<>();
+        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        return resourceCosts;
+    }
+
+    @Override
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
-                    .format("exoticName", this.getName())
                     .format("firerateBoost", RATE_OF_FIRE_BUFF)
                     .format("boostTime", BUFF_DURATION)
-                    .format("firerateMalus", RATE_OF_FIRE_DEBUFF)
+                    .format("firerateMalus", Math.abs(RATE_OF_FIRE_DEBUFF))
                     .format("malusTime", DEBUFF_DURATION)
                     .format("cooldownTime", COOLDOWN)
-                    .addToTooltip(tooltip, tooltipColors);
-        } else {
-            tooltip.addPara(this.getName(), tooltipColors[0], 5);
+                    .addToTooltip(tooltip, title);
         }
-    }
-
-    @Override
-    public void modifyResourcesPanel(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
-        resourceCosts.put(ITEM, 1f);
-    }
-
-    @Override
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
     }
 
     private String getIntervalId(ShipAPI ship) {
@@ -104,7 +96,8 @@ public class SpooledFeeders extends Exotic {
         return ship.getId() + this.getKey() + "spooled";
     }
 
-    private boolean isPD(WeaponAPI weapon) {
+    private boolean shouldSpool(WeaponAPI weapon) {
+        if (weapon.getSlot().getWeaponType() == WeaponAPI.WeaponType.MISSILE) return false;
         return weapon.hasAIHint(WeaponAPI.AIHints.PD) || weapon.hasAIHint(WeaponAPI.AIHints.PD_ONLY);
     }
 
@@ -131,7 +124,7 @@ public class SpooledFeeders extends Exotic {
 
             if(canSpool(ship)) {
                 for (WeaponAPI weapon : ship.getAllWeapons()) {
-                    if (weapon.isFiring() && !(ship.getShipAI() != null && isPD(weapon))) {
+                    if (weapon.isFiring() && !(ship.getShipAI() != null && shouldSpool(weapon))) {
                         interval.setInterval(BUFF_DURATION, BUFF_DURATION);
                         customData.put(getSpooledId(ship), SpoolState.BUFFED);
 

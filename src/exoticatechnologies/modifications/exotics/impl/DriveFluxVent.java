@@ -2,15 +2,13 @@ package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
-import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -20,11 +18,11 @@ import org.json.JSONException;
 import org.lazywizard.lazylib.VectorUtils;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class DriveFluxVent extends Exotic {
     private static final String ITEM = "et_drivevent";
-    private static final Color[] tooltipColors = {new Color(0x9D62C4), ExoticaTechHM.infoColor};
 
     private static float VENT_SPEED_INCREASE = 30f;
     private static int FORWARD_SPEED_INCREASE = 50;
@@ -66,24 +64,21 @@ public class DriveFluxVent extends Exotic {
     }
 
     @Override
-    public void modifyResourcesPanel(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
-        resourceCosts.put(ITEM, 1f);
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
+        Map<String, Float> resourceCosts = new HashMap<>();
+        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        return resourceCosts;
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
-        if (systems.hasExotic(this.getKey())) {
-            if (expand) {
-                StringUtils.getTranslation(this.getKey(), "longDescription")
-                        .format("exoticName", this.getName())
-                        .format("ventBonus", VENT_SPEED_INCREASE)
-                        .format("speedThreshold", FLUX_LEVEL_REQUIRED)
-                        .format("speedBonus", String.valueOf(FORWARD_SPEED_INCREASE))
-                        .format("speedBonusTime", SPEED_BUFF_TIME)
-                        .addToTooltip(tooltip, tooltipColors);
-            } else {
-                tooltip.addPara(this.getName(), tooltipColors[0], 5);
-            }
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+        if (expand) {
+            StringUtils.getTranslation(this.getKey(), "longDescription")
+                    .format("ventBonus", VENT_SPEED_INCREASE)
+                    .format("speedThreshold", FLUX_LEVEL_REQUIRED)
+                    .format("speedBonus", String.valueOf(FORWARD_SPEED_INCREASE))
+                    .format("speedBonusTime", SPEED_BUFF_TIME)
+                    .addToTooltip(tooltip, title);
         }
     }
 

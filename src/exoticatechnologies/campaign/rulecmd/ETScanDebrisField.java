@@ -1,7 +1,6 @@
 package exoticatechnologies.campaign.rulecmd;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.FleetMemberPickerListener;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -12,9 +11,7 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.campaign.ScanUtils;
-import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 
 import java.util.ArrayList;
@@ -23,7 +20,7 @@ import java.util.Map;
 
 @Log4j
 public class ETScanDebrisField extends BaseCommandPlugin {
-    private static float NOTABLE_BANDWIDTH = 180f;
+    private static final float NOTABLE_BANDWIDTH = 180f;
 
     @Override
     public boolean doesCommandAddOptions() {
@@ -52,6 +49,9 @@ public class ETScanDebrisField extends BaseCommandPlugin {
             if (!ScanUtils.isPerShipDataNotable(shipData, i)) continue;
 
             FleetMemberAPI fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
+            log.info("debris field: scanning fleet member ID " + shipData.fleetMemberId);
+            fm.setId(shipData.fleetMemberId);
+
             validSelectionList.add(fm);
         }
 

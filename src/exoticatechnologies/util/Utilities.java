@@ -7,8 +7,10 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
+import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
 
 import java.util.*;
@@ -18,6 +20,7 @@ public class Utilities {
     private Utilities() {
     }
 
+    public static final String STORY_POINTS = "STORYPOINTS";
     public static final List<String> RESOURCES_LIST = new ArrayList<String>() {{
         add("supplies");
         add("volatiles");
@@ -164,8 +167,7 @@ public class Utilities {
     }
 
     public static void takeResources(CampaignFleetAPI fleet, MarketAPI market, Map<String, Integer> resources) {
-        Map<String, Integer> remainingResources = new HashMap<>();
-        remainingResources.putAll(resources);
+        Map<String, Integer> remainingResources = new HashMap<>(resources);
 
         if (market != null
                 && market.getSubmarket(Submarkets.SUBMARKET_STORAGE) != null
@@ -313,6 +315,44 @@ public class Utilities {
         return winner;
     }
 
+    /**
+     * finds the highest level chip that can be installed for a specific upgrade. this takes into account bandwidth,
+     * so if the only chips that can be found are too high level due to bandwidth then none will be returned.
+     * @param cargo cargo
+     * @param fm the ship
+     * @param mods ship mods
+     * @param upgrade the upgrade
+     * @return the chip, or null if no chip can be found that can be installed, or if there is no chip for that upgrade.
+     */
+    public static CargoStackAPI getUpgradeChip(CargoAPI cargo, FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade) {
+        float shipBandwidth = mods.getBandwidthWithExotics(fm);
+        float usedBandwidth = mods.getUsedBandwidth();
+
+        CargoStackAPI winner = null;
+        int winningLevel = 0;
+        String id = upgrade.getKey();
+
+        for(CargoStackAPI stack : cargo.getStacksCopy()) {
+            if(stack.isSpecialStack() && stack.getPlugin() != null && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
+
+                UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
+
+                if (id.equals(upgradeItem.getUpgradeId())) {
+                    int level = upgradeItem.getUpgradeLevel();
+                    if (level > mods.getUpgrade(upgrade)) {
+                        float upgradeBandwidth = (level - mods.getUpgrade(upgrade)) * upgrade.getBandwidthUsage();
+                        if ((usedBandwidth + upgradeBandwidth <= shipBandwidth) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
+                            winningLevel = upgradeItem.getUpgradeLevel();
+                            winner = stack;
+                        }
+                    }
+                }
+            }
+        }
+
+        return winner;
+    }
+
     public static boolean hasUpgradeChip(CargoAPI cargo, String id) {
         return getUpgradeChip(cargo, id) != null;
     }
@@ -330,12 +370,49 @@ public class Utilities {
     public static CargoStackAPI getSpecialStack(CargoAPI cargo, String id, String params) {
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
             if(stack.isSpecialStack()) {
-                if (stack.getSpecialDataIfSpecial().getId().equals(id) && stack.getSpecialDataIfSpecial().getData().equals(params)) {
+                SpecialItemData data = stack.getSpecialDataIfSpecial();
+                if (params != null && params.isEmpty()) {
+                    params = null;
+                }
+                if (data.getId().equals(id) && Objects.equals(data.getData(), params)) {
                     return stack;
                 }
             }
         }
 
         return null;
+    }
+
+    public static String formatSpecialItem(SpecialItemData data) {
+        return formatSpecialItem(data.getId(), data.getData());
+    }
+
+    public static String formatSpecialItem(String id, Object... data) {
+        StringBuilder paramBuilder = new StringBuilder();
+        for (int i = 0; i < data.length; i++) {
+            paramBuilder.append(data[i]);
+            if (i < data.length - 1) {
+                paramBuilder.append(",");
+            }
+        }
+
+        return String.format("$%s(%s)", id, paramBuilder);
+    }
+
+    public static String getSpecialItemId(String specialKey) {
+        return specialKey.substring(1, specialKey.indexOf("("));
+    }
+
+    public static String getSpecialItemParams(String specialKey) {
+        String params = specialKey.substring(specialKey.indexOf("(") + 1, specialKey.lastIndexOf(")"));
+        return params;
+    }
+
+    public static boolean isSpecialItemId(String key) {
+        return key.startsWith("$");
+    }
+
+    public static boolean isResourceString(String key) {
+        return key.startsWith("&");
     }
 }

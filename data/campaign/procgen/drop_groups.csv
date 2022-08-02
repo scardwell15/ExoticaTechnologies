@@ -1,8 +1,9 @@
 commodity,group,freq
-item_et_ammospool,et_exotic,8
-item_et_plasmacatalyst,et_exotic,5
-item_et_drivevent,et_exotic,8
-item_et_hangarforge,et_exotic,4
-item_et_equalizercore,et_exotic,5
-item_et_phaseengine,et_exotic,4
+item_et_exotic:SpooledFeeders,et_exotic,8
+item_et_exotic:DriveFluxVent,et_exotic,8
+item_et_exotic:EqualizerCore,et_exotic,6
+item_et_exotic:PlasmaFluxCatalyst,et_exotic,5
+item_et_exotic:HangarForgeMissiles,et_exotic,3
+item_et_exotic:HangarForge,et_exotic,4
+item_et_exotic:PhasefieldEngine,et_exotic,3
 nothing,et_exotic,75%

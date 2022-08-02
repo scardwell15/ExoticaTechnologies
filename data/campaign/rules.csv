@@ -5,8 +5,9 @@ $menuState == main
 $tradeMode == OPEN
 RepairAvailable","SetShortcut ETMainMenu ""U"" true",,"25:ETMainMenu:Visit the local Exotica Technologies branch.",
 ETMainMenu,DialogOptionSelected,"$option==ETMainMenu","$menuState = ETMainMenu
-ETInteractionDialogPlugin","The Exotica engineering team welcomes you! They ask you to pick a ship.","15:ETShipList:Consider an overhaul to a ship
+ETPrototypeUI","The Exotica engineering team welcomes you!","16:ETOpenPrototypeUI:View the prototype UI.
 90:ETDialogBack:Back",
+ETOpenPrototypeUI,DialogOptionSelected,$option==ETOpenPrototypeUI,ETPrototypeUI,,,
 ,,,,,,
 ETDialogBack,DialogOptionSelected,"$option==ETDialogBack","ShowDefaultVisual
 $menuState = main 0
@@ -21,10 +22,17 @@ ETFleetEncounterGenerated,GeneratedESForFleet,"ETHasUpgrades score:9999998
 !$ziggurat
 $customType != coronal_tap","$player.etScanFleetOnCommsLinkOpen = true 0
 Highlight ""Exotica technologies""","The other fleet appears to have modified some of their ships with Exotica technologies. They can be scanned through a small change to how a comms link is initialized.",,
+ETDerelictEncounterGenerated,TriggerAutomatedDefenses,"!$etHasDrawnTextForDefenses
+ETHasUpgrades score:9999998
+$customType != coronal_tap","$etHasDrawnTextForDefenses = true 0
+FireBest TriggerAutomatedDefenses
+ETGenerateForDefenseFleet
+AddText ""Generated mods for new fleet.""",,,
 ETOmegaEncounterGenerated,TriggerAutomatedDefenses,"!$etHasDrawnTextForOmega
 ETHasUpgrades score:9999998
 $customType == coronal_tap","$etHasDrawnTextForOmega = true 0
 FireBest TriggerAutomatedDefenses
+ETGenerateForDefenseFleet
 $player.etScanFleetOnCommsLinkOpen = true 0
 AddText ""The sensors tell you that there are Exotica technologies present on whatever those things are, and that most of them appear to be subsumed alpha, beta and gamma-level AI cores. The sensors don't explain why you can hear the subsumed AI cores crying, or why it almost sounds like music.""
 Highlight ""Exotica technologies"" ""crying""

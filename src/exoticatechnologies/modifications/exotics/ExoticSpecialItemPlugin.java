@@ -71,6 +71,7 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
         //you know what to do
     }
 
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private void handleParam(int index, String param) {
         switch(Param.get(index)) {
             case EXOTIC_ID: {

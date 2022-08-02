@@ -1,9 +1,7 @@
 package exoticatechnologies.campaign.rulecmd;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.FleetMemberPickerListener;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
@@ -12,9 +10,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.campaign.ScanUtils;
-import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.ShipModifications;
-import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 
 import java.util.ArrayList;
@@ -23,7 +19,7 @@ import java.util.Map;
 
 @Log4j
 public class ETScanFleet extends BaseCommandPlugin {
-    private static float NOTABLE_BANDWIDTH = 180f;
+    private static final float NOTABLE_BANDWIDTH = 180f;
 
     @Override
     public boolean doesCommandAddOptions() {

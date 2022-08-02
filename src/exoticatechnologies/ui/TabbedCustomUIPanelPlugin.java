@@ -11,20 +11,29 @@ import lombok.Setter;
 import java.util.List;
 
 public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
-    private float SWITCHER_BUTTON_WIDTH = 68;
+    private final float SWITCHER_BUTTON_WIDTH = 68;
 
     @Getter
     @Setter
     protected CustomPanelAPI myPanel;
     @Getter
-    @Setter
-    protected TooltipMakerAPI myTooltip;
+    protected final TooltipMakerAPI myTooltip;
 
     protected TooltipMakerAPI switcherPanel;
     protected ButtonAPI switcherButton;
 
     protected CustomPanelAPI currentPanel;
+    protected int lastPanelIndex = 0;
     protected int currentPanelIndex = 0;
+
+    protected float switcherPanelDefaultWidth;
+    protected final float switcherButtonHeight = 64;
+    protected final float switcherPanelHeight = 64;
+
+    public TabbedCustomUIPanelPlugin(TooltipMakerAPI tooltip, float defaultSwitcherPanelWidth) {
+        this.myTooltip = tooltip;
+        this.switcherPanelDefaultWidth = defaultSwitcherPanelWidth;
+    }
 
     @Override
     public void advance(float amount) {
@@ -46,6 +55,7 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
 
         if (switcherButton.isChecked()) {
             switcherButton.setChecked(false);
+            switcherButtonClicked();
         }
     }
 
@@ -58,11 +68,40 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
 
     protected abstract int getMaxPanelIndex();
 
-    private void cyclePanelIndex() {
+    protected void cyclePanelIndex() {
         currentPanelIndex++;
         if (currentPanelIndex > getMaxPanelIndex()) {
             currentPanelIndex = 0;
         }
+    }
+
+    protected void switchPanels(int newPanelIndex) {
+        myPanel.getPosition().setSize(getSwitcherPanelWidth(newPanelIndex), getSwitcherPanelHeight(newPanelIndex));
+        myTooltip.getPosition().inTL(0,0);
+
+        if (currentPanel != null) {
+            //must remove whole ass panel here because alex
+            myPanel.removeComponent(switcherPanel);
+            makeSwitcher(newPanelIndex);
+        }
+
+        currentPanel = createNewPanel(newPanelIndex, getSwitcherPanelWidth(newPanelIndex), getSwitcherPanelHeight(newPanelIndex));
+        switcherPanel.addCustom(currentPanel, 3).getPosition().inTL(3, 3);
+
+        switchedPanels(newPanelIndex, lastPanelIndex);
+        lastPanelIndex = newPanelIndex;
+    }
+
+    protected void switchedPanels(int newPanelIndex, int lastPanelIndex) {
+    }
+
+    public void switchToPanel(int newPanelIndex) {
+        currentPanelIndex = newPanelIndex;
+        if (currentPanelIndex > getMaxPanelIndex()) {
+            currentPanelIndex = 0;
+        }
+
+        switchPanels(newPanelIndex);
     }
 
     protected boolean shouldMakeSwitcher() {
@@ -73,17 +112,6 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
         return true;
     }
 
-    protected void switchPanels(int newPanelIndex) {
-        if (currentPanel != null) {
-            //must remove whole ass panel here because alex
-            myPanel.removeComponent(switcherPanel);
-            makeSwitcher(newPanelIndex);
-        }
-
-        currentPanel = createNewPanel(newPanelIndex, getSwitcherPanelWidth(), getSwitcherPanelHeight());
-        switcherPanel.addCustom(currentPanel, 3).getPosition().rightOfTop(switcherButton, 3);
-    }
-
     protected abstract CustomPanelAPI createNewPanel(int newPanelIndex, float panelWidth, float panelHeight);
 
     protected abstract String getSwitcherLabelText(int newPanelIndex);
@@ -91,13 +119,13 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
     protected abstract float getSwitcherLabelWidth(int newPanelIndex);
 
     private void makeSwitcher(int newPanelIndex) {
-        makeSwitcherPanel(newPanelIndex, myPanel.getPosition().getWidth() - getSwitcherPanelWidth(), getSwitcherPanelWidth(), getSwitcherPanelHeight());
-        makeSwitcherButtons(newPanelIndex, getSwitcherButtonWidth(), getSwitcherButtonHeight());
+        makeSwitcherPanel(newPanelIndex, getSwitcherButtonXOffset(newPanelIndex), getSwitcherPanelWidth(newPanelIndex), getSwitcherPanelHeight(newPanelIndex));
+        makeSwitcherButtons(newPanelIndex, getSwitcherButtonWidth(newPanelIndex), getSwitcherButtonHeight(newPanelIndex));
     }
 
     protected void makeSwitcherPanel(int newPanelIndex, float panelX, float panelWidth, float panelHeight) {
         switcherPanel = myPanel.createUIElement(panelWidth, panelHeight, false);
-        myPanel.addUIElement(switcherPanel).inTL(panelX, 0);
+        myPanel.addUIElement(switcherPanel).inTL(0, 0);
     }
 
     protected void makeSwitcherButtons(int newPanelIndex, float buttonW, float buttonH) {
@@ -105,6 +133,7 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
 
         switcherButton = switcherPanel.addAreaCheckbox(getSwitcherLabelText(newPanelIndex), "id",
                 playerFaction.getBaseUIColor(), playerFaction.getDarkUIColor(), playerFaction.getBrightUIColor(), buttonW, buttonH, 0);
+        switcherButton.getPosition().inTL(getSwitcherButtonXOffset(newPanelIndex), switcherPanelHeight / 4);
     }
 
     protected void killSwitcherButton() {
@@ -112,20 +141,28 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
         switcherButton = null;
     }
 
-    private float getSwitcherPanelWidth() {
-        return myPanel.getPosition().getWidth() - 340;
+    protected float getSwitcherButtonXOffset(int newPanelIndex) {
+        return getSwitcherButtonWidth(newPanelIndex) + 3;
     }
 
-    private float getSwitcherPanelHeight() {
-        return 64;
+    protected float getSwitcherPanelWidth(int newPanelIndex) {
+        return switcherPanelDefaultWidth; // - getSwitcherPanelXOffset(newPanelIndex);
     }
 
-    protected float getSwitcherButtonWidth() {
+    protected float getSwitcherPanelHeight(int newPanelIndex) {
+        return switcherPanelHeight;
+    }
+
+    protected float getSwitcherButtonWidth(int newPanelIndex) {
         return SWITCHER_BUTTON_WIDTH;
     }
 
-    protected float getSwitcherButtonHeight() {
-        return 64;
+    protected float getSwitcherButtonHeight(int newPanelIndex) {
+        return switcherButtonHeight;
+    }
+
+    protected float getSwitcherPanelUpperOffset(int newPanelInex) {
+        return getSwitcherButtonXOffset(newPanelInex) + getSwitcherButtonWidth(newPanelInex) + 3;
     }
 
     @Override

@@ -2,8 +2,6 @@ package exoticatechnologies.modifications.exotics;
 
 import com.fs.starfarer.api.Global;
 import data.scripts.util.MagicSettings;
-import exoticatechnologies.dialog.modifications.SystemOptionsHandler;
-import exoticatechnologies.modifications.exotics.dialog.ExoticsPickerState;
 import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
@@ -14,13 +12,11 @@ import java.util.*;
 
 @Log4j
 public class ExoticsHandler {
-    private static int EXOTIC_OPTION_ORDER = 2;
+    private static final int EXOTIC_OPTION_ORDER = 2;
     public static final Map<String, Exotic> EXOTICS = new HashMap<>();
     public static final List<Exotic> EXOTIC_LIST = new ArrayList<>();
-    public static final ExoticsPickerState EXOTICS_PICKER_DIALOG = new ExoticsPickerState();
 
     public static void initialize() {
-        SystemOptionsHandler.addOption(EXOTICS_PICKER_DIALOG);
         ExoticsHandler.populateExotics();
     }
 

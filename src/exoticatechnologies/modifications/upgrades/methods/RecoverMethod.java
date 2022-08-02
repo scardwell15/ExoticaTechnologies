@@ -3,17 +3,16 @@ package exoticatechnologies.modifications.upgrades.methods;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class RecoverMethod implements UpgradeMethod {
@@ -47,11 +46,8 @@ public class RecoverMethod implements UpgradeMethod {
     }
 
     @Override
-    public void apply(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, ShipModifications mods, Upgrade upgrade, MarketAPI market, FleetMemberAPI fm) {
-        TextPanelAPI textPanel = dialog.getTextPanel();
+    public String apply(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
-
-        ShipAPI.HullSize hullSize = fm.getHullSpec().getHullSize();
 
         int creditCost = getCreditCost(fm, mods, upgrade);
 
@@ -68,13 +64,13 @@ public class RecoverMethod implements UpgradeMethod {
         mods.save(fm);
         ExoticaTechHM.addToFleetMember(fm);
 
-        textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "UpgradeRecoveredSuccessfully"));
+        return StringUtils.getString("UpgradesDialog", "UpgradeRecoveredSuccessfully");
     }
 
     /**
      * Sums up the floats in the map.
      *
-     * @param resourceCosts
+     * @param resourceCosts resource cost map
      * @return The sum.
      */
     private static int getCreditCostForResources(Map<String, Integer> resourceCosts) {
@@ -88,15 +84,31 @@ public class RecoverMethod implements UpgradeMethod {
 
     private static int getCreditCost(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade) {
         float resourceCreditCost = getCreditCostForResources(upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade)));
-        int creditCost = (int) (resourceCreditCost * 0.166);
 
-        return creditCost;
+        return (int) (resourceCreditCost * 0.166);
     }
 
     @Override
-    public void modifyResourcesPanel(ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm, Upgrade upgrade, boolean hovered) {
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
+        Map<String, Float> resourceCosts = new HashMap<>();
+
         if (hovered) {
-            resourceCosts.put(Commodities.CREDITS, (float) getCreditCost(fm, plugin.getExtraSystems(), upgrade));
+            resourceCosts.put(Commodities.CREDITS, (float) getCreditCost(fm, mods, upgrade));
+
+            String resourceName = StringUtils.getTranslation("ShipListDialog", "UpgradeChipText")
+                    .format("upgradeName", upgrade.getName())
+                    .toString();
+
+            if (mods.hasUpgrade(upgrade)) {
+                resourceName = StringUtils.getTranslation("ShipListDialog", "UpgradeChipWithLevelText")
+                        .format("upgradeName", upgrade.getName())
+                        .format("level", mods.getUpgrade(upgrade))
+                        .toString();
+            }
+
+            resourceCosts.put(String.format("&%s", resourceName), -1f);
         }
+
+        return resourceCosts;
     }
 }

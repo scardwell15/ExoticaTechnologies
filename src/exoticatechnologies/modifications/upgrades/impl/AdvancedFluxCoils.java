@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.upgrades.impl;
 
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -9,6 +10,7 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.methods.ChipMethod;
 import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.util.StatUtils;
+import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
@@ -22,11 +24,11 @@ import java.util.Set;
 @Log4j
 public class AdvancedFluxCoils extends Upgrade {
     @Getter protected final float bandwidthUsage = 30f;
-    private static float CAPACITY_MAX = 25f;
-    private static float VENT_SPEED_MAX = 25f;
-    private static float WEAPON_FLUX_MAX = -10f;
-    private Set<String> allowedFactions = new HashSet<>();
-    private static Color COLOR = new Color(105, 74, 227);
+    private static final float CAPACITY_MAX = 25f;
+    private static final float VENT_SPEED_MAX = 25f;
+    private static final float WEAPON_FLUX_MAX = -10f;
+    private final Set<String> allowedFactions = new HashSet<>();
+    private static final Color COLOR = new Color(105, 74, 227);
 
     @Override
     public Color getColor() {
@@ -55,6 +57,15 @@ public class AdvancedFluxCoils extends Upgrade {
     }
 
     @Override
+    public boolean shouldShow(FleetMemberAPI fm, ShipModifications es, MarketAPI market) {
+        if (!canApply(fm)) {
+            return false;
+        }
+
+        return super.shouldShow(fm, es, market);
+    }
+
+    @Override
     protected void loadConfig() throws JSONException {
         JSONArray allowedFactions = this.upgradeSettings.getJSONArray("allowedFactions");
         for (int i = 0; i < allowedFactions.length(); i++) {
@@ -77,6 +88,24 @@ public class AdvancedFluxCoils extends Upgrade {
         StatUtils.setStatMult(stats.getBallisticWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
         StatUtils.setStatMult(stats.getEnergyWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
         StatUtils.setStatMult(stats.getMissileWeaponFluxCostMod(), this.getBuffId(), level, WEAPON_FLUX_MAX, maxLevel);
+    }
+
+    @Override
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "fluxCapacityWithFinal")
+                .formatWithOneDecimalAndModifier("percent", CAPACITY_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", CAPACITY_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "ventSpeedWithFinal")
+                .formatWithOneDecimalAndModifier("percent", VENT_SPEED_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", VENT_SPEED_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "weaponFluxCosts")
+                .formatWithOneDecimalAndModifier("percent", WEAPON_FLUX_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", WEAPON_FLUX_MAX)
+                .addToTooltip(tooltip);
     }
 
     @Override

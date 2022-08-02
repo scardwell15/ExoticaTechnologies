@@ -16,12 +16,12 @@ import java.awt.*;
 
 public class OverchargedShields extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
-    private static float FLUX_PER_DAM_MAX = -20f;
-    private static float ARC_MAX = 40f;
+    private static final float FLUX_PER_DAM_MAX = -20f;
+    private static final float ARC_MAX = 40f;
     private static float UPKEEP_MAX = 36f;
-    private static float UNFOLD_MAX = -30f;
-    private static float TURNRATE_MAX = -25f;
-    private static Color COLOR = new Color(56, 187, 166);
+    private static final float UNFOLD_MAX = -30f;
+    private static final float TURNRATE_MAX = -25f;
+    private static final Color COLOR = new Color(56, 187, 166);
 
     @Override
     public Color getColor() {
@@ -51,6 +51,39 @@ public class OverchargedShields extends Upgrade {
             StatUtils.setStatMult(stats.getShieldUnfoldRateMult(), this.getBuffId(), level - 2, UNFOLD_MAX, maxLevel - 2);
             StatUtils.setStatMult(stats.getShieldTurnRateMult(), this.getBuffId(), level - 2, TURNRATE_MAX, maxLevel - 2);
         }
+    }
+
+    @Override
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "shieldEfficiency")
+                .formatWithOneDecimalAndModifier("percent", FLUX_PER_DAM_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", FLUX_PER_DAM_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "shieldArc")
+                .formatWithOneDecimalAndModifier("percent", ARC_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", ARC_MAX)
+                .addToTooltip(tooltip);
+
+        //after level 3
+        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+                .format("level", 3)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "shieldUpkeep")
+                .formatWithOneDecimalAndModifier("percent", UPKEEP_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", UPKEEP_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "shieldUnfoldRateWithFinal")
+                .formatWithOneDecimalAndModifier("percent", UNFOLD_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", UNFOLD_MAX)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "shieldTurnRateWithFinal")
+                .formatWithOneDecimalAndModifier("percent", TURNRATE_MAX / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", TURNRATE_MAX)
+                .addToTooltip(tooltip);
     }
 
     @Override

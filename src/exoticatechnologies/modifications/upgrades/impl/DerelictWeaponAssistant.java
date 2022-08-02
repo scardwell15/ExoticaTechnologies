@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.upgrades.impl;
 
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -9,6 +10,7 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.methods.ChipMethod;
 import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.util.StatUtils;
+import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import org.json.JSONArray;
@@ -20,11 +22,11 @@ import java.util.Set;
 
 public class DerelictWeaponAssistant extends Upgrade {
     @Getter protected final float bandwidthUsage = 10f;
-    private static float RECOIL_REDUCTION = -25f;
-    private static float PROJ_SPEED = 20f;
-    private static float FIRERATE_BONUS = 10f;
-    private Set<String> allowedFactions = new HashSet<>();
-    private static Color COLOR = new Color(170, 200, 75);
+    private static final float RECOIL_REDUCTION = -25f;
+    private static final float PROJ_SPEED = 20f;
+    private static final float FIRERATE_BONUS = 10f;
+    private final Set<String> allowedFactions = new HashSet<>();
+    private static final Color COLOR = new Color(170, 200, 75);
 
     @Override
     public Color getColor() {
@@ -65,11 +67,38 @@ public class DerelictWeaponAssistant extends Upgrade {
     }
 
     @Override
+    public boolean shouldShow(FleetMemberAPI fm, ShipModifications es, MarketAPI market) {
+        if (!canApply(fm)) {
+            return false;
+        }
+
+        return super.shouldShow(fm, es, market);
+    }
+
+    @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {
         StatUtils.setStatPercent(stats.getRecoilPerShotMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
         StatUtils.setStatPercent(stats.getMaxRecoilMult(), this.getBuffId(), level, RECOIL_REDUCTION / 2, maxLevel);
         StatUtils.setStatPercent(stats.getProjectileSpeedMult(), this.getBuffId(), level, PROJ_SPEED, maxLevel);
         StatUtils.setStatPercent(stats.getBallisticRoFMult(), this.getBuffId(), level, FIRERATE_BONUS, maxLevel);
+    }
+
+    @Override
+    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "recoilWithFinal")
+                .formatWithOneDecimalAndModifier("percent", RECOIL_REDUCTION / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", RECOIL_REDUCTION)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "projSpeedWithFinal")
+                .formatWithOneDecimalAndModifier("percent", PROJ_SPEED / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", PROJ_SPEED)
+                .addToTooltip(tooltip);
+
+        StringUtils.getTranslation(this.getKey(), "ballisticFirerateWithFinal")
+                .formatWithOneDecimalAndModifier("percent", FIRERATE_BONUS / this.getMaxLevel(fm))
+                .formatPercWithOneDecimalAndModifier("finalValue", FIRERATE_BONUS)
+                .addToTooltip(tooltip);
     }
 
     @Override

@@ -107,7 +107,7 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
                 break;
             }
             case UPGRADE_LEVEL: {
-                upgradeLevel = Integer.valueOf(param);
+                upgradeLevel = Integer.parseInt(param);
                 break;
             }
         }

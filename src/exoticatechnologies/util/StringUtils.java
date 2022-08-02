@@ -2,7 +2,9 @@ package exoticatechnologies.util;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
+import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import lombok.AccessLevel;
@@ -18,6 +20,16 @@ import java.util.regex.Pattern;
 
 public class StringUtils {
     private StringUtils() {
+    }
+
+    public static String formatCost(float cost) {
+        String costText = "";
+        if (cost > 0) {
+            costText = String.format("-%s", Misc.getWithDGS(cost));
+        } else if (cost < 0) {
+            costText = String.format("+%s", Misc.getWithDGS(Math.abs(cost)));
+        }
+        return costText;
     }
 
     public static String getString(String parent, String key) {
@@ -44,7 +56,7 @@ public class StringUtils {
      * @param values the values
      * @return the string
      */
-    public static String formatString(String format, List<String> keys, List<Object> values) {
+    public static String formatString(String format, List<String> keys, List<String> values) {
         if (keys.size() != values.size()) {
             return null;
         }
@@ -71,19 +83,19 @@ public class StringUtils {
         }
     }
 
-    private static Map<Character, Color> adaptiveHighlightCharacterMap = new HashMap<>();
+    private static final Map<Character, Color> adaptiveHighlightCharacterMap = new HashMap<>();
     static {
         adaptiveHighlightCharacterMap.put('*', Misc.getHighlightColor());
         adaptiveHighlightCharacterMap.put('=', Misc.getNegativeHighlightColor());
         adaptiveHighlightCharacterMap.put('&', Misc.getEnergyMountColor());
     }
 
-    private static Pattern regularHighlightPattern = Pattern.compile("[\\*]([^\\*]*)[\\*]");
-    private static Pattern adaptiveHighlightsPattern = Pattern.compile("[=\\*&]([^=\\*&]*)[=\\*&]");
+    private static final Pattern regularHighlightPattern = Pattern.compile("[*]([^*]*)[*]");
+    private static final Pattern adaptiveHighlightsPattern = Pattern.compile("[=*&]([^=*&]*)[=*&]");
 
     /**
      * can match for positive (*) and negative (=) highlights
-     * @param format
+     * @param format string to format
      * @return pair that contains strings and their highlights
      */
     private static Pair<String[], Color[]> getAdaptiveHighlights(String format) {
@@ -102,7 +114,7 @@ public class StringUtils {
 
     /**
      * only matches positive (*) highlights
-     * @param format
+     * @param format string to get highlights from
      * @return list of strings to be highlighted
      */
     private static String[] getHighlights(String format) {
@@ -124,17 +136,17 @@ public class StringUtils {
         return padding.toString();
     }
 
-    public static void addToTooltip(TooltipMakerAPI tooltip, String translated, float pad) {
+    public static LabelAPI addToTooltip(TooltipMakerAPI tooltip, String translated, float pad) {
         Pair<String[], Color[]> highlights = getAdaptiveHighlights(translated);
-        tooltip.addPara(getPad(pad) + translated.replaceAll("[=\\*&]", ""),
+        return tooltip.addPara(getPad(pad) + translated.replaceAll("[=*&]", ""),
                 2f,
                 highlights.two,
                 highlights.one);
     }
 
-    public static void addToTooltip(TooltipMakerAPI tooltip, String translated, float pad, Color[] colors) {
+    public static LabelAPI addToTooltip(TooltipMakerAPI tooltip, String translated, float pad, Color[] colors) {
         String[] highlights = getHighlights(translated);
-        tooltip.addPara(getPad(pad) + translated.replaceAll("[\\*&]", ""),
+        return tooltip.addPara(getPad(pad) + translated.replaceAll("[*&]", ""),
                 2f,
                 colors,
                 highlights);
@@ -142,7 +154,7 @@ public class StringUtils {
 
     public static void addToTextPanel(TextPanelAPI textPanel, String translated) {
         Pair<String[], Color[]> highlights = getAdaptiveHighlights(translated);
-        textPanel.addPara(translated.replaceAll("[=\\*&]", "").replaceAll("%%", "%"));
+        textPanel.addPara(translated.replaceAll("[=*&]", "").replaceAll("%%", "%"));
         textPanel.highlightInLastPara(highlights.one);
         textPanel.setHighlightColorsInLastPara(highlights.two);
     }
@@ -158,9 +170,9 @@ public class StringUtils {
     public static class Translation {
         protected final String scope;
         protected final String key;
-        protected List<String> formats = new ArrayList<>();
-        protected List<Object> values = new ArrayList<>();
-        protected List<Color> colors = new ArrayList<>();
+        protected final List<String> formats = new ArrayList<>();
+        protected final List<String> values = new ArrayList<>();
+        protected final List<Color> colors = new ArrayList<>();
 
         public Translation format(String flag, Object value) {
             formats.add(flag);
@@ -194,16 +206,16 @@ public class StringUtils {
             return this;
         }
 
-        public Translation formatWithOneDecimalAndModifier(String flag, Number value) {
+        public Translation formatPercWithOneDecimalAndModifier(String flag, Number value) {
             formats.add(flag);
-            values.add(getFloatWithModifier(value.floatValue()));
+            values.add(getFloatWithModifier(value.floatValue()) + "%%");
 
             return this;
         }
 
-        public Translation formatWithModifier(String flag, Number value) {
+        public Translation formatWithOneDecimalAndModifier(String flag, Number value) {
             formats.add(flag);
-            values.add(value.intValue());
+            values.add(getFloatWithModifier(value.floatValue()));
 
             return this;
         }
@@ -233,24 +245,41 @@ public class StringUtils {
             }
         }
 
-        public void addToTooltip(TooltipMakerAPI tooltip) {
-            this.addToTooltip(tooltip, 0f);
+        public String toStringNoFormats() {
+            return this.toString().replaceAll("[=*&]", "");
         }
 
-        public void addToTooltip(TooltipMakerAPI tooltip, Color... colors) {
-            this.addToTooltip(tooltip, 0f, colors);
+        public LabelAPI addToTooltip(TooltipMakerAPI tooltip) {
+            return this.addToTooltip(tooltip, 0f);
         }
 
-        public void addToTooltip(TooltipMakerAPI tooltip, float pad) {
+        public LabelAPI addToTooltip(TooltipMakerAPI tooltip, Color... colors) {
+            return this.addToTooltip(tooltip, 0f, colors);
+        }
+
+        public LabelAPI addToTooltip(TooltipMakerAPI tooltip, float pad) {
             if (!colors.isEmpty()) {
-                this.addToTooltip(tooltip, colors.toArray(new Color[0]));
+                return this.addToTooltip(tooltip, colors.toArray(new Color[0]));
             } else {
-                StringUtils.addToTooltip(tooltip, this.toString(), pad);
+                return StringUtils.addToTooltip(tooltip, this.toString(), pad);
             }
         }
 
-        public void addToTooltip(TooltipMakerAPI tooltip, float pad, Color... colors) {
-            StringUtils.addToTooltip(tooltip, this.toString(), pad, colors);
+        public LabelAPI addToTooltip(TooltipMakerAPI tooltip, float pad, Color... colors) {
+            return StringUtils.addToTooltip(tooltip, this.toString(), pad, colors);
+        }
+
+        public LabelAPI addToTooltip(TooltipMakerAPI tooltip, UIComponentAPI positionBelowThis) {
+            LabelAPI label = StringUtils.addToTooltip(tooltip, this.toString(), 0f, colors.toArray(new Color[0]));
+            UIComponentAPI prev = tooltip.getPrev();
+            prev.getPosition().belowLeft(positionBelowThis, 2);
+            return label;
+        }
+
+        public void setLabelText(LabelAPI label) {
+            label.setText(this.toStringNoFormats());
+            label.setHighlight(values.toArray(new String[0]));
+            label.setHighlightColors(colors.toArray(new Color[0]));
         }
 
         public void addToTextPanel(TextPanelAPI textPanel) {
@@ -266,7 +295,7 @@ public class StringUtils {
         }
     }
 
-    public static interface Conditional {
+    public interface Conditional {
         String get();
     }
 }

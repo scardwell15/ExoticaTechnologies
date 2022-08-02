@@ -2,19 +2,19 @@ package exoticatechnologies.modifications.upgrades.methods;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ChipMethod implements UpgradeMethod {
@@ -35,7 +35,8 @@ public class ChipMethod implements UpgradeMethod {
 
     @Override
     public boolean canUse(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
-        if (Utilities.hasUpgradeChip(fm.getFleetData().getFleet().getCargo(), upgrade.getKey())) {
+        CargoStackAPI stack = Utilities.getUpgradeChip(fm.getFleetData().getFleet().getCargo(), fm, mods, upgrade);
+        if (stack != null) {
             int creditCost = getCreditCost(fm, mods, upgrade);
             return Global.getSector().getPlayerFleet().getCargo().getCredits().get() >= creditCost;
         }
@@ -48,22 +49,35 @@ public class ChipMethod implements UpgradeMethod {
     }
 
     @Override
-    public void apply(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, ShipModifications mods, Upgrade upgrade, MarketAPI market, FleetMemberAPI fm) {
+    public String apply(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
 
-        CargoStackAPI stack = Utilities.getUpgradeChip(fm.getFleetData().getFleet().getCargo(), upgrade.getKey());
+        CargoStackAPI stack = getDesiredChip(fm, mods, upgrade);
         UpgradeSpecialItemPlugin stackPlugin = (UpgradeSpecialItemPlugin) stack.getPlugin();
         int creditCost = getCreditCost(fm, mods, upgrade);
 
-        Utilities.takeUpgradeChip(fleet.getCargo(), upgrade.getKey(), stackPlugin.getUpgradeLevel());
-        mods.putUpgrade(upgrade, stackPlugin.getUpgradeLevel());
         fleet.getCargo().getCredits().subtract(creditCost);
+        fleet.getCargo().removeItems(CargoAPI.CargoItemType.SPECIAL, stack.getData(), 1);
+
+        mods.putUpgrade(upgrade, stackPlugin.getUpgradeLevel());
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
-        StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
+
+        return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
                 .format("name", upgrade.getName())
                 .format("level", mods.getUpgrade(upgrade))
-                .addToTextPanel(dialog.getTextPanel());
+                .toString();
+    }
+
+    /**
+     * returns the most valuable and still usable chip for the ship and its bandwidth.
+     * @param fm the ship
+     * @param mods the mods
+     * @param upgrade the upgrade
+     * @return the stack
+     */
+    public static CargoStackAPI getDesiredChip(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade) {
+        return Utilities.getUpgradeChip(fm.getFleetData().getFleet().getCargo(), fm, mods, upgrade);
     }
 
     /**
@@ -82,7 +96,7 @@ public class ChipMethod implements UpgradeMethod {
     }
 
     private static int getCreditCost(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade) {
-        CargoStackAPI stack = Utilities.getUpgradeChip(fm.getFleetData().getFleet().getCargo(), upgrade.getKey());
+        CargoStackAPI stack = getDesiredChip(fm, mods, upgrade);
         if (stack != null) {
             UpgradeSpecialItemPlugin plugin = (UpgradeSpecialItemPlugin) stack.getPlugin();
 
@@ -91,19 +105,29 @@ public class ChipMethod implements UpgradeMethod {
 
             return creditCost;
         }
-        return Integer.MAX_VALUE;
+        return 0;
     }
 
     @Override
-    public void modifyResourcesPanel(ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm, Upgrade upgrade, boolean hovered) {
-        if (hovered) {
-            resourceCosts.put(Commodities.CREDITS, (float) getCreditCost(fm, plugin.getExtraSystems(), upgrade));
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
+        Map<String, Float> resourceCosts = new HashMap<>();
 
-            CargoStackAPI stack = Utilities.getUpgradeChip(fm.getFleetData().getFleet().getCargo(), upgrade.getKey());
+        if (hovered) {
+            resourceCosts.put(Commodities.CREDITS, (float) getCreditCost(fm, mods, upgrade));
+
+            CargoStackAPI stack = getDesiredChip(fm, mods, upgrade);
             if (stack != null) {
                 UpgradeSpecialItemPlugin stackPlugin = (UpgradeSpecialItemPlugin) stack.getPlugin();
-                resourceCosts.put(ETInteractionDialogPlugin.formatSpecialItem(stack.getSpecialDataIfSpecial()), 1f);
+                resourceCosts.put(Utilities.formatSpecialItem(stack.getSpecialDataIfSpecial()), 1f);
+            } else {
+                String resourceName = StringUtils.getTranslation("ShipListDialog", "UpgradeChipText")
+                        .format("upgradeName", upgrade.getName())
+                        .toString();
+
+                resourceCosts.put(String.format("&%s", resourceName), 1f);
             }
         }
+
+        return resourceCosts;
     }
 }

@@ -2,18 +2,16 @@ package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
-import exoticatechnologies.modifications.exotics.Exotic;
-import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -22,11 +20,11 @@ import org.json.JSONException;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PhasefieldEngine extends Exotic {
     private static final String ITEM = "et_phaseengine";
-    private static final Color[] tooltipColors = {new Color(0xA94EFF), ExoticaTechHM.infoColor};
 
     private static int PHASE_RESET_INTERVAL = 8;
     private static int INVULNERABLE_INTERVAL = 2;
@@ -40,8 +38,8 @@ public class PhasefieldEngine extends Exotic {
 
     @Override
     public void loadConfig() throws JSONException {
-        PHASE_RESET_INTERVAL = (int) exoticSettings.getInt("phaseResetInterval");
-        INVULNERABLE_INTERVAL = (int) exoticSettings.getInt("invulnerableInterval");
+        PHASE_RESET_INTERVAL = exoticSettings.getInt("phaseResetInterval");
+        INVULNERABLE_INTERVAL = exoticSettings.getInt("invulnerableInterval");
 
         PHASE_COOLDOWN_PERCENT_REDUCTION = (float) exoticSettings.getDouble("phaseCooldownReduction");
         PHASE_COST_PERCENT_REDUCTION = (float) exoticSettings.getDouble("phaseCostBaseReduction");
@@ -56,10 +54,7 @@ public class PhasefieldEngine extends Exotic {
 
     @Override
     public boolean canApply(ShipVariantAPI var) {
-        if(var.getHullSpec().getShieldType() != ShieldAPI.ShieldType.PHASE) {
-            return false;
-        }
-        return true;
+        return var.getHullSpec().getShieldType() == ShieldAPI.ShieldType.PHASE;
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -85,23 +80,22 @@ public class PhasefieldEngine extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
+        Map<String, Float> resourceCosts = new HashMap<>();
+        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        return resourceCosts;
+    }
+
+    @Override
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
-                    .format("exoticName", this.getName())
                     .format("phaseCostReduction", String.valueOf(1 - Math.abs(PHASE_COST_PERCENT_REDUCTION / 100f)))
                     .format("phaseResetTime", PHASE_RESET_INTERVAL)
                     .format("noDamageTime", INVULNERABLE_INTERVAL)
                     .format("zeroFluxCost", Misc.getRounded(PHASE_COST_IF_ZERO))
-                    .addToTooltip(tooltip, tooltipColors);
-        } else {
-            tooltip.addPara(this.getName(), tooltipColors[0], 5);
+                    .addToTooltip(tooltip, title);
         }
-    }
-
-    @Override
-    public void modifyResourcesPanel(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
-        resourceCosts.put(ITEM, 1f);
     }
 
     @Override

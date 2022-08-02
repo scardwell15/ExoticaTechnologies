@@ -95,9 +95,7 @@ public class FleetMemberUtils {
             }
 
             ShipVariantAPI shipVariant = member.getVariant();
-            Iterator<String> moduleIterator = shipVariant.getStationModules().keySet().iterator();
-            while (moduleIterator.hasNext()) {
-                String moduleVariantId = moduleIterator.next();
+            for (String moduleVariantId : shipVariant.getStationModules().keySet()) {
                 ShipVariantAPI moduleVariant = shipVariant.getModuleVariant(moduleVariantId);
 
                 if (moduleVariant.getStatsForOpCosts() != null) {

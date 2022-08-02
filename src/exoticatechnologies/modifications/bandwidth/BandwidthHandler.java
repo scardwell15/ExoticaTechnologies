@@ -6,18 +6,12 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
 import exoticatechnologies.ETModPlugin;
-import exoticatechnologies.dialog.modifications.SystemOptionsHandler;
-import exoticatechnologies.modifications.bandwidth.dialog.BandwidthState;
 import exoticatechnologies.modifications.ShipModifications;
 
 import java.util.Map;
 
 public class BandwidthHandler {
-    public static BandwidthState DIALOG_STATE = new BandwidthState();
-    private static int UPGRADE_OPTION_ORDER = 0;
-    public static void initialize() {
-        SystemOptionsHandler.addOption(DIALOG_STATE);
-    }
+    private static final int UPGRADE_OPTION_ORDER = 0;
 
     public static boolean canUpgrade(ShipModifications buff, FleetMemberAPI selectedShip) {
         return buff == null || buff.canUpgradeBandwidth(selectedShip);

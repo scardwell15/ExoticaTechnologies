@@ -1,14 +1,13 @@
 package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
-import exoticatechnologies.hullmods.ExoticaTechHM;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -17,11 +16,11 @@ import lombok.Getter;
 import org.json.JSONException;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HangarForge extends Exotic {
     private static final String ITEM = "et_hangarforge";
-    private static final Color[] tooltipColors = {Color.GREEN, ExoticaTechHM.infoColor, ExoticaTechHM.infoColor};
 
     private static float RATE_DECREASE_MODIFIER = -35f;
     private static float FIGHTER_REPLACEMENT_TIME_BONUS = -15f;
@@ -49,6 +48,11 @@ public class HangarForge extends Exotic {
     }
 
     @Override
+    public boolean canApply(ShipVariantAPI var) {
+        return var.isCarrier();
+    }
+
+    @Override
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         return "You need a Hangar Forge to install this.";
     }
@@ -66,22 +70,19 @@ public class HangarForge extends Exotic {
     }
 
     @Override
-    public void modifyResourcesPanel(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
-        resourceCosts.put(ITEM, 1f);
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
+        Map<String, Float> resourceCosts = new HashMap<>();
+        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        return resourceCosts;
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
-        if (systems.hasExotic(this.getKey())) {
-            if (expand) {
-                StringUtils.getTranslation(this.getKey(), "longDescription")
-                        .format("exoticName", this.getName())
-                        .format("replacementRateIncrease", FIGHTER_REPLACEMENT_TIME_BONUS)
-                        .format("rateDecreaseBuff", RATE_DECREASE_MODIFIER)
-                        .addToTooltip(tooltip, tooltipColors);
-            } else {
-                tooltip.addPara(this.getName(), tooltipColors[0], 5);
-            }
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+        if (expand) {
+            StringUtils.getTranslation(this.getKey(), "longDescription")
+                    .format("replacementRateIncrease", FIGHTER_REPLACEMENT_TIME_BONUS)
+                    .format("rateDecreaseBuff", RATE_DECREASE_MODIFIER)
+                    .addToTooltip(tooltip, title);
         }
     }
 

@@ -20,27 +20,11 @@ import java.util.*;
 @Log4j
 public class ShipModifications {
     //per fleet member!
-    private static float CHANCE_OF_UPGRADES = 0.4f;
+    private static final float CHANCE_OF_UPGRADES = 0.4f;
 
     ShipModifications() {
-
-        if (upgrades == null) {
-            this.upgrades = new ETUpgrades();
-        }
-
-        if (exotics == null) {
-            this.exotics = new ETExotics();
-        }
-    }
-
-    ShipModifications(FleetMemberAPI fm) {
-        if (upgrades == null) {
-            this.upgrades = new ETUpgrades();
-        }
-
-        if (exotics == null) {
-            this.exotics = new ETExotics();
-        }
+        this.upgrades = new ETUpgrades();
+        this.exotics = new ETExotics();
     }
 
     public boolean shouldApplyHullmod() {
@@ -62,7 +46,6 @@ public class ShipModifications {
 
     /**
      * for ships without a fleet member.
-     * @param seed
      * @param var
      * @param faction
      */
@@ -77,7 +60,7 @@ public class ShipModifications {
 
     /**
      * for a fleet member
-     * @param seed
+     * @param fm
      * @param faction
      */
     public void generate(FleetMemberAPI fm, String faction) {

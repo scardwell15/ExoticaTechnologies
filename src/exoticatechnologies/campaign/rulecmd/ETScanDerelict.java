@@ -15,8 +15,6 @@ import java.util.Map;
 
 @Log4j
 public class ETScanDerelict extends BaseCommandPlugin {
-    private static float NOTABLE_BANDWIDTH = 180f;
-
     @Override
     public boolean doesCommandAddOptions() {
         return false;
@@ -32,7 +30,7 @@ public class ETScanDerelict extends BaseCommandPlugin {
 
         ScanUtils.addModificationsToTextPanel(dialog.getTextPanel(),
                 shipData.shipName != null ? shipData.shipName : "???",
-                ETModPlugin.getData(interactionTarget.getId()),
+                ETModPlugin.getData(shipData.fleetMemberId),
                 shipData.getVariant().getHullSize(),
                 null);
 

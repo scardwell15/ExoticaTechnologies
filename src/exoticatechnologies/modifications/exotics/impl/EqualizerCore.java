@@ -1,7 +1,6 @@
 package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -9,8 +8,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.WeaponBaseRangeModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exoticatechnologies.campaign.rulecmd.ETInteractionDialogPlugin;
-import exoticatechnologies.hullmods.ExoticaTechHM;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
@@ -19,11 +17,11 @@ import lombok.Getter;
 import org.json.JSONException;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class EqualizerCore extends Exotic {
     private static final String ITEM = "et_equalizercore";
-    private static final Color[] tooltipColors = {Color.orange.darker(), ExoticaTechHM.infoColor};
 
     private static float RECOIL_REDUCTION = -25f;
     private static float TURN_RATE_BUFF = 50f;
@@ -69,26 +67,23 @@ public class EqualizerCore extends Exotic {
     }
 
     @Override
-    public void modifyResourcesPanel(InteractionDialogAPI dialog, ETInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
-        resourceCosts.put(ITEM, 1f);
+    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
+        Map<String, Float> resourceCosts = new HashMap<>();
+        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        return resourceCosts;
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
-        if (systems.hasExotic(this.getKey())) {
-            if(expand) {
-                StringUtils.getTranslation(this.getKey(), "longDescription")
-                        .format("exoticName", this.getName())
-                        .format("recoilReduction", RECOIL_REDUCTION)
-                        .format("weaponTurnBonus", TURN_RATE_BUFF)
-                        .format("lowRangeThreshold", RANGE_LIMIT_BOTTOM)
-                        .format("rangeBonus", RANGE_BOTTOM_BUFF)
-                        .format("highRangeThreshold", RANGE_LIMIT_TOP)
-                        .format("rangeMalus", RANGE_TOP_BUFF)
-                        .addToTooltip(tooltip, tooltipColors);
-            } else {
-                tooltip.addPara(this.getName(), tooltipColors[0], 5);
-            }
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+        if (expand) {
+            StringUtils.getTranslation(this.getKey(), "longDescription")
+                    .format("recoilReduction", RECOIL_REDUCTION)
+                    .format("weaponTurnBonus", TURN_RATE_BUFF)
+                    .format("lowRangeThreshold", RANGE_LIMIT_BOTTOM)
+                    .format("rangeBonus", RANGE_BOTTOM_BUFF)
+                    .format("highRangeThreshold", RANGE_LIMIT_TOP)
+                    .format("rangeMalus", Math.abs(RANGE_TOP_BUFF))
+                    .addToTooltip(tooltip, title);
         }
     }
 
@@ -111,7 +106,7 @@ public class EqualizerCore extends Exotic {
     }
 
     // Our range listener
-    private class ESR_EqualizerCoreListener implements WeaponBaseRangeModifier {
+    private static class ESR_EqualizerCoreListener implements WeaponBaseRangeModifier {
 
         @Override
         public float getWeaponBaseRangePercentMod(ShipAPI ship, WeaponAPI weapon) {

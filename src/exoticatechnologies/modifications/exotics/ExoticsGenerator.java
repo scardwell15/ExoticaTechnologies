@@ -2,11 +2,8 @@ package exoticatechnologies.modifications.exotics;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.util.WeightedRandomPicker;
 import data.scripts.util.MagicSettings;
 import exoticatechnologies.modifications.ShipModFactory;
-import exoticatechnologies.modifications.upgrades.Upgrade;
-import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.util.Utilities;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
@@ -18,7 +15,7 @@ import java.util.Random;
 @Log4j
 public class ExoticsGenerator {
     //per fleet member!
-    private static float CHANCE_OF_EXOTICS = 0.1f;
+    private static final float CHANCE_OF_EXOTICS = 0.1f;
 
     public static ETExotics generate(ShipVariantAPI var, String faction, float bandwidth) {
         Map<String, Float> factionExoticChances = MagicSettings.getFloatMap("exoticatechnologies", "factionExoticChances");

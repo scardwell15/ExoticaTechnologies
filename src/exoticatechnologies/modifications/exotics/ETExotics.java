@@ -30,10 +30,7 @@ public class ETExotics {
     }
 
     public boolean hasExotic(String key) {
-        if (this.exotics.contains(key)) {
-            return true;
-        }
-        return false;
+        return this.exotics.contains(key);
     }
 
     public void putExotic(Exotic exotic) {

@@ -22,21 +22,22 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("EmptyMethod")
 public abstract class Upgrade {
-    public static String ITEM = "et_upgrade";
+    public static final String ITEM = "et_upgrade";
     @Getter @Setter public String key;
     @Getter @Setter protected String name;
     @Getter @Setter protected String description;
-    @Getter @Setter protected String tooltip;
     @Getter protected JSONObject upgradeSettings;
-    @Getter protected Map<String, Float> resourceRatios = new HashMap<>();
+    @Getter protected final Map<String, Float> resourceRatios = new HashMap<>();
 
     public static Upgrade get(String upgradeKey) {
         return UpgradesHandler.UPGRADES.get(upgradeKey);
     }
 
-
     public abstract float getBandwidthUsage();
+
+    public abstract void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip);
 
     public boolean shouldLoad() {
         return true;
@@ -86,7 +87,7 @@ public abstract class Upgrade {
         }
     }
 
-    protected void loadConfig() throws JSONException {};
+    protected void loadConfig() throws JSONException {}
 
 
     public String getBuffId() {
@@ -194,14 +195,5 @@ public abstract class Upgrade {
         }
 
         return resourceCosts;
-    }
-
-    protected static <T extends Upgrade> T getInstance(Class<T> test) {
-        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if(upgrade.getClass().equals(test)) {
-                return (T) upgrade;
-            }
-        }
-        return null;
     }
 }

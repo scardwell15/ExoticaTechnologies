@@ -13,9 +13,10 @@ import lombok.Getter;
 import java.awt.*;
 
 public class TracerRecoilCalculator extends Upgrade {
-    @Getter protected final float bandwidthUsage = 15f;
-    private static final float RECOIL_REDUCTION = -20f;
-    private static final float PROJ_SPEED = -20f;
+    @Getter protected final float bandwidthUsage = 5f;
+    private static final float RECOIL_REDUCTION = -30f;
+    private static final float WEAPON_MOUNT_HEALTH = 16f;
+    private static final float WEAPON_TURN_RATE = -16f;
     private static final Color COLOR = new Color(213, 129, 60);
 
     @Override
@@ -25,31 +26,27 @@ public class TracerRecoilCalculator extends Upgrade {
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {
-        StatUtils.setStatPercent(stats.getRecoilPerShotMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
-        StatUtils.setStatPercent(stats.getMaxRecoilMult(), this.getBuffId(), level, RECOIL_REDUCTION / 2, maxLevel);
+        StatUtils.setStatMult(stats.getRecoilPerShotMultSmallWeaponsOnly(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
+        StatUtils.setStatMult(stats.getRecoilPerShotMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
+        StatUtils.setStatMult(stats.getMaxRecoilMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
+        StatUtils.setStatPercent(stats.getWeaponHealthBonus(), this.getBuffId(), level, WEAPON_MOUNT_HEALTH, maxLevel);
 
         if (level >= 3) {
-            StatUtils.setStatPercent(stats.getProjectileSpeedMult(), this.getBuffId(), level - 2, PROJ_SPEED, maxLevel - 2);
+            StatUtils.setStatMult(stats.getWeaponTurnRateBonus(), this.getBuffId(), level - 2, WEAPON_TURN_RATE, maxLevel - 2);
         }
     }
 
-
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "recoilWithFinal")
-                .formatWithOneDecimalAndModifier("percent", RECOIL_REDUCTION / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", RECOIL_REDUCTION)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltipMult(tooltip, "recoil", fm, mods, RECOIL_REDUCTION);
+        this.addBenefitToShopTooltipMult(tooltip, "weaponHealth", fm, mods, WEAPON_MOUNT_HEALTH);
 
         //after level 3
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 
-        StringUtils.getTranslation(this.getKey(), "projSpeedWithFinal")
-                .formatWithOneDecimalAndModifier("percent", PROJ_SPEED / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", PROJ_SPEED)
-                .addToTooltip(tooltip);
+        this.addMalusToShopTooltipMult(tooltip, "weaponTurnRate", fm, mods, 3, WEAPON_TURN_RATE);
     }
 
     @Override
@@ -59,20 +56,23 @@ public class TracerRecoilCalculator extends Upgrade {
         if (expand) {
             tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-            this.addDecreaseToTooltip(tooltip,
+            this.addBenefitToTooltipMult(tooltip,
                     "recoil",
                     fm.getStats().getRecoilPerShotMult().getMultStatMod(this.getBuffId()).getValue());
 
+            this.addBenefitToTooltip(tooltip,
+                    "weaponHealth",
+                    fm.getStats().getWeaponHealthBonus().getPercentBonus(this.getBuffId()).getValue());
 
-            MutableStat.StatMod projSpeedStat = fm.getStats().getProjectileSpeedMult().getMultStatMod(this.getBuffId());
-            float projSpeedBonus = 1f;
-            if (projSpeedStat != null) {
-                projSpeedBonus = projSpeedStat.getValue();
+            MutableStat.StatMod weaponTurnStat = fm.getStats().getWeaponTurnRateBonus().getMultBonus(this.getBuffId());
+            float weaponTurnRate = 1f;
+            if (weaponTurnStat != null) {
+                weaponTurnRate = weaponTurnStat.getValue();
             }
 
-            this.addDecreaseToTooltip(tooltip,
-                    "projSpeed",
-                    projSpeedBonus);
+            this.addMalusToTooltipMult(tooltip,
+                    "weaponTurnRate",
+                    weaponTurnRate);
         } else {
             tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
         }

@@ -95,36 +95,29 @@ public class CommissionedCrews extends Upgrade {
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "crewSalaryShort")
-                .format("salaryIncrease", COST_PER_CREW_MAX / this.getMaxLevel(fm))
-                .format("finalValue", COST_PER_CREW_MAX)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        if (mods.getUpgrade(this) >= this.getMaxLevel(fm)) {
+            StringUtils.getTranslation(this.getKey(), "crewSalaryFinal")
+                    .format("salaryIncrease", COST_PER_CREW_MAX / this.getMaxLevel(fm) * mods.getUpgrade(this))
+                    .addToTooltip(tooltip);
+        } else {
+            StringUtils.getTranslation(this.getKey(), "crewSalaryShop")
+                    .format("salaryIncrease", COST_PER_CREW_MAX / this.getMaxLevel(fm) * mods.getUpgrade(this))
+                    .format("perLevel", COST_PER_CREW_MAX / this.getMaxLevel(fm))
+                    .format("finalValue", COST_PER_CREW_MAX)
+                    .addToTooltip(tooltip);
+        }
 
-        StringUtils.getTranslation(this.getKey(), "hullRepair")
-                .formatWithOneDecimalAndModifier("percent", REPAIR_RATE_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", REPAIR_RATE_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "fuelConsumptionInfo")
-                .formatWithOneDecimalAndModifier("percent", FUEL_USE_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", FUEL_USE_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "suppliesToRecover")
-                .format("percent", SUPPLIES_RECOVERY_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", SUPPLIES_RECOVERY_MAX)
-                .addToTooltip(tooltip);
+        this.addBenefitToShopTooltip(tooltip, "hullRepair", fm, mods, REPAIR_RATE_MAX);
+        this.addBenefitToShopTooltipMult(tooltip, "fuelConsumptionShop", fm, mods, FUEL_USE_MAX);
+        this.addBenefitToShopTooltipMult(tooltip, "suppliesToRecover", fm, mods, SUPPLIES_RECOVERY_MAX);
 
         if (isAutomated(fm)) {
-            StringUtils.getTranslation(this.getKey(), "supplyConsumptionInfoAutomated")
+            StringUtils.getTranslation(this.getKey(), "supplyConsumptionShopAutomated")
                     .format("percent", 200)
                     .addToTooltip(tooltip);
         } else {
-            StringUtils.getTranslation(this.getKey(), "supplyConsumptionInfo")
-                    .format("percent", SUPPLIES_MONTH_MAX / this.getMaxLevel(fm))
-                    .formatPercWithOneDecimalAndModifier("finalValue", SUPPLIES_MONTH_MAX)
-                    .addToTooltip(tooltip);
+            this.addBenefitToShopTooltipMult(tooltip, "supplyConsumptionShop", fm, mods, SUPPLIES_MONTH_MAX);
         }
     }
 
@@ -141,7 +134,6 @@ public class CommissionedCrews extends Upgrade {
                     .format("salaryIncrease", salary)
                     .format("finalValue", Math.round(totalCostPerMonth))
                     .addToTooltip(tooltip, 2f);
-
 
             float fuelUseMult = fm.getStats().getSuppliesToRecover().getMultStatMod(this.getBuffId()).getValue();
             float savedFuel = fm.getHullSpec().getFuelPerLY() * fuelUseMult;
@@ -170,12 +162,12 @@ public class CommissionedCrews extends Upgrade {
                         .addToTooltip(tooltip, 2f);
             }
 
-            this.addDecreaseWithFinalToTooltip(tooltip,
+            this.addBenefitToTooltipMult(tooltip,
                     "suppliesToRecover",
                     fm.getStats().getSuppliesToRecover().getMultStatMod(this.getBuffId()).getValue(),
                     fm.getHullSpec().getSuppliesToRecover());
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addBenefitToTooltip(tooltip,
                     "hullRepair",
                     fm.getStats().getRepairRatePercentPerDay().getPercentStatMod(this.getBuffId()).getValue(),
                     fm.getStats().getRepairRatePercentPerDay().getBaseValue());

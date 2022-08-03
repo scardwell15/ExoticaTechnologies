@@ -91,21 +91,10 @@ public class AdvancedFluxCoils extends Upgrade {
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "fluxCapacityWithFinal")
-                .formatWithOneDecimalAndModifier("percent", CAPACITY_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", CAPACITY_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "ventSpeedWithFinal")
-                .formatWithOneDecimalAndModifier("percent", VENT_SPEED_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", VENT_SPEED_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "weaponFluxCosts")
-                .formatWithOneDecimalAndModifier("percent", WEAPON_FLUX_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", WEAPON_FLUX_MAX)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltipMult(tooltip, "fluxCapacity", fm, mods, CAPACITY_MAX);
+        this.addBenefitToShopTooltipMult(tooltip, "ventSpeed", fm, mods, VENT_SPEED_MAX);
+        this.addBenefitToShopTooltipMult(tooltip, "weaponFluxCosts", fm, mods, WEAPON_FLUX_MAX);
     }
 
     @Override
@@ -116,15 +105,15 @@ public class AdvancedFluxCoils extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-                this.addIncreaseToTooltip(tooltip,
+                this.addBenefitToTooltipMult(tooltip,
                         "fluxCapacity",
                         (fm.getStats().getFluxCapacity().getMultStatMod(this.getBuffId()).getValue() - 1f) * 100f);
 
-                this.addIncreaseToTooltip(tooltip,
+                this.addBenefitToTooltip(tooltip,
                         "ventSpeed",
                         fm.getStats().getVentRateMult().getPercentStatMod(this.getBuffId()).getValue());
 
-                this.addDecreaseToTooltip(tooltip,
+                this.addBenefitToTooltipMult(tooltip,
                         "weaponFluxCosts",
                         fm.getStats().getBallisticWeaponFluxCostMod().getMultBonus(this.getBuffId()).getValue());
             } else {

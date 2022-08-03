@@ -18,9 +18,9 @@ public class OverchargedShields extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
     private static final float FLUX_PER_DAM_MAX = -20f;
     private static final float ARC_MAX = 40f;
-    private static float UPKEEP_MAX = 36f;
+    private static float UPKEEP_MAX = 32f;
     private static final float UNFOLD_MAX = -30f;
-    private static final float TURNRATE_MAX = -25f;
+    private static final float TURNRATE_MAX = -20f;
     private static final Color COLOR = new Color(56, 187, 166);
 
     @Override
@@ -43,47 +43,35 @@ public class OverchargedShields extends Upgrade {
         StatUtils.setStatPercent(stats.getShieldArcBonus(), this.getBuffId(), level, ARC_MAX, maxLevel);
 
         if (level >= 3) {
+            float upkeepMax = UPKEEP_MAX;
             if (fm.getHullSpec().getShieldSpec().getUpkeepCost() >= 300) {
-                UPKEEP_MAX = UPKEEP_MAX * 0.66f;
+                upkeepMax = UPKEEP_MAX * 0.66f;
             }
 
-            StatUtils.setStatPercent(stats.getShieldUpkeepMult(), this.getBuffId(), level - 2, UPKEEP_MAX, maxLevel - 2);
+            StatUtils.setStatPercent(stats.getShieldUpkeepMult(), this.getBuffId(), level - 2, upkeepMax, maxLevel - 2);
             StatUtils.setStatMult(stats.getShieldUnfoldRateMult(), this.getBuffId(), level - 2, UNFOLD_MAX, maxLevel - 2);
             StatUtils.setStatMult(stats.getShieldTurnRateMult(), this.getBuffId(), level - 2, TURNRATE_MAX, maxLevel - 2);
         }
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "shieldEfficiency")
-                .formatWithOneDecimalAndModifier("percent", FLUX_PER_DAM_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", FLUX_PER_DAM_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "shieldArc")
-                .formatWithOneDecimalAndModifier("percent", ARC_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", ARC_MAX)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltipMult(tooltip, "shieldEfficiency", fm, mods, FLUX_PER_DAM_MAX);
+        this.addBenefitToShopTooltip(tooltip, "shieldArc", fm, mods, ARC_MAX);
 
         //after level 3
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 
-        StringUtils.getTranslation(this.getKey(), "shieldUpkeep")
-                .formatWithOneDecimalAndModifier("percent", UPKEEP_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", UPKEEP_MAX)
-                .addToTooltip(tooltip);
+        float upkeepMax = UPKEEP_MAX;
+        if (fm.getHullSpec().getShieldSpec().getUpkeepCost() >= 300) {
+            upkeepMax = UPKEEP_MAX * 0.66f;
+        }
 
-        StringUtils.getTranslation(this.getKey(), "shieldUnfoldRateWithFinal")
-                .formatWithOneDecimalAndModifier("percent", UNFOLD_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", UNFOLD_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "shieldTurnRateWithFinal")
-                .formatWithOneDecimalAndModifier("percent", TURNRATE_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", TURNRATE_MAX)
-                .addToTooltip(tooltip);
+        this.addMalusToShopTooltip(tooltip, "shieldUpkeep", fm, mods, 3, upkeepMax);
+        this.addMalusToShopTooltipMult(tooltip, "shieldUnfoldRate", fm, mods, 3, UNFOLD_MAX);
+        this.addMalusToShopTooltipMult(tooltip, "shieldTurnRate", fm, mods, 3, TURNRATE_MAX);
     }
 
     @Override
@@ -94,15 +82,21 @@ public class OverchargedShields extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
+                this.addBenefitToTooltipMult(tooltip,
+                        "shieldEfficiency",
+                        fm.getStats().getShieldDamageTakenMult().getMultStatMod(this.getBuffId()).getValue(),
+                        fm.getHullSpec().getBaseShieldFluxPerDamageAbsorbed());
+
+                /*
                 float shieldEffMod = fm.getStats().getShieldDamageTakenMult().getMultStatMod(this.getBuffId()).getValue();
                 float shieldEffMult = -(1f - shieldEffMod);
                 float shieldEffFinal = fm.getHullSpec().getBaseShieldFluxPerDamageAbsorbed() * shieldEffMult;
                 StringUtils.getTranslation(this.getKey(), "shieldEfficiency")
                         .formatWithOneDecimalAndModifier("percent", shieldEffMult * 100f)
                         .format("finalValue", String.valueOf(Math.round(shieldEffFinal * 100f) / 100f))
-                        .addToTooltip(tooltip, 2f);
+                        .addToTooltip(tooltip, 2f);*/
 
-                this.addIncreaseWithFinalToTooltip(tooltip,
+                this.addBenefitToTooltip(tooltip,
                         "shieldArc",
                         fm.getStats().getShieldArcBonus().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getHullSpec().getShieldSpec().getArc());
@@ -113,7 +107,7 @@ public class OverchargedShields extends Upgrade {
                     shieldUpkeepBonus = shieldUpkeepStat.getValue();
                 }
 
-                this.addIncreaseWithFinalToTooltip(tooltip,
+                this.addMalusToTooltip(tooltip,
                         "shieldUpkeep",
                         shieldUpkeepBonus,
                         fm.getHullSpec().getShieldSpec().getUpkeepCost());
@@ -124,7 +118,7 @@ public class OverchargedShields extends Upgrade {
                     shieldUnfoldBonus = shieldUnfoldStat.getValue();
                 }
 
-                this.addDecreaseToTooltip(tooltip,
+                this.addMalusToTooltipMult(tooltip,
                         "shieldUnfoldRate",
                         shieldUnfoldBonus);
 
@@ -135,7 +129,7 @@ public class OverchargedShields extends Upgrade {
                     shieldTurnBonus = shieldTurnStat.getValue();
                 }
 
-                this.addDecreaseToTooltip(tooltip,
+                this.addMalusToTooltipMult(tooltip,
                         "shieldTurnRate",
                         shieldTurnBonus);
             } else {

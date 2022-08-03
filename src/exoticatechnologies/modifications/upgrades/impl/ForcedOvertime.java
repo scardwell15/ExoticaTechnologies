@@ -34,7 +34,7 @@ public class ForcedOvertime extends Upgrade {
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
         float delta;
         if (fm.getHullSpec().getHullSize() == ShipAPI.HullSize.CAPITAL_SHIP) {
             delta = CAPITAL_MULT;
@@ -46,36 +46,16 @@ public class ForcedOvertime extends Upgrade {
             delta = FRIGATE_MULT;
         }
 
-        StringUtils.getTranslation(this.getKey(), "peakPerformanceTime")
-                .formatWithOneDecimalAndModifier("percent", PEAK_CR_MAX / this.getMaxLevel(fm) * delta)
-                .formatPercWithOneDecimalAndModifier("finalValue", PEAK_CR_MAX * delta)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "crPerDeployment")
-                .formatWithOneDecimalAndModifier("percent", CR_TO_DEPLOY_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", CR_TO_DEPLOY_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "requiredCrew")
-                .formatWithOneDecimalAndModifier("percent", REQUIRED_CREW_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", REQUIRED_CREW_MAX)
-                .addToTooltip(tooltip);
+        this.addBenefitToShopTooltip(tooltip, "peakPerformanceTime", fm, mods, PEAK_CR_MAX * delta);
+        this.addBenefitToShopTooltipMult(tooltip, "crPerDeployment", fm, mods, CR_TO_DEPLOY_MAX);
+        this.addMalusToShopTooltip(tooltip, "requiredCrew", fm, mods, REQUIRED_CREW_MAX);
 
         //after level 3
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "crRecoveryRate")
-                .formatWithOneDecimalAndModifier("percent", CR_RECOVERY_RATE_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", CR_RECOVERY_RATE_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "crDegradationShortWithFinal")
-                .formatWithOneDecimalAndModifier("percent", CR_LOSS_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", CR_LOSS_MAX)
-                .addToTooltip(tooltip);
-
+        this.addMalusToShopTooltip(tooltip, "crDegradationShop", fm, mods, 3, CR_LOSS_MAX);
+        this.addMalusToShopTooltipMult(tooltip, "crRecoveryRate", fm, mods, 3, CR_RECOVERY_RATE_MAX);
     }
 
     @Override
@@ -110,18 +90,18 @@ public class ForcedOvertime extends Upgrade {
         if (expand) {
             tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addBenefitToTooltip(tooltip,
                     "peakPerformanceTime",
                     fm.getStats().getPeakCRDuration().getPercentBonus(this.getBuffId()).getValue(),
                     fm.getVariant().getHullSpec().getNoCRLossTime());
 
             float crPerDeploymentMult = fm.getStats().getCRPerDeploymentPercent().getMultBonus(this.getBuffId()).getValue();
-            this.addDecreaseWithFinalToTooltip(tooltip,
+            this.addBenefitToTooltipMult(tooltip,
                     "crPerDeployment",
                     crPerDeploymentMult,
                     fm.getHullSpec().getCRToDeploy());
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addMalusToTooltip(tooltip,
                     "requiredCrew",
                     fm.getStats().getMinCrewMod().getPercentBonus(this.getBuffId()).getValue(),
                     fm.getHullSpec().getMinCrew());
@@ -132,7 +112,7 @@ public class ForcedOvertime extends Upgrade {
                 baseCRRecoveryBonus = baseCRRecoveryStat.getValue();
             }
 
-            this.addDecreaseWithFinalToTooltip(tooltip,
+            this.addMalusToTooltipMult(tooltip,
                     "crRecoveryRate",
                     baseCRRecoveryBonus,
                     fm.getStats().getBaseCRRecoveryRatePercentPerDay().getBaseValue());
@@ -143,7 +123,7 @@ public class ForcedOvertime extends Upgrade {
                 crDegradationBonus = crDegradationStat.getValue();
             }
 
-            this.addIncreaseToTooltip(tooltip,
+            this.addMalusToTooltip(tooltip,
                     "crDegradation",
                     crDegradationBonus);
         } else {

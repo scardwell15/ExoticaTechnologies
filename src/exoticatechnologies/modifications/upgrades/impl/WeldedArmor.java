@@ -17,9 +17,9 @@ public class WeldedArmor extends Upgrade {
     private static final float HULL_MAX = 30f;
     private static final float ARMOR_MAX = 10f;
 
-    private static final float EMP_TAKEN_MAX = 15f;
-    private static final float ENGINE_HEALTH_MAX = -15f;
-    private static final float WEAPON_HEALTH_MAX = -15f;
+    private static final float EMP_TAKEN_MAX = 16f;
+    private static final float ENGINE_HEALTH_MAX = -16f;
+    private static final float WEAPON_HEALTH_MAX = -16f;
     private static final Color COLOR = new Color(88, 225, 61);
 
     @Override
@@ -28,36 +28,17 @@ public class WeldedArmor extends Upgrade {
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "hull")
-                .formatWithOneDecimalAndModifier("percent", HULL_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", HULL_MAX)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltip(tooltip, "hull", fm, mods, HULL_MAX);
+        this.addBenefitToShopTooltip(tooltip, "armor", fm, mods, ARMOR_MAX);
 
-        StringUtils.getTranslation(this.getKey(), "armor")
-                .formatWithOneDecimalAndModifier("percent", ARMOR_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", ARMOR_MAX)
-                .addToTooltip(tooltip);
-
-        //after level 3
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 
-        StringUtils.getTranslation(this.getKey(), "empDamageWithFinal")
-                .formatWithOneDecimalAndModifier("percent", EMP_TAKEN_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", EMP_TAKEN_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "engineHealthWithFinal")
-                .formatWithOneDecimalAndModifier("percent", ENGINE_HEALTH_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", ENGINE_HEALTH_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "weaponHealthWithFinal")
-                .formatWithOneDecimalAndModifier("percent", WEAPON_HEALTH_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", WEAPON_HEALTH_MAX)
-                .addToTooltip(tooltip);
+        this.addMalusToShopTooltipMult(tooltip, "weaponHealth", fm, mods, 3, WEAPON_HEALTH_MAX);
+        this.addMalusToShopTooltipMult(tooltip, "engineHealth", fm, mods, 3, ENGINE_HEALTH_MAX);
+        this.addMalusToShopTooltip(tooltip, "empDamage", fm, mods, 3, EMP_TAKEN_MAX);
     }
 
     @Override
@@ -79,12 +60,12 @@ public class WeldedArmor extends Upgrade {
         if (expand) {
             tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addBenefitToTooltip(tooltip,
                     "hull",
                     fm.getStats().getHullBonus().getPercentBonus(this.getBuffId()).getValue(),
                     fm.getVariant().getHullSpec().getHitpoints());
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addBenefitToTooltip(tooltip,
                     "armor",
                     fm.getStats().getArmorBonus().getPercentBonus(this.getBuffId()).getValue(),
                     fm.getVariant().getHullSpec().getArmorRating());
@@ -95,7 +76,7 @@ public class WeldedArmor extends Upgrade {
                 empDamageBonus = empDamageTakenStat.getValue();
             }
 
-            this.addIncreaseToTooltip(tooltip,
+            this.addMalusToTooltip(tooltip,
                     "empDamage",
                     empDamageBonus);
 
@@ -105,7 +86,7 @@ public class WeldedArmor extends Upgrade {
                 engineHealthBonus = engineHealthBonusStat.getValue();
             }
 
-            this.addDecreaseToTooltip(tooltip,
+            this.addMalusToTooltipMult(tooltip,
                     "engineHealth",
                     engineHealthBonus);
 
@@ -115,7 +96,7 @@ public class WeldedArmor extends Upgrade {
                 weaponHealthBonus = weaponHealthBonusStat.getValue();
             }
 
-            this.addDecreaseToTooltip(tooltip,
+            this.addMalusToTooltipMult(tooltip,
                     "weaponHealth",
                     weaponHealthBonus);
         } else {

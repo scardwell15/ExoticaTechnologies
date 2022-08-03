@@ -37,7 +37,7 @@ public abstract class Upgrade {
 
     public abstract float getBandwidthUsage();
 
-    public abstract void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip);
+    public abstract void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods);
 
     public boolean shouldLoad() {
         return true;
@@ -141,33 +141,6 @@ public abstract class Upgrade {
 
     public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand);
 
-    protected void addIncreaseWithFinalToTooltip(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
-        StringUtils.getTranslation(this.getKey(), translation)
-                .formatWithOneDecimalAndModifier("percent", increase)
-                .formatWithOneDecimalAndModifier("finalValue", base * increase / 100f)
-                .addToTooltip(tooltip, 2f);
-    }
-
-    protected void addDecreaseWithFinalToTooltip(TooltipMakerAPI tooltip, String translation, Float decrease, Float base) {
-        float finalMult = -(1f - decrease);
-        StringUtils.getTranslation(this.getKey(), translation)
-                .formatWithOneDecimalAndModifier("percent", finalMult * 100f)
-                .formatWithOneDecimalAndModifier("finalValue", base * finalMult)
-                .addToTooltip(tooltip, 2f);
-    }
-
-    protected void addIncreaseToTooltip(TooltipMakerAPI tooltip, String translation, Float increase) {
-        StringUtils.getTranslation(this.getKey(), translation)
-                .formatWithOneDecimalAndModifier("percent", increase)
-                .addToTooltip(tooltip, 2f);
-    }
-
-    protected void addDecreaseToTooltip(TooltipMakerAPI tooltip, String translation, Float decrease) {
-        StringUtils.getTranslation(this.getKey(), translation)
-                .formatWithOneDecimalAndModifier("percent", -(1f - decrease) * 100f)
-                .addToTooltip(tooltip, 2f);
-    }
-
     public SpecialItemData getNewSpecialItemData(int level) {
         return new SpecialItemData(Upgrade.ITEM, String.format("%s,%s", this.getKey(), level));
     }
@@ -195,5 +168,159 @@ public abstract class Upgrade {
         }
 
         return resourceCosts;
+    }
+
+    private void addStatToTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float increase) {
+        StringUtils.getTranslation("CommonOptions", statFormatKey)
+                .format("stat", statName)
+                .formatPercWithModifier("percent", increase)
+                .addToTooltip(tooltip);
+    }
+
+    private void addStatMultToTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float increase) {
+        StringUtils.getTranslation("CommonOptions", statFormatKey)
+                .format("stat", statName)
+                .formatMult("percent", increase)
+                .addToTooltip(tooltip);
+    }
+
+    private void addStatToTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float increase, Float base) {
+        StringUtils.getTranslation("CommonOptions", statFormatKey)
+                .format("stat", statName)
+                .formatPercWithModifier("percent", increase)
+                .formatWithOneDecimalAndModifier("finalValue", base * increase / 100f)
+                .addToTooltip(tooltip);
+    }
+
+    private void addStatMultToTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float increase, Float base) {
+        StringUtils.getTranslation("CommonOptions", statFormatKey)
+                .format("stat", statName)
+                .formatMult("percent", increase)
+                .formatWithOneDecimalAndModifier("finalValue", base * increase)
+                .addToTooltip(tooltip);
+    }
+
+    protected void addBenefitToTooltip(TooltipMakerAPI tooltip, String translation, Float increase) {
+        addStatToTooltip(tooltip, "StatBenefit", getString(translation), increase);
+    }
+
+    protected void addBenefitToTooltipMult(TooltipMakerAPI tooltip, String translation, Float increase) {
+        addStatMultToTooltip(tooltip, "StatBenefit", getString(translation), increase);
+    }
+
+    protected void addBenefitToTooltip(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
+        addStatToTooltip(tooltip, "StatBenefitWithFinal", getString(translation), increase, base);
+    }
+
+    protected void addBenefitToTooltipMult(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
+        addStatMultToTooltip(tooltip, "StatBenefitWithFinal", getString(translation), increase, base);
+    }
+
+    protected void addMalusToTooltip(TooltipMakerAPI tooltip, String translation, Float increase) {
+        addStatToTooltip(tooltip, "StatMalus", getString(translation), increase);
+    }
+
+    protected void addMalusToTooltipMult(TooltipMakerAPI tooltip, String translation, Float increase) {
+        addStatMultToTooltip(tooltip, "StatMalus", getString(translation), increase);
+    }
+
+    protected void addMalusToTooltip(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
+        addStatToTooltip(tooltip, "StatMalusWithFinal", getString(translation), increase, base);
+    }
+
+    protected void addMalusToTooltipMult(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
+        addStatMultToTooltip(tooltip, "StatMalusWithFinal", getString(translation), increase, base);
+    }
+
+
+
+    private void addStatToShopTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float currValue, Float perLevel, Float finalValue) {
+        StringUtils.getTranslation("CommonOptions",statFormatKey)
+                .format("stat", statName)
+                .formatPercWithModifier("percent", currValue)
+                .formatPercWithModifier("perLevel", perLevel)
+                .formatPercWithModifier("finalValue", finalValue)
+                .addToTooltip(tooltip);
+    }
+
+    private void addStatMultToShopTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float currValue, Float perLevel, Float finalValue) {
+        StringUtils.getTranslation("CommonOptions",statFormatKey)
+                .format("stat", statName)
+                .formatMult("percent", currValue)
+                .formatMultWithModifier("perLevel", perLevel)
+                .formatMult("finalValue", finalValue)
+                .addToTooltip(tooltip);
+    }
+
+    protected void addBenefitToShopTooltip(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, Float finalValue) {
+        addBenefitToShopTooltip(tooltip, translation, fm, mods, 1, finalValue);
+    }
+
+    protected void addBenefitToShopTooltipMult(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, Float finalValue) {
+        addBenefitToShopTooltipMult(tooltip, translation, fm, mods, 1, finalValue);
+    }
+
+    protected void addMalusToShopTooltip(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, Float finalValue) {
+        addMalusToShopTooltip(tooltip, translation, fm, mods, 1, finalValue);
+    }
+
+    protected void addMalusToShopTooltipMult(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, Float finalValue) {
+        addMalusToShopTooltipMult(tooltip, translation, fm, mods, 1, finalValue);
+    }
+
+    protected void addBenefitToShopTooltip(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, int startingLevel, Float finalValue) {
+        float perLevel = finalValue / (this.getMaxLevel(fm) - (startingLevel - 1));
+        float currValue = perLevel * Math.max(mods.getUpgrade(this) - (startingLevel - 1), 0);
+
+        addStatToShopTooltip(tooltip, "StatBenefitInShop", getString(translation), currValue, perLevel, finalValue);
+    }
+
+    protected void addBenefitToShopTooltipMult(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, int startingLevel, Float finalValue) {
+        finalValue = finalValue / 100f;
+        float perLevel = finalValue / (this.getMaxLevel(fm) - (startingLevel - 1));
+
+        int currLevel = mods.getUpgrade(this) - (startingLevel - 1);
+        float currValue = 1;
+        if (currLevel > 0) {
+            if (finalValue < 0) {
+                currValue = 1 - perLevel * currLevel;
+            } else {
+                currValue = 1 + perLevel * currLevel;
+            }
+        }
+
+        finalValue = 1 + finalValue;
+
+        addStatMultToShopTooltip(tooltip, "StatBenefitInShop", getString(translation), currValue, perLevel, finalValue);
+    }
+
+    protected void addMalusToShopTooltip(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, int startingLevel, Float finalValue) {
+        float perLevel = finalValue / (this.getMaxLevel(fm) - (startingLevel - 1));
+        float currValue = perLevel * Math.max(mods.getUpgrade(this) - (startingLevel - 1), 0);
+
+        addStatToShopTooltip(tooltip, "StatMalusInShop", getString(translation), currValue, perLevel, finalValue);
+    }
+
+    protected void addMalusToShopTooltipMult(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, int startingLevel, Float finalValue) {
+        finalValue = finalValue / 100f;
+        float perLevel = finalValue / (this.getMaxLevel(fm) - (startingLevel - 1));
+
+        int currLevel = mods.getUpgrade(this) - (startingLevel - 1);
+        float currValue = 1;
+        if (currLevel > 0) {
+            if (finalValue < 0) {
+                currValue = 1 - perLevel * currLevel;
+            } else {
+                currValue = 1 + perLevel * currLevel;
+            }
+        }
+
+        finalValue = 1 + finalValue;
+
+        addStatMultToShopTooltip(tooltip, "StatMalusInShop", getString(translation), currValue, perLevel, finalValue);
+    }
+
+    public String getString(String key) {
+        return StringUtils.getString(this.getKey(), key);
     }
 }

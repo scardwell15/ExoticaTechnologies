@@ -76,4 +76,9 @@ public class ResourcesMethod implements UpgradeMethod {
 
         return resourceCosts;
     }
+
+    @Override
+    public boolean usesBandwidth() {
+        return true;
+    }
 }

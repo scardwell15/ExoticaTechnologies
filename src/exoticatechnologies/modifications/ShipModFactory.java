@@ -60,6 +60,10 @@ public class ShipModFactory {
             return null;
         }
 
+        if (fm.getFleetData().getFleet().getMemoryWithoutUpdate().contains("$faction")) {
+            return (String) fm.getFleetData().getFleet().getMemoryWithoutUpdate().get("$faction");
+        }
+
         return fm.getFleetData().getFleet().getFaction().getId();
     }
 

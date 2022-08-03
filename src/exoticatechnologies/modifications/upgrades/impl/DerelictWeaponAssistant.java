@@ -77,28 +77,18 @@ public class DerelictWeaponAssistant extends Upgrade {
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {
-        StatUtils.setStatPercent(stats.getRecoilPerShotMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
-        StatUtils.setStatPercent(stats.getMaxRecoilMult(), this.getBuffId(), level, RECOIL_REDUCTION / 2, maxLevel);
+        StatUtils.setStatMult(stats.getRecoilPerShotMultSmallWeaponsOnly(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
+        StatUtils.setStatMult(stats.getRecoilPerShotMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
+        StatUtils.setStatMult(stats.getMaxRecoilMult(), this.getBuffId(), level, RECOIL_REDUCTION, maxLevel);
         StatUtils.setStatPercent(stats.getProjectileSpeedMult(), this.getBuffId(), level, PROJ_SPEED, maxLevel);
         StatUtils.setStatPercent(stats.getBallisticRoFMult(), this.getBuffId(), level, FIRERATE_BONUS, maxLevel);
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "recoilWithFinal")
-                .formatWithOneDecimalAndModifier("percent", RECOIL_REDUCTION / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", RECOIL_REDUCTION)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "projSpeedWithFinal")
-                .formatWithOneDecimalAndModifier("percent", PROJ_SPEED / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", PROJ_SPEED)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "ballisticFirerateWithFinal")
-                .formatWithOneDecimalAndModifier("percent", FIRERATE_BONUS / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", FIRERATE_BONUS)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltipMult(tooltip, "recoil", fm, mods, RECOIL_REDUCTION);
+        this.addBenefitToShopTooltip(tooltip, "projSpeed", fm, mods, PROJ_SPEED);
+        this.addBenefitToShopTooltip(tooltip, "ballisticFirerate", fm, mods, FIRERATE_BONUS);
     }
 
     @Override
@@ -108,15 +98,15 @@ public class DerelictWeaponAssistant extends Upgrade {
         if (expand) {
             tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-            this.addDecreaseToTooltip(tooltip,
+            this.addBenefitToTooltipMult(tooltip,
                     "recoil",
                     fm.getStats().getRecoilPerShotMult().getMultStatMod(this.getBuffId()).getValue());
 
-            this.addIncreaseToTooltip(tooltip,
+            this.addBenefitToTooltip(tooltip,
                     "projSpeed",
                     fm.getStats().getProjectileSpeedMult().getPercentStatMod(this.getBuffId()).getValue());
 
-            this.addIncreaseToTooltip(tooltip,
+            this.addBenefitToTooltip(tooltip,
                     "ballisticFirerate",
                     fm.getStats().getProjectileSpeedMult().getPercentStatMod(this.getBuffId()).getValue());
         } else {

@@ -114,4 +114,9 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
         cargo.removeCommodity(id, taken);
         return (int) (cost - taken);
     }
+
+    @Override
+    public boolean usesBandwidth() {
+        return true;
+    }
 }

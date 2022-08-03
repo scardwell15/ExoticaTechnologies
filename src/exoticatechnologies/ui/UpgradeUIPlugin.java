@@ -5,12 +5,9 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.*;
-import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
@@ -21,8 +18,6 @@ import exoticatechnologies.modifications.upgrades.methods.ChipMethod;
 import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
-import exoticatechnologies.util.Utilities;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -84,7 +79,7 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
         float rowYOffset = panelHeight / 3 - 6;
         int index = 0;
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if (!upgrade.shouldShow(fm, mods, market)) {
+            if (!mods.hasUpgrade(upgrade) && !upgrade.shouldShow(fm, mods, market)) {
                 continue;
             }
 
@@ -110,8 +105,6 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
                 lastImg = upgIcon;
             }
         }
-
-        upgradeButtons.addListener(new UpgradeGroupButtonListener());
     }
 
     public void redisplayUpgrade(Upgrade upgrade) {
@@ -142,7 +135,7 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
             LabelAPI switchDescriptionLabel = descriptionTooltip.addPara(upgrade.getDescription(), 0);
             switchDescriptionLabel.getPosition().belowLeft(title, 3f);
         } else {
-            upgrade.printStatInfoToTooltip(fm, descriptionTooltip);
+            upgrade.printStatInfoToTooltip(descriptionTooltip, fm, mods);
         }
 
         ButtonAPI descButton = descriptionTooltip.addButton(StringUtils.getString("ShipListDialog", "ModDescriptionButtonText"), "switchDescriptionButton",
@@ -234,20 +227,22 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
 
                 boolean canUse = method.canUse(fm, mods, upgrade, market);
                 if (canUse) {
-                    float shipBandwidth = mods.getBandwidthWithExotics(fm);
-                    float usedBandwidth = mods.getUsedBandwidth();
-                    float upgradeUsage = upgrade.getBandwidthUsage();
+                    if (method.usesBandwidth()) {
+                        float shipBandwidth = mods.getBandwidthWithExotics(fm);
+                        float usedBandwidth = mods.getUsedBandwidth();
+                        float upgradeUsage = upgrade.getBandwidthUsage();
 
-                    if (method instanceof ChipMethod) {
-                        CargoStackAPI stack = ChipMethod.getDesiredChip(fm, mods, upgrade);
-                        if (stack != null) {
-                            UpgradeSpecialItemPlugin plugin = (UpgradeSpecialItemPlugin) stack.getPlugin();
+                        if (method instanceof ChipMethod) {
+                            CargoStackAPI stack = ChipMethod.getDesiredChip(fm, mods, upgrade);
+                            if (stack != null) {
+                                UpgradeSpecialItemPlugin plugin = (UpgradeSpecialItemPlugin) stack.getPlugin();
 
-                            upgradeUsage = upgrade.getBandwidthUsage() * (plugin.getUpgradeLevel() - mods.getUpgrade(upgrade));
+                                upgradeUsage = upgrade.getBandwidthUsage() * (plugin.getUpgradeLevel() - mods.getUpgrade(upgrade));
+                            }
                         }
-                    }
 
-                    canUse = (usedBandwidth + upgradeUsage) <= shipBandwidth;
+                        canUse = (usedBandwidth + upgradeUsage) <= shipBandwidth;
+                    }
                 }
 
                 ButtonAPI methodButton = methodTooltip.addButton(buttonText, "", buttonWidth, 18, 2f);
@@ -283,6 +278,7 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
             panel.removeComponent(methodTooltip);
             methodTooltip = null;
         }
+        methodButtons.clear();
 
         FactionAPI playerFaction = Global.getSector().getPlayerFaction();
 
@@ -443,7 +439,6 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
                 redisplayDescription(displayedUpgrade);
             }
         }
-
     }
 
     private class UpgradeMethodGroupButtonListener extends ButtonListener {
@@ -451,22 +446,14 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
         public void checked(ButtonData button) {
             if (displayedUpgrade == null) return;
             if (!button.isEnabled()) return;
-            button.setEnabled(false);
-            doUpgradeWithMethod(displayedUpgrade, displayedMethod);
+            doUpgradeWithMethod(displayedUpgrade, (UpgradeMethod) button.getData());
             redisplayUpgradeIcons();
+            redisplayDescription(displayedUpgrade);
         }
 
         @Override
         public void highlighted(ButtonData button) {
             displayedMethod = (UpgradeMethod) button.getData();
-            redisplayResourceMap(displayedUpgrade, displayedMethod);
-        }
-
-        @Override
-        public void unhighlighted(ButtonData button) {
-            if (displayedMethod != null && displayedMethod.equals(button.getData())) {
-                displayedMethod = null;
-            }
             redisplayResourceMap(displayedUpgrade, displayedMethod);
         }
     }

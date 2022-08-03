@@ -59,4 +59,11 @@ public interface UpgradeMethod {
      * Get cost of resources.
      */
     Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered);
+
+    /**
+     * Whether the upgrade method will increase bandwidth usage. If true, and a selected upgrade's bandwidth usage
+     * would exceed a ship's bandwidth, it will be disabled.
+     * @return whether it cares
+     */
+    boolean usesBandwidth();
 }

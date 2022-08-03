@@ -33,22 +33,14 @@ public class InterferenceShielding extends Upgrade {
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "sensorProfile")
-                .formatWithOneDecimalAndModifier("percent", SENSOR_PROFILE_MULT / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", SENSOR_PROFILE_MULT)
-                .addToTooltip(tooltip);
-
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltipMult(tooltip, "sensorProfile", fm, mods, SENSOR_PROFILE_MULT);
 
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 
-        //after level 3
-        StringUtils.getTranslation(this.getKey(), "supplyConsumption")
-                .formatWithOneDecimalAndModifier("percent", SUPPLY_CONSUMPTION_MULT / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", SUPPLY_CONSUMPTION_MULT)
-                .addToTooltip(tooltip);
+        this.addMalusToShopTooltip(tooltip, "supplyConsumption", fm, mods, 3, SUPPLY_CONSUMPTION_MULT);
     }
 
     @Override
@@ -59,7 +51,7 @@ public class InterferenceShielding extends Upgrade {
             tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
             float sensorProfileBonus = fm.getStats().getSensorProfile().getMultStatMod(this.getBuffId()).getValue();
-            this.addDecreaseWithFinalToTooltip(tooltip,
+            this.addBenefitToTooltipMult(tooltip,
                     "sensorProfile",
                     sensorProfileBonus,
                     fm.getStats().getSensorProfile().getBaseValue());
@@ -70,7 +62,7 @@ public class InterferenceShielding extends Upgrade {
                 supplyConsumptionBonus = supplyConsumptionStat.getValue();
             }
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addMalusToTooltip(tooltip,
                     "supplyConsumption",
                     supplyConsumptionBonus,
                     fm.getVariant().getHullSpec().getSuppliesPerMonth());

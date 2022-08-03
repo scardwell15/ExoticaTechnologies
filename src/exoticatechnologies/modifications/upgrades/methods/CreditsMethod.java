@@ -123,4 +123,9 @@ public class CreditsMethod implements UpgradeMethod {
 
         return resourceCosts;
     }
+
+    @Override
+    public boolean usesBandwidth() {
+        return true;
+    }
 }

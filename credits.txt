@@ -1,5 +1,4 @@
-this project uses some assets created in part using a UIIconLib made by Harmful Mechanic/Soren, which was given to me under the CC 4.0 Attribution-NonCommercial-ShareAlike 4.0 International license.
-i additionally used some icons from https://game-icons.net, which distributes them under the CC 3.0 license.
+i used some icons from https://game-icons.net, which distributes them under the CC 3.0 license.
 
 this mod was originally named Extra System Reloaded, which had been developed first by Originem and then updated by Iridicens.
 

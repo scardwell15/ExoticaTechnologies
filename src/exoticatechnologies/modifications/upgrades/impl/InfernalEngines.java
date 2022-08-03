@@ -29,40 +29,18 @@ public class InfernalEngines extends Upgrade {
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "speed")
-                .formatWithOneDecimalAndModifier("percent", SPEED_MULT / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", SPEED_MULT)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "accelerationWithFinal")
-                .formatWithOneDecimalAndModifier("percent", ACCELERATION_MAX / this.getMaxLevel(fm))
-                .formatWithOneDecimalAndModifier("finalValue", ACCELERATION_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "burnLevel")
-                .formatWithOneDecimalAndModifier("percent", BURN_LEVEL_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", BURN_LEVEL_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "turnrateWithFinal")
-                .formatWithOneDecimalAndModifier("percent", TURN_RATE_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", TURN_RATE_MAX)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltip(tooltip, "speed", fm, mods, SPEED_MULT);
+        this.addBenefitToShopTooltip(tooltip, "acceleration", fm, mods, ACCELERATION_MAX);
+        this.addBenefitToShopTooltip(tooltip, "burnLevel", fm, mods, TURN_RATE_MAX);
+        this.addBenefitToShopTooltip(tooltip, "turnrate", fm, mods, BURN_LEVEL_MAX);
 
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 
-        StringUtils.getTranslation(this.getKey(), "decelerationWithFinal")
-                .formatWithOneDecimalAndModifier("percent", DECELERATION_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", DECELERATION_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "fuelUse")
-                .formatWithOneDecimalAndModifier("percent", FUEL_USE_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", FUEL_USE_MAX)
-                .addToTooltip(tooltip);
+        this.addMalusToShopTooltipMult(tooltip, "deceleration", fm, mods, 3, DECELERATION_MAX);
+        this.addMalusToShopTooltip(tooltip, "fuelUse", fm, mods, 3, FUEL_USE_MAX);
     }
 
     @Override
@@ -75,7 +53,6 @@ public class InfernalEngines extends Upgrade {
         StatUtils.setStatPercent(stats.getTurnAcceleration(), this.getBuffId(), level, TURN_RATE_MAX, maxLevel);
 
         StatUtils.setStatPercent(stats.getMaxBurnLevel(), this.getBuffId(), level, BURN_LEVEL_MAX, maxLevel);
-
 
         if (level >= 3) {
             StatUtils.setStatMult(stats.getDeceleration(), this.getBuffId(), level - 2, DECELERATION_MAX, maxLevel - 2);
@@ -91,20 +68,20 @@ public class InfernalEngines extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-                this.addIncreaseWithFinalToTooltip(tooltip,
+                this.addBenefitToTooltip(tooltip,
                         "speed",
                         fm.getStats().getMaxSpeed().getPercentStatMod(this.getBuffId()).getValue(),
                         fm.getStats().getMaxSpeed().getBaseValue());
 
-                this.addIncreaseToTooltip(tooltip,
+                this.addBenefitToTooltip(tooltip,
                         "acceleration",
                         fm.getStats().getAcceleration().getPercentStatMod(this.getBuffId()).getValue());
 
-                this.addIncreaseToTooltip(tooltip,
+                this.addBenefitToTooltip(tooltip,
                         "turnrate",
                         fm.getStats().getMaxTurnRate().getPercentStatMod(this.getBuffId()).getValue());
 
-                this.addIncreaseWithFinalToTooltip(tooltip,
+                this.addBenefitToTooltip(tooltip,
                         "burnLevel",
                         fm.getStats().getMaxBurnLevel().getPercentStatMod(this.getBuffId()).getValue(),
                         fm.getStats().getMaxBurnLevel().getBaseValue());
@@ -117,7 +94,7 @@ public class InfernalEngines extends Upgrade {
                     decelerationBonus = decelerationStat.getValue();
                 }
 
-                this.addDecreaseToTooltip(tooltip,
+                this.addMalusToTooltipMult(tooltip,
                         "deceleration",
                         decelerationBonus);
 
@@ -127,7 +104,7 @@ public class InfernalEngines extends Upgrade {
                     fuelUseBonus = fuelUseStat.getValue();
                 }
 
-                this.addIncreaseWithFinalToTooltip(tooltip,
+                this.addMalusToTooltip(tooltip,
                         "fuelUse",
                         fuelUseBonus,
                         fm.getHullSpec().getFuelPerLY());

@@ -130,4 +130,9 @@ public class ChipMethod implements UpgradeMethod {
 
         return resourceCosts;
     }
+
+    @Override
+    public boolean usesBandwidth() {
+        return true;
+    }
 }

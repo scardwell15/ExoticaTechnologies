@@ -84,14 +84,31 @@ public class StringUtils {
     }
 
     private static final Map<Character, Color> adaptiveHighlightCharacterMap = new HashMap<>();
+    private static final String regularHighlightCharacterPattern;
+    private static final Pattern regularHighlightPattern;
+    private static final String adaptiveHighlightCharacterPattern;
+    private static final Pattern adaptiveHighlightsPattern;
+    private static Color superNegativeColor = new Color(169, 57, 57);
     static {
+
         adaptiveHighlightCharacterMap.put('*', Misc.getHighlightColor());
         adaptiveHighlightCharacterMap.put('=', Misc.getNegativeHighlightColor());
         adaptiveHighlightCharacterMap.put('&', Misc.getEnergyMountColor());
+        adaptiveHighlightCharacterMap.put('^', Misc.getPositiveHighlightColor());
+        adaptiveHighlightCharacterMap.put('`', superNegativeColor);
+
+        regularHighlightCharacterPattern = "[*]";
+        regularHighlightPattern = Pattern.compile("[*]([^*]*)[*]");
+
+        StringBuilder allCharsBuilder = new StringBuilder();
+        for (Character theChar : adaptiveHighlightCharacterMap.keySet()) {
+            allCharsBuilder.append(theChar);
+        }
+
+        adaptiveHighlightCharacterPattern = String.format("[%s]", allCharsBuilder);
+        adaptiveHighlightsPattern = Pattern.compile(String.format("[%s]([^%s]*)[%s]", allCharsBuilder, allCharsBuilder, allCharsBuilder));
     }
 
-    private static final Pattern regularHighlightPattern = Pattern.compile("[*]([^*]*)[*]");
-    private static final Pattern adaptiveHighlightsPattern = Pattern.compile("[=*&]([^=*&]*)[=*&]");
 
     /**
      * can match for positive (*) and negative (=) highlights
@@ -138,7 +155,7 @@ public class StringUtils {
 
     public static LabelAPI addToTooltip(TooltipMakerAPI tooltip, String translated, float pad) {
         Pair<String[], Color[]> highlights = getAdaptiveHighlights(translated);
-        return tooltip.addPara(getPad(pad) + translated.replaceAll("[=*&]", ""),
+        return tooltip.addPara(getPad(pad) + translated.replaceAll(adaptiveHighlightCharacterPattern, ""),
                 2f,
                 highlights.two,
                 highlights.one);
@@ -146,7 +163,7 @@ public class StringUtils {
 
     public static LabelAPI addToTooltip(TooltipMakerAPI tooltip, String translated, float pad, Color[] colors) {
         String[] highlights = getHighlights(translated);
-        return tooltip.addPara(getPad(pad) + translated.replaceAll("[*&]", ""),
+        return tooltip.addPara(getPad(pad) + translated.replaceAll(adaptiveHighlightCharacterPattern, ""),
                 2f,
                 colors,
                 highlights);
@@ -154,14 +171,14 @@ public class StringUtils {
 
     public static void addToTextPanel(TextPanelAPI textPanel, String translated) {
         Pair<String[], Color[]> highlights = getAdaptiveHighlights(translated);
-        textPanel.addPara(translated.replaceAll("[=*&]", "").replaceAll("%%", "%"));
+        textPanel.addPara(translated.replaceAll(adaptiveHighlightCharacterPattern, "").replaceAll("%%", "%"));
         textPanel.highlightInLastPara(highlights.one);
         textPanel.setHighlightColorsInLastPara(highlights.two);
     }
 
     public static void addToTextPanel(TextPanelAPI textPanel, String translated, Color[] highlightColors) {
         String[] highlights = getHighlights(translated);
-        textPanel.addPara(translated.replaceAll("\\*", "").replaceAll("%%", "%"));
+        textPanel.addPara(translated.replaceAll(regularHighlightCharacterPattern, "").replaceAll("%%", "%"));
         textPanel.highlightInLastPara(highlights);
         textPanel.setHighlightColorsInLastPara(highlightColors);
     }
@@ -196,12 +213,33 @@ public class StringUtils {
             return this;
         }
 
+        public Translation formatMult(String flag, Number value) {
+            formats.add(flag);
+            values.add(getFloat(value.floatValue()) + "x");
+
+            return this;
+        }
+
+        public Translation formatMultWithModifier(String flag, Number value) {
+            formats.add(flag);
+            values.add(getModifier(value) + getFloat(value.floatValue()) + "x");
+
+            return this;
+        }
+
         public Translation formatWithOneDecimalAndModifier(String flag, Conditional cond) {
             formats.add(flag);
 
             Float value = Float.valueOf(cond.get());
 
             values.add(getFloatWithModifier(value));
+
+            return this;
+        }
+
+        public Translation formatPercWithModifier(String flag, Number value) {
+            formats.add(flag);
+            values.add(getModifier(value) + getFloat(value.floatValue()) + "%%");
 
             return this;
         }
@@ -220,7 +258,11 @@ public class StringUtils {
             return this;
         }
 
-        private static String getFloatWithModifier(Number value) {
+        private static String getFloat(Number value) {
+            return Misc.getRoundedValue(value.floatValue());
+        }
+
+        private static String getModifier(Number value) {
             String prefix;
             if (value.floatValue() > 0f) {
                 prefix = "+";
@@ -228,7 +270,11 @@ public class StringUtils {
                 prefix = "";
             }
 
-            return prefix + Misc.getRoundedValueMaxOneAfterDecimal(value.floatValue());
+            return prefix;
+        }
+
+        private static String getFloatWithModifier(Number value) {
+            return getModifier(value) + Misc.getRoundedValueMaxOneAfterDecimal(value.floatValue());
         }
 
         public String toString() {

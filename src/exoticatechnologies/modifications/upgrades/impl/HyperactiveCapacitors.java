@@ -37,26 +37,16 @@ public class HyperactiveCapacitors extends Upgrade {
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "fluxCapacityWithFinal")
-                .formatWithOneDecimalAndModifier("percent", CAPACITY_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", CAPACITY_MAX)
-                .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "ventSpeedWithFinal")
-                .formatWithOneDecimalAndModifier("percent", VENT_SPEED_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", VENT_SPEED_MAX)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltipMult(tooltip, "fluxCapacity", fm, mods, CAPACITY_MAX);
+        this.addBenefitToShopTooltipMult(tooltip, "ventSpeed", fm, mods, VENT_SPEED_MAX);
 
         //after level 3
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 
-        StringUtils.getTranslation(this.getKey(), "weaponFluxCostsWithFinal")
-                .formatWithOneDecimalAndModifier("percent", WEAPON_FLUX_MAX / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", WEAPON_FLUX_MAX)
-                .addToTooltip(tooltip);
+        this.addMalusToShopTooltip(tooltip, "weaponFluxCosts", fm, mods, 3, WEAPON_FLUX_MAX);
     }
 
     @Override
@@ -67,11 +57,11 @@ public class HyperactiveCapacitors extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-                this.addIncreaseToTooltip(tooltip,
+                this.addBenefitToTooltipMult(tooltip,
                         "fluxCapacity",
-                        (fm.getStats().getFluxCapacity().getMultStatMod(this.getBuffId()).getValue() - 1f) * 100f);
+                        fm.getStats().getFluxCapacity().getMultStatMod(this.getBuffId()).getValue());
 
-                this.addIncreaseToTooltip(tooltip,
+                this.addBenefitToTooltip(tooltip,
                         "ventSpeed",
                         fm.getStats().getVentRateMult().getPercentStatMod(this.getBuffId()).getValue());
 
@@ -82,7 +72,7 @@ public class HyperactiveCapacitors extends Upgrade {
                     weaponFluxBonus = weaponFluxStat.getValue();
                 }
 
-                this.addIncreaseToTooltip(tooltip,
+                this.addBenefitToTooltip(tooltip,
                         "weaponFluxCosts",
                         weaponFluxBonus);
             } else {

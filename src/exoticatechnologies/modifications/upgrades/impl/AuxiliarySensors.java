@@ -35,26 +35,15 @@ public class AuxiliarySensors extends Upgrade {
     }
 
     @Override
-    public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
-        StringUtils.getTranslation(this.getKey(), "sensorStrength")
-                .formatWithOneDecimalAndModifier("percent", SENSOR_STRENGTH_MULT / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", SENSOR_STRENGTH_MULT)
-                .addToTooltip(tooltip);
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
+        this.addBenefitToShopTooltip(tooltip, "sensorStrength", fm, mods, SENSOR_STRENGTH_MULT);
 
         //after level 3
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
-                        .format("level", 3)
-                        .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "sensorProfile")
-                .formatWithOneDecimalAndModifier("percent", SENSOR_PROFILE_MULT / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", SENSOR_PROFILE_MULT)
+                .format("level", 3)
                 .addToTooltip(tooltip);
-
-        StringUtils.getTranslation(this.getKey(), "requiredCrew")
-                .formatWithOneDecimalAndModifier("percent", MIN_CREW_MULT / this.getMaxLevel(fm))
-                .formatPercWithOneDecimalAndModifier("finalValue", MIN_CREW_MULT)
-                .addToTooltip(tooltip);
+        this.addMalusToShopTooltip(tooltip, "sensorProfile", fm, mods, 3, SENSOR_PROFILE_MULT);
+        this.addMalusToShopTooltip(tooltip, "requiredCrew", fm, mods, 3, MIN_CREW_MULT);
     }
 
     @Override
@@ -64,7 +53,7 @@ public class AuxiliarySensors extends Upgrade {
         if (expand) {
             tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addBenefitToTooltip(tooltip,
                     "sensorStrength",
                     fm.getStats().getSensorStrength().getPercentStatMod(this.getBuffId()).getValue(),
                     fm.getStats().getSensorStrength().getBaseValue());
@@ -75,7 +64,7 @@ public class AuxiliarySensors extends Upgrade {
                 sensorProfileBonus = sensorProfileStat.getValue();
             }
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addMalusToTooltip(tooltip,
                     "sensorProfile",
                     sensorProfileBonus,
                     fm.getStats().getSensorProfile().getBaseValue());
@@ -86,7 +75,7 @@ public class AuxiliarySensors extends Upgrade {
                 minCrewBonus = minCrewStat.getValue();
             }
 
-            this.addIncreaseWithFinalToTooltip(tooltip,
+            this.addMalusToTooltip(tooltip,
                     "requiredCrew",
                     minCrewBonus,
                     fm.getVariant().getHullSpec().getMinCrew());

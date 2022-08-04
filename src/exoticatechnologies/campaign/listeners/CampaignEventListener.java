@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
+import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -12,6 +13,7 @@ import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireAll;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
@@ -32,14 +34,20 @@ import lombok.extern.log4j.Log4j;
 import java.util.*;
 
 @Log4j
-public class CampaignEventListener extends BaseCampaignEventListener implements EveryFrameScript {
+public class CampaignEventListener extends BaseCampaignEventListener implements EveryFrameScript, EconomyTickListener {
     private static final boolean debug = false;
     @Getter
     private static final List<CampaignFleetAPI> activeFleets = new ArrayList<>();
     private final IntervalUtil interval = new IntervalUtil(2f, 2f);
     private final IntervalUtil cleaningInterval = new IntervalUtil(15f, 15f);
-
     @Getter private static boolean appliedData = false;
+
+    private static final List<String> submarketIdsToCheckForSpecialItems = new ArrayList<>();
+    static {
+        submarketIdsToCheckForSpecialItems.add(Submarkets.SUBMARKET_BLACK);
+        submarketIdsToCheckForSpecialItems.add(Submarkets.SUBMARKET_OPEN);
+        submarketIdsToCheckForSpecialItems.add(Submarkets.GENERIC_MILITARY);
+    }
 
     public CampaignEventListener(boolean permaRegister) {
         super(permaRegister);
@@ -339,6 +347,40 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             dlog(String.format("Extra system instances active: [%s]", ETModPlugin.getShipModificationMap().size()));
             dlog(String.format("Fleet instances active: [%s]", activeFleets.size()));
         }
+    }
+
+    @Override
+    public void reportEconomyTick(int iterIndex) {
+
+    }
+
+    @Override
+    public void reportEconomyMonthEnd() {
+        for (MarketAPI market : Global.getSector().getEconomy().getMarketsCopy()) {
+            for (String submarketId : submarketIdsToCheckForSpecialItems) {
+                if (market.hasSubmarket(submarketId)) {
+                    SubmarketAPI submarket = market.getSubmarket(submarketId);
+                    CargoAPI cargo = submarket.getCargoNullOk();
+
+                    if (cargo == null) continue;
+                    for (CargoStackAPI stack : cargo.getStacksCopy()) {
+                        if (shouldRemoveStackFromSubmarket(stack)) {
+                            cargo.removeStack(stack);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean shouldRemoveStackFromSubmarket(CargoStackAPI stack) {
+        if (stack.isSpecialStack() && stack.getSpecialDataIfSpecial() != null) {
+            String specialId = stack.getSpecialDataIfSpecial().getId();
+            if (specialId.equals("et_upgrade") || specialId.equals("et_exotic")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static FleetMemberAPI findFM(String fmId) {

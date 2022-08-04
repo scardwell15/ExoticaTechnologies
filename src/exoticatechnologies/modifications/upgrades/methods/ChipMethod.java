@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Misc;
+import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
@@ -60,6 +61,8 @@ public class ChipMethod implements UpgradeMethod {
         fleet.getCargo().removeItems(CargoAPI.CargoItemType.SPECIAL, stack.getData(), 1);
 
         mods.putUpgrade(upgrade, stackPlugin.getUpgradeLevel());
+        mods.save(fm);
+        ExoticaTechHM.addToFleetMember(fm);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
 

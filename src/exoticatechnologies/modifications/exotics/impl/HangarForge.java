@@ -39,17 +39,8 @@ public class HangarForge extends Exotic {
     }
 
     @Override
-    public boolean canApply(FleetMemberAPI fm) {
-        if (fm.getStats().getNumFighterBays().getModifiedValue() <= 0) {
-            return false;
-        }
-
-        return canApply(fm.getVariant());
-    }
-
-    @Override
     public boolean canApply(ShipVariantAPI var) {
-        return var.isCarrier();
+        return var.getWings() != null && var.getWings().size() > 0;
     }
 
     @Override

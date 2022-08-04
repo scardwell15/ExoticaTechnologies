@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Misc;
+import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
@@ -54,9 +55,11 @@ public class CreditsMethod implements UpgradeMethod {
     public String apply(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         int level = mods.getUpgrade(upgrade);
         int creditCost = getFinalCreditCost(fm, upgrade, level, market);
+        Global.getSector().getPlayerFleet().getCargo().getCredits().subtract(creditCost);
 
         mods.putUpgrade(upgrade);
-        Global.getSector().getPlayerFleet().getCargo().getCredits().subtract(creditCost);
+        mods.save(fm);
+        ExoticaTechHM.addToFleetMember(fm);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")

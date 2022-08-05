@@ -138,4 +138,9 @@ public class ChipMethod implements UpgradeMethod {
     public boolean usesBandwidth() {
         return true;
     }
+
+    @Override
+    public boolean usesLevel() {
+        return true;
+    }
 }

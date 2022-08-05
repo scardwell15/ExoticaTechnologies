@@ -116,4 +116,9 @@ public class RecoverMethod implements UpgradeMethod {
     public boolean usesBandwidth() {
         return false;
     }
+
+    @Override
+    public boolean usesLevel() {
+        return false;
+    }
 }

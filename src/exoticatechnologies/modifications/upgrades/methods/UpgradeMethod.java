@@ -66,4 +66,11 @@ public interface UpgradeMethod {
      * @return whether it cares
      */
     boolean usesBandwidth();
+
+    /**
+     * Whether the upgrade method will increase upgrade level. If true, and a selected upgrade PLUS ONE would exceed
+     * an upgrade's max level for that ship, it will be disabled.
+     * @return whether it cares
+     */
+    boolean usesLevel();
 }

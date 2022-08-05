@@ -224,8 +224,19 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
             }
 
             if (upgrade.canUseUpgradeMethod(fm, mods, method)) {
-
                 boolean canUse = method.canUse(fm, mods, upgrade, market);
+
+                if (canUse) {
+                    if (method.usesLevel()) {
+                        int level = mods.getUpgrade(upgrade);
+                        int maxLevel = upgrade.getMaxLevel(fm);
+
+                        if ((level + 1) > maxLevel) {
+                            canUse = false;
+                        }
+                    }
+                }
+
                 if (canUse) {
                     if (method.usesBandwidth()) {
                         float shipBandwidth = mods.getBandwidthWithExotics(fm);

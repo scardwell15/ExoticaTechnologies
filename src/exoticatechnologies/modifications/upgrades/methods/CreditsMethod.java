@@ -131,4 +131,9 @@ public class CreditsMethod implements UpgradeMethod {
     public boolean usesBandwidth() {
         return true;
     }
+
+    @Override
+    public boolean usesLevel() {
+        return true;
+    }
 }

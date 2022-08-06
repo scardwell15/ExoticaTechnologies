@@ -25,8 +25,6 @@ public class TimedUIPlugin implements CustomUIPanelPlugin {
 
         currLife += amount;
 
-        System.out.printf("%s >= %s%n", currLife, endLife);
-
         if (currLife >= endLife) {
             finished = true;
             listener.end();

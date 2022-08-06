@@ -108,9 +108,13 @@ public class CommissionedCrews extends Upgrade {
                     .addToTooltip(tooltip);
         }
 
+        if(IronShellIntegration.isEnabled()) {
+            StringUtils.getTranslation(this.getKey(), "ironShellTaxText")
+                    .addToTooltip(tooltip);
+        }
+
         this.addBenefitToShopTooltip(tooltip, "hullRepair", fm, mods, REPAIR_RATE_MAX);
         this.addBenefitToShopTooltipMult(tooltip, "fuelConsumptionShop", fm, mods, FUEL_USE_MAX);
-        this.addBenefitToShopTooltipMult(tooltip, "suppliesToRecover", fm, mods, SUPPLIES_RECOVERY_MAX);
 
         if (isAutomated(fm)) {
             StringUtils.getTranslation(this.getKey(), "supplyConsumptionShopAutomated")
@@ -119,6 +123,8 @@ public class CommissionedCrews extends Upgrade {
         } else {
             this.addBenefitToShopTooltipMult(tooltip, "supplyConsumptionShop", fm, mods, SUPPLIES_MONTH_MAX);
         }
+
+        this.addMalusToShopTooltipMult(tooltip, "suppliesToRecover", fm, mods, SUPPLIES_RECOVERY_MAX);
     }
 
     @Override
@@ -135,7 +141,7 @@ public class CommissionedCrews extends Upgrade {
                     .format("finalValue", Math.round(totalCostPerMonth))
                     .addToTooltip(tooltip, 2f);
 
-            float fuelUseMult = fm.getStats().getSuppliesToRecover().getMultStatMod(this.getBuffId()).getValue();
+            float fuelUseMult = fm.getStats().getFuelUseMod().getMultBonus(this.getBuffId()).getValue();
             float savedFuel = fm.getHullSpec().getFuelPerLY() * fuelUseMult;
             float fuelCost = Global.getSector().getEconomy().getCommoditySpec(Commodities.FUEL).getBasePrice();
             StringUtils.getTranslation(this.getKey(), "fuelConsumption")

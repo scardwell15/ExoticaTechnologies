@@ -63,7 +63,7 @@ public class UpgradesGenerator {
                     }
                     //has a chance to bias towards upgrades that already exist.
                     else if (upgrades.getUpgrade(upgrade) == 0
-                            && random.nextFloat() > (0.8f - smodCount * 0.25f)) {
+                            && random.nextFloat() > Math.max(0.05f, (0.8f - smodCount * 0.25f))) {
                         upgrade = null;
                     }
                 }
@@ -130,7 +130,7 @@ public class UpgradesGenerator {
                     //has a chance to bias towards upgrades that already exist.
                     //this chance ramps up as the ship gets more SMODs.
                     else if (upgrades.getUpgrade(upgrade) == 0
-                            && random.nextFloat() > (0.8f - smodCount * 0.25f)) {
+                            && random.nextFloat() > Math.max(0.05f, (0.8f - smodCount * 0.25f))) {
                         upgrade = null;
                     }
                 }

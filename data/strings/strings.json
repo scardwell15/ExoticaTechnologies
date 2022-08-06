@@ -277,7 +277,8 @@
 		"supplyConsumptionAutomated": "Supply consumption: `${percent}%%` (=${finalValue}=, or =${creditsSavedPerMonth} credits= per month)",
 		"supplyConsumptionShop": "Supply consumption",
 		"supplyConsumptionShopAutomated": "Supply consumption: `${percent}%%` for AI",
-		"suppliesToRecover": "Supplies to recover"
+		"suppliesToRecover": "Supplies to recover",
+		"ironShellTaxText": "Increased crew salary is *refundable* under Hegemony tax regulation."
 	},
 	"HyperactiveCapacitors": {
 		"name": "Hyperactive Capacitors",

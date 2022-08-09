@@ -63,6 +63,9 @@ public class CrateItemPlugin extends BaseSpecialItemPlugin {
         tooltip.addPara(StringUtils.getString("CrateText", "ContentsText"), Misc.getTextColor(), opad);
 
         List<CargoStackAPI> cargoStacks = getCargo().getStacksCopy();
+
+        if (cargoStacks.isEmpty()) return;
+
         Iterator<CargoStackAPI> stackIterator = cargoStacks.iterator();
 
         List<Pair<StringUtils.Translation, Color>> upgradeStrings = new ArrayList<>();

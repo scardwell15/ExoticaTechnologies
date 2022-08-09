@@ -84,6 +84,8 @@ public class SalvageListener implements ShowLootListener {
         CargoAPI salvage = SalvageEntity.generateSalvage(random,
                 1f, 1f, 1f, 1f, dropValue, dropRandom);
         loot.addAll(salvage);
+
+        CampaignEventListener.setMergeCheck(true);
     }
 
     private static List<SalvageEntityGenDataSpec.DropData> getDropDataFromEntity(SectorEntityToken entity) {

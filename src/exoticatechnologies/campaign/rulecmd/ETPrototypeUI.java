@@ -50,6 +50,7 @@ public class ETPrototypeUI extends BaseCommandPlugin {
             if (fleetMemberAPI.isFighterWing()) {
                 iterator.remove();
             }
+            fleetMemberAPI.getId();
         }
 
         showModifyShipsPanel(dialog, fleetMembers);

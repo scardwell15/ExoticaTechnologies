@@ -58,7 +58,7 @@ public class ChipMethod implements UpgradeMethod {
         int creditCost = getCreditCost(fm, mods, upgrade);
 
         fleet.getCargo().getCredits().subtract(creditCost);
-        fleet.getCargo().removeItems(CargoAPI.CargoItemType.SPECIAL, stack.getData(), 1);
+        Utilities.takeItem(stack);
 
         mods.putUpgrade(upgrade, stackPlugin.getUpgradeLevel());
         mods.save(fm);

@@ -72,7 +72,7 @@ public class HyperactiveCapacitors extends Upgrade {
                     weaponFluxBonus = weaponFluxStat.getValue();
                 }
 
-                this.addBenefitToTooltip(tooltip,
+                this.addMalusToTooltip(tooltip,
                         "weaponFluxCosts",
                         weaponFluxBonus);
             } else {

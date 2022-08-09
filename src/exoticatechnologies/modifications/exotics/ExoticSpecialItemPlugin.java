@@ -5,17 +5,19 @@ import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.awt.*;
 
 public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
 
+    @Getter
     protected String exoticId;
-    protected Exotic exotic;
+    @Getter @Setter
+    protected boolean ignoreCrate = false;
 
-    public String getExoticId() {
-        return exoticId;
-    }
+    protected Exotic exotic;
 
     @Override
     public void init(CargoStackAPI stack) {
@@ -46,6 +48,10 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
         return exotic;
     }
 
+    public CargoStackAPI getStack() {
+        return stack;
+    }
+
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource, boolean useGray) {
         float opad = 10.0F;
@@ -71,15 +77,18 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
         //you know what to do
     }
 
-    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private void handleParam(int index, String param) {
         switch(Param.get(index)) {
-            case EXOTIC_ID: {
+            case EXOTIC_ID:
                 exoticId = param;
                 if (ExoticsHandler.EXOTICS.containsKey(exoticId)) {
                     exotic = ExoticsHandler.EXOTICS.get(exoticId);
                 }
-            }
+                 break;
+            case IGNORE_CRATE:
+                ignoreCrate = Boolean.parseBoolean(param);
+                break;
+
         }
     }
 
@@ -88,7 +97,8 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
     }
 
     private enum Param {
-        EXOTIC_ID;
+        EXOTIC_ID,
+        IGNORE_CRATE;
 
         private static Param get(int index) {
             return Param.values()[index];

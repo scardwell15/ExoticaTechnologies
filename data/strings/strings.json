@@ -94,52 +94,30 @@
 		"RecoverExotic": "Recover chip",
 		"DestroyExotic": "Destroy"
 	},
+	"CrateText": {
+		"TitleText": "\"Big Create\" Crate",
+		"SideText": "*Available* chips in your fleet's cargo is displayed on top of the *selected* cargo to be stored in the crate.",
+		"SideText2": "Note that when moving stacks between the two locations, it is possible for the stack size to be reported as zero. *This is a purely visual error, and can be safely ignored*; your fleet's logistics personnel are experts, after all.",
+		"MoveOption": "Confirm",
+		"CancelOption": "Cancel",
+		"ContentsText": "Any Exotica Technologies branch is able to use chips directly from this crate.\nContents:",
+		"UpgradeText": "*${upgradeItemName}* (${levelQuantities})",
+		"ExoticText": "*${exoticItemName}* (${quantity})"
+	},
 	"BandwidthDialog": {
-		"OpenBandwidthOptions": "Bandwidth",
-		"BandwidthFullyUpgraded": "The bandwidth for this ship has been fully upgraded.",
-		"BandwidthForShip": "The bandwidth of this ship is *${bandwidth}*, of which *${bandwidthUsedByUpgrades}* has been used by upgrades.",
-		"BandwidthBonusFromMarket": "The industrial presence at this market is providing *${bonus} strength* to bandwidth increases.",
-		"BandwidthUpgradeForShip": "Local industrial facilities are capable of increasing the bandwidth of the ship by *${bonusBandwidth}*.",
-		"CostCreditsToUpgrade": "The on-site team estimates the bandwidth increase to cost *${credits} credits*.",
-		"ConfirmPurchaseUpgrade": "Purchase the upgrade.",
-		"ConfirmInsufficientCredits": "Insufficient credits.",
-		"ConfirmBandwidthTooHigh": "The bandwidth of this ship cannot be increased any further.",
-		"UpgradedBandwidthForShip": "The engineering team reports that the upgrade was a *success*. The bandwidth of the ship is now increased to *${bandwidth}*.",
-		"UpgradedToMaxBandwidthShip": "The engineering team reports that the bandwidth cannot be improved any further.",
-		"AnotherBandwidthUpgradeForShip": "The engineering team estimates that another upgrade would cost *${credits} credits* for a bandwidth increase of ${bonusBandwidth}."
+		"OpenBandwidthOptions": "Bandwidth"
 	},
 	"ExoticsDialog": {
-		"OpenExoticOptions": "Exotics",
-		"ReturnToExoticsList": "Back to exotic list",
-		"ExoticsListOpened": "The engineering team presents a list of exotic modifications that they are able to install.",
-		"DestroyExoticOption": "Have the modification destroyed.",
-		"RecoverExoticStoryOption": "Execute a plan to recover the modification.",
-		"InstallExoticOption": "Have the modification installed.",
-		"ExoticInstalledSuccessfully": "Your chief engineer reports that the modification was installed successfully.",
-		"ExoticDestroyedSuccessfully": "Your chief engineer reports that the modification was removed from the ship, but it could not be recovered.",
-		"ExoticRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. With the tone and look on their face, you could swear they think you're threatening their salary."
+		"OpenExoticOptions": "Exotics"
 	},
 	"UpgradesDialog": {
 		"OpenUpgradeOptions": "Upgrades",
-		"ReturnToUpgradesList": "Back to upgrades list",
-		"UpgradeNameWithLevelAndMax": "${upgradeName} (${level}/${max})",
-		"UpgradeNameWithLevel": "${upgradeName} (${level})",
-		"UpgradeNameMaxed": "${upgradeName} (MAX)",
-		"UpgradesListOpened": "The engineering team presents a list of upgrades that they can offer.",
-		"CanPerformUpgradePicked": "The engineering team presents a series of invoices, each one containing a different form of payment.",
-		"CannotPerformUpgradeMaxLevel": "The ship has reached the =max level= for this upgrade.",
-		"CannotPerformUpgradeBandwidth": "The ship cannot support this upgrade due to =bandwidth constraints=. The engineering team suggests that the bandwidth of the ship be increased so they can perform more upgrades.",
-		"UpgradeBandwidthCost": "The upgrade will use *${bandwidthCost}* bandwidth from your ship, which has *${freeBandwidth}* free to use.",
-		"UpgradeSuccessChance": "The upgrade has a ${successChance} chance of success. The engineering team stresses that there are no refunds if there are no notable results, however.",
 		"UpgradePerformedSuccessfully": "Your chief engineer reports that the *${name}* upgrade was a success. It is now *level ${level}*.",
-		"UpgradePerformedFailure": "After a few expletives, your chief engineer reports that the upgrade was a failure.",
 		"UpgradeRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. They say this with the slightest disbelief, as if surprised that the plan worked at all."
 	},
 	"UpgradeMethods": {
 		"UpgradeMethodsTitle": "Installation",
 		"ResourcesOption": "Resources",
-		"ResourcesUpgradeRequirement": "This upgrade requires:",
-		"ResourcesUpgradePostText": "The amount you have is displayed after the name of each resource. This includes market storage!",
 		"CreditsOption": "Credits",
 		"CreditsUpgradeTooltip": "The credit cost of an upgrade increases exponentially as level goes up. It can be reduced somewhat through faction relations.",
 		"IndEvoComponentsOption": "Ship Components",
@@ -266,7 +244,7 @@
 	},
 	"CommissionedCrews": {
 		"name": "Commissioned Crews",
-		"description": "Improve CR per deployment, ship repair rate, CR recovery, fuel consumption and supply use, but increases the amount the required crew are paid each month. This shifts the logistical constraints of a ship from supplies and fuel to credits.",
+		"description": "Improve CR per deployment, ship repair rate, CR recovery, fuel consumption and supply use, but increases the amount the required crew are paid each month, and the supplies the crew uses to recover. This shifts the logistical constraints of a ship from supplies and fuel to credits.",
 		"crewSalary": "Crew salary increased to =${salaryIncrease} credits= for the required crew of this ship. The effective increased cost per month is =${finalValue} credits= for this ship.",
 		"crewSalaryShop": "Ship's required crew salary: =${salaryIncrease} credits= (=${perLevel}= per level, `${finalValue} credits` at max)",
 		"crewSalaryFinal": "Ship's required crew salary: `${salaryIncrease} credits`",
@@ -298,7 +276,7 @@
 	},
 	"TracerRecoilCalculator": {
 		"name": "Tracer Recoil Calculator",
-		"description": "Loading weapons with a special kind of tracer round allows this subsystem to make trajectory adjustments to reduce recoil and inaccuracy at the cost of projectile speed.",
+		"description": "Loading weapons with a special kind of tracer round allows this subsystem to make trajectory adjustments to reduce recoil and inaccuracy at the cost of weapon turn rate. The durability of the weapon is increased as a side effect.",
 		"recoil": "Recoil",
 		"weaponHealth": "Weapon health",
 		"weaponTurnRate": "Weapon turn rate"

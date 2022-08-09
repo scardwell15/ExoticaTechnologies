@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.hullmods.PhaseAnchor;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
@@ -26,7 +27,7 @@ import java.util.Map;
 public class PhasefieldEngine extends Exotic {
     private static final String ITEM = "et_phaseengine";
 
-    private static int PHASE_RESET_INTERVAL = 8;
+    private static int PHASE_RESET_INTERVAL = 6;
     private static int INVULNERABLE_INTERVAL = 2;
 
     private static float PHASE_COOLDOWN_PERCENT_REDUCTION = -50f;
@@ -105,9 +106,12 @@ public class PhasefieldEngine extends Exotic {
         } else if (fm.getHullSpec().getShieldSpec().getPhaseCost() < 0) {
             stats.getPhaseCloakActivationCostBonus().modifyMult(getBuffId() + "base", -1f);
         }
-
         stats.getPhaseCloakActivationCostBonus().modifyMult(getBuffId(), 1f - Math.abs(PHASE_COST_PERCENT_REDUCTION / 100f));
-        stats.getPhaseCloakCooldownBonus().modifyMult(getBuffId(), PHASE_COOLDOWN_PERCENT_REDUCTION / 100f);
+    }
+
+    @Override
+    public void applyExoticToShip(FleetMemberAPI fm, ShipAPI ship, float bandwidth, String id) {
+        ship.getMutableStats().getPhaseCloakActivationCostBonus().unmodify("phase_anchor");
     }
 
     private String getPhaseStateId(ShipAPI ship) {

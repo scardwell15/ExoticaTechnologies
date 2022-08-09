@@ -78,7 +78,12 @@ public class UIUtils {
                     }
 
                     if (cost != 0) {
-                        StringUtils.getTranslation("CommonOptions", "SpecialItemTextWithCost")
+                        String translationKey = "SpecialItemTextWithCost";
+                        if (cost < 0) {
+                            translationKey = "SpecialItemTextWithPay";
+                        }
+
+                        StringUtils.getTranslation("CommonOptions", translationKey)
                                 .format("name", name)
                                 .format("amount", Misc.getWithDGS(quantity))
                                 .format("cost", StringUtils.formatCost(cost))

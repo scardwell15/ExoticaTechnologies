@@ -168,15 +168,15 @@ public class CommissionedCrews extends Upgrade {
                         .addToTooltip(tooltip, 2f);
             }
 
-            this.addBenefitToTooltipMult(tooltip,
-                    "suppliesToRecover",
-                    fm.getStats().getSuppliesToRecover().getMultStatMod(this.getBuffId()).getValue(),
-                    fm.getHullSpec().getSuppliesToRecover());
-
             this.addBenefitToTooltip(tooltip,
                     "hullRepair",
                     fm.getStats().getRepairRatePercentPerDay().getPercentStatMod(this.getBuffId()).getValue(),
                     fm.getStats().getRepairRatePercentPerDay().getBaseValue());
+
+            this.addMalusToTooltipMult(tooltip,
+                    "suppliesToRecover",
+                    fm.getStats().getSuppliesToRecover().getMultStatMod(this.getBuffId()).getValue(),
+                    fm.getHullSpec().getSuppliesToRecover());
 
         } else {
             tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));

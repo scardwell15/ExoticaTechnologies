@@ -3,6 +3,7 @@ package exoticatechnologies.modifications.exotics.impl;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
@@ -104,6 +105,12 @@ public class AlphaSubcore extends Exotic {
         Map<String, Float> resourceCosts = new HashMap<>();
         resourceCosts.put(ITEM, 1f);
         return resourceCosts;
+    }
+
+
+    @Override
+    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+        onInstall(fm);
     }
 
     @Override

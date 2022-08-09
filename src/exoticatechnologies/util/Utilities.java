@@ -7,8 +7,11 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import exoticatechnologies.cargo.CrateItemPlugin;
+import exoticatechnologies.cargo.CrateSpecialData;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
@@ -244,12 +247,19 @@ public class Utilities {
     }
 
     public static CargoStackAPI getExoticChip(CargoAPI cargo, String id) {
-        SpecialItemSpecAPI specialSpec = Global.getSettings().getSpecialItemSpec(Exotic.ITEM);
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
-            if(stack.isSpecialStack() && stack.getPlugin() instanceof GenericExoticItemPlugin) {
-                GenericExoticItemPlugin exoticPlugin = (GenericExoticItemPlugin) stack.getPlugin();
-                if (exoticPlugin.getExoticId().equals(id)) {
-                    return stack;
+            if(stack.isSpecialStack()) {
+                if (stack.getPlugin() instanceof GenericExoticItemPlugin) {
+                    GenericExoticItemPlugin exoticPlugin = (GenericExoticItemPlugin) stack.getPlugin();
+                    if (exoticPlugin.getExoticId().equals(id)) {
+                        return stack;
+                    }
+                } else if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    CargoStackAPI crateStack = getExoticChip(plugin.getCargo(), id);
+                    if (crateStack != null) {
+                        return crateStack;
+                    }
                 }
             }
         }
@@ -261,22 +271,29 @@ public class Utilities {
         return getExoticChip(cargo, id) != null;
     }
 
-    public static void takeExoticChip(CargoAPI cargo, String id) {
-        CargoStackAPI stack = getExoticChip(cargo, id);
-        if (stack != null) {
-            stack.subtract(1);
-            if (stack.getSize() == 0) {
-                cargo.removeStack(stack);
-            }
+    public static void takeItem(CargoStackAPI stack) {
+        stack.subtract(1);
+        if (stack.getSize() == 0) {
+            stack.getCargo().removeStack(stack);
         }
     }
 
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id, int level) {
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
-            if(stack.isSpecialStack() && stack.getPlugin() != null && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
-                UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
-                if (id.equals(upgradeItem.getUpgradeId()) && upgradeItem.getUpgradeLevel() == level) {
-                    return stack;
+            if(stack.isSpecialStack()) {
+                if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    CargoStackAPI crateStack = getUpgradeChip(plugin.getCargo(), id, level);
+                    if (crateStack != null) {
+                        stack = crateStack;
+                    }
+                }
+
+                if (stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
+                    UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
+                    if (id.equals(upgradeItem.getUpgradeId()) && upgradeItem.getUpgradeLevel() == level) {
+                        return stack;
+                    }
                 }
             }
         }
@@ -284,30 +301,26 @@ public class Utilities {
         return null;
     }
 
-    public static boolean hasUpgradeChip(CargoAPI cargo, String id, int level) {
-        return getUpgradeChip(cargo, id, level) != null;
-    }
-
-    public static void takeUpgradeChip(CargoAPI cargo, String id, int level) {
-        CargoStackAPI stack = getUpgradeChip(cargo, id, level);
-        if (stack != null) {
-            stack.subtract(1);
-            if (stack.getSize() == 0) {
-                cargo.removeStack(stack);
-            }
-        }
-    }
-
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id) {
         CargoStackAPI winner = null;
         int winningLevel = 0;
 
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
-            if(stack.isSpecialStack() && stack.getPlugin() != null && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
-                UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
-                if (id.equals(upgradeItem.getUpgradeId()) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
-                    winningLevel = upgradeItem.getUpgradeLevel();
-                    winner = stack;
+            if(stack.isSpecialStack()) {
+                if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    CargoStackAPI crateStack = getUpgradeChip(plugin.getCargo(), id);
+                    if (crateStack != null) {
+                        stack = crateStack;
+                    }
+                }
+
+                if (stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
+                    UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
+                    if (id.equals(upgradeItem.getUpgradeId()) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
+                        winningLevel = upgradeItem.getUpgradeLevel();
+                        winner = stack;
+                    }
                 }
             }
         }
@@ -333,17 +346,26 @@ public class Utilities {
         String id = upgrade.getKey();
 
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
-            if(stack.isSpecialStack() && stack.getPlugin() != null && stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
+            if(stack.isSpecialStack()) {
+                if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    CargoStackAPI crateStack = getUpgradeChip(plugin.getCargo(), fm, mods, upgrade);
+                    if (crateStack != null) {
+                        stack = crateStack;
+                    }
+                }
 
-                UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
+                if(stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
+                    UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
 
-                if (id.equals(upgradeItem.getUpgradeId())) {
-                    int level = upgradeItem.getUpgradeLevel();
-                    if (level > mods.getUpgrade(upgrade)) {
-                        float upgradeBandwidth = (level - mods.getUpgrade(upgrade)) * upgrade.getBandwidthUsage();
-                        if ((usedBandwidth + upgradeBandwidth <= shipBandwidth) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
-                            winningLevel = upgradeItem.getUpgradeLevel();
-                            winner = stack;
+                    if (id.equals(upgradeItem.getUpgradeId())) {
+                        int level = upgradeItem.getUpgradeLevel();
+                        if (level > mods.getUpgrade(upgrade)) {
+                            float upgradeBandwidth = (level - mods.getUpgrade(upgrade)) * upgrade.getBandwidthUsage();
+                            if ((usedBandwidth + upgradeBandwidth <= shipBandwidth) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
+                                winningLevel = upgradeItem.getUpgradeLevel();
+                                winner = stack;
+                            }
                         }
                     }
                 }
@@ -357,30 +379,71 @@ public class Utilities {
         return getUpgradeChip(cargo, id) != null;
     }
 
-    public static void takeUpgradeChip(CargoAPI cargo, String id) {
-        CargoStackAPI stack = getUpgradeChip(cargo, id);
-        if (stack != null) {
-            stack.subtract(1);
-            if (stack.getSize() == 0) {
-                cargo.removeStack(stack);
-            }
-        }
-    }
-
     public static CargoStackAPI getSpecialStack(CargoAPI cargo, String id, String params) {
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
             if(stack.isSpecialStack()) {
-                SpecialItemData data = stack.getSpecialDataIfSpecial();
-                if (params != null && params.isEmpty()) {
-                    params = null;
-                }
-                if (data.getId().equals(id) && Objects.equals(data.getData(), params)) {
-                    return stack;
+                if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    stack = getSpecialStack(plugin.getCargo(), id, params);
+                    if (stack != null) {
+                        return stack;
+                    }
+                } else {
+                    SpecialItemData data = stack.getSpecialDataIfSpecial();
+                    if (params != null && params.isEmpty()) {
+                        params = null;
+                    }
+                    if (data.getId().equals(id) && Objects.equals(data.getData(), params)) {
+                        return stack;
+                    }
                 }
             }
         }
 
         return null;
+    }
+
+    //runcode exoticatechnologies.util.Utilities.mergeChipsIntoCrate($playerFleet.getCargo())
+    public static void mergeChipsIntoCrate(CargoAPI cargo) {
+        CrateSpecialData crateData = null;
+
+        for (CargoStackAPI stack : cargo.getStacksCopy()) {
+            if (stack.isSpecialStack()) {
+                SpecialItemData data = stack.getSpecialDataIfSpecial();
+                if (data instanceof CrateSpecialData) {
+                    if (crateData == null) {
+                        crateData = (CrateSpecialData) data;
+                    } else {
+                        //merge crates while we're here.
+                        crateData.getCargo().addAll(((CrateSpecialData) data).getCargo());
+                        cargo.removeStack(stack);
+                    }
+                }
+            }
+        }
+
+        if (crateData == null) {
+            CargoStackAPI stack = Global.getFactory().createCargoStack(CargoAPI.CargoItemType.SPECIAL, new CrateSpecialData(), cargo);
+            stack.setSize(1);
+            cargo.addFromStack(stack);
+
+            crateData = (CrateSpecialData) stack.getSpecialDataIfSpecial();
+        }
+
+        for (CargoStackAPI stack : cargo.getStacksCopy()) {
+            if (stack.isSpecialStack()) {
+                String specialId = stack.getSpecialDataIfSpecial().getId();
+                if (specialId.equals("et_upgrade") || specialId.equals("et_exotic")) {
+                    SpecialItemPlugin plugin = stack.getPlugin();
+                    if ((plugin instanceof UpgradeSpecialItemPlugin && !((UpgradeSpecialItemPlugin) plugin).isIgnoreCrate())
+                        || (plugin instanceof ExoticSpecialItemPlugin && !((ExoticSpecialItemPlugin) plugin).isIgnoreCrate()))
+                    {
+                        crateData.getCargo().addFromStack(stack);
+                        cargo.removeStack(stack);
+                    }
+                }
+            }
+        }
     }
 
     public static String formatSpecialItem(SpecialItemData data) {
@@ -404,8 +467,7 @@ public class Utilities {
     }
 
     public static String getSpecialItemParams(String specialKey) {
-        String params = specialKey.substring(specialKey.indexOf("(") + 1, specialKey.lastIndexOf(")"));
-        return params;
+        return specialKey.substring(specialKey.indexOf("(") + 1, specialKey.lastIndexOf(")"));
     }
 
     public static boolean isSpecialItemId(String key) {

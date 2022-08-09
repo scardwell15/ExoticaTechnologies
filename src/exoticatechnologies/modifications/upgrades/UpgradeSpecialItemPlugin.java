@@ -7,13 +7,16 @@ import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.awt.*;
 
 public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
 
-    protected String upgradeId;
-    protected int upgradeLevel = 0;
+    @Getter protected String upgradeId;
+    @Getter protected int upgradeLevel = 0;
+    @Getter @Setter protected boolean ignoreCrate = false;
     protected Upgrade upgrade;
 
     @Override
@@ -39,14 +42,6 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
         upgradeSprite.renderRegionAtCenter(x + (1 + tX) * w / 2, y + (1 + tY) * h/2, 0.22f, 0.21f, 0.565f, 0.56f);
     }
 
-    public String getUpgradeId() {
-        return upgradeId;
-    }
-
-    public int getUpgradeLevel() {
-        return upgradeLevel;
-    }
-
     @Override
     public void init(CargoStackAPI stack) {
         super.init(stack);
@@ -64,6 +59,10 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
                 handleParam(i, param);
             }
         }
+    }
+
+    public CargoStackAPI getStack() {
+        return stack;
     }
 
     public final Upgrade getUpgrade() {
@@ -99,17 +98,18 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
 
     private void handleParam(int index, String param) {
         switch(Param.get(index)) {
-            case UPGRADE_ID: {
+            case UPGRADE_ID:
                 upgradeId = param;
                 if (UpgradesHandler.UPGRADES.containsKey(upgradeId)) {
                     upgrade = UpgradesHandler.UPGRADES.get(upgradeId);
                 }
                 break;
-            }
-            case UPGRADE_LEVEL: {
+            case UPGRADE_LEVEL:
                 upgradeLevel = Integer.parseInt(param);
                 break;
-            }
+            case IGNORE_CRATE:
+                ignoreCrate = Boolean.parseBoolean(param);
+                break;
         }
     }
 
@@ -119,7 +119,8 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
 
     private enum Param {
         UPGRADE_ID,
-        UPGRADE_LEVEL;
+        UPGRADE_LEVEL,
+        IGNORE_CRATE;
 
         private static Param get(int index) {
             return Param.values()[index];

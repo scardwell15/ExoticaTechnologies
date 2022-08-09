@@ -28,7 +28,9 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.FleetMemberUtils;
+import exoticatechnologies.util.Utilities;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 
 import java.util.*;
@@ -41,6 +43,9 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     private final IntervalUtil interval = new IntervalUtil(2f, 2f);
     private final IntervalUtil cleaningInterval = new IntervalUtil(15f, 15f);
     @Getter private static boolean appliedData = false;
+
+    @Getter @Setter
+    private static boolean mergeCheck = false;
 
     private static final List<String> submarketIdsToCheckForSpecialItems = new ArrayList<>();
     static {
@@ -311,6 +316,11 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     }
                 }
             }
+        }
+
+        if (mergeCheck && !Global.getSector().getCampaignUI().isShowingMenu()) {
+            mergeCheck = false;
+            Utilities.mergeChipsIntoCrate(Global.getSector().getPlayerFleet().getCargo());
         }
 
         if (Global.getSector().getCampaignUI().getCurrentCoreTab() != CoreUITabId.REFIT) {

@@ -168,12 +168,10 @@ public class ExoticUIPlugin implements CustomUIPanelPlugin {
         Map<String, Float> methodResources = null;
         if (data != null) {
             if (data.equals(installButtonData)) {
-                if (Utilities.hasExoticChip(fm.getFleetData().getFleet().getCargo(), exotic.getKey())) {
+                CargoStackAPI exoticStack = Utilities.getExoticChip(fm.getFleetData().getFleet().getCargo(), exotic.getKey());
+                if (exoticStack != null) {
                     methodResources = new HashMap<>();
-                    methodResources.put("&"
-                            + StringUtils.getTranslation("ShipListDialog", "UpgradeChipText")
-                            .format("upgradeName", exotic.getName())
-                            .toStringNoFormats(), 1f);
+                    methodResources.put(Utilities.formatSpecialItem(exoticStack.getSpecialDataIfSpecial()), 1f);
                 } else {
                     methodResources = exotic.getResourceCostMap(fm, mods, market);
                 }
@@ -182,7 +180,7 @@ public class ExoticUIPlugin implements CustomUIPanelPlugin {
 
                 CargoStackAPI stack = Utilities.getExoticChip(fm.getFleetData().getFleet().getCargo(), exotic.getKey());
                 if (stack != null) {
-                    resourceCosts.put(Utilities.formatSpecialItem(stack.getSpecialDataIfSpecial()), 1f);
+                    resourceCosts.put(Utilities.formatSpecialItem(stack.getSpecialDataIfSpecial()), -1f);
                 } else {
                     methodResources.put("&"
                             + StringUtils.getTranslation("ShipListDialog", "UpgradeChipText")
@@ -481,8 +479,9 @@ public class ExoticUIPlugin implements CustomUIPanelPlugin {
 
             Exotic exotic = displayedExotic;
 
-            if (Utilities.hasExoticChip(fm.getFleetData().getFleet().getCargo(), displayedExotic.getKey())) {
-                Utilities.takeExoticChip(fm.getFleetData().getFleet().getCargo(), displayedExotic.getKey());
+            CargoStackAPI stack = Utilities.getExoticChip(fm.getFleetData().getFleet().getCargo(), displayedExotic.getKey());
+            if (stack != null) {
+                Utilities.takeItem(stack);
             } else {
                 exotic.removeItemsFromFleet(fm.getFleetData().getFleet(), fm);
             }

@@ -291,8 +291,6 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
         }
         methodButtons.clear();
 
-        FactionAPI playerFaction = Global.getSector().getPlayerFaction();
-
         String displayString = method.apply(fm, mods, upgrade, market);
 
         TimedUIPlugin timedPlugin = new TimedUIPlugin(0.75f, new UpgradedUIListener());

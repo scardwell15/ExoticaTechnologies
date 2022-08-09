@@ -56,7 +56,7 @@
     "phaseCooldownReduction": -50.0, #reduces phase cooldown time by this amount.
 
     "phaseCostModIfNegative": -100.0, #if phase cost is negative, apply this modifier.
-    "phaseCostIfZero": 10.0, #percent of base flux capacity
+    "phaseCostIfZero": 20.0, #percent of base flux capacity
     "phaseCostBaseReduction": -75.0 #reduces phase cost by this amount.
     #this reduction applies after the other mods here.
   },

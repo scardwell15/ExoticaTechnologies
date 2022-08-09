@@ -33,7 +33,7 @@ public class PhasefieldEngine extends Exotic {
     private static float PHASE_COOLDOWN_PERCENT_REDUCTION = -50f;
     private static float PHASE_COST_PERCENT_REDUCTION = -75f;
     private static float PHASE_COST_PERCENT_IF_NEGATIVE = -100f;
-    private static float PHASE_COST_IF_ZERO = 10f;
+    private static float PHASE_COST_IF_ZERO = 20f;
 
     @Getter private final Color mainColor = new Color(0xA94EFF);
 

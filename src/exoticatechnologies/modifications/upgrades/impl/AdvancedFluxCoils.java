@@ -93,7 +93,7 @@ public class AdvancedFluxCoils extends Upgrade {
     @Override
     public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
         this.addBenefitToShopTooltipMult(tooltip, "fluxCapacity", fm, mods, CAPACITY_MAX);
-        this.addBenefitToShopTooltipMult(tooltip, "ventSpeed", fm, mods, VENT_SPEED_MAX);
+        this.addBenefitToShopTooltip(tooltip, "ventSpeed", fm, mods, VENT_SPEED_MAX);
         this.addBenefitToShopTooltipMult(tooltip, "weaponFluxCosts", fm, mods, WEAPON_FLUX_MAX);
     }
 

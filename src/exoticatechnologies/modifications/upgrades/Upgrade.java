@@ -304,11 +304,7 @@ public abstract class Upgrade {
         int currLevel = mods.getUpgrade(this) - (startingLevel - 1);
         float currValue = 1;
         if (currLevel > 0) {
-            if (finalValue < 0) {
-                currValue = 1 - perLevel * currLevel;
-            } else {
-                currValue = 1 + perLevel * currLevel;
-            }
+            currValue = 1 + perLevel * currLevel;
         }
 
         finalValue = 1 + finalValue;

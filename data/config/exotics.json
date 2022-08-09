@@ -33,7 +33,7 @@
     "rangeBottomBuff": 200, #receive a flat bonus of this.
 
     "rangeTopBounds": 800, #weapons with base range above this
-    "rangeTopBuff": -150 #receive a flat bonus of this.
+    "rangeTopBuff": -50 #receive a flat bonus of this.
   },
   "HangarForge": {
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HangarForge",

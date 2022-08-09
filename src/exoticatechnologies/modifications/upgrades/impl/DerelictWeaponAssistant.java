@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class DerelictWeaponAssistant extends Upgrade {
     @Getter protected final float bandwidthUsage = 10f;
-    private static final float RECOIL_REDUCTION = -25f;
+    private static final float RECOIL_REDUCTION = -30f;
     private static final float PROJ_SPEED = 20f;
     private static final float FIRERATE_BONUS = 10f;
     private final Set<String> allowedFactions = new HashSet<>();

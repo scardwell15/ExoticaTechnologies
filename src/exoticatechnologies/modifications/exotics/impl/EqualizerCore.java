@@ -29,7 +29,7 @@ public class EqualizerCore extends Exotic {
     private static int RANGE_LIMIT_BOTTOM = 550;
     private static int RANGE_BOTTOM_BUFF = 200;
     private static int RANGE_LIMIT_TOP = 800;
-    private static int RANGE_TOP_BUFF = -150;
+    private static int RANGE_TOP_BUFF = -50; //per 100 units
 
     @Getter private final Color mainColor = Color.orange.darker();
 
@@ -77,7 +77,7 @@ public class EqualizerCore extends Exotic {
     public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
-                    .format("recoilReduction", RECOIL_REDUCTION)
+                    .format("recoilReduction", Math.abs(RECOIL_REDUCTION))
                     .format("weaponTurnBonus", TURN_RATE_BUFF)
                     .format("lowRangeThreshold", RANGE_LIMIT_BOTTOM)
                     .format("rangeBonus", RANGE_BOTTOM_BUFF)
@@ -100,13 +100,13 @@ public class EqualizerCore extends Exotic {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
-        if (!ship.hasListenerOfClass(ESR_EqualizerCoreListener.class)) {
-            ship.addListener(new ESR_EqualizerCoreListener());
+        if (!ship.hasListenerOfClass(ET_EqualizerCoreListener.class)) {
+            ship.addListener(new ET_EqualizerCoreListener());
         }
     }
 
     // Our range listener
-    private static class ESR_EqualizerCoreListener implements WeaponBaseRangeModifier {
+    private static class ET_EqualizerCoreListener implements WeaponBaseRangeModifier {
 
         @Override
         public float getWeaponBaseRangePercentMod(ShipAPI ship, WeaponAPI weapon) {
@@ -126,7 +126,7 @@ public class EqualizerCore extends Exotic {
 
             float baseRangeMod = 0;
             if(weapon.getSpec().getMaxRange() >= RANGE_LIMIT_TOP) {
-                baseRangeMod = RANGE_TOP_BUFF;
+                baseRangeMod = RANGE_TOP_BUFF * (weapon.getSpec().getMaxRange() - RANGE_LIMIT_TOP) / 100;
             } else if (weapon.getSpec().getMaxRange() <= RANGE_LIMIT_BOTTOM) {
                 baseRangeMod = RANGE_BOTTOM_BUFF;
             }

@@ -15,7 +15,7 @@ import java.awt.*;
 public class InterferenceShielding extends Upgrade {
     @Getter protected final float bandwidthUsage = 10f;
     private static final float SENSOR_PROFILE_MULT = -50f;
-    private static final float SUPPLY_CONSUMPTION_MULT = 20f;
+    private static final float SUPPLY_CONSUMPTION_MULT = 16f;
     private static final Color COLOR = new Color(93, 59, 210);
 
     @Override

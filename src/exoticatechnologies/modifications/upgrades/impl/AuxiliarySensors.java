@@ -15,8 +15,8 @@ import java.awt.*;
 public class AuxiliarySensors extends Upgrade {
     @Getter protected final float bandwidthUsage = 5f;
     private static final float SENSOR_STRENGTH_MULT = 50f;
-    private static final float SENSOR_PROFILE_MULT = 10f;
-    private static final float MIN_CREW_MULT = 20f;
+    private static final float SENSOR_PROFILE_MULT = 12f;
+    private static final float MIN_CREW_MULT = 16f;
     private static final Color COLOR = new Color(178, 178, 178);
 
     @Override

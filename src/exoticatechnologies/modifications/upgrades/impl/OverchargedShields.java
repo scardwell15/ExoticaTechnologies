@@ -16,11 +16,11 @@ import java.awt.*;
 
 public class OverchargedShields extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
-    private static final float FLUX_PER_DAM_MAX = -20f;
+    private static final float FLUX_PER_DAM_MAX = -25f;
     private static final float ARC_MAX = 40f;
-    private static float UPKEEP_MAX = 32f;
-    private static final float UNFOLD_MAX = -30f;
-    private static final float TURNRATE_MAX = -20f;
+    private static float UPKEEP_MAX = 28f;
+    private static final float UNFOLD_MAX = -28f;
+    private static final float TURNRATE_MAX = -16f;
     private static final Color COLOR = new Color(56, 187, 166);
 
     @Override

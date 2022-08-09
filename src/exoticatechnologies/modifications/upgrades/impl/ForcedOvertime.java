@@ -15,12 +15,12 @@ import java.awt.*;
 
 public class ForcedOvertime extends Upgrade {
     @Getter protected final float bandwidthUsage = 5f;
-    private static final float CR_TO_DEPLOY_MAX = -20f;
-    private static final float CR_RECOVERY_RATE_MAX = -20f;
+    private static final float CR_TO_DEPLOY_MAX = -32f;
+    private static final float CR_RECOVERY_RATE_MAX = -16f;
 
-    private static final float REQUIRED_CREW_MAX = 20f;
-    private static final float PEAK_CR_MAX = 20f;
-    private static final float CR_LOSS_MAX = 20f;
+    private static final float REQUIRED_CREW_PERC = 16f;
+    private static final float PPT_PERC = 20f;
+    private static final float CR_LOSS_PERC = 20f;
 
     private static final float FRIGATE_MULT = 8f;
     private static final float DESTROYER_MULT = 3f;
@@ -46,15 +46,15 @@ public class ForcedOvertime extends Upgrade {
             delta = FRIGATE_MULT;
         }
 
-        this.addBenefitToShopTooltip(tooltip, "peakPerformanceTime", fm, mods, PEAK_CR_MAX * delta);
+        this.addBenefitToShopTooltip(tooltip, "peakPerformanceTime", fm, mods, PPT_PERC * delta);
         this.addBenefitToShopTooltipMult(tooltip, "crPerDeployment", fm, mods, CR_TO_DEPLOY_MAX);
-        this.addMalusToShopTooltip(tooltip, "requiredCrew", fm, mods, REQUIRED_CREW_MAX);
+        this.addMalusToShopTooltip(tooltip, "requiredCrew", fm, mods, REQUIRED_CREW_PERC);
 
         //after level 3
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
-        this.addMalusToShopTooltip(tooltip, "crDegradationShop", fm, mods, 3, CR_LOSS_MAX);
+        this.addMalusToShopTooltip(tooltip, "crDegradationShop", fm, mods, 3, CR_LOSS_PERC);
         this.addMalusToShopTooltipMult(tooltip, "crRecoveryRate", fm, mods, 3, CR_RECOVERY_RATE_MAX);
     }
 
@@ -72,13 +72,13 @@ public class ForcedOvertime extends Upgrade {
             delta = FRIGATE_MULT;
         }
 
-        StatUtils.setStatPercent(stats.getPeakCRDuration(), this.getBuffId(), level, PEAK_CR_MAX * delta, maxLevel);
+        StatUtils.setStatPercent(stats.getPeakCRDuration(), this.getBuffId(), level, PPT_PERC * delta, maxLevel);
         StatUtils.setStatMult(stats.getCRPerDeploymentPercent(), this.getBuffId(), level, CR_TO_DEPLOY_MAX, maxLevel);
 
-        StatUtils.setStatPercent(stats.getMinCrewMod(), this.getBuffId(), level, REQUIRED_CREW_MAX, maxLevel);
+        StatUtils.setStatPercent(stats.getMinCrewMod(), this.getBuffId(), level, REQUIRED_CREW_PERC, maxLevel);
 
         if (level >= 3) {
-            StatUtils.setStatPercent(stats.getCRLossPerSecondPercent(), this.getBuffId(), level - 2, CR_LOSS_MAX, maxLevel - 2);
+            StatUtils.setStatPercent(stats.getCRLossPerSecondPercent(), this.getBuffId(), level - 2, CR_LOSS_PERC, maxLevel - 2);
             StatUtils.setStatMult(stats.getBaseCRRecoveryRatePercentPerDay(), this.getBuffId(), level - 2, CR_RECOVERY_RATE_MAX, maxLevel - 2);
         }
     }

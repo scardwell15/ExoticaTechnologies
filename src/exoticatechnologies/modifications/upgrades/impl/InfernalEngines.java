@@ -19,7 +19,7 @@ public class InfernalEngines extends Upgrade {
     private static final float TURN_RATE_MAX = 30f;
     private static final float BURN_LEVEL_MAX = 20f;
 
-    private static final float DECELERATION_MAX = -30f;
+    private static final float DECELERATION_MAX = -24f;
     private static final float FUEL_USE_MAX = 16f;
     private static final Color COLOR = new Color(255, 224, 94);
 

@@ -15,7 +15,7 @@ import java.awt.*;
 public class WeldedArmor extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
     private static final float HULL_MAX = 30f;
-    private static final float ARMOR_MAX = 10f;
+    private static final float ARMOR_MAX = 15f;
 
     private static final float EMP_TAKEN_MAX = 16f;
     private static final float ENGINE_HEALTH_MAX = -16f;

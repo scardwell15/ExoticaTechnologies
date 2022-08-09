@@ -16,7 +16,7 @@ public class HyperactiveCapacitors extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
     private static final float CAPACITY_MAX = 25f;
     private static final float VENT_SPEED_MAX = 50f;
-    private static final float WEAPON_FLUX_MAX = 30f;
+    private static final float WEAPON_FLUX_MAX = 24f;
     private static final Color COLOR = new Color(143, 86, 182);
 
     @Override
@@ -39,7 +39,7 @@ public class HyperactiveCapacitors extends Upgrade {
     @Override
     public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
         this.addBenefitToShopTooltipMult(tooltip, "fluxCapacity", fm, mods, CAPACITY_MAX);
-        this.addBenefitToShopTooltipMult(tooltip, "ventSpeed", fm, mods, VENT_SPEED_MAX);
+        this.addBenefitToShopTooltip(tooltip, "ventSpeed", fm, mods, VENT_SPEED_MAX);
 
         //after level 3
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")

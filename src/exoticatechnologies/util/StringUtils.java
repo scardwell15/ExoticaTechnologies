@@ -316,7 +316,7 @@ public class StringUtils {
         }
 
         public LabelAPI addToTooltip(TooltipMakerAPI tooltip, UIComponentAPI positionBelowThis) {
-            LabelAPI label = StringUtils.addToTooltip(tooltip, this.toString(), 0f, colors.toArray(new Color[0]));
+            LabelAPI label = this.addToTooltip(tooltip, 0);
             UIComponentAPI prev = tooltip.getPrev();
             prev.getPosition().belowLeft(positionBelowThis, 2);
             return label;

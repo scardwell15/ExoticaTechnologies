@@ -43,13 +43,4 @@ public class ETScanOmegas extends BaseCommandPlugin {
         }
         return true;
     }
-
-    private static void scanFleetMember(FleetMemberAPI fm, InteractionDialogAPI dialog) {
-        if (fm != null) {
-            ShipModifications mods = ShipModFactory.getForFleetMember(fm);
-            TextPanelAPI textPanel = dialog.getTextPanel();
-
-            ScanUtils.addModificationsToTextPanel(textPanel, fm.getShipName(), mods, fm.getVariant().getHullSize(), fm.getFleetData().getFleet().getFaction().getColor());
-        }
-    }
 }

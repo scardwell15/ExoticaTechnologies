@@ -58,7 +58,8 @@
 		"DebrisFieldHasNotableMods": "Upon closer inspection, the ships in the debris field appear to have signs of *Exotica technologies*.",
 		"ExoticHeader": "Exotics",
 		"UpgradeHeader": "Upgrades",
-		"NotableShipsHeader": "Notable ships"
+		"NotableShipsHeader": "Notable ships",
+		"ModsMissingText": "Upon a closer inspection by your intelligence officer, a small anomaly within the search results indicates to both of you now that =the ship has no Exotica technologies= installed. They aren't able to give a clear explanation why this was missed, only mentioning that a faint humming may have distracted them."
 	},
 	"MainMenu": {
 		"UpgradeShips": "Consider upgrading a ship.",

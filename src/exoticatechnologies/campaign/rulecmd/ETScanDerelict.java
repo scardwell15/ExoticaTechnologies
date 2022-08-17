@@ -8,6 +8,8 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySp
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.campaign.ScanUtils;
+import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 
 import java.util.List;
@@ -28,12 +30,33 @@ public class ETScanDerelict extends BaseCommandPlugin {
         DerelictShipEntityPlugin plugin = (DerelictShipEntityPlugin) interactionTarget.getCustomPlugin();
         ShipRecoverySpecial.PerShipData shipData = plugin.getData().ship;
 
-        ScanUtils.addModificationsToTextPanel(dialog.getTextPanel(),
-                shipData.shipName != null ? shipData.shipName : "???",
-                ETModPlugin.getData(shipData.fleetMemberId),
-                shipData.getVariant().getHullSize(),
-                null);
+        ShipModifications mods = getMods(interactionTarget, shipData);
+        if (mods == null) {
+            dialog.getOptionPanel().setEnabled(ruleId, false);
+
+            StringUtils.getTranslation("FleetScanner", "ModsMissingText")
+                    .addToTextPanel(dialog.getTextPanel());
+        } else {
+            ScanUtils.addModificationsToTextPanel(dialog.getTextPanel(),
+                    shipData.shipName != null ? shipData.shipName : "???",
+                    mods,
+                    shipData.getVariant().getHullSize(),
+                    null);
+        }
 
         return true;
+    }
+
+    public ShipModifications getMods(SectorEntityToken entity, ShipRecoverySpecial.PerShipData shipData) {
+        if (shipData.fleetMemberId != null) {
+            if (ETModPlugin.hasData(shipData.fleetMemberId)) {
+                return ETModPlugin.getData(shipData.fleetMemberId);
+            }
+        } else {
+            if (ETModPlugin.hasData(entity.getId())) {
+                return ETModPlugin.getData(entity.getId());
+            }
+        }
+        return null;
     }
 }

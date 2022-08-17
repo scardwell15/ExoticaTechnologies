@@ -114,6 +114,9 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             DerelictShipEntityPlugin.DerelictShipData data = plugin.getData();
             ShipRecoverySpecial.PerShipData shipData = data.ship;
 
+            ShipVariantAPI var = shipData.getVariant();
+            if (var == null) return;
+
             FleetMemberAPI fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
 
             if (shipData.fleetMemberId == null) {
@@ -122,9 +125,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                 fm.setId(shipData.fleetMemberId);
             }
 
-            ShipVariantAPI var = shipData.getVariant();
+            if (shipData.shipName != null) {
+                fm.setShipName(shipData.shipName);
+            }
 
-            if (var == null) return;
 
             long seed = shipData.fleetMemberId.hashCode();
             ShipModFactory.getRandom().setSeed(seed);
@@ -134,7 +138,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             ShipModifications mods = ShipModFactory.generateRandom(var, null);
             ETModPlugin.saveData(shipData.fleetMemberId, mods);
 
-            Global.getSector().addTransientScript(new DerelictsEFScript(var.getHullVariantId(), mods));
+            Global.getSector().addTransientScript(new DerelictsEFScript(shipData.fleetMemberId, mods));
             return;
         }
 
@@ -151,7 +155,6 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                 for (ShipRecoverySpecial.PerShipData shipData : data.ships) {
 
                     ShipVariantAPI var = shipData.getVariant();
-
                     if (var == null) continue;
 
                     FleetMemberAPI fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, var);
@@ -159,6 +162,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                         fm.setId(shipData.fleetMemberId);
                     } else {
                         shipData.fleetMemberId = fm.getId();
+                    }
+
+                    if (shipData.shipName != null) {
+                        fm.setShipName(shipData.shipName);
                     }
 
                     long seed = shipData.fleetMemberId.hashCode();
@@ -169,7 +176,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     //it will never find one.
                     ETModPlugin.saveData(shipData.fleetMemberId, mods);
 
-                    derelictVariantMap.put(var.getHullVariantId(), mods);
+                    derelictVariantMap.put(shipData.fleetMemberId, mods);
                 }
 
                 Global.getSector().addTransientScript(new DerelictsEFScript(derelictVariantMap));

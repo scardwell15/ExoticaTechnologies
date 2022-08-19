@@ -393,7 +393,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     private static boolean shouldRemoveStackFromSubmarket(CargoStackAPI stack) {
         if (stack.isSpecialStack() && stack.getSpecialDataIfSpecial() != null) {
             String specialId = stack.getSpecialDataIfSpecial().getId();
-            if (specialId.equals("et_upgrade") || specialId.equals("et_exotic")) {
+            if (specialId.startsWith("et_")) {
                 return true;
             }
         }

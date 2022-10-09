@@ -26,7 +26,7 @@ import java.util.Map;
 public abstract class Upgrade {
     public static final String ITEM = "et_upgrade";
     @Getter @Setter public String key;
-    @Getter @Setter protected String name;
+    @Getter @Setter public String name;
     @Getter @Setter protected String description;
     @Getter protected JSONObject upgradeSettings;
     @Getter protected final Map<String, Float> resourceRatios = new HashMap<>();

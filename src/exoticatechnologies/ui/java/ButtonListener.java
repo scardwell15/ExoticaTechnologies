@@ -1,4 +1,4 @@
-package exoticatechnologies.ui;
+package exoticatechnologies.ui.java;
 
 public abstract class ButtonListener {
     public void highlighted(ButtonData data) {

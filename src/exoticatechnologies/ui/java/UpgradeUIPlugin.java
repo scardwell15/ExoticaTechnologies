@@ -1,9 +1,7 @@
-package exoticatechnologies.ui;
+package exoticatechnologies.ui.java;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
-import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
@@ -39,7 +37,6 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
     private TooltipMakerAPI resourceTooltip;
     private TooltipMakerAPI methodTooltip;
 
-    private final ShipModificationUIPanelPlugin plugin;
     private final FleetMemberAPI fm;
     private final ShipModifications mods;
     private final MarketAPI market;
@@ -114,7 +111,7 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
         if (upgrade == null) return;
 
         //39f = upgrades * 6f (for padding between each icon) + 3f for the panel padding.
-        upgradeInfoPanelWidth = panelWidth - plugin.getSwitcherPanelUpperOffset(ShipModificationUIPanelPlugin.UPGRADES_INDEX) - 39f;
+        upgradeInfoPanelWidth = panelWidth - 1 - 39f;
 
         redisplayDescription(upgrade);
         redisplayResourceMap(upgrade, displayedMethod);
@@ -142,7 +139,7 @@ public class UpgradeUIPlugin implements CustomUIPanelPlugin {
                 upgradeInfoPanelWidth / 2 - 6f, 18f, 0f);
         descButton.getPosition().inTL(3f, 0).setYAlignOffset(-panelHeight + 24f);
 
-        panel.addUIElement(descriptionTooltip).inTL(plugin.getSwitcherPanelUpperOffset(ShipModificationUIPanelPlugin.UPGRADES_INDEX) + 32, 3);
+        panel.addUIElement(descriptionTooltip).inTL(1 + 32, 3);
 
         switchDescriptionButton = new ButtonData(descButton, null);
         switchDescriptionButton.addListener(new DescriptionSwapButtonListener());

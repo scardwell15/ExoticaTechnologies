@@ -16,7 +16,7 @@ import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
-import exoticatechnologies.ui.TabbedCustomUIPanelPlugin;
+import exoticatechnologies.ui.java.TabbedCustomUIPanelPlugin;
 import exoticatechnologies.util.StringUtils;
 import lombok.*;
 import lombok.extern.log4j.Log4j;
@@ -102,11 +102,11 @@ public class ScanUtils {
     }
 
     public static boolean doesEntityHaveNotableMods(ShipModifications mods) {
-        return mods.hasUpgrades() || mods.hasExotics() || mods.getBandwidth() >= NOTABLE_BANDWIDTH;
+        return mods.hasUpgrades() || mods.hasExotics() || mods.getBaseBandwidth() >= NOTABLE_BANDWIDTH;
     }
 
     public static void addModificationsToTextPanel(TextPanelAPI textPanel, String shipName, ShipModifications mods, ShipAPI.HullSize hullSize, Color color) {
-        float bandwidth = mods.getBandwidth();
+        float bandwidth = mods.getBaseBandwidth();
 
         if (color == null) {
             color = Misc.getHighlightColor();
@@ -261,7 +261,7 @@ public class ScanUtils {
             TooltipMakerAPI shipText = rowHolder.createUIElement(textWidth, NOTABLE_SHIPS_ROW_HEIGHT, false);
             shipText.addPara(member.getShipName(), f, 0);
             shipText.addPara(member.getHullSpec().getNameWithDesignationWithDashClass(), 0);
-            float bandwidth = mods.getBandwidth();
+            float bandwidth = mods.getBaseBandwidth();
             StringUtils.getTranslation("FleetScanner", "ShipBandwidthShort")
                     .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getBandwidthColor(bandwidth))
                     .addToTooltip(shipText, pad);

@@ -28,7 +28,7 @@ public class PhasefieldEngine extends Exotic {
     private static final String ITEM = "et_phaseengine";
 
     private static int PHASE_RESET_INTERVAL = 6;
-    private static int INVULNERABLE_INTERVAL = 2;
+    private static int INVULNERABLE_INTERVAL = 3;
 
     private static float PHASE_COOLDOWN_PERCENT_REDUCTION = -50f;
     private static float PHASE_COST_PERCENT_REDUCTION = -75f;
@@ -306,8 +306,11 @@ public class PhasefieldEngine extends Exotic {
         @Override
         public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damageAPI, Vector2f point, boolean shieldHit) {
             if(target == this.ship) {
-                damageAPI.getModifier().modifyMult(PhasefieldEngine.this.getBuffId(), 0f);
-                return PhasefieldEngine.this.getBuffId();
+                IntervalUtil interval = getInvulnerableInterval(this.ship);
+                if (interval != null) {
+                    damageAPI.getModifier().modifyMult(PhasefieldEngine.this.getBuffId(), 0.66f * (INVULNERABLE_INTERVAL - interval.getElapsed()) / INVULNERABLE_INTERVAL);
+                    return PhasefieldEngine.this.getBuffId();
+                }
             }
             return null;
         }

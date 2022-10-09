@@ -43,6 +43,10 @@ public class CrateItemPlugin extends BaseSpecialItemPlugin {
     @SneakyThrows
     @Override
     public void performRightClickAction() {
+
+        //fix for campaign post-combat crash
+        if (Global.getSector().getCampaignUI().getCurrentInteractionDialog() != null) return;
+
         Global.getSector().addTransientScript(new CrateDisplayScript(stack.getCargo(), this));
     }
 

@@ -17,7 +17,7 @@ public class InfernalEngines extends Upgrade {
     private static final float SPEED_MULT = 15f;
     private static final float ACCELERATION_MAX = 30f;
     private static final float TURN_RATE_MAX = 30f;
-    private static final float BURN_LEVEL_MAX = 20f;
+    private static final float BURN_LEVEL_MAX = 30f;
 
     private static final float DECELERATION_MAX = -24f;
     private static final float FUEL_USE_MAX = 16f;
@@ -32,8 +32,8 @@ public class InfernalEngines extends Upgrade {
     public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
         this.addBenefitToShopTooltip(tooltip, "speed", fm, mods, SPEED_MULT);
         this.addBenefitToShopTooltip(tooltip, "acceleration", fm, mods, ACCELERATION_MAX);
-        this.addBenefitToShopTooltip(tooltip, "burnLevel", fm, mods, TURN_RATE_MAX);
-        this.addBenefitToShopTooltip(tooltip, "turnrate", fm, mods, BURN_LEVEL_MAX);
+        this.addBenefitToShopTooltip(tooltip, "burnLevel", fm, mods, BURN_LEVEL_MAX);
+        this.addBenefitToShopTooltip(tooltip, "turnrate", fm, mods, TURN_RATE_MAX);
 
         StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)

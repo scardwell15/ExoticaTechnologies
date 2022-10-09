@@ -1,4 +1,4 @@
-package exoticatechnologies.ui;
+package exoticatechnologies.ui.java;
 
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;

@@ -46,9 +46,9 @@ public class StringUtils {
 
     /**
      * Formats a string using two lists.
-     * First list is of strings that correspond to a "key" in the format formatted like this:
+     * First ships is of strings that correspond to a "key" in the format formatted like this:
      * ${key}
-     * The second list is of values. If any are a number, they will be formatted using Starsector's number formatting.
+     * The second ships is of values. If any are a number, they will be formatted using Starsector's number formatting.
      * It will be run through String.valueOf otherwise.
      *
      * @param format the format
@@ -132,7 +132,7 @@ public class StringUtils {
     /**
      * only matches positive (*) highlights
      * @param format string to get highlights from
-     * @return list of strings to be highlighted
+     * @return ships of strings to be highlighted
      */
     private static String[] getHighlights(String format) {
         List<String> highlights = new ArrayList<>();

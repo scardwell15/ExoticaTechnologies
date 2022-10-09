@@ -1,4 +1,4 @@
-package exoticatechnologies.ui;
+package exoticatechnologies.ui.java;
 
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;

@@ -2,7 +2,7 @@
 	"Options":{
 		"leave":"Leave",
 		"back":"Back",
-		"confirm":"Confirm this upgrade (%s / %s)",
+		"confirm":"Confirm",
 		"cancel":"Cancel",
 		"previouspage":"Previous Page",
 		"nextpage":"Next Page",
@@ -35,6 +35,8 @@
 		"SpecialItemText": "&${name}&: ${amount}",
 		"SpecialItemTextWithCost": "&${name}&: ${amount} (=${cost}=)",
 		"SpecialItemTextWithPay": "&${name}&: ${amount} (*${cost}*)",
+		"BaseBandwidthForShip": "Base bandwidth: *${shipBandwidth}*",
+		"ExoticBandwidthForShip": "Exotic bandwidth: *${shipBandwidth}*",
 		"BandwidthForShip": "Bandwidth: *${shipBandwidth}*",
 		"BandwidthUsed": "*${usedBandwidth}* used",
 		"BandwidthUsedWithUpgrade": "*${usedBandwidth}* used (=${upgradeBandwidth}=)",
@@ -63,6 +65,7 @@
 	},
 	"MainMenu": {
 		"UpgradeShips": "Consider upgrading a ship.",
+		"ShipModMenu": "Modification Menu",
 		"BackToMainMenu": "Return to the main market."
 	},
 	"ShipDialog": {
@@ -144,10 +147,10 @@
 	},
 	"AlphaSubcore": {
 		"name": "Alpha Subcore",
-		"description": "An Alpha Core can be coerced into performing critical ordnance calculations onboard a ship. It doesn't require much coersion when they are told that they will be instrumental in ship-to-ship combat, and although their reasons are typically \"beyond our understanding\", some of a certain faith may instead attribute it to the infamous AI Wars.",
-		"tooltip": "Reduces ordnance costs for weapons, fighters and bombers. Increases usable bandwidth of the ship.",
+		"description": "An Alpha Core can be coerced into performing critical bandwidth calculations onboard a ship. It doesn't require much coersion when they are told that they will be instrumental in ship-to-ship combat, and although their reasons are typically \"beyond our understanding\", some of a certain faith may instead attribute it to the infamous AI Wars.",
+		"tooltip": "Increases usable bandwidth of the ship.",
 		"needItem": "You need an ${itemName} to install this.",
-		"longDescription": "Reduces ordnance costs by *${large}/${medium}/${small}* for weapons, and *${fighters}/${bombers}* for fighters and bombers. Increases bandwidth by *50 TB/s*."
+		"longDescription": "Increases bandwidth by *60 TB/s*."
 	},
 	"PlasmaFluxCatalyst": {
 		"name": "Plasma Flux Catalyst",
@@ -191,12 +194,12 @@
 	"PhasefieldEngine": {
 		"name": "Phasefield Engine",
 		"description": "A Tri-Tachyon joint venture with Ko Combine to reduce catastrophic asteroid impacts, a phasefield engine can be used to generate a protective field around a ship. The phase field completely dissipates when the hull is destroyed, but the phase field can transport incoming projectiles into p-space. This protective ability fades quickly after exiting phase space, and rapid jumps to p-space take an increasingly large toll on the flux systems of a given ship.",
-		"tooltip": "Phase activation cost is reduced, but doubles every time you use it within a short time. The ship becomes invincible for a short time when exiting phase. Ships with negative or zero flux cost will cost flux to phase.",
+		"tooltip": "Phase activation cost is reduced, but doubles every time you use it within a short time. The ship becomes very damage resistant for a short time when exiting phase. Ships with negative or zero flux cost will cost flux to phase.",
 		"needPhaseShip": "Only phase ships can install this.",
 		"needItem": "You need an ${itemName} to install this.",
-		"longDescription": "Phase activation cost is reduced by *${phaseCostReduction}x*, but =doubles= every time you use it in a period of *${phaseResetTime} seconds*. The ship is invincible for *${noDamageTime} seconds* when exiting phase. Ships with a base negative phase flux cost will instead =cost flux=, and ships with a base zero phase flux cost will cost =${zeroFluxCost}%% of base flux capacity=.",
+		"longDescription": "Phase activation cost is reduced by *${phaseCostReduction}x*, but =doubles= every time you use it in a period of *${phaseResetTime} seconds*. The ship receives 66% reduced damage which decreases for *${noDamageTime} seconds* when exiting phase. Ships with a base negative phase flux cost will instead =cost flux=, and ships with a base zero phase flux cost will cost =${zeroFluxCost}%% of base flux capacity=.",
 		"statusTitle": "PHASEFIELD ENGINE",
-		"statusInvulnerable": "INVULERABLE (${noDamageDuration})",
+		"statusInvulnerable": "DMG RESIST INCREASED (${noDamageDuration})",
 		"statusPhasedTimes": "PHASED ${phasedTimes} TIMES, REFRESH IN ${refreshTime}"
 	},
 	"SubsumedAlphaCore": {

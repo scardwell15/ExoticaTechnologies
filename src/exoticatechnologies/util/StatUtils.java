@@ -1,7 +1,9 @@
 package exoticatechnologies.util;
 
 import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import org.lazywizard.lazylib.combat.CombatUtils;
 
 import java.text.DecimalFormat;
 
@@ -10,6 +12,17 @@ public class StatUtils {
     private static final DecimalFormat FLOATING_FORMAT_UNROUNDED = new DecimalFormat("#.##");
 
     private StatUtils() {
+    }
+
+    public void detectShips(ShipAPI ship) {
+        for (ShipAPI nextShip : CombatUtils.getShipsWithinRange(ship.getLocation(), 200f)) {
+            if (nextShip.getCustomData().get("yourFlagOrCircleThingGoesInThisIfStatement") != null) {
+                return;
+            }
+
+            nextShip.setCustomData("yourFlagOrCircleThingGoesInThisIfStatement", true);
+            detectShips(nextShip);
+        }
     }
 
     public static void setStatPercent(StatBonus stat, String buffId, float mult) {

@@ -8,6 +8,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
 import exoticatechnologies.modifications.upgrades.methods.*;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.ui.impl.shop.ShopManager;
+import exoticatechnologies.ui.impl.shop.UpgradeShopUIPlugin;
 import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
@@ -37,6 +39,8 @@ public class UpgradesHandler {
         UPGRADE_METHODS.add(new RecoverMethod());
 
         UpgradesHandler.populateUpgrades();
+
+        ShopManager.addMenu(new UpgradeShopUIPlugin());
     }
 
     public static void populateUpgrades() {

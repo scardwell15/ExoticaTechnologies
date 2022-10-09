@@ -54,8 +54,8 @@ public class ShipModifications {
             this.bandwidth = Bandwidth.generate().getRandomInRange();
         }
 
-        this.exotics = ExoticsGenerator.generate(var, faction, this.getBandwidth());
-        this.upgrades = UpgradesGenerator.generate(var, faction, this.getBandwidth());
+        this.exotics = ExoticsGenerator.generate(var, faction, this.getBaseBandwidth());
+        this.upgrades = UpgradesGenerator.generate(var, faction, this.getBaseBandwidth());
     }
 
     /**
@@ -72,14 +72,14 @@ public class ShipModifications {
             return;
         }
 
-        this.exotics = ExoticsGenerator.generate(fm, faction, this.getBandwidth(fm));
+        this.exotics = ExoticsGenerator.generate(fm, faction, this.getBaseBandwidth(fm));
         this.upgrades = UpgradesGenerator.generate(fm, faction, this.getBandwidthWithExotics(fm));
     }
 
     //bandwidth
     private float bandwidth = -1f;
 
-    public void putBandwidth(float bandwidth) {
+    public void setBandwidth(float bandwidth) {
         this.bandwidth = bandwidth;
     }
 
@@ -87,7 +87,7 @@ public class ShipModifications {
      * Use this only if bandwidth has already been generated. The Exotica dialog WILL generate bandwidth.
      * @return
      */
-    public float getBandwidth() {
+    public float getBaseBandwidth() {
         return Math.max(this.bandwidth, 0f);
     }
 
@@ -96,7 +96,7 @@ public class ShipModifications {
      * @param fm
      * @return
      */
-    public float getBandwidth(FleetMemberAPI fm) {
+    public float getBaseBandwidth(FleetMemberAPI fm) {
         if(bandwidth < 0f) {
             log.info(String.format("Bandwidth was below zero for fm [%s]", fm.getId()));
             bandwidth = ShipModFactory.generateBandwidth(fm);
@@ -129,7 +129,7 @@ public class ShipModifications {
                 maxBandwidth += exotic.getExtraBandwidthPurchaseable(fm, this);
             }
         }
-        return maxBandwidth > getBandwidth(fm);
+        return maxBandwidth > getBaseBandwidth(fm);
     }
 
     public float getUsedBandwidth() {

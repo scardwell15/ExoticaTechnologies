@@ -48,6 +48,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     private static boolean mergeCheck = false;
 
     private static final List<String> submarketIdsToCheckForSpecialItems = new ArrayList<>();
+
     static {
         submarketIdsToCheckForSpecialItems.add(Submarkets.SUBMARKET_BLACK);
         submarketIdsToCheckForSpecialItems.add(Submarkets.SUBMARKET_OPEN);
@@ -228,7 +229,6 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                 if (mods != null) {
                     ExoticaTechHM.removeFromFleetMember(fm);
                     ETModPlugin.removeData(fm.getId());
-                    dlog("Removed FM [%s] because it died in combat", fm.getId());
                 }
             }
         }
@@ -303,10 +303,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                 FleetMemberAPI fm = CampaignEventListener.findFM(fmId);
 
                 if (fm != null) {
-                    dlog("found fm [%s] for id [%s]", fm.getShipName(), fmId);
                     ExoticaTechHM.addToFleetMember(fm);
-                } else {
-                    dlog("could not find for id [%s]", fmId);
                 }
             }
 
@@ -342,16 +339,13 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
             checkNearbyFleets();
 
-            //disgustingly get a list of the fmIds
+            //disgustingly get a ships of the fmIds
             String[] fmIds = ETModPlugin.getShipModificationMap().keySet().toArray(new String[0]);
             for (String fmId : fmIds) {
                 if (findFM(fmId) == null) {
 
-                    dlog(String.format("Fleet member %s was not found in the current location or market storage", fmId));
                     if (!isInFleet(fmId, Global.getSector().getPlayerFleet())) {
                         ETModPlugin.removeData(fmId);
-                    } else {
-                        dlog("The member was found in the player fleet, though.");
                     }
                 }
             }
@@ -515,10 +509,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             return false;
         }
 
-        for(FleetMemberAPI fleetMember : fleet.getFleetData().getMembersListCopy()) {
+        for (FleetMemberAPI fleetMember : fleet.getFleetData().getMembersListCopy()) {
             if (fleetMember.isFighterWing()) continue;
 
-            if(fm.equals(fleetMember)) {
+            if (fm.equals(fleetMember)) {
                 return true;
             }
         }
@@ -530,10 +524,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             return false;
         }
 
-        for(FleetMemberAPI fleetMember : fleet.getFleetData().getMembersListCopy()) {
+        for (FleetMemberAPI fleetMember : fleet.getFleetData().getMembersListCopy()) {
             if (fleetMember.isFighterWing()) continue;
 
-            if(fmId.equals(fleetMember.getId())) {
+            if (fmId.equals(fleetMember.getId())) {
                 return true;
             }
         }
@@ -548,7 +542,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
         } else {
             String[] values = new String[args.length];
 
-            for(int i = 0; i < args.length; i++) {
+            for (int i = 0; i < args.length; i++) {
                 values[i] = String.valueOf(args[i]);
             }
 

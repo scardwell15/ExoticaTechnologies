@@ -39,7 +39,7 @@ public class ShipModFactory {
             return ETModPlugin.getData(fm.getId());
         } else {
             ShipModifications mods = new ShipModifications();
-            mods.putBandwidth(ShipModFactory.generateBandwidth(fm));
+            mods.setBandwidth(ShipModFactory.generateBandwidth(fm));
 
             if (CampaignEventListener.isAppliedData()) {
                 mods.save(fm);
@@ -55,13 +55,20 @@ public class ShipModFactory {
         }
 
         if (fm.getFleetData() == null
-                || fm.getFleetData().getFleet() == null
-                || fm.getFleetData().getFleet().getFaction() == null) {
+                || fm.getFleetData().getFleet() == null) {
             return null;
         }
 
-        if (fm.getFleetData().getFleet().getMemoryWithoutUpdate().contains("$faction")) {
-            return (String) fm.getFleetData().getFleet().getMemoryWithoutUpdate().get("$faction");
+        try {
+            if (fm.getFleetData().getFleet().getMemoryWithoutUpdate().contains("$faction")) {
+                return (String) fm.getFleetData().getFleet().getMemoryWithoutUpdate().get("$faction");
+            }
+        } catch (Throwable th) {
+            return null;
+        }
+
+        if (fm.getFleetData().getFleet().getFaction() == null) {
+            return null;
         }
 
         return fm.getFleetData().getFleet().getFaction().getId();

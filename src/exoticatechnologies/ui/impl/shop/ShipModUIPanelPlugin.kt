@@ -1,30 +1,33 @@
-package exoticatechnologies.ui.impl
+package exoticatechnologies.ui.impl.shop
 
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModifications
-import exoticatechnologies.modifications.bandwidth.Bandwidth
-import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.ui.BaseUIPanelPlugin
+import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
 import kotlin.math.max
 
-class ShipModUIPanelPlugin(var parentPanel: CustomPanelAPI, override var panelWidth: Float, override var panelHeight: Float) : BaseUIPanelPlugin() {
+class ShipModUIPanelPlugin(val dialog: InteractionDialogAPI,
+                           var parentPanel: CustomPanelAPI, override var panelWidth: Float, override var panelHeight: Float) : InteractiveUIPanelPlugin() {
     private val pad = 3f
     private val opad = 10f
 
-    private var innerPanel: CustomPanelAPI
-    private var innerTooltip: TooltipMakerAPI
+    private var innerPanel: CustomPanelAPI? = null
+    private var innerTooltip: TooltipMakerAPI? = null
+    private var shipHeaderPanel: CustomPanelAPI? = null
+    private var shopMenuPanel: CustomPanelAPI? = null
+    private var shopMenuTooltip: TooltipMakerAPI? = null
+    private var shopMenuPlugin: ShopMenuUIPlugin? = null
 
-    init {
+    fun layoutPanels(): CustomPanelAPI {
         val outerPanel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         val outerTooltip = outerPanel.createUIElement(panelWidth, panelHeight, false)
 
@@ -39,6 +42,8 @@ class ShipModUIPanelPlugin(var parentPanel: CustomPanelAPI, override var panelWi
         outerTooltip.addCustom(innerPanel, 3f).position.belowMid(heading, 3f)
         outerPanel.addUIElement(outerTooltip).inTL(0f, 0f)
         parentPanel.addComponent(outerPanel).inTR(0f, 0f)
+
+        return outerPanel
     }
 
     override fun renderBelow(alphaMult: Float) {
@@ -47,8 +52,16 @@ class ShipModUIPanelPlugin(var parentPanel: CustomPanelAPI, override var panelWi
         RenderUtils.popUIRenderingStack()
     }
 
-    fun showPanel(member: FleetMemberAPI?): CustomPanelAPI {
-        innerPanel.removeComponent(innerTooltip)
+    fun showPanel(member: FleetMemberAPI?): CustomPanelAPI? {
+        if (shopMenuPlugin != null && member != null) {
+            shopMenuPlugin!!.deactivated(this, member, ShipModFactory.getForFleetMember(member))
+            shopMenuPlugin = null
+            shopMenuTooltip = null
+            shopMenuPanel = null
+            shipHeaderPanel = null
+        }
+
+        innerPanel!!.removeComponent(innerTooltip)
         if (member != null) {
             innerTooltip = showMember(member)
         } else {
@@ -57,75 +70,87 @@ class ShipModUIPanelPlugin(var parentPanel: CustomPanelAPI, override var panelWi
         return innerPanel
     }
 
-    private fun showNothing(): TooltipMakerAPI {
-        val tooltip = innerPanel.createUIElement(panelWidth, panelHeight - 16, false)
+    private fun showNothing(): TooltipMakerAPI? {
+        val tooltip = innerPanel!!.createUIElement(panelWidth, panelHeight, false)
 
-        innerPanel.addUIElement(tooltip).inTL(0f, 0f)
+        innerPanel!!.addUIElement(tooltip)?.inTL(0f, 0f)
 
         return tooltip
     }
 
     private fun showMember(member: FleetMemberAPI): TooltipMakerAPI {
-        val tooltip = innerPanel.createUIElement(panelWidth, panelHeight - 16, false)
+        val mods = ShipModFactory.getForFleetMember(member)
 
-        val rowPlugin = ShipHeaderUIPanelPlugin(member, ShipModFactory.getForFleetMember(member))
-        rowPlugin.layoutPanel(tooltip)
+        val tooltip = innerPanel!!.createUIElement(panelWidth, panelHeight, false)
 
-        innerPanel.addUIElement(tooltip).inTL(0f, 0f)
+        val rowPlugin = ShipHeaderUIPanelPlugin(dialog, member, mods, innerPanel!!)
+        rowPlugin.panelWidth = panelWidth
+        rowPlugin.panelHeight = max(panelHeight * 0.1f, Global.getSettings().screenHeight * 0.166f)
+        shipHeaderPanel = rowPlugin.layoutPanel(tooltip)
+
+        val tabHolderPlugin = ShopTabHolderUIPlugin()
+        tabHolderPlugin.panelWidth = panelWidth
+        tabHolderPlugin.panelHeight = 36f
+        val tabHolderPanel = innerPanel!!.createCustomPanel(tabHolderPlugin.panelWidth, tabHolderPlugin.panelHeight, tabHolderPlugin)
+
+        var lastButton: TooltipMakerAPI? = null
+        ShopManager.shopMenuUIPlugins.forEach {
+            val newButton = it.getTabUIPlugin().createTabButton(tabHolderPanel, member, mods)
+            clickables[newButton] = it.getNewButtonHandler(this, member, mods)
+
+            if (lastButton != null) {
+                tabHolderPanel.addUIElement(newButton).rightOfMid(lastButton, pad)
+            } else {
+                tabHolderPanel.addUIElement(newButton).inTL(pad, pad)
+            }
+            lastButton = newButton
+        }
+
+        tooltip.addCustom(tabHolderPanel, opad)
+
+        val shopMenuPlugin = ShopHolderUIPlugin()
+        shopMenuPlugin.panelWidth = panelWidth
+        shopMenuPlugin.panelHeight = panelHeight - rowPlugin.panelHeight - tabHolderPlugin.panelHeight - 36
+        //for some reason need to subtract 36 from here when panel is much bigger.
+        //this brings it above the *Confirm* button for exiting the panel.
+
+        shopMenuPanel = innerPanel!!.createCustomPanel(shopMenuPlugin.panelWidth, shopMenuPlugin.panelHeight, shopMenuPlugin)
+        tooltip.addCustom(shopMenuPanel, 0f).position.belowLeft(tabHolderPanel, pad)
+
+        innerPanel!!.addUIElement(tooltip).inTL(0f, 0f)
 
         return tooltip
     }
 
-    private inner class ShipHeaderUIPanelPlugin(var member: FleetMemberAPI, var mods: ShipModifications) : BaseUIPanelPlugin() {
-        override var panelWidth: Float = this@ShipModUIPanelPlugin.panelWidth
-        override var panelHeight: Float = max(this@ShipModUIPanelPlugin.panelHeight * 0.1f, Global.getSettings().screenHeight * 0.166f)
-
-        override fun processInput(events: List<InputEventAPI>) {
+    fun activatedTab(plugin: ShopMenuUIPlugin, member: FleetMemberAPI, mods: ShipModifications) {
+        if (shopMenuTooltip != null) {
+            shopMenuPanel!!.removeComponent(shopMenuTooltip)
+            shopMenuTooltip = null
         }
 
-        fun layoutPanel(tooltip: TooltipMakerAPI): CustomPanelAPI {
-            val shipNameColor = member.captain.faction.baseUIColor
-
-            val panel: CustomPanelAPI =
-                parentPanel.createCustomPanel(panelWidth, panelHeight, this)
-
-            // Ship image with tooltip of the ship class
-            val shipImg = panel.createUIElement(iconSize, iconSize, false)
-            shipImg.addShipList(1, 1, iconSize, Misc.getBasePlayerColor(), mutableListOf(member), 0f)
-            panel.addUIElement(shipImg).inTL(0f, 0f)
-
-            // Ship name, class, bandwidth
-            val shipText = panel.createUIElement(panelWidth, panelHeight, false)
-            shipText.setParaOrbitronLarge()
-            shipText.addPara("${member.shipName} (${member.hullSpec.nameWithDesignationWithDashClass})", shipNameColor, 0f)
-            shipText.setParaFontDefault()
-
-            val baseBandwidth = mods.getBaseBandwidth(member)
-            StringUtils.getTranslation("CommonOptions", "BaseBandwidthForShip")
-                .format(
-                    "shipBandwidth",
-                    BandwidthUtil.getFormattedBandwidthWithName(baseBandwidth),
-                    Bandwidth.getBandwidthColor(baseBandwidth)
-                )
-                .addToTooltip(shipText, pad)
-
-            val exoticBandwidth = mods.getBandwidthWithExotics(member)
-            if (baseBandwidth != exoticBandwidth) {
-                StringUtils.getTranslation("CommonOptions", "ExoticBandwidthForShip")
-                    .format(
-                        "shipBandwidth",
-                        BandwidthUtil.getFormattedBandwidthWithName(exoticBandwidth),
-                        Bandwidth.getBandwidthColor(exoticBandwidth)
-                    )
-                    .addToTooltip(shipText, pad)
-            }
-
-            panel.addUIElement(shipText).rightOfTop(shipImg, pad)
-
-            // done, add row to TooltipMakerAPI
-            tooltip.addCustom(panel, opad)
-
-            return panel
+        if (shopMenuPlugin == plugin) {
+            shopMenuPlugin!!.deactivated(this, member, mods)
+            shopMenuPlugin = null
+            return
         }
+
+        plugin.panelWidth = shopMenuPanel!!.position.width - pad * 2
+        plugin.panelHeight = shopMenuPanel!!.position.height - pad * 2
+
+        // if null then we didn't want to display anything for this member/mods
+        plugin.layoutPanel(shopMenuPanel!!, member, mods)?.let {
+            plugin.activated(this, member, mods)
+            shopMenuPlugin = plugin
+            shopMenuTooltip = it
+            shopMenuPanel!!.addUIElement(it).inTL(pad, pad)
+        }
+    }
+
+    class ShopHolderUIPlugin: BaseUIPanelPlugin() {
+        override var bgColor: Color = Color(255, 255, 255, 40)
+    }
+
+    class ShopTabHolderUIPlugin: BaseUIPanelPlugin() {
+        override var bgColor: Color = Color(255, 255, 0, 40)
     }
 }

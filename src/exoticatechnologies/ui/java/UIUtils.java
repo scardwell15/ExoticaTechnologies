@@ -1,4 +1,4 @@
-package exoticatechnologies.ui;
+package exoticatechnologies.ui.java;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;

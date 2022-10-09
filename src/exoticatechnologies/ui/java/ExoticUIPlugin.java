@@ -1,4 +1,4 @@
-package exoticatechnologies.ui;
+package exoticatechnologies.ui.java;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -38,7 +38,6 @@ public class ExoticUIPlugin implements CustomUIPanelPlugin {
     private TooltipMakerAPI resourceTooltip;
     private TooltipMakerAPI methodTooltip;
 
-    private final ShipModificationUIPanelPlugin plugin;
     private final FleetMemberAPI fm;
     private final ShipModifications mods;
     private final MarketAPI market;
@@ -118,7 +117,7 @@ public class ExoticUIPlugin implements CustomUIPanelPlugin {
         if (exotic == null) return;
 
         //39f = exotics * 6f (for padding between each icon) + 3f for the panel padding.
-        exoticInfoPanelWidth = panelWidth - plugin.getSwitcherPanelUpperOffset(ShipModificationUIPanelPlugin.EXOTICS_INDEX) - 39f;
+        exoticInfoPanelWidth = panelWidth - 1 - 39f;
 
         redisplayDescription(exotic);
         redisplayResourceMap(exotic, null);
@@ -146,7 +145,7 @@ public class ExoticUIPlugin implements CustomUIPanelPlugin {
                 exoticInfoPanelWidth / 2 - 6f, 18f, 0f);
         descButton.getPosition().inTL(3f, 0).setYAlignOffset(-panelHeight + 24f);
 
-        panel.addUIElement(descriptionTooltip).inTL(plugin.getSwitcherPanelUpperOffset(ShipModificationUIPanelPlugin.UPGRADES_INDEX) + 32, 3);
+        panel.addUIElement(descriptionTooltip).inTL(1 + 32, 3);
 
         switchDescriptionButton = new ButtonData(descButton, null);
         switchDescriptionButton.addListener(new DescriptionSwapButtonListener());

@@ -23,12 +23,6 @@ import java.util.Map;
 public class AlphaSubcore extends Exotic {
     private static final String ITEM = "alpha_core";
 
-    public static final int COST_REDUCTION_LG = 4;
-    public static final int COST_REDUCTION_MED = 2;
-    public static final int COST_REDUCTION_SM = 1;
-    public static final int COST_REDUCTION_FIGHTER = 2;
-    public static final int COST_REDUCTION_BOMBER = 2;
-
     @Getter private final Color mainColor = Color.cyan;
 
     @Override
@@ -75,15 +69,8 @@ public class AlphaSubcore extends Exotic {
 
     @Override
     public void onInstall(FleetMemberAPI fm) {
-        if(fm.getVariant() != null && !fm.getVariant().hasHullMod("et_alphasubcore")) {
-            fm.getVariant().addMod("et_alphasubcore");
-        }
-    }
-
-    @Override
-    public void onDestroy(FleetMemberAPI fm) {
-        if (fm.getVariant() != null) {
-            fm.getVariant().removeMod("AlphaSubcoreHM");
+        if(fm.getVariant() != null && fm.getVariant().hasHullMod("et_alphasubcore")) {
+            fm.getVariant().removeMod("et_alphasubcore");
         }
     }
 
@@ -91,11 +78,6 @@ public class AlphaSubcore extends Exotic {
     public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
-                    .format("large", COST_REDUCTION_LG)
-                    .format("medium", COST_REDUCTION_MED)
-                    .format("small", COST_REDUCTION_SM)
-                    .format("fighters", COST_REDUCTION_FIGHTER)
-                    .format("bombers", COST_REDUCTION_BOMBER)
                     .addToTooltip(tooltip, title);
         }
     }
@@ -113,11 +95,6 @@ public class AlphaSubcore extends Exotic {
         onInstall(fm);
     }
 
-    @Override
-    public void applyExoticToShip(FleetMemberAPI fm, ShipAPI ship, float bandwidth, String id) {
-        onInstall(fm);
-    }
-
     /**
      * extra bandwidth added directly to ship.
      * @param fm
@@ -125,6 +102,6 @@ public class AlphaSubcore extends Exotic {
      * @return
      */
     public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications es) {
-        return 50f;
+        return 60f;
     }
 }

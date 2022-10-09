@@ -1,0 +1,8 @@
+Drive Flux Vent doesnt work. Tried it on a few ships. Didnt increase speed at all. Even tried it on ships that are quite maneuverable so I could actually reach top speed quickly. I tested when venting at almost 100% flux just in case.
+Plasma Flux Catalyst doesn't double the effectiveness of caps and vents. Made sure to exit and enter station screen to refresh it just in case, as the description mentions it may not show up immediately.
+Interference Shielding is weird. Sometimes it works, sometimes it doesn't. Not sure why.
+Derelict Weapon Assistant doesnt seem to actually do anything to projectile speed as far as I can tell.
+Infernal Engines is a bit iffy (burn level again.)
+Spooled Feeders works fine, but you can see the UI even when it's installed on another ship in combat
+Phasefield Engine - check if the ship has the PHASE hint
+Hacked missile forge applies to AMBs

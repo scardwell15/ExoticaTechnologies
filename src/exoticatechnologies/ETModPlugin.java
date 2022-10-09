@@ -13,6 +13,7 @@ import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.util.FleetMemberUtils;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
@@ -41,6 +42,7 @@ public class ETModPlugin extends BaseModPlugin {
 	@Override
     public void onGameLoad(boolean newGame) {
 		FleetMemberUtils.moduleMap.clear();
+		ShopManager.getShopMenuUIPlugins().clear();
 
 		ETModSettings.loadModSettings();
 

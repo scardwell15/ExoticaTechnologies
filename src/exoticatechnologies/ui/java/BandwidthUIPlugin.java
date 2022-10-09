@@ -1,4 +1,4 @@
-package exoticatechnologies.ui;
+package exoticatechnologies.ui.java;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
@@ -21,7 +21,6 @@ import java.util.List;
 public class BandwidthUIPlugin implements CustomUIPanelPlugin {
     @Setter
     private ButtonAPI upgradeButton;
-    private final ShipModificationUIPanelPlugin plugin;
     private final FleetMemberAPI fm;
     private final ShipModifications mods;
     private final MarketAPI market;
@@ -50,7 +49,7 @@ public class BandwidthUIPlugin implements CustomUIPanelPlugin {
     }
 
     public void doBandwidthPurchase() {
-        float shipBandwidth = mods.getBandwidth(fm);
+        float shipBandwidth = mods.getBaseBandwidth(fm);
         float upgradeBandwidthMult = BandwidthHandler.getMarketBandwidthMult(market);
         float estimatedOverhaulCost = BandwidthHandler.getBandwidthUpgradePrice(fm, shipBandwidth, upgradeBandwidthMult);
         float bonusBandwidth = Bandwidth.BANDWIDTH_STEP * upgradeBandwidthMult;
@@ -59,15 +58,12 @@ public class BandwidthUIPlugin implements CustomUIPanelPlugin {
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 0.75f);
 
-        mods.putBandwidth(newBandwidth);
+        mods.setBandwidth(newBandwidth);
         mods.save(fm);
         ExoticaTechHM.addToFleetMember(fm);
 
         if (!ETModPlugin.isDebugUpgradeCosts()) {
             Global.getSector().getPlayerFleet().getCargo().getCredits().subtract(estimatedOverhaulCost);
         }
-
-        plugin.reloadBandwidth();
-        plugin.switchToPanel(ShipModificationUIPanelPlugin.BANDWIDTH_INDEX);
     }
 }

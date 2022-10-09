@@ -1,4 +1,4 @@
-package exoticatechnologies.ui;
+package exoticatechnologies.ui.java;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
@@ -133,7 +133,7 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
 
         switcherButton = switcherPanel.addAreaCheckbox(getSwitcherLabelText(newPanelIndex), "id",
                 playerFaction.getBaseUIColor(), playerFaction.getDarkUIColor(), playerFaction.getBrightUIColor(), buttonW, buttonH, 0);
-        switcherButton.getPosition().inTL(getSwitcherButtonXOffset(newPanelIndex), switcherPanelHeight / 4);
+        switcherButton.getPosition().inTL(getSwitcherButtonXOffset(newPanelIndex), switcherPanelHeight / 4 - 6);
     }
 
     protected void killSwitcherButton() {

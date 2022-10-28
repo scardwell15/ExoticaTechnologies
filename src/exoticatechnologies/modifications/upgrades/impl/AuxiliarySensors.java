@@ -39,7 +39,7 @@ public class AuxiliarySensors extends Upgrade {
         this.addBenefitToShopTooltip(tooltip, "sensorStrength", fm, mods, SENSOR_STRENGTH_MULT);
 
         //after level 3
-        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+        StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
         this.addMalusToShopTooltip(tooltip, "sensorProfile", fm, mods, 3, SENSOR_PROFILE_MULT);

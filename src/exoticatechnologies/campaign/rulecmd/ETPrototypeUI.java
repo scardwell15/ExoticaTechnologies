@@ -24,7 +24,7 @@ import java.util.Map;
 public class ETPrototypeUI extends BaseCommandPlugin {
     private static InteractionDialogAPI dialog;
     private static Map<String, MemoryAPI> memoryMap;
-    private static final float SHIP_ROW_HEIGHT = 64;
+    private static final float SHIP_ROW_HEIGHT = 64f;
 
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
@@ -45,16 +45,8 @@ public class ETPrototypeUI extends BaseCommandPlugin {
     }
 
     private static void showModifyShipsPanel(InteractionDialogAPI dialog, List<FleetMemberAPI> members) {
-        float screenWidth = Display.getWidth();
-        float screenHeight = Display.getHeight();
-
-        float allRowsHeight = (SHIP_ROW_HEIGHT + 10) * (members.size() * 3) + 3;
-
-        float panelHeight = Math.min(allRowsHeight + 20 + 16, screenHeight * 0.65f);
-        float panelWidth = Math.min(screenWidth * 0.85f, 1280); // maybe could scale it to the largest number of icons we'll have to show?
-
         ShipModificationDialogDelegate delegate = new ShipModificationDialogDelegate(dialog, dialog.getInteractionTarget().getMarket());
-        dialog.showCustomDialog(panelWidth, panelHeight, delegate);
+        dialog.showCustomDialog(delegate.getPanelWidth(), delegate.getPanelHeight(), delegate);
     }
 
     public static class DrawCreditsPanelPlugin implements CustomUIPanelPlugin {

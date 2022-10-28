@@ -120,9 +120,11 @@ public class CreditsMethod implements UpgradeMethod {
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
         Map<String, Float> resourceCosts = new HashMap<>();
 
+        float cost = 0f;
         if (hovered) {
-            resourceCosts.put(Commodities.CREDITS, (float) CreditsMethod.getFinalCreditCost(fm, upgrade, mods.getUpgrade(upgrade), market));
+            cost = (float) CreditsMethod.getFinalCreditCost(fm, upgrade, mods.getUpgrade(upgrade), market);
         }
+        resourceCosts.put(Commodities.CREDITS, cost);
 
         return resourceCosts;
     }

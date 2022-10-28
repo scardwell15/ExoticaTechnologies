@@ -2,13 +2,17 @@ package exoticatechnologies.modifications.exotics;
 
 import com.fs.starfarer.api.Global;
 import data.scripts.util.MagicSettings;
+import exoticatechnologies.modifications.exotics.impl.HullmodExotic;
 import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 @Log4j
 public class ExoticsHandler {
@@ -22,7 +26,7 @@ public class ExoticsHandler {
 
     public static void populateExotics() {
         try {
-            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/exotics.json", "extra_system_reloaded");
+            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/exotics.json", "exoticatechnologies");
 
             Iterator augIterator = settings.keys();
             while(augIterator.hasNext()) {
@@ -31,17 +35,38 @@ public class ExoticsHandler {
                 if(EXOTICS.containsKey(augKey)) return;
 
                 JSONObject augObj = (JSONObject) settings.getJSONObject(augKey);
+                Exotic exotic = null;
 
-                Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(augObj.getString("exoticClass"));
-                Exotic exotic = (Exotic) clzz.newInstance();
+                if (augObj.has("exoticClass")) {
+                    Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(augObj.getString("exoticClass"));
+                    exotic = (Exotic) clzz.newInstance();
 
-                if(exotic.shouldLoad()) {
+                    if (exotic.shouldLoad()) {
+                        exotic.setKey(augKey);
+                        exotic.setName(StringUtils.getString(augKey, "name"));
+                        exotic.setDescription(StringUtils.getString(augKey, "description"));
+                        exotic.setTooltip(StringUtils.getString(augKey, "tooltip"));
+                        exotic.setConfig(augObj);
+                    } else {
+                        exotic = null;
+                    }
+                } else if (augObj.has("exoticHullmod")) {
+                    JSONArray colorArr = augObj.optJSONArray("exoticColor");
+                    Color mainColor = new Color(colorArr.getInt(0), colorArr.getInt(1), colorArr.getInt(2), colorArr.optInt(3, 255));
+
+                    String hullmodId = augObj.getString("exoticHullmod");
+                    String tooltipStringKey = augObj.getString("exoticTooltipStringKey");
+
+                    exotic = new HullmodExotic(hullmodId, tooltipStringKey, mainColor);
+
                     exotic.setKey(augKey);
                     exotic.setName(StringUtils.getString(augKey, "name"));
                     exotic.setDescription(StringUtils.getString(augKey, "description"));
                     exotic.setTooltip(StringUtils.getString(augKey, "tooltip"));
                     exotic.setConfig(augObj);
+                }
 
+                if (exotic != null) {
                     ExoticsHandler.addExotic(exotic);
 
                     log.info(String.format("loaded exotic [%s]", exotic.getName()));

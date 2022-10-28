@@ -44,19 +44,8 @@ public class HangarForge extends Exotic {
     }
 
     @Override
-    public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return "You need a Hangar Forge to install this.";
-    }
-
-    @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
-        return true;
-    }
-
-    @Override
-    public boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.addItem(fleet, ITEM, 1);
         return true;
     }
 

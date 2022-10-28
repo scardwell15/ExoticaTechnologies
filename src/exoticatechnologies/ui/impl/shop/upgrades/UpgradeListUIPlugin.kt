@@ -1,4 +1,4 @@
-package exoticatechnologies.ui.impl.shop
+package exoticatechnologies.ui.impl.shop.upgrades
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
@@ -10,17 +10,25 @@ import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
-class UpgradeListUIPanelPlugin(parentPanel: CustomPanelAPI,
-                                var member: FleetMemberAPI,
-                                var mods: ShipModifications): ListUIPanelPlugin<Upgrade>(parentPanel) {
+class UpgradeListUIPlugin(parentPanel: CustomPanelAPI,
+                          var member: FleetMemberAPI,
+                          var mods: ShipModifications): ListUIPanelPlugin<Upgrade>(parentPanel) {
     override val listHeader = StringUtils.getTranslation("UpgradesDialog", "OpenUpgradeOptions").toString()
-    override var bgColor: Color = Color(255, 70, 255, 100)
+    override var bgColor: Color = Color(255, 70, 255, 0)
 
     override fun createPanelForItem(tooltip: TooltipMakerAPI, item: Upgrade): ListItemUIPanelPlugin<Upgrade> {
-        val rowPlugin = UpgradeItemUIPlugin(item, member, mods, this)
+        val rowPlugin = UpgradeListItemUIPlugin(item, member, mods, this)
         rowPlugin.panelWidth = panelWidth
-        rowPlugin.panelHeight = rowSize
+        rowPlugin.panelHeight = rowHeight
         rowPlugin.layoutPanel(tooltip)
         return rowPlugin
+    }
+
+    override fun shouldMakePanelForItem(item: Upgrade): Boolean {
+        if (mods.hasUpgrade(item)) {
+            return true
+        }
+
+        return item.canApply(member)
     }
 }

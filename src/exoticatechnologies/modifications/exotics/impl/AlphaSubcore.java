@@ -1,10 +1,8 @@
 package exoticatechnologies.modifications.exotics.impl;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -20,10 +18,12 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AlphaSubcore extends Exotic {
+public class AlphaSubcore extends HullmodExotic {
     private static final String ITEM = "alpha_core";
 
-    @Getter private final Color mainColor = Color.cyan;
+    public AlphaSubcore() {
+        super("et_alphasubcore", "longDescription", Color.cyan);
+    }
 
     @Override
     public boolean canAfford(CampaignFleetAPI fleet, MarketAPI market) {
@@ -49,29 +49,10 @@ public class AlphaSubcore extends Exotic {
         return canApply(fm.getVariant());
     }
 
-    public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return StringUtils.getTranslation(this.getKey(), "needItem")
-                .format("itemName", Global.getSettings().getSpecialItemSpec(ITEM).getName())
-                .toString();
-    }
-
-    @Override
-    public boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.addItem(fleet, ITEM, 1);
-        return true;
-    }
-
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
         return true;
-    }
-
-    @Override
-    public void onInstall(FleetMemberAPI fm) {
-        if(fm.getVariant() != null && fm.getVariant().hasHullMod("et_alphasubcore")) {
-            fm.getVariant().removeMod("et_alphasubcore");
-        }
     }
 
     @Override

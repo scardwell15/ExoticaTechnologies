@@ -219,6 +219,11 @@ public class ShipModifications {
         return this.upgrades.hasUpgrades();
     }
 
+    public boolean hasBandwidthForUpgrade(FleetMemberAPI member, Upgrade upgrade, int level) {
+        float upgradeBandwidth = (level - this.getUpgrade(upgrade)) * upgrade.getBandwidthUsage();
+        return getUsedBandwidth() + upgradeBandwidth <= getBandwidthWithExotics(member);
+    }
+
     public float getHullSizeFactor(ShipAPI.HullSize hullSize) {
         return this.upgrades.getHullSizeFactor(hullSize);
     }

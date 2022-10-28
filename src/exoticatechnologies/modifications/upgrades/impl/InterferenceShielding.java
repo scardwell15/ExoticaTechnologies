@@ -36,7 +36,7 @@ public class InterferenceShielding extends Upgrade {
     public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods) {
         this.addBenefitToShopTooltipMult(tooltip, "sensorProfile", fm, mods, SENSOR_PROFILE_MULT);
 
-        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+        StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 

@@ -71,8 +71,12 @@ public class ResourcesMethod implements UpgradeMethod {
         Map<String, Float> resourceCosts = new HashMap<>();
 
         if (hovered) {
-            for(Map.Entry<String, Integer> entry : upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade)).entrySet()) {
-                resourceCosts.put(entry.getKey(), Float.valueOf(entry.getValue()));
+            Map<String, Integer> upgradeCosts = upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade));
+            for (String key : upgradeCosts.keySet()) {
+                float cost = Float.valueOf(upgradeCosts.get(key));
+                if (cost != 0) {
+                    resourceCosts.put(key, cost);
+                }
             }
         }
 

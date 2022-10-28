@@ -48,28 +48,9 @@ public class HangarForgeMissiles extends Exotic {
     }
 
     @Override
-    public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        if (fleet.getCargo().getCredits().get() < COST_CREDITS) {
-            return StringUtils.getTranslation(this.getKey(), "needCredits")
-                    .format("needCredits", COST_CREDITS)
-                    .toString();
-        }
-
-        return StringUtils.getTranslation(this.getKey(), "needItem")
-                .format("itemName", Global.getSettings().getSpecialItemSpec(ITEM).getName())
-                .toString();
-    }
-
-    @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         fleet.getCargo().getCredits().subtract(150000);
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
-        return true;
-    }
-
-    @Override
-    public boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.addItem(fleet, ITEM, 1);
         return true;
     }
 

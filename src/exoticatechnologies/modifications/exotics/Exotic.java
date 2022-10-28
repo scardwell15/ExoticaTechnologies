@@ -24,10 +24,10 @@ public abstract class Exotic {
     public static final String ITEM = "et_exotic";
     @Getter
     @Setter
-    protected String key;
+    public String key;
     @Getter
     @Setter
-    protected String name;
+    public String name;
     @Getter
     @Setter
     protected String description;
@@ -77,7 +77,13 @@ public abstract class Exotic {
 
     }
 
-    public abstract boolean canAfford(CampaignFleetAPI fleet, MarketAPI market);
+    public boolean canAfford(CampaignFleetAPI fleet, MarketAPI market) {
+        return false;
+    }
+
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+        return false;
+    }
 
     public boolean canApply(FleetMemberAPI fm) {
         return canApply(fm.getVariant());
@@ -86,12 +92,6 @@ public abstract class Exotic {
     public boolean canApply(ShipVariantAPI fm) {
         return true;
     }
-
-    public abstract String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm);
-
-    public abstract boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm);
-
-    public abstract boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm);
 
     public boolean shouldLoad() {
         return true;
@@ -107,6 +107,16 @@ public abstract class Exotic {
     }
 
     public void printStatInfoToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
+        StringUtils.getTranslation(this.getKey(), "longDescription")
+                .addToTooltip(tooltip);
+    }
+
+    public void printDescriptionToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI member) {
+        StringUtils.getTranslation(this.getKey(), "description")
+                .addToTooltip(tooltip);
+    }
+
+    public void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI member) {
         StringUtils.getTranslation(this.getKey(), "longDescription")
                 .addToTooltip(tooltip);
     }

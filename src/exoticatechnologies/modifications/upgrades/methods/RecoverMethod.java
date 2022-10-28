@@ -95,8 +95,8 @@ public class RecoverMethod implements UpgradeMethod {
         if (hovered) {
             resourceCosts.put(Commodities.CREDITS, (float) getCreditCost(fm, mods, upgrade));
 
-            String resourceName = StringUtils.getTranslation("ShipListDialog", "UpgradeChipText")
-                    .format("upgradeName", upgrade.getName())
+            String resourceName = StringUtils.getTranslation("ShipListDialog", "ChipName")
+                    .format("name", upgrade.getName())
                     .toString();
 
             if (mods.hasUpgrade(upgrade)) {

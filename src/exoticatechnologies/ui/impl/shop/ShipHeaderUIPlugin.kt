@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.*
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModifications
@@ -16,8 +15,10 @@ import exoticatechnologies.util.StringUtils
 import kotlin.math.max
 import kotlin.math.min
 
-class ShipHeaderUIPanelPlugin(dialog: InteractionDialogAPI,
-                              var member: FleetMemberAPI, var mods: ShipModifications, var parentPanel: CustomPanelAPI) : InteractiveUIPanelPlugin() {
+class ShipHeaderUIPlugin(
+    dialog: InteractionDialogAPI,
+    var member: FleetMemberAPI, var mods: ShipModifications, var parentPanel: CustomPanelAPI
+) : InteractiveUIPanelPlugin() {
     private val pad = 3f
     private val opad = 10f
 
@@ -44,9 +45,6 @@ class ShipHeaderUIPanelPlugin(dialog: InteractionDialogAPI,
         }
     }
 
-    override fun processInput(events: List<InputEventAPI>) {
-    }
-
     fun layoutPanel(tooltip: TooltipMakerAPI): CustomPanelAPI {
         val shipNameColor = member.captain.faction.baseUIColor
 
@@ -69,13 +67,16 @@ class ShipHeaderUIPanelPlugin(dialog: InteractionDialogAPI,
 
         panel.addUIElement(shipText).rightOfTop(shipImg, pad)
 
-        // ShipListDialog BandwidthUpgradeCost BandwidthUpgradeCostCannotAfford BandwidthUpgradePeak
         val bandwidthHeight = panelHeight - shipText.position.height
         bandwidthTooltip = panel.createUIElement(panelWidth - iconSize, bandwidthHeight, false)
 
         bandwidthUpgradeLabel = bandwidthTooltip?.addPara("", 0f)
-        bandwidthButton = bandwidthTooltip?.addButton(StringUtils.getString("ShipListDialog", "BandwidthPurchase"), "test",
-            Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.C2_MENU, 72F, 22F, 3F)
+        bandwidthButton = bandwidthTooltip?.addButton(
+            StringUtils.getString("BandwidthDialog", "BandwidthPurchase"), "test",
+            Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.C2_MENU, 72F, 22F, 3F
+        )
+
+        buttons[bandwidthButton!!] = BandwidthButtonHandler(this)
 
         setBandwidthUpgradeLabel()
 
@@ -114,7 +115,12 @@ class ShipHeaderUIPanelPlugin(dialog: InteractionDialogAPI,
         lastBandwidth = bandwidth
     }
 
-    private fun modifyBandwidthText(label: LabelAPI, bandwidth: Float, translationParent: String, translationKey: String) {
+    private fun modifyBandwidthText(
+        label: LabelAPI,
+        bandwidth: Float,
+        translationParent: String,
+        translationKey: String
+    ) {
         label.text = StringUtils.getTranslation(translationParent, translationKey)
             .format(
                 "shipBandwidth",
@@ -136,25 +142,42 @@ class ShipHeaderUIPanelPlugin(dialog: InteractionDialogAPI,
                 val newBandwidth = Bandwidth.BANDWIDTH_STEP * marketMult
 
                 if (member.fleetData.fleet.cargo.credits.get() < upgradePrice) {
-                    modifyBandwidthUpgradeLabel(it, newBandwidth, upgradePrice, "ShipListDialog", "BandwidthUpgradeCostCannotAfford")
+                    modifyBandwidthUpgradeLabel(
+                        it,
+                        newBandwidth,
+                        upgradePrice,
+                        "BandwidthDialog",
+                        "BandwidthUpgradeCostCannotAfford"
+                    )
                     bandwidthButton?.isEnabled = false
                 } else {
-                    modifyBandwidthUpgradeLabel(it, newBandwidth, upgradePrice, "ShipListDialog", "BandwidthUpgradeCost")
+                    modifyBandwidthUpgradeLabel(
+                        it,
+                        newBandwidth,
+                        upgradePrice,
+                        "BandwidthDialog",
+                        "BandwidthUpgradeCost"
+                    )
                     bandwidthButton?.isEnabled = true
                 }
             }
         }
     }
 
-    private fun modifyBandwidthUpgradeLabel(label: LabelAPI, bandwidth: Float, upgradePrice: Float, translationParent: String, translationKey: String) {
+    private fun modifyBandwidthUpgradeLabel(
+        label: LabelAPI,
+        bandwidth: Float,
+        upgradePrice: Float,
+        translationParent: String,
+        translationKey: String
+    ) {
         val creditsText = Misc.getDGSCredits(upgradePrice)
-        label.text = StringUtils.getTranslation(translationParent, translationKey)
+        StringUtils.getTranslation(translationParent, translationKey)
             .format("bonusBandwidth", BandwidthUtil.getFormattedBandwidth(bandwidth))
-            .format("credits", creditsText)
-            .toStringNoFormats()
-
-        label.setHighlightColors(Bandwidth.getBandwidthColor(bandwidth), Misc.getHighlightColor())
-        label.setHighlight(BandwidthUtil.getFormattedBandwidthWithName(bandwidth), creditsText)
+            .format("costCredits", creditsText)
+            .format("credits", Misc.getDGSCredits(member.fleetData.fleet.cargo.credits.get()))
+            .setAdaptiveHighlights()
+            .setLabelText(label)
     }
 
     private fun doBandwidthUpgrade() {

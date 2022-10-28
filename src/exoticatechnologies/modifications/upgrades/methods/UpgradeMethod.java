@@ -2,8 +2,10 @@ package exoticatechnologies.modifications.upgrades.methods;
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.sun.xml.internal.ws.client.sei.MethodHandler;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.ui.impl.shop.upgrades.UpgradeMethodsUIPlugin;
 
 import java.util.Map;
 

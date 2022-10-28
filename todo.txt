@@ -6,3 +6,34 @@ Infernal Engines is a bit iffy (burn level again.)
 Spooled Feeders works fine, but you can see the UI even when it's installed on another ship in combat
 Phasefield Engine - check if the ship has the PHASE hint
 Hacked missile forge applies to AMBs
+
+Limit exotics to 2 per ship, 3 with skill that increases S-Mods
+Revert alpha subcore change
+
+Daemon upgrade: https://game-icons.net/1x1/lorc/angular-spider.html
+- tbd
+
+Daemon exotic:
+- Reactive Damper
+- when taking damage to armor, pop a 1s damper field
+- dampens the initial triggering damage
+- only works on damage over 100
+- cooldown tbd
+- passive downside is increased armor damage taken
+
+"I really like Hyperactive Capacitors because the main downside is very big and the bonuses do not directly alleviate it either. But the bonuses are still enormous so well worth considering.
+ Same with Infernal Engines like I mentioned above.
+ Meanwhile, both of Forced Overtime's downsides are alleviated by its upsides, making it mostly free of effective downsides."
+
+ "Tracer Recoil Calculator feels too cheap because it's a 50 TB / s upgrade, yet it gives a whopping 0.7x recoil to all guns, while only costing you 0.84x weapon turnrate."
+
+ "Like on Infernal Engines, it looks really good but that 0.76x deceleration is no joke."
+
+ "Can use some more palpable downsides:
+  Welded Armor
+  Tracer Recoil Calculator
+  Forced Overtime
+  Maybe Overcharged Shields
+
+  Feels too cheap for what it does:
+  Tracer Recoil Calculator"

@@ -27,7 +27,7 @@ public abstract class Upgrade {
     public static final String ITEM = "et_upgrade";
     @Getter @Setter public String key;
     @Getter @Setter public String name;
-    @Getter @Setter protected String description;
+    @Getter @Setter public String description;
     @Getter protected JSONObject upgradeSettings;
     @Getter protected final Map<String, Float> resourceRatios = new HashMap<>();
 

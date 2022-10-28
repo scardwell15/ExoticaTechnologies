@@ -51,7 +51,7 @@ public class ForcedOvertime extends Upgrade {
         this.addMalusToShopTooltip(tooltip, "requiredCrew", fm, mods, REQUIRED_CREW_PERC);
 
         //after level 3
-        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+        StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
         this.addMalusToShopTooltip(tooltip, "crDegradationShop", fm, mods, 3, CR_LOSS_PERC);

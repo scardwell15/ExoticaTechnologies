@@ -42,7 +42,7 @@ public class TracerRecoilCalculator extends Upgrade {
         this.addBenefitToShopTooltipMult(tooltip, "weaponHealth", fm, mods, WEAPON_MOUNT_HEALTH);
 
         //after level 3
-        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+        StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 

@@ -40,7 +40,7 @@ public class SubsumedAlphaCore extends Exotic {
             return false;
         }
 
-        if (fm.getFleetData().getFleet().getFaction().toString().equals(Factions.OMEGA)) {
+        if (fm.getFleetData().getFleet().getFaction().getId().equals(Factions.OMEGA)) {
             return super.canApply(fm.getVariant());
         }
 
@@ -52,17 +52,8 @@ public class SubsumedAlphaCore extends Exotic {
         return false;
     }
 
-    public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return "You aren't an omega, right?";
-    }
-
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return true;
-    }
-
-    @Override
-    public boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         return true;
     }
 

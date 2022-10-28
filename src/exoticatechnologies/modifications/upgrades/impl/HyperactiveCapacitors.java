@@ -42,7 +42,7 @@ public class HyperactiveCapacitors extends Upgrade {
         this.addBenefitToShopTooltip(tooltip, "ventSpeed", fm, mods, VENT_SPEED_MAX);
 
         //after level 3
-        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+        StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 

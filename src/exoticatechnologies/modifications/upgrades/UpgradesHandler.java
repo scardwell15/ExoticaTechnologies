@@ -9,7 +9,8 @@ import data.scripts.util.MagicSettings;
 import exoticatechnologies.modifications.upgrades.methods.*;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.ui.impl.shop.ShopManager;
-import exoticatechnologies.ui.impl.shop.UpgradeShopUIPlugin;
+import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin;
+import exoticatechnologies.ui.impl.shop.upgrades.UpgradeShopUIPlugin;
 import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
@@ -41,11 +42,12 @@ public class UpgradesHandler {
         UpgradesHandler.populateUpgrades();
 
         ShopManager.addMenu(new UpgradeShopUIPlugin());
+        ShopManager.addMenu(new ExoticShopUIPlugin());
     }
 
     public static void populateUpgrades() {
         try {
-            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/upgrades.json", "extra_system_reloaded");
+            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/upgrades.json", "exoticatechnologies");
 
             Iterator upgIterator = settings.keys();
             while(upgIterator.hasNext()) {

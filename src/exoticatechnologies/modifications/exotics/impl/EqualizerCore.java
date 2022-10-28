@@ -49,20 +49,10 @@ public class EqualizerCore extends Exotic {
         return Utilities.hasItem(fleet.getCargo(), ITEM);
     }
 
-    public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return "You need an Equalizer Core to install this.";
-    }
-
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
-        return true;
-    }
-
-    @Override
-    public boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.addItem(fleet, ITEM, 1);
         return true;
     }
 

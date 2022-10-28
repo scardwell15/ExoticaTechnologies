@@ -7,6 +7,9 @@ import exoticatechnologies.util.RenderUtils
 import java.awt.Color
 import kotlin.math.min
 
+fun Color.modify(red: Int = this.red, green: Int = this.green, blue: Int = this.blue, alpha: Int = this.alpha) =
+    Color(red, green, blue, alpha)
+
 open class BaseUIPanelPlugin: CustomUIPanelPlugin {
     lateinit var pos: PositionAPI
     open var panelWidth: Float = 0f
@@ -15,6 +18,10 @@ open class BaseUIPanelPlugin: CustomUIPanelPlugin {
         get() { return min(panelWidth, panelHeight)
         }
     open var bgColor: Color = Color(0, 0, 0, 0)
+
+    fun setBGColor(red: Int = bgColor.red, green: Int = bgColor.green, blue: Int = bgColor.blue, alpha: Int = bgColor.alpha) {
+        bgColor = Color(red, green, blue, alpha)
+    }
 
     override fun positionChanged(position: PositionAPI) {
         pos = position
@@ -35,6 +42,10 @@ open class BaseUIPanelPlugin: CustomUIPanelPlugin {
     }
 
     override fun processInput(events: List<InputEventAPI>) {
+    }
+
+    fun isHovered(events: List<InputEventAPI>) : Boolean {
+        return events.any { pos.containsEvent(it) }
     }
 }
 

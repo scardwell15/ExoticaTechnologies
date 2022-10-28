@@ -47,17 +47,8 @@ public class SubsumedGammaCore extends Exotic {
         return false;
     }
 
-    public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return "You aren't an omega, right?";
-    }
-
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return true;
-    }
-
-    @Override
-    public boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         return true;
     }
 

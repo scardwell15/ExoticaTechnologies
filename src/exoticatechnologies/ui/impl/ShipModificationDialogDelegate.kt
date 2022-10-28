@@ -12,14 +12,10 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.ShowDefaultVisual
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.ui.BaseUIPanelPlugin
-import exoticatechnologies.ui.impl.ships.ShipListUIPanelPlugin
-import exoticatechnologies.ui.impl.shop.ShipModUIPanelPlugin
+import exoticatechnologies.ui.impl.ships.ShipListUIPlugin
+import exoticatechnologies.ui.impl.shop.ShipModUIPlugin
 import exoticatechnologies.util.StringUtils
-import java.awt.Color
 import kotlin.math.min
-
-fun Color.modify(red: Int? = null, green: Int? = null, blue: Int? = null, alpha: Int? = null) =
-    Color(red ?: this.red, green ?: this.green, blue ?: this.blue, alpha ?: this.alpha)
 
 class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var market: MarketAPI) : CustomDialogDelegate {
     var panelHeight: Float = Global.getSettings().screenHeight * 0.65f
@@ -30,20 +26,20 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
 
     override fun createCustomDialog(panel: CustomPanelAPI) {
         members = Global.getSector().playerFleet.membersWithFightersCopy
-            .filterNot {it.isFighterWing}
+            .filterNot { it.isFighterWing }
             .toMutableList()
 
-        val listPlugin = ShipListUIPanelPlugin(panel)
+        val listPlugin = ShipListUIPlugin(panel)
         listPlugin.panelHeight = panelHeight
         val shipListTooltip = listPlugin.layoutPanels(members)
 
-        val modPlugin = ShipModUIPanelPlugin(dialog, panel, panelWidth - listPlugin.panelWidth, panelHeight)
+        val modPlugin = ShipModUIPlugin(dialog, panel, panelWidth - listPlugin.panelWidth, panelHeight)
         val shipModTooltip = modPlugin.layoutPanels()
 
         listPlugin.addListener { member ->
             run {
-                listPlugin.panelPluginMap.values.forEach { it.bgColor.modify(alpha = 0) }
-                listPlugin.panelPluginMap[member]?.bgColor?.modify(alpha = 100)
+                listPlugin.panelPluginMap.values.forEach { it.setBGColor(alpha = 0) }
+                listPlugin.panelPluginMap[member]?.setBGColor(alpha = 100)!!
                 modPlugin.showPanel(member)
             }
         }

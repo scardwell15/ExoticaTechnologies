@@ -14,8 +14,8 @@ import java.awt.*;
 
 public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
 
-    @Getter protected String upgradeId;
-    @Getter protected int upgradeLevel = 0;
+    @Getter public String upgradeId;
+    @Getter public int upgradeLevel = 0;
     @Getter @Setter protected boolean ignoreCrate = false;
     protected Upgrade upgrade;
 

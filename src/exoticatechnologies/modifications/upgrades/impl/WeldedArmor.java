@@ -32,7 +32,7 @@ public class WeldedArmor extends Upgrade {
         this.addBenefitToShopTooltip(tooltip, "hull", fm, mods, HULL_MAX);
         this.addBenefitToShopTooltip(tooltip, "armor", fm, mods, ARMOR_MAX);
 
-        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+        StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 

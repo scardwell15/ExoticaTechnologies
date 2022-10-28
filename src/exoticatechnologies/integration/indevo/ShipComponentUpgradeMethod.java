@@ -77,12 +77,12 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
     @Override
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
         Map<String, Float> resourceCosts = new HashMap<>();
-        float cost = 0;
+
         if (hovered) {
-            cost = IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, mods.getUpgrade(upgrade));
+            float cost = IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, mods.getUpgrade(upgrade));
+            resourceCosts.put(IndEvoUtil.SHIP_COMPONENT_ITEM_ID, cost);
         }
 
-        resourceCosts.put(IndEvoUtil.SHIP_COMPONENT_ITEM_ID, cost);
 
         return resourceCosts;
     }

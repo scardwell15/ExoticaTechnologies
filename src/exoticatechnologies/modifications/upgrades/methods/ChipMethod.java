@@ -14,19 +14,20 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ChipMethod implements UpgradeMethod {
+    @Getter
+    @Setter
+    public CargoStackAPI upgradeChipStack = null;
+
     @Override
     public String getOptionText(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
-        int creditCost = getCreditCost(fm, mods, upgrade);
-
-        String creditCostFormatted = Misc.getFormat().format(creditCost);
-        return StringUtils.getTranslation("UpgradeMethods", "ChipOption")
-                .format("credits", creditCostFormatted)
-                .toString();
+        return StringUtils.getString("UpgradeMethods", "ChipOption");
     }
 
     @Override
@@ -36,12 +37,11 @@ public class ChipMethod implements UpgradeMethod {
 
     @Override
     public boolean canUse(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
-        CargoStackAPI stack = Utilities.getUpgradeChip(fm.getFleetData().getFleet().getCargo(), fm, mods, upgrade);
-        if (stack != null) {
-            int creditCost = getCreditCost(fm, mods, upgrade);
+        if (upgradeChipStack != null) {
+            int creditCost = getCreditCost(fm, mods, upgrade, upgradeChipStack);
             return Global.getSector().getPlayerFleet().getCargo().getCredits().get() >= creditCost;
         }
-        return false;
+        return Utilities.hasUpgradeChip(fm.getFleetData().getFleet().getCargo(), upgrade.getKey());
     }
 
     @Override
@@ -51,14 +51,17 @@ public class ChipMethod implements UpgradeMethod {
 
     @Override
     public String apply(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
+        if (upgradeChipStack == null) {
+            throw new IllegalArgumentException("Missing chip stack.");
+        }
+
         CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
 
-        CargoStackAPI stack = getDesiredChip(fm, mods, upgrade);
-        UpgradeSpecialItemPlugin stackPlugin = (UpgradeSpecialItemPlugin) stack.getPlugin();
-        int creditCost = getCreditCost(fm, mods, upgrade);
+        UpgradeSpecialItemPlugin stackPlugin = (UpgradeSpecialItemPlugin) upgradeChipStack.getPlugin();
+        int creditCost = getCreditCost(fm, mods, upgrade, upgradeChipStack);
 
         fleet.getCargo().getCredits().subtract(creditCost);
-        Utilities.takeItem(stack);
+        Utilities.takeItem(upgradeChipStack);
 
         mods.putUpgrade(upgrade, stackPlugin.getUpgradeLevel());
         mods.save(fm);
@@ -89,7 +92,7 @@ public class ChipMethod implements UpgradeMethod {
      * @param resourceCosts
      * @return The sum.
      */
-    private static int getCreditCostForResources(Map<String, Integer> resourceCosts) {
+    public static int getCreditCostForResources(Map<String, Integer> resourceCosts) {
         float creditCost = 0;
 
         for (Map.Entry<String, Integer> resourceCost : resourceCosts.entrySet()) {
@@ -98,8 +101,7 @@ public class ChipMethod implements UpgradeMethod {
         return (int) creditCost;
     }
 
-    private static int getCreditCost(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade) {
-        CargoStackAPI stack = getDesiredChip(fm, mods, upgrade);
+    public static int getCreditCost(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, CargoStackAPI stack) {
         if (stack != null) {
             UpgradeSpecialItemPlugin plugin = (UpgradeSpecialItemPlugin) stack.getPlugin();
 
@@ -116,19 +118,18 @@ public class ChipMethod implements UpgradeMethod {
         Map<String, Float> resourceCosts = new HashMap<>();
 
         if (hovered) {
-            resourceCosts.put(Commodities.CREDITS, (float) getCreditCost(fm, mods, upgrade));
-
-            CargoStackAPI stack = getDesiredChip(fm, mods, upgrade);
-            if (stack != null) {
-                UpgradeSpecialItemPlugin stackPlugin = (UpgradeSpecialItemPlugin) stack.getPlugin();
-                resourceCosts.put(Utilities.formatSpecialItem(stack.getSpecialDataIfSpecial()), 1f);
-            } else {
-                String resourceName = StringUtils.getTranslation("ShipListDialog", "UpgradeChipText")
-                        .format("upgradeName", upgrade.getName())
+            if (upgradeChipStack == null) {
+                String resourceName = StringUtils.getTranslation("ShipListDialog", "ChipName")
+                        .format("name", upgrade.getName())
                         .toString();
 
                 resourceCosts.put(String.format("&%s", resourceName), 1f);
+
+                return resourceCosts;
             }
+
+            resourceCosts.put(Commodities.CREDITS, (float) getCreditCost(fm, mods, upgrade, upgradeChipStack));
+            resourceCosts.put(Utilities.formatSpecialItem(upgradeChipStack.getSpecialDataIfSpecial()), 1f);
         }
 
         return resourceCosts;

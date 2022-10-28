@@ -11,10 +11,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -188,8 +186,8 @@ public class StringUtils {
         protected final String scope;
         protected final String key;
         protected final List<String> formats = new ArrayList<>();
-        protected final List<String> values = new ArrayList<>();
-        protected final List<Color> colors = new ArrayList<>();
+        protected List<String> values = new ArrayList<>();
+        protected List<Color> colors = new ArrayList<>();
 
         public Translation format(String flag, Object value) {
             formats.add(flag);
@@ -320,6 +318,12 @@ public class StringUtils {
             UIComponentAPI prev = tooltip.getPrev();
             prev.getPosition().belowLeft(positionBelowThis, 2);
             return label;
+        }
+
+        public Translation setAdaptiveHighlights() {
+            Pair<String[], Color[]> valuesToColors = getAdaptiveHighlights(getString(scope, key));
+            colors = Arrays.asList(valuesToColors.two);
+            return this;
         }
 
         public void setLabelText(LabelAPI label) {

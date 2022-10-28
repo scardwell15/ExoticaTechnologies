@@ -60,7 +60,7 @@ public class OverchargedShields extends Upgrade {
         this.addBenefitToShopTooltip(tooltip, "shieldArc", fm, mods, ARC_MAX);
 
         //after level 3
-        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+        StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 

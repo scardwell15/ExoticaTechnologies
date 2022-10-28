@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.hullmods.PhaseAnchor;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
@@ -58,25 +57,9 @@ public class PhasefieldEngine extends Exotic {
         return var.getHullSpec().getShieldType() == ShieldAPI.ShieldType.PHASE;
     }
 
-    public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        if(fm.getHullSpec().getShieldType() != ShieldAPI.ShieldType.PHASE) {
-            return StringUtils.getString(this.getKey(), "needPhaseShip");
-        }
-
-        return StringUtils.getTranslation(this.getKey(), "needItem")
-                .format("itemName", Global.getSettings().getSpecialItemSpec(ITEM).getName())
-                .toString();
-    }
-
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
-        return true;
-    }
-
-    @Override
-    public boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.addItem(fleet, ITEM, 1);
         return true;
     }
 

@@ -6,14 +6,13 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.ui.BaseUIPanelPlugin
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
-import exoticatechnologies.util.StringUtils
 
 abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : InteractiveUIPanelPlugin() {
-    open val listHeader = StringUtils.getTranslation("FleetScanner", "NotableShipsHeader").toString()
-    open val rowSize = 64f
+    abstract val listHeader: String
+    open val rowHeight = 64f
+    open val rowWidth = 240f
     private val pad = 3f
     private val opad = 10f
-    private val textWidth = 240f
 
     private var listeners: MutableList<ListListener<T>> = mutableListOf()
 
@@ -22,40 +21,50 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
 
     var panelPluginMap: HashMap<T, BaseUIPanelPlugin> = hashMapOf()
 
-    private fun getListWidth() : Float {
-        return textWidth + rowSize
+    private fun getListWidth(): Float {
+        return rowWidth
     }
 
-    private fun getListHeight(rows: Int) : Float {
-        return opad + (rowSize + pad) * rows
+    private fun getListHeight(rows: Int): Float {
+        return opad + (rowHeight + pad) * rows
     }
 
-    fun layoutPanels(members: MutableList<T>): CustomPanelAPI {
+    open fun createListHeader(tooltip: TooltipMakerAPI) {
+        tooltip.addSectionHeading(listHeader, Alignment.MID, 0f)
+    }
+
+    fun layoutPanels(members: List<T>): CustomPanelAPI {
+        val validMembers = members.filter { shouldMakePanelForItem(it) }
+
         val outerPanel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         val outerTooltip = outerPanel.createUIElement(panelWidth, panelHeight, false)
 
-        outerTooltip.addSectionHeading(listHeader, Alignment.MID, 0f)
+        createListHeader(outerTooltip)
+
         val heading = outerTooltip.prev
 
         val innerPanel = outerPanel.createCustomPanel(panelWidth, panelHeight, null)
         val scrollerTooltip: TooltipMakerAPI = innerPanel.createUIElement(panelWidth, panelHeight, true)
-        val scrollingPanel: CustomPanelAPI = innerPanel.createCustomPanel(panelWidth, getListHeight(members.size), null)
+        val scrollingPanel: CustomPanelAPI =
+            innerPanel.createCustomPanel(panelWidth, getListHeight(validMembers.size), null)
         val tooltip: TooltipMakerAPI = scrollingPanel.createUIElement(panelWidth, panelHeight, false)
 
         var lastItem: CustomPanelAPI? = null
-        members.forEach {
-            val rowPlugin = createPanelForItem(tooltip, it)
 
-            if (lastItem != null) {
-                rowPlugin.panel!!.position.belowLeft(lastItem, pad)
-            } else {
-                rowPlugin.panel!!.position.inTL(0f, pad)
+        validMembers
+            .map { it to createPanelForItem(tooltip, it) }
+            .filter { (_, rowPlugin) -> rowPlugin != null }
+            .forEach { (item, rowPlugin) ->
+                if (lastItem != null) {
+                    rowPlugin?.panel!!.position.belowLeft(lastItem, pad)
+                } else {
+                    rowPlugin?.panel!!.position.inTL(0f, pad)
+                }
+                lastItem = rowPlugin.panel!!
+
+                panelPluginMap[item] = rowPlugin
+                clickables[rowPlugin.panel!!] = ListItemButtonHandler(rowPlugin, this)
             }
-            lastItem = rowPlugin.panel!!
-
-            panelPluginMap[it] = rowPlugin
-            clickables[rowPlugin.panel!!] = ListItemButtonHandler(rowPlugin, this)
-        }
 
         scrollingPanel.addUIElement(tooltip).inTL(0f, 0f)
         scrollerTooltip.addCustom(scrollingPanel, 0f).position.inTL(0f, 0f)
@@ -67,7 +76,16 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
         return outerPanel
     }
 
-    abstract fun createPanelForItem(tooltip: TooltipMakerAPI, item: T): ListItemUIPanelPlugin<T>
+    fun clearItems() {
+        panelPluginMap.clear()
+        clickables.clear()
+    }
+
+    open fun shouldMakePanelForItem(item: T): Boolean {
+        return true
+    }
+
+    abstract fun createPanelForItem(tooltip: TooltipMakerAPI, item: T): ListItemUIPanelPlugin<T>?
 
     fun pickedItem(item: T) {
         listeners.forEach {

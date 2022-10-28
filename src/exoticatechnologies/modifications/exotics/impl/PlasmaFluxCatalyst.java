@@ -1,6 +1,5 @@
 package exoticatechnologies.modifications.exotics.impl;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -38,22 +37,10 @@ public class PlasmaFluxCatalyst extends Exotic {
         return Utilities.hasItem(fleet.getCargo(), ITEM);
     }
 
-    public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return StringUtils.getTranslation(this.getKey(), "needItem")
-                .format("itemName", Global.getSettings().getSpecialItemSpec(ITEM).getName())
-                .toString();
-    }
-
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
-        return true;
-    }
-
-    @Override
-    public boolean restoreItemsToFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.addItem(fleet, ITEM, 1);
         return true;
     }
 

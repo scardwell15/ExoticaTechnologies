@@ -39,7 +39,6 @@
 		"ExoticBandwidthForShip": "Exotic bandwidth: *${shipBandwidth}*",
 		"BandwidthForShip": "Bandwidth: *${shipBandwidth}*",
 		"BandwidthUsed": "*${usedBandwidth}* used",
-		"BandwidthUsedWithUpgrade": "*${usedBandwidth}* used (=${upgradeBandwidth}=)",
 		"BandwidthUsedByUpgrade": "=${upgradeBandwidth}=",
 		"BandwidthGivenByUpgrade": "*${upgradeBandwidth}*",
 		"StoryPointCost": "=${storyPoints}= story points",
@@ -73,23 +72,30 @@
 		"OpenedDialog": "The on-site engineering team is ready to assist you with this ship."
 	},
 	"ShipListDialog": {
-		"BackToShipList": "Select a different ship to modify.",
-		"SelectShip": "Select a ship",
-		"Confirm": "Confirm",
-		"Cancel": "Cancel",
+		"ShipListHeader": "Your Fleet",
 		"OpenModOptions": "Select",
 		"SelectPanelText": "Upgrades: *${numUpgrades}* | Exotics: &${numExotics}&",
-		"BandwidthUpgradeCost": "A bandwidth increase of &${bonusBandwidth}& will cost *${credits}* credits.",
-		"BandwidthUpgradeCostCannotAfford": "You cannot afford the upgrade. (*${credits}* credits)",
-		"BandwidthUpgradePeak": "This ship has reached its maximum bandwidth.",
-		"BandwidthPurchase": "Purchase",
-		"UpgradeDrawbackAfterLevel": "Starting at =level ${level}=:",
-		"UpgradeChipText": "${upgradeName} Chip",
+		"ChipName": "${name} Chip",
 		"UpgradeChipWithLevelText": "${upgradeName} Chip (${level})",
-		"ModDescriptionButtonText": "Description",
-		"ModStatsButtonText": "Stats",
-		"UpgradeCostTitle": "Price",
 		"ShopHeader": "Exotica Technologies",
+	},
+	"CrateText": {
+		"TitleText": "\"Big Create\" Crate",
+		"SideText": "*Available* chips in your fleet's cargo is displayed on top of the *selected* cargo to be stored in the crate.",
+		"SideText2": "Note that when moving stacks between the two locations, it is possible for the stack size to be reported as zero. *This is a purely visual error, and can be safely ignored*; your fleet's logistics personnel are experts, after all.",
+		"ContentsText": "Any Exotica Technologies branch is able to use chips directly from this crate.\nContents:",
+		"UpgradeText": "*${upgradeItemName}* (${levelQuantities})",
+		"ExoticText": "*${exoticItemName}* (${quantity})"
+	},
+	"BandwidthDialog": {
+		"OpenBandwidthOptions": "Bandwidth",
+		"BandwidthUpgradeCost": "A bandwidth increase of &${bonusBandwidth}& will cost *${costCredits}* credits. You have *${credits}* credits.",
+		"BandwidthUpgradeCostCannotAfford": "You cannot afford the increase, which is priced at *${costCredits}* credits. You have *${credits}* credits.",
+		"BandwidthUpgradePeak": "This ship has reached its maximum bandwidth.",
+		"BandwidthPurchase": "Purchase"
+	},
+	"ExoticsDialog": {
+		"OpenExoticOptions": "Exotics",
 		"ExoticInstalled": "Exotic installed!",
 		"ExoticRecovered": "Exotic recovered!",
 		"ExoticDestroyed": "Exotic destroyed!",
@@ -98,26 +104,26 @@
 		"RecoverExotic": "Recover chip",
 		"DestroyExotic": "Destroy"
 	},
-	"CrateText": {
-		"TitleText": "\"Big Create\" Crate",
-		"SideText": "*Available* chips in your fleet's cargo is displayed on top of the *selected* cargo to be stored in the crate.",
-		"SideText2": "Note that when moving stacks between the two locations, it is possible for the stack size to be reported as zero. *This is a purely visual error, and can be safely ignored*; your fleet's logistics personnel are experts, after all.",
-		"MoveOption": "Confirm",
-		"CancelOption": "Cancel",
-		"ContentsText": "Any Exotica Technologies branch is able to use chips directly from this crate.\nContents:",
-		"UpgradeText": "*${upgradeItemName}* (${levelQuantities})",
-		"ExoticText": "*${exoticItemName}* (${quantity})"
-	},
-	"BandwidthDialog": {
-		"OpenBandwidthOptions": "Bandwidth"
-	},
-	"ExoticsDialog": {
-		"OpenExoticOptions": "Exotics"
+	"ExoticCosts": {
+		"BandwidthGivenByExotic": "Max bandwidth: *${bandwidth}* (*${exoticBandwidth}*)"
 	},
 	"UpgradesDialog": {
 		"OpenUpgradeOptions": "Upgrades",
+		"UpgradeLevel": "Level ${level}",
 		"UpgradePerformedSuccessfully": "Your chief engineer reports that the *${name}* upgrade was a success. It is now *level ${level}*.",
-		"UpgradeRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. They say this with the slightest disbelief, as if surprised that the plan worked at all."
+		"UpgradeRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. They say this with the slightest disbelief, as if surprised that the plan worked at all.",
+		"ModDescriptionButtonText": "Description",
+		"ModStatsButtonText": "Stats",
+		"ResourceText": "${name}: *${amount}*",
+		"ResourceTextWithCost": "${name}: *${amount}* (=${cost}=)",
+		"ResourceTextWithPay": "${name}: *${amount}* (^${cost}^)",
+		"UpgradeChipsHeader": "Chips",
+		"UpgradeDrawbackAfterLevel": "Starting at =level ${level}=:"
+	},
+	"UpgradeCosts": {
+		"UpgradeCostTitle": "Price",
+		"BandwidthUsedWithUpgrade": "*${usedBandwidth}* used (=${upgradeBandwidth}=)",
+		"BandwidthUsed": "*${usedBandwidth}* used"
 	},
 	"UpgradeMethods": {
 		"UpgradeMethodsTitle": "Installation",

@@ -35,7 +35,7 @@ public class InfernalEngines extends Upgrade {
         this.addBenefitToShopTooltip(tooltip, "burnLevel", fm, mods, BURN_LEVEL_MAX);
         this.addBenefitToShopTooltip(tooltip, "turnrate", fm, mods, TURN_RATE_MAX);
 
-        StringUtils.getTranslation("ShipListDialog", "UpgradeDrawbackAfterLevel")
+        StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
                 .format("level", 3)
                 .addToTooltip(tooltip);
 

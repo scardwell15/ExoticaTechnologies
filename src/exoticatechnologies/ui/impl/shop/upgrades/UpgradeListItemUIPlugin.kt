@@ -1,4 +1,4 @@
-package exoticatechnologies.ui.impl.shop
+package exoticatechnologies.ui.impl.shop.upgrades
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
@@ -9,11 +9,12 @@ import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import java.awt.Color
 
-class UpgradeItemUIPlugin(item: Upgrade,
-                          var member: FleetMemberAPI,
-                          var mods: ShipModifications,
-                          private val listPanel: ListUIPanelPlugin<Upgrade>
-                        ) : ListItemUIPanelPlugin<Upgrade>(item) {
+class UpgradeListItemUIPlugin(
+    item: Upgrade,
+    var member: FleetMemberAPI,
+    var mods: ShipModifications,
+    private val listPanel: ListUIPanelPlugin<Upgrade>
+) : ListItemUIPanelPlugin<Upgrade>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
     private val opad = 6f
     override var panelWidth: Float = 222f

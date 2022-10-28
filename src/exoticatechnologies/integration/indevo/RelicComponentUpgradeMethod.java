@@ -79,12 +79,11 @@ public class RelicComponentUpgradeMethod implements UpgradeMethod {
     @Override
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
         Map<String, Float> resourceCosts = new HashMap<>();
-        float cost = 0;
-        if (hovered) {
-            cost = IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, mods.getUpgrade(upgrade));
-        }
 
-        resourceCosts.put(IndEvoUtil.RELIC_COMPONENT_ITEM_ID, cost);
+        if (hovered) {
+            float cost = IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, mods.getUpgrade(upgrade));
+            resourceCosts.put(IndEvoUtil.RELIC_COMPONENT_ITEM_ID, cost);
+        }
 
         return resourceCosts;
     }

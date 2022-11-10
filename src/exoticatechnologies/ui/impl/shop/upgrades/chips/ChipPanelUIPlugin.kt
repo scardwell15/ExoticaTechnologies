@@ -1,8 +1,8 @@
 package exoticatechnologies.ui.impl.shop.upgrades.chips
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoAPI
 import com.fs.starfarer.api.campaign.CargoStackAPI
-import com.fs.starfarer.api.campaign.SpecialItemPlugin
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.*
@@ -11,10 +11,9 @@ import exoticatechnologies.cargo.CrateItemPlugin
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
-import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
-import exoticatechnologies.ui.impl.shop.upgrades.UpgradeMethodsUIPlugin
+import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 
 class ChipPanelUIPlugin(
     var parentPanel: CustomPanelAPI,
@@ -47,8 +46,10 @@ class ChipPanelUIPlugin(
         }
 
         val backTooltip: TooltipMakerAPI = listPanel.createUIElement(panelWidth, 22f, false)
-        val backButton: ButtonAPI = backTooltip.addButton("Cancel", "backButton",
-            Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.C2_MENU, 72f, 22f, 3f)
+        val backButton: ButtonAPI = backTooltip.addButton(
+            "Cancel", "backButton",
+            Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.C2_MENU, 72f, 22f, 3f
+        )
 
         backButton.position.inBMid(3f)
         buttons[backButton] = BackButtonHandler(this)
@@ -103,29 +104,37 @@ class ChipPanelUIPlugin(
     /**
      * gets all valid upgrade chips for member from cargo
      */
-    fun getUpgradeChips(cargo: CargoAPI) : List<CargoStackAPI> {
-        val stacks: List<CargoStackAPI> = cargo.stacksCopy
-            .flatMap { stack ->
-                if (stack.plugin is CrateItemPlugin)
-                    getChipsFromCrate(stack)
-                else
-                    listOf(stack)
-            }
-            .filter { it.plugin is UpgradeSpecialItemPlugin }
-            .map { it to it.plugin as UpgradeSpecialItemPlugin }
-            .filter { (_, plugin) -> plugin.upgradeId == upgrade.key }
-            .filter { (_, plugin) -> plugin.upgradeLevel > mods.getUpgrade(upgrade) }
-            .filter { (_, plugin) -> mods.hasBandwidthForUpgrade(member, upgrade, plugin.upgradeLevel) }
-            .map { (stack, _) -> stack }
-
-        return stacks
+    fun getUpgradeChips(cargo: CargoAPI): List<CargoStackAPI> {
+        return Companion.getUpgradeChips(cargo, member, mods, upgrade)
     }
 
-    /**
-     * gets all valid upgrade chips for member from crate
-     */
-    fun getChipsFromCrate(stack: CargoStackAPI) : List<CargoStackAPI> {
-        return getUpgradeChips((stack.plugin as CrateItemPlugin).cargo)
-    }
+    companion object {
+        fun getUpgradeChips(cargo: CargoAPI, member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade): List<CargoStackAPI> {
+            val stacks: List<CargoStackAPI> = cargo.stacksCopy
+                .flatMap { stack ->
+                    if (stack.plugin is CrateItemPlugin)
+                        getChipsFromCrate(stack, member, mods, upgrade)
+                    else
+                        listOf(stack)
+                }
+                .filter { it.plugin is UpgradeSpecialItemPlugin }
+                .map { it to it.plugin as UpgradeSpecialItemPlugin }
+                .filter { (_, plugin) -> plugin.upgradeId == upgrade.key }
+                .filter { (_, plugin) -> plugin.upgradeLevel > mods.getUpgrade(upgrade) }
+                .filter { (_, plugin) -> mods.hasBandwidthForUpgrade(member, upgrade, plugin.upgradeLevel) }
+                .filter { (stack, _) ->
+                    ChipMethod.getCreditCost(member, mods, upgrade, stack) > Global.getSector().playerFleet.cargo.credits.get()
+                }
+                .map { (stack, _) -> stack }
 
+            return stacks
+        }
+
+        /**
+         * gets all valid upgrade chips for member from crate
+         */
+        fun getChipsFromCrate(stack: CargoStackAPI, member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade): List<CargoStackAPI> {
+            return getUpgradeChips((stack.plugin as CrateItemPlugin).cargo, member, mods, upgrade)
+        }
+    }
 }

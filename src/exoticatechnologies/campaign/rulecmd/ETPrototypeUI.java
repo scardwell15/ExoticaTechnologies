@@ -14,7 +14,6 @@ import exoticatechnologies.util.RenderUtils;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.lazylib.ui.FontException;
 import org.lazywizard.lazylib.ui.LazyFont;
-import org.lwjgl.opengl.Display;
 
 import java.util.Iterator;
 import java.util.List;

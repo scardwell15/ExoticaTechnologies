@@ -50,7 +50,7 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
     }
 
     override fun getConfirmText(): String {
-        return StringUtils.getString("Options","confirm")
+        return StringUtils.getString("Options","leave")
     }
 
     override fun getCancelText(): String {
@@ -64,6 +64,7 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
     }
 
     override fun customDialogCancel() {
+        customDialogConfirm()
     }
 
     override fun getCustomPanelPlugin(): CustomUIPanelPlugin {

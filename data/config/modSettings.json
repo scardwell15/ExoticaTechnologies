@@ -16,7 +16,6 @@
 
     # average bandwidth weight multiplier
     "factionBandwidthMult": {
-      "omega": 3.0,
       "remnant": 1.66,
       "derelict": 0.75,
       "hegemony": 1.25,

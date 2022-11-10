@@ -73,7 +73,7 @@ public class ExoticsGenerator {
         ETExotics exotics = new ETExotics();
 
         float exoticChance = CHANCE_OF_EXOTICS;
-        if (factionExoticChances.containsKey(faction)) {
+        if (faction != null && factionExoticChances.containsKey(faction)) {
             exoticChance = factionExoticChances.get(faction);
         }
 
@@ -85,7 +85,7 @@ public class ExoticsGenerator {
         float rolledChance = random.nextFloat();
         if (rolledChance < exoticChance) {
             float perExoticMult = 1.0f;
-            if (factionPerExoticMult.containsKey(faction)) {
+            if (faction != null && factionPerExoticMult.containsKey(faction)) {
                 perExoticMult = factionPerExoticMult.get(faction);
             }
             perExoticMult *= (1 + smodCount * 0.5f);

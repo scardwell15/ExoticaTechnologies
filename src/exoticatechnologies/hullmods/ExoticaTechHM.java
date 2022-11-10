@@ -120,7 +120,7 @@ public class ExoticaTechHM extends BaseHullMod {
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);
             if(level <= 0) continue;
-            upgrade.advanceInCampaign(fm, level, upgrade.getMaxLevel(fm));
+            upgrade.advanceInCampaign(fm, mods, amount);
         }
     }
 
@@ -130,18 +130,17 @@ public class ExoticaTechHM extends BaseHullMod {
             return;
         }
 
-        FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
-        if(fm == null) return;
+        FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
+        if(member == null) return;
 
-        ShipModifications mods = this.getModifications(fm);
+        ShipModifications mods = this.getModifications(member);
         if(mods == null) return;
 
-        ShipAPI.HullSize hullSize = ship.getHullSize();
-        float bandwidth = mods.getBandwidthWithExotics(fm);
+        float bandwidth = mods.getBandwidthWithExotics(member);
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);
             if(level <= 0) continue;
-            upgrade.advanceInCombat(ship, amount, level, bandwidth);
+            upgrade.advanceInCombat(ship, amount, member, mods);
         }
 
         for(Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
@@ -190,28 +189,28 @@ public class ExoticaTechHM extends BaseHullMod {
             int level = mods.getUpgrade(upgrade);
             if(level <= 0) continue;
 
-            upgrade.applyUpgradeToStats(fm, stats, level, upgrade.getMaxLevel(fm));
+            upgrade.applyUpgradeToStats(fm, stats, mods);
         }
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-        FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
-        if(fm == null) return;
+        FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
+        if(member == null) return;
 
-        ShipModifications mods = this.getModifications(fm);
+        ShipModifications mods = this.getModifications(member);
         if(mods == null) return;
 
-        float bandwidth = mods.getBandwidthWithExotics(fm);
+        float bandwidth = mods.getBandwidthWithExotics(member);
 
         for(Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if(!mods.hasExotic(exotic)) continue;
-            exotic.applyExoticToShip(fm, ship, bandwidth, id);
+            exotic.applyExoticToShip(member, ship, bandwidth, id);
         }
 
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if(!mods.hasUpgrade(upgrade)) continue;
-            upgrade.applyUpgradeToShip(fm, ship, mods.getUpgrade(upgrade), upgrade.getMaxLevel(fm));
+            upgrade.applyUpgradeToShip(member, ship, mods);
         }
     }
 
@@ -239,7 +238,7 @@ public class ExoticaTechHM extends BaseHullMod {
         float bandwidth = mods.getBandwidthWithExotics(fm);
         String bandwidthString = BandwidthUtil.getFormattedBandwidthWithName(bandwidth);
 
-        hullmodTooltip.addPara("The ship has %s bandwidth.", 0, Bandwidth.getBandwidthColor(bandwidth),  bandwidthString);
+        hullmodTooltip.addPara("The ship has %s bandwidth.", 0, Bandwidth.getColor(bandwidth),  bandwidthString);
 
         boolean exoticsExpand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
         boolean upgradesExpand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F2"));
@@ -248,57 +247,63 @@ public class ExoticaTechHM extends BaseHullMod {
         TooltipMakerAPI tooltip = hullmodTooltip;
 
         if(exoticsExpand || upgradesExpand) {
-            customPanelAPI = Global.getSettings().createCustom(width, 500f, null);
-            tooltip = customPanelAPI.createUIElement(width, 500f, true);
-        }
+            customPanelAPI = Global.getSettings().createCustom(width, 300f, null);
+            TooltipMakerAPI scrollTooltip = customPanelAPI.createUIElement(width, 300f, true);
+            CustomPanelAPI innerPanel = customPanelAPI.createCustomPanel(width, 1100f, null);
+            tooltip = innerPanel.createUIElement(width, 1100f, false);
 
-        UIComponentAPI lastLabel = null;
-        boolean addedExoticSection = false;
-        try {
-            for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
-                if (!mods.hasExotic(exotic.getKey())) continue;
-
-                if (!addedExoticSection) {
-                    addedExoticSection = true;
-                    tooltip.addSectionHeading(StringUtils.getString("FleetScanner", "ExoticHeader"), Alignment.MID, 6);
-                    lastLabel = tooltip.getPrev();
-                }
-
-                tooltip.addTitle(exotic.getName(), exotic.getMainColor()).getPosition().belowLeft(lastLabel, 3);
-                UIComponentAPI title = tooltip.getPrev();
-                exotic.modifyToolTip(tooltip, title, fm, mods, exoticsExpand);
-
-                lastLabel = tooltip.getPrev();
-                tooltip.setParaFontDefault();
-                tooltip.setParaFontColor(tooltipColor);
-            }
-        } catch (Throwable th) {
-            log.info("Caught exotic description exception", th);
-            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
-        }
-
-        boolean addedUpgradeSection = false;
-        try {
-            for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-                if (mods.getUpgrade(upgrade) < 1) continue;
-
-                if (!addedUpgradeSection) {
-                    addedUpgradeSection = true;
-                    tooltip.addSectionHeading(StringUtils.getString("FleetScanner", "UpgradeHeader"), Alignment.MID, 6);
-                }
-                upgrade.modifyToolTip(tooltip, fm, mods, upgradesExpand);
-                tooltip.setParaFontDefault();
-                tooltip.setParaFontColor(tooltipColor);
-            }
-        } catch (Throwable th) {
-            log.info("Caught upgrade description exception", th);
-            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
-        }
-
-        if(exoticsExpand || upgradesExpand) {
-            customPanelAPI.addUIElement(tooltip).inTL(-5f, 0);
+            innerPanel.addUIElement(tooltip);
+            scrollTooltip.addCustom(innerPanel, 0f);
+            customPanelAPI.addUIElement(scrollTooltip).inTL(-5f, 0);
             hullmodTooltip.addCustom(customPanelAPI, 0f);
             hullmodTooltip.setForceProcessInput(true);
+        }
+
+        if (!upgradesExpand) {
+            UIComponentAPI lastLabel = null;
+            boolean addedExoticSection = false;
+            try {
+                for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
+                    if (!mods.hasExotic(exotic.getKey())) continue;
+
+                    if (!addedExoticSection) {
+                        addedExoticSection = true;
+                        tooltip.addSectionHeading(StringUtils.getString("FleetScanner", "ExoticHeader"), Alignment.MID, 6);
+                        lastLabel = tooltip.getPrev();
+                    }
+
+                    tooltip.addTitle(exotic.getName(), exotic.getColor()).getPosition().belowLeft(lastLabel, 3);
+                    UIComponentAPI title = tooltip.getPrev();
+                    exotic.modifyToolTip(tooltip, title, fm, mods, exoticsExpand);
+
+                    lastLabel = tooltip.getPrev();
+                    tooltip.setParaFontDefault();
+                    tooltip.setParaFontColor(tooltipColor);
+                }
+            } catch (Throwable th) {
+                log.info("Caught exotic description exception", th);
+                tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
+            }
+        }
+
+        if (!exoticsExpand) {
+            boolean addedUpgradeSection = false;
+            try {
+                for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+                    if (mods.getUpgrade(upgrade) < 1) continue;
+
+                    if (!addedUpgradeSection) {
+                        addedUpgradeSection = true;
+                        tooltip.addSectionHeading(StringUtils.getString("FleetScanner", "UpgradeHeader"), Alignment.MID, 6);
+                    }
+                    upgrade.modifyToolTip(tooltip, ship.getMutableStats(), fm, mods, upgradesExpand);
+                    tooltip.setParaFontDefault();
+                    tooltip.setParaFontColor(tooltipColor);
+                }
+            } catch (Throwable th) {
+                log.info("Caught upgrade description exception", th);
+                tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
+            }
         }
 
         if (!exoticsExpand && !upgradesExpand) {

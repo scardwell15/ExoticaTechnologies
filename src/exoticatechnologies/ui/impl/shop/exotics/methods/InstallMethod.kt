@@ -10,12 +10,12 @@ import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
 class InstallMethod : Method {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): String {
+    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String {
         val stack = Utilities.getExoticChip(member.fleetData.fleet.cargo, exotic.key)
         if (stack != null) {
             Utilities.takeItem(stack)
         } else {
-            exotic.removeItemsFromFleet(member.fleetData.fleet, member)
+            exotic.removeItemsFromFleet(member.fleetData.fleet, member, market)
         }
 
         mods.putExotic(exotic)

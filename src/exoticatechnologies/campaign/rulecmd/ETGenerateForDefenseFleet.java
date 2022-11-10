@@ -1,28 +1,14 @@
 package exoticatechnologies.campaign.rulecmd;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.fleet.FleetMemberType;
-import com.fs.starfarer.api.impl.campaign.ids.Entities;
-import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
-import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.ETModPlugin;
-import exoticatechnologies.campaign.ScanUtils;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
-import exoticatechnologies.campaign.listeners.DerelictsEFScript;
-import exoticatechnologies.modifications.ShipModFactory;
-import exoticatechnologies.modifications.ShipModifications;
-import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 

@@ -4,6 +4,8 @@
     #beyond just making the game easier/harder.
 
   "SpooledFeeders": {
+      "name": "Spooled Feeders",
+
       "exoticClass": "exoticatechnologies.modifications.exotics.impl.SpooledFeeders",
       #the below settings are percentages, so 100 means doubled
       "weaponFireRateBuff": 100.0, #after shooting
@@ -13,9 +15,13 @@
       "debuffActiveTime": 4,
   },
   "PlasmaFluxCatalyst": {
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.PlasmaFluxCatalyst"
+      "name": "Plasma Flux Catalyst",
+
+      "exoticClass": "exoticatechnologies.modifications.exotics.impl.PlasmaFluxCatalyst"
   },
   "DriveFluxVent": {
+    "name": "Drive Flux Vent",
+
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.DriveFluxVent",
 
     "ventSpeedIncrease": 30.0, #buff to flux dissipation while venting
@@ -24,6 +30,8 @@
     "buffDuration": 4.0 #amount of time buff is active after venting
   },
   "EqualizerCore": {
+    "name": "Equalizer Core",
+
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.EqualizerCore",
 
     "recoilReduction": -25.0,
@@ -36,18 +44,24 @@
     "rangeTopBuff": -50 #receive a flat bonus of this.
   },
   "HangarForge": {
+    "name": "Hangar Forge",
+
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HangarForge",
 
     "fighterReplacementBuff": -15.0, #decreases the time to replace a fighter
     "replacementRateDecreaseSpeed": -35.0 #this decreases the rate at which it degrades
   },
   "HangarForgeMissiles": {
+    "name": "Hacked Missile Forge",
+
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HangarForgeMissiles",
 
     "secondsBetweenReloads": 90,
     "percentReloaded": 50.0
   },
   "PhasefieldEngine": {
+    "name": "Phasefield Engine",
+
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasefieldEngine",
 
     "phaseResetInterval": 8, #amount of time unphased before the cost to phase resets
@@ -61,15 +75,19 @@
     #this reduction applies after the other mods here.
   },
   "AlphaSubcore": {
+    "name": "Alpha Subcore",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore"
   },
   "SubsumedAlphaCore": {
+    "name": "Subsumed Alpha Core",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.SubsumedAlphaCore"
   },
   "SubsumedBetaCore": {
+    "name": "Subsumed Beta Core",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.SubsumedBetaCore"
   },
   "SubsumedGammaCore": {
+    "name": "Subsumed Gamma Core",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.SubsumedGammaCore"
   }
 }

@@ -20,10 +20,12 @@ public enum Bandwidth {
     SUPERIOR(150f, "superior", new Color(75,125,255), 16),
     PRISTINE(200f, "pristine", new Color(150,100,200), 8),
     ULTIMATE(250f, "ultimate", new Color(255,100,255), 4),
-    DOMAIN(300f, "domain", new Color(200,255,255), 1);
+    PERFECT(300f, "perfect", new Color(200,255,255), 1),
+    UNKNOWN(350f, "???", new Color(255, 153, 0), 0);
+
     public static final String BANDWIDTH_RESOURCE = "Bandwidth";
     public static final float BANDWIDTH_STEP = 5f;
-    public static final float MAX_BANDWIDTH = DOMAIN.bandwidth;
+    public static final float MAX_BANDWIDTH = PERFECT.bandwidth;
     private static Map<Float, Bandwidth> BANDWIDTH_MAP = null;
     private static final List<Bandwidth> BANDWIDTH_LIST = Arrays.asList(values());
     @Getter private final float bandwidth;
@@ -53,7 +55,7 @@ public enum Bandwidth {
                 return b;
             }
         }
-        return DOMAIN;
+        return NORMAL;
     }
 
     public static Bandwidth generate(float mult) {
@@ -70,7 +72,7 @@ public enum Bandwidth {
                 return b;
             }
         }
-        return DOMAIN;
+        return NORMAL;
     }
 
     public static Map<Float, Bandwidth> getBandwidthMap() {
@@ -83,11 +85,11 @@ public enum Bandwidth {
         return BANDWIDTH_MAP;
     }
 
-    public static String getBandwidthName(float arg) {
+    public static String getName(float arg) {
         return Global.getSettings().getString("BandwidthName", getBandwidthDef(arg).getKey());
     }
 
-    public static Color getBandwidthColor(float arg){
+    public static Color getColor(float arg){
         return getBandwidthDef(arg).getColor();
     }
 

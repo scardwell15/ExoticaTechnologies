@@ -8,11 +8,10 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
-import lombok.Getter;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -21,37 +20,42 @@ import java.util.Map;
 public class AlphaSubcore extends HullmodExotic {
     private static final String ITEM = "alpha_core";
 
-    public AlphaSubcore() {
-        super("et_alphasubcore", "longDescription", Color.cyan);
+    public AlphaSubcore(String key, JSONObject settingsObj) {
+        super(key, settingsObj, "et_alphasubcore", "AlphaSubcore", Color.cyan);
     }
 
     @Override
     public boolean canAfford(CampaignFleetAPI fleet, MarketAPI market) {
-        return Utilities.hasItem(fleet.getCargo(), ITEM);
+        return Utilities.hasItem(fleet.getCargo(), ITEM)
+                || (Misc.getStorageCargo(market) != null && Utilities.hasItem(Misc.getStorageCargo(market), ITEM));
     }
 
     @Override
-    public boolean canApply(FleetMemberAPI fm) {
-        if(fm.getFleetData() == null
-                || fm.getFleetData().getFleet() == null) {
-            return canApply(fm.getVariant());
+    public boolean canApply(FleetMemberAPI member) {
+        if(member.getFleetData() == null
+                || member.getFleetData().getFleet() == null) {
+            return canApply(member.getVariant());
         }
 
-        if (!Misc.isPlayerOrCombinedContainingPlayer(fm.getFleetData().getFleet())) {
-            if(fm.getFleetData().getFleet().getFaction().getId().equals(Factions.HEGEMONY)
-                    || fm.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_CHURCH)
-                    || fm.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_PATH)) {
+        if (!Misc.isPlayerOrCombinedContainingPlayer(member.getFleetData().getFleet())) {
+            if(member.getFleetData().getFleet().getFaction().getId().equals(Factions.HEGEMONY)
+                    || member.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_CHURCH)
+                    || member.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_PATH)) {
                 return false;
             }
-            return canApply(fm.getVariant());
+            return canApply(member.getVariant());
         }
 
-        return canApply(fm.getVariant());
+        return canApply(member.getVariant());
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
+        if (Utilities.hasItem(fleet.getCargo(), ITEM)) {
+            Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
+        } else {
+            Utilities.takeItemQuantity(Misc.getStorageCargo(market), ITEM, 1);
+        }
         return true;
     }
 

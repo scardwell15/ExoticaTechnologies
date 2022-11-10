@@ -9,6 +9,7 @@ import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.util.StringUtils
+import java.awt.Color
 
 class UpgradeDescriptionUIPlugin(
     var parentPanel: CustomPanelAPI,
@@ -18,7 +19,10 @@ class UpgradeDescriptionUIPlugin(
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
-    private var displayDescription: Boolean = true
+
+    companion object {
+        private var displayDescription: Boolean = true
+    }
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -39,21 +43,22 @@ class UpgradeDescriptionUIPlugin(
         val tooltip = mainPanel!!.createUIElement(panelWidth, panelHeight, false)
         descriptionTooltip = tooltip
 
+        val color: Color = upgrade.color
         tooltip.setParaOrbitronLarge()
-        tooltip.addPara(upgrade.name, upgrade.color, 0f)
+        tooltip.addPara(upgrade.name, color, 0f)
         tooltip.setParaFontDefault()
 
         val levelText = StringUtils.getTranslation("UpgradesDialog", "UpgradeLevel")
             .format("level", mods.getUpgrade(upgrade))
             .toStringNoFormats()
-        descriptionTooltip!!.addPara(levelText, upgrade.color,3f)
+        descriptionTooltip!!.addPara(levelText, color,3f)
 
         val buttonText: String
         if (displayDescription) {
             descriptionTooltip!!.addPara(upgrade.description, 3f)
             buttonText = StringUtils.getString("UpgradesDialog", "ModStatsButtonText")
         } else {
-            upgrade.printStatInfoToTooltip(tooltip, member, mods)
+            upgrade.modifyInShop(tooltip, member, mods)
             buttonText = StringUtils.getString("UpgradesDialog", "ModDescriptionButtonText")
         }
 

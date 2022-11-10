@@ -6,53 +6,41 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
+import exoticatechnologies.modifications.Modification;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.Map;
 
-public abstract class Exotic {
+public abstract class Exotic extends Modification {
     public static final String ITEM = "et_exotic";
-    @Getter
-    @Setter
-    public String key;
-    @Getter
-    @Setter
-    public String name;
     @Getter
     @Setter
     protected String description;
     @Getter
     @Setter
     protected String tooltip;
-    @Getter
-    protected JSONObject exoticSettings;
+
+    public Exotic(@NotNull String key, JSONObject settings) {
+        super(key, settings);
+    }
 
     public static Exotic get(String exoticKey) {
         return ExoticsHandler.EXOTICS.get(exoticKey);
     }
 
-    public abstract Color getMainColor();
+    public abstract Color getColor();
 
     public String getTextDescription() {
         return getDescription() + "\n\n" + getTooltip();
-    }
-
-    public void setConfig(JSONObject exoticSettings) throws JSONException {
-        this.exoticSettings = exoticSettings;
-        loadConfig();
-    }
-
-    protected void loadConfig() throws JSONException {
     }
 
     public String getIcon() {
@@ -60,7 +48,7 @@ public abstract class Exotic {
     }
 
     public String getBuffId() {
-        return "ESR_" + getKey();
+        return "ET_" + getKey();
     }
 
     protected boolean isNPC(FleetMemberAPI fm) {
@@ -81,23 +69,15 @@ public abstract class Exotic {
         return false;
     }
 
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         return false;
-    }
-
-    public boolean canApply(FleetMemberAPI fm) {
-        return canApply(fm.getVariant());
-    }
-
-    public boolean canApply(ShipVariantAPI fm) {
-        return true;
     }
 
     public boolean shouldLoad() {
         return true;
     }
 
-    public boolean shouldShow(FleetMemberAPI fm, ShipModifications es, MarketAPI market) {
+    public boolean shouldShow(FleetMemberAPI member, ShipModifications mods, MarketAPI market) {
         return true;
     }
 

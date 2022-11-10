@@ -14,7 +14,8 @@ import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import exoticatechnologies.modifications.exotics.Exotic;
 import lombok.Getter;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -31,16 +32,10 @@ public class SpooledFeeders extends Exotic {
     private static int BUFF_DURATION = 5;
     private static int DEBUFF_DURATION = 4;
 
-    @Getter private final Color mainColor = new Color(0xD93636);
+    @Getter private final Color color = new Color(0xD93636);
 
-    @Override
-    public void loadConfig() throws JSONException {
-        RATE_OF_FIRE_BUFF = (float) exoticSettings.getDouble("weaponFireRateBuff");
-        RATE_OF_FIRE_DEBUFF = (float) exoticSettings.getDouble("weaponFireRateDebuff");
-
-        COOLDOWN = (int) exoticSettings.getInt("buffCooldown");
-        BUFF_DURATION = (int) exoticSettings.getInt("buffActiveTime");
-        DEBUFF_DURATION = (int) exoticSettings.getInt("debuffActiveTime");
+    public SpooledFeeders(@NotNull String key, JSONObject settings) {
+        super(key, settings);
     }
 
     @Override
@@ -49,7 +44,7 @@ public class SpooledFeeders extends Exotic {
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
         return true;
@@ -58,7 +53,10 @@ public class SpooledFeeders extends Exotic {
     @Override
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
         Map<String, Float> resourceCosts = new HashMap<>();
-        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        resourceCosts.put(
+                "&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                        .format("name", getName())
+                        .toStringNoFormats(), 1f);
         return resourceCosts;
     }
 
@@ -147,12 +145,12 @@ public class SpooledFeeders extends Exotic {
                     customData.put(getSpooledId(ship), SpoolState.SPOOLED);
                 }
             } else if (spooled == SpoolState.BUFFED) {
-                Global.getCombatEngine().maintainStatusForPlayerShip(
-                        this.getBuffId(),
-                        "graphics/icons/hullsys/ammo_feeder.png",
-                        StringUtils.getString(this.getKey(), "statusTitle"),
-                        StringUtils.getString(this.getKey(), "statusBuffText"),
-                        false);
+                maintainStatus(ship,
+                    "graphics/icons/hullsys/ammo_feeder.png",
+                    StringUtils.getTranslation(this.getKey(), "statusBuffText")
+                            .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
+                            .toString(),
+                    false);
 
                 ship.getMutableStats().getBallisticRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_BUFF / 100f);
                 ship.getMutableStats().getEnergyRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_BUFF / 100f);
@@ -175,9 +173,13 @@ public class SpooledFeeders extends Exotic {
         }
     }
 
+    public static boolean isPlayerShip(ShipAPI ship) {
+        return Global.getCombatEngine().getPlayerShip() != null
+                && Global.getCombatEngine().getPlayerShip().equals(ship);
+    }
+
     public void maintainStatus(ShipAPI ship, String spriteName, String translation, boolean isDebuff) {
-        if(Global.getCombatEngine().getPlayerShip() != null
-                && Global.getCombatEngine().getPlayerShip().equals(ship)) {
+        if(isPlayerShip(ship)) {
             Global.getCombatEngine().maintainStatusForPlayerShip(
                     this.getBuffId(),
                     "graphics/icons/hullsys/ammo_feeder.png",

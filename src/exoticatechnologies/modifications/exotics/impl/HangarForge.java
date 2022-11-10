@@ -3,7 +3,6 @@ package exoticatechnologies.modifications.exotics.impl;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -13,7 +12,8 @@ import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import exoticatechnologies.modifications.exotics.Exotic;
 import lombok.Getter;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -25,12 +25,10 @@ public class HangarForge extends Exotic {
     private static float RATE_DECREASE_MODIFIER = -35f;
     private static float FIGHTER_REPLACEMENT_TIME_BONUS = -15f;
 
-    @Getter private final Color mainColor = Color.GREEN;
+    @Getter private final Color color = Color.GREEN;
 
-    @Override
-    public void loadConfig() throws JSONException {
-        RATE_DECREASE_MODIFIER = (float) exoticSettings.getDouble("replacementRateDecreaseSpeed");
-        FIGHTER_REPLACEMENT_TIME_BONUS = (float) exoticSettings.getDouble("fighterReplacementBuff");
+    public HangarForge(@NotNull String key, JSONObject settings) {
+        super(key, settings);
     }
 
     @Override
@@ -39,12 +37,17 @@ public class HangarForge extends Exotic {
     }
 
     @Override
-    public boolean canApply(ShipVariantAPI var) {
-        return var.getWings() != null && var.getWings().size() > 0;
+    public boolean canApply(FleetMemberAPI member) {
+        if (member.getStats() != null) {
+            if (member.getStats().getNumFighterBays().getModifiedInt() > 0) {
+                return canApply(member.getVariant());
+            }
+        }
+        return false;
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
         return true;
     }

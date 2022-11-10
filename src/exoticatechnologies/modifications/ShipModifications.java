@@ -228,8 +228,8 @@ public class ShipModifications {
         return this.upgrades.getHullSizeFactor(hullSize);
     }
 
-    public boolean isMaxLevel(FleetMemberAPI shipSelected, Upgrade upgrade) {
-        return this.getUpgrade(upgrade) >= upgrade.getMaxLevel(shipSelected.getHullSpec().getHullSize());
+    public boolean isMaxLevel(FleetMemberAPI member, Upgrade upgrade) {
+        return this.getUpgrade(upgrade) >= upgrade.getMaxLevel(member.getHullSpec().getHullSize());
     }
 
     @Override

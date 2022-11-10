@@ -12,6 +12,8 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -30,7 +32,11 @@ public class PlasmaFluxCatalyst extends Exotic {
         MAX_FLUX_EQUIPMENT.put(ShipAPI.HullSize.CAPITAL_SHIP, 50);
     }
 
-    @Getter private final Color mainColor = new Color(0x00BBFF);
+    @Getter private final Color color = new Color(0x00BBFF);
+
+    public PlasmaFluxCatalyst(@NotNull String key, JSONObject settings) {
+        super(key, settings);
+    }
 
     @Override
     public boolean canAfford(CampaignFleetAPI fleet, MarketAPI market) {
@@ -38,7 +44,7 @@ public class PlasmaFluxCatalyst extends Exotic {
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
         return true;
@@ -47,7 +53,10 @@ public class PlasmaFluxCatalyst extends Exotic {
     @Override
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
         Map<String, Float> resourceCosts = new HashMap<>();
-        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        resourceCosts.put(
+                "&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                        .format("name", getName())
+                        .toStringNoFormats(), 1f);
         return resourceCosts;
     }
 

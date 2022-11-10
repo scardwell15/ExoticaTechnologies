@@ -115,14 +115,14 @@ public class ScanUtils {
         if (!(mods.hasUpgrades() || mods.hasExotics())) {
             StringUtils.getTranslation("FleetScanner", "ShipHasBandwidth")
                     .format("name", shipName, color)
-                    .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getBandwidthColor(bandwidth))
+                    .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getColor(bandwidth))
                     .addToTextPanel(textPanel);
             return;
         }
 
         StringUtils.getTranslation("FleetScanner", "ShipHasUpgrades")
                 .format("name", shipName, color)
-                .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getBandwidthColor(bandwidth))
+                .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getColor(bandwidth))
                 .addToTextPanel(textPanel);
 
         if (mods.hasUpgrades()) {
@@ -263,7 +263,7 @@ public class ScanUtils {
             shipText.addPara(member.getHullSpec().getNameWithDesignationWithDashClass(), 0);
             float bandwidth = mods.getBaseBandwidth();
             StringUtils.getTranslation("FleetScanner", "ShipBandwidthShort")
-                    .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getBandwidthColor(bandwidth))
+                    .format("bandwidth", BandwidthUtil.getFormattedBandwidthWithName(bandwidth), Bandwidth.getColor(bandwidth))
                     .addToTooltip(shipText, pad);
             rowHolder.addUIElement(shipText).rightOfTop(shipImg, pad);
 
@@ -311,7 +311,7 @@ public class ScanUtils {
 
         @Override
         public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-            tooltip.addPara(exotic.getName(), exotic.getMainColor(), 0f);
+            tooltip.addPara(exotic.getName(), exotic.getColor(), 0f);
             tooltip.addPara(exotic.getTextDescription(), 0f);
         }
     }

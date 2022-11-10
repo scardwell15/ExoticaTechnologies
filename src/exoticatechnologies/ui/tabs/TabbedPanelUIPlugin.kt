@@ -15,7 +15,6 @@ open class TabbedPanelUIPlugin(var parentPanel: CustomPanelAPI) : InteractiveUIP
     private var activeTabElement: TooltipMakerAPI? = null
     private var activeTabPlugin: TabPanelUIPlugin? = null
 
-    //todo - allow override plugins for tab holder and inner panel
     fun layoutPanels(tooltip: TooltipMakerAPI, members: List<TabPanelUIPlugin>, tabHolderPlugin: BaseUIPanelPlugin? = null, holderPanelPlugin: BaseUIPanelPlugin? = null): CustomPanelAPI {
         val myPanel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         val innerTooltip = myPanel.createUIElement(panelWidth, panelHeight, false)

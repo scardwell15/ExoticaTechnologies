@@ -14,7 +14,8 @@ import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -31,17 +32,10 @@ public class EqualizerCore extends Exotic {
     private static int RANGE_LIMIT_TOP = 800;
     private static int RANGE_TOP_BUFF = -50; //per 100 units
 
-    @Getter private final Color mainColor = Color.orange.darker();
+    @Getter private final Color color = Color.orange.darker();
 
-    @Override
-    public void loadConfig() throws JSONException {
-        RECOIL_REDUCTION = (float) exoticSettings.getDouble("recoilReduction");
-        TURN_RATE_BUFF = (float) exoticSettings.getDouble("weaponTurnRateIncrease");
-
-        RANGE_LIMIT_BOTTOM = (int) exoticSettings.getInt("rangeBottomBounds");
-        RANGE_BOTTOM_BUFF = (int) exoticSettings.getInt("rangeBottomBuff");
-        RANGE_LIMIT_TOP = (int) exoticSettings.getInt("rangeTopBounds");
-        RANGE_TOP_BUFF = (int) exoticSettings.getInt("rangeTopBuff");
+    public EqualizerCore(@NotNull String key, JSONObject settings) {
+        super(key, settings);
     }
 
     @Override
@@ -50,7 +44,7 @@ public class EqualizerCore extends Exotic {
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
         return true;
@@ -59,7 +53,10 @@ public class EqualizerCore extends Exotic {
     @Override
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
         Map<String, Float> resourceCosts = new HashMap<>();
-        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        resourceCosts.put(
+                "&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                        .format("name", getName())
+                        .toStringNoFormats(), 1f);
         return resourceCosts;
     }
 

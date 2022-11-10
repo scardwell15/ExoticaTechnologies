@@ -6,17 +6,17 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
-import exoticatechnologies.modifications.upgrades.methods.*;
+import exoticatechnologies.ui.impl.shop.upgrades.methods.*;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin;
 import exoticatechnologies.ui.impl.shop.upgrades.UpgradeShopUIPlugin;
-import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.*;
 
 @Log4j
@@ -55,39 +55,39 @@ public class UpgradesHandler {
 
                 if(UPGRADES.containsKey(upgKey)) continue;
 
-                JSONObject upgObj = (JSONObject) settings.getJSONObject(upgKey);
+                Upgrade upgrade;
+                try {
+                    JSONObject upgradeSettings = settings.getJSONObject(upgKey);
 
-                Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(upgObj.getString("upgradeClass"));
-                Upgrade upgrade = (Upgrade) clzz.newInstance();
+                    if (upgradeSettings.has("upgradeClass")) {
+                        Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(upgradeSettings.getString("upgradeClass"));
 
-                if(upgrade.shouldLoad()) {
-                    upgrade.setKey(upgKey);
-                    upgrade.setName(StringUtils.getString(upgKey, "name"));
-                    upgrade.setDescription(StringUtils.getString(upgKey, "description"));
-                    upgrade.setConfig(upgObj);
+                        //magic to get around reflection block
+                        upgrade = (Upgrade) MethodHandles.lookup().findConstructor(clzz, MethodType.methodType(void.class, String.class, JSONObject.class))
+                                .invoke(upgKey, upgradeSettings);
+                        if (!upgrade.shouldLoad()) {
+                            upgrade = null;
+                        }
+                    } else {
+                        upgrade = new Upgrade(upgKey, upgradeSettings);
 
-                    UpgradesHandler.addUpgrade(upgrade);
+                        if (!upgrade.shouldLoad()) {
+                            upgrade = null;
+                        }
+                    }
 
-                    log.info(String.format("loaded upgrade [%s]", upgrade.getName()));
+                    if (upgrade != null) {
+                        UpgradesHandler.addUpgrade(upgrade);
+
+                        log.info(String.format("loaded upgrade [%s]", upgrade.getName()));
+                    }
+                } catch (JSONException ex) {
+                    String logStr = String.format("Upgrade [%s] had an error.", upgKey);
+                    log.error(logStr);
+                    throw new RuntimeException(logStr, ex);
                 }
             }
-        } catch (JSONException | IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public static void loadConfigs() {
-        try {
-            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/upgrades.json", "exoticatechnologies");
-
-            for (Upgrade upgrade : UPGRADES_LIST) {
-                if (!settings.has(upgrade.getKey())) {
-                    continue;
-                }
-
-                upgrade.setConfig(settings.getJSONObject(upgrade.getKey()));
-            }
-        } catch (JSONException | IOException ex) {
+        } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
     }

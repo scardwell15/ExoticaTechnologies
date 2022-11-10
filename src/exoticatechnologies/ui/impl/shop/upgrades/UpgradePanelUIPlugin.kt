@@ -9,8 +9,8 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
-import exoticatechnologies.modifications.upgrades.methods.ChipMethod
-import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod
+import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
+import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.chips.ChipPanelUIPlugin
@@ -75,8 +75,9 @@ class UpgradePanelUIPlugin(
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
-        val displayString = method.apply(member, mods, upgrade, market)
+        method.apply(member, mods, upgrade, market)
 
+        /*
         val tooltip = mainPanel!!.createUIElement(panelWidth / 2, panelHeight, false)
         val timedPlugin = TimedUIPlugin(0.75f, UpgradedUIListener(this, tooltip))
 
@@ -87,7 +88,11 @@ class UpgradePanelUIPlugin(
 
         upgradedPanel.addUIElement(upgradedTooltip).inTL(0f, 0f)
         tooltip.addCustom(upgradedPanel, 0f)
-        mainPanel!!.addUIElement(tooltip).inBR(0f, 0f)
+        mainPanel!!.addUIElement(tooltip).inBR(0f, 0f) */
+
+        descriptionPlugin!!.resetDescription()
+        resourcesPlugin!!.redisplayResourceCosts(method)
+        methodsPlugin!!.createTooltip()
     }
 
     fun showChipsPanel() {
@@ -116,19 +121,8 @@ class UpgradePanelUIPlugin(
 
         val method = ChipMethod()
         method.upgradeChipStack = stack
-        val displayString = method.apply(member, mods, upgrade, market)
 
-        val tooltip = mainPanel!!.createUIElement(panelWidth / 2, panelHeight, false)
-        val timedPlugin = TimedUIPlugin(0.75f, UpgradedUIListener(this, tooltip))
-
-        val upgradedPanel: CustomPanelAPI =
-            mainPanel!!.createCustomPanel(panelWidth / 2, panelHeight, timedPlugin)
-        val upgradedTooltip = upgradedPanel.createUIElement(panelWidth / 2, panelHeight, false)
-        upgradedTooltip.addPara(displayString, 0f).position.inMid()
-
-        upgradedPanel.addUIElement(upgradedTooltip).inTL(0f, 0f)
-        tooltip.addCustom(upgradedPanel, 0f)
-        mainPanel!!.addUIElement(tooltip).inBR(0f, 0f)
+        doUpgradeWithMethod(upgrade, method)
     }
 
     private class MethodListener(val mainPlugin: UpgradePanelUIPlugin): UpgradeMethodsUIPlugin.Listener() {

@@ -2,12 +2,10 @@ package exoticatechnologies.cargo;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import lombok.SneakyThrows;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 /**
  * thank you to Schaf-Unschaf for the idea

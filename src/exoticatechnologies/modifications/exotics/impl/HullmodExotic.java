@@ -8,22 +8,24 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class HullmodExotic extends Exotic {
     private final String hullmodId;
-    private final String translationKey;
+    private final String statDescriptionKey;
     private final Color mainColor;
 
-    public HullmodExotic(String hullmodId, String translationKey, Color mainColor) {
+    public HullmodExotic(String key, JSONObject settingsObj, String hullmodId, String statDescriptionKey, Color mainColor) {
+        super(key, settingsObj);
         this.hullmodId = hullmodId;
-        this.translationKey = translationKey;
+        this.statDescriptionKey = statDescriptionKey;
         this.mainColor = mainColor;
     }
 
     @Override
-    public Color getMainColor() {
+    public Color getColor() {
         return mainColor;
     }
 
@@ -54,7 +56,7 @@ public class HullmodExotic extends Exotic {
     @Override
     public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
         if (expand) {
-            StringUtils.getTranslation(this.getKey(), translationKey)
+            StringUtils.getTranslation(this.getKey(), statDescriptionKey)
                     .addToTooltip(tooltip, title);
         }
     }

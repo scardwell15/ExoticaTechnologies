@@ -115,7 +115,7 @@ abstract class ResourcesUIPlugin(
     fun addStoryPointsCost(tooltip: TooltipMakerAPI, cost: Float) {
         if (cost > 0) {
             StringUtils.getTranslation("CommonOptions", "StoryPointCost")
-                .format("storyPoints", StringUtils.formatCost(cost))
+                .format("storyPoints", StringUtils.formatCost(cost), Misc.getStoryOptionColor())
                 .addToTooltip(tooltip)
         }
     }

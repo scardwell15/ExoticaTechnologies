@@ -1,24 +1,15 @@
 package exoticatechnologies.ui.impl.shop.upgrades
 
-import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.campaign.CargoAPI
-import com.fs.starfarer.api.campaign.SpecialItemData
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
-import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
-import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod
-import exoticatechnologies.ui.InteractiveUIPanelPlugin
+import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.impl.shop.ResourcesUIPlugin
-import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.Utilities
 
 class UpgradeResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,

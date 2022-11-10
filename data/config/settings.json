@@ -1,5 +1,5 @@
 {
-	#base settings for everything ESR related
+	#base settings for everything ET related
 
 	"upgradeAlwaysSucceed":true, #does upgrading always succeed?
 		"baseFailureMinFactor":0.4, #a multiplier applied to the chance to fail. the first upgrade always succeeds, but failure chance increases for every upgrade after.
@@ -62,6 +62,7 @@
 			"ForcedOvertime": "graphics/icons/upgrades/forcedovertime.png",
 			"HyperactiveCapacitors": "graphics/icons/upgrades/hyperactivecapacitors.png",
 			"InfernalEngines": "graphics/icons/upgrades/infernalengines.png",
+			"IronShell": "graphics/icons/upgrades/ironshell.png",
 			"OverchargedShields": "graphics/icons/upgrades/overchargedshields.png",
 			"WeldedArmor": "graphics/icons/upgrades/weldedarmor.png",
 			"TracerRecoilCalculator": "graphics/icons/upgrades/tracerrecoilcalculator.png",

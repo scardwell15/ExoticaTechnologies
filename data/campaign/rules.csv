@@ -81,8 +81,7 @@ AddText ""Generated mods for new fleet.""",,,
 ,,,,,,
 # DebrisField,,,,,,
 ETDebrisFieldGen,PopulateSalvageOptions1,"$customType == debris_field_shared
-!$entity.etGeneratedForDebrisField","AddOption 2 ETScanDebrisField ""Scan the debris field for Exotica technologies.""
-ETGenerateForDebrisField
+!$entity.etGeneratedForDebrisField","ETGenerateForDebrisField
 $entity.etGeneratedForDebrisField = true 0",,,
 ETScanDebrisField,DialogOptionSelected,"$option==ETScanDebrisField","ETScanDebrisField",,,
 "#END DebrisField",,,,,,

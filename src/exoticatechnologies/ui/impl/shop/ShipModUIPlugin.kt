@@ -29,6 +29,10 @@ class ShipModUIPlugin(
     private var tabbedShopPlugin: TabbedPanelUIPlugin? = null
     private var activeShopPlugin: TabPanelUIPlugin? = null
 
+    companion object {
+        private var lastTabOpen: TabPanelUIPlugin? = null
+    }
+
     fun layoutPanels(): CustomPanelAPI {
         val outerPanel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         val outerTooltip = outerPanel.createUIElement(panelWidth, panelHeight, false)
@@ -97,6 +101,8 @@ class ShipModUIPlugin(
         shopPanel.position.belowLeft(shipHeaderPanel, opad)
 
         tabbedShopPlugin!!.addListener { plugin ->
+            lastTabOpen = plugin
+            activeShopPlugin = plugin
             tabHolderPlugin.lineColor = plugin.getTabButtonUIPlugin().baseColor
             if (plugin is ShopMenuUIPlugin) {
                 plugin.member = member
@@ -104,6 +110,19 @@ class ShipModUIPlugin(
                 plugin.market = dialog.interactionTarget.market
             }
         }
+
+        var openTab = lastTabOpen
+        openTab?.let {
+            var newTab: ShopMenuUIPlugin? = null
+            for (plugin: ShopMenuUIPlugin in ShopManager.shopMenuUIPlugins) {
+                if (plugin::class == it::class) {
+                    newTab = plugin
+                }
+            }
+            openTab = newTab
+        }
+
+        tabbedShopPlugin!!.pickedTab(openTab ?: ShopManager.shopMenuUIPlugins[0])
 
         innerPanel!!.addUIElement(tooltip).inTL(0f, 0f)
 

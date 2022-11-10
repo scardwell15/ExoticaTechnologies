@@ -95,7 +95,7 @@ public class UpgradesGenerator {
         ETUpgrades upgrades = new ETUpgrades();
 
         float upgradeChance = CHANCE_OF_UPGRADES;
-        if (factionUpgradeChances.containsKey(faction)) {
+        if (faction != null && factionUpgradeChances.containsKey(faction)) {
             upgradeChance = factionUpgradeChances.get(faction);
         }
 
@@ -106,7 +106,7 @@ public class UpgradesGenerator {
         Random random = ShipModFactory.getRandom();
         if (random.nextFloat() < upgradeChance) {
             float perUpgradeMult = 1.0f;
-            if (factionPerUpgradeMult.containsKey(faction)) {
+            if (faction != null && factionPerUpgradeMult.containsKey(faction)) {
                 perUpgradeMult = factionPerUpgradeMult.get(faction);
             }
             perUpgradeMult *= (1 + smodCount * 0.5f);

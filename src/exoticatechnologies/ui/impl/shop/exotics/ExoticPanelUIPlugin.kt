@@ -7,16 +7,12 @@ import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
-import exoticatechnologies.modifications.upgrades.Upgrade
-import exoticatechnologies.modifications.upgrades.methods.ChipMethod
-import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
 import exoticatechnologies.ui.impl.shop.exotics.methods.DestroyMethod
 import exoticatechnologies.ui.impl.shop.exotics.methods.InstallMethod
 import exoticatechnologies.ui.impl.shop.exotics.methods.Method
 import exoticatechnologies.ui.impl.shop.exotics.methods.RecoverMethod
-import exoticatechnologies.ui.impl.shop.upgrades.UpgradePanelUIPlugin
 import exoticatechnologies.util.RenderUtils
 import java.awt.Color
 
@@ -81,9 +77,9 @@ class ExoticPanelUIPlugin(
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
-        val displayString = method.apply(member, mods, exotic)
+        val displayString = method.apply(member, mods, exotic, market)
 
-        val tooltip = mainPanel!!.createUIElement(panelWidth / 2, panelHeight, false)
+        /*val tooltip = mainPanel!!.createUIElement(panelWidth / 2, panelHeight, false)
         val timedPlugin = TimedUIPlugin(0.75f, AppliedUIListener(this, tooltip))
 
         val upgradedPanel: CustomPanelAPI =
@@ -93,7 +89,10 @@ class ExoticPanelUIPlugin(
 
         upgradedPanel.addUIElement(upgradedTooltip).inTL(0f, 0f)
         tooltip.addCustom(upgradedPanel, 0f)
-        mainPanel!!.addUIElement(tooltip).inBR(0f, 0f)
+        mainPanel!!.addUIElement(tooltip).inBR(0f, 0f)*/
+
+        resourcesPlugin!!.redisplayResourceCosts(method)
+        methodsPlugin!!.createTooltip()
     }
 
     private class MethodListener(val mainPlugin: ExoticPanelUIPlugin) : ExoticMethodsUIPlugin.Listener() {

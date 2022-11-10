@@ -1,7 +1,15 @@
 {
-  #upgrade settings
   "WeldedArmor": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.WeldedArmor",
+    "name": "Welded Armor",
+    "color": [90, 225, 60],
+    "bandwidthPerLevel": 15,
+    "stats": [
+      {"id": "hull", "scalingEffect": 30},
+      {"id": "armor", "scalingEffect": 30},
+      {"id": "empDamageTaken", "scalingEffect": 16, "startingLevel": 3},
+      {"id": "engineHealth", "scalingEffect": -16, "startingLevel": 3},
+      {"id": "weaponHealth", "scalingEffect": -16, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "volatiles": 1.0,
       "metals": 3.5,
@@ -10,7 +18,16 @@
     }
   },
   "CommissionedCrews": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.CommissionedCrews",
+    "name": "Commissioned Crews",
+    "color": [230, 200, 25],
+    "bandwidthPerLevel": 5,
+    "stats": [
+      {"id": "crewSalary", "scalingEffect": 25},
+      {"id": "suppliesPerMonth", "scalingEffect": -30},
+      {"id": "repairRateAfterBattle", "scalingEffect": 20},
+      {"id": "fuelUse", "scalingEffect": -20},
+      {"id": "suppliesToRecover", "scalingEffect": 20, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "supplies": 3.0,
       "volatiles": 1.0,
@@ -20,7 +37,17 @@
     }
   },
   "InfernalEngines": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.InfernalEngines",
+    "name": "Infernal Engines",
+    "color": [255, 225, 95],
+    "bandwidthPerLevel": 10,
+    "stats": [
+      {"id": "maxSpeed", "scalingEffect": 15},
+      {"id": "acceleration", "scalingEffect": 30},
+      {"id": "turnRate", "scalingEffect": 30},
+      {"id": "burnLevel", "scalingEffect": 30},
+      {"id": "deceleration", "scalingEffect": -24, "startingLevel": 3},
+      {"id": "fuelUse", "scalingEffect": 16, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "volatiles": 3.0,
       "organics": 1.0,
@@ -30,7 +57,16 @@
     }
   },
   "ForcedOvertime": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.ForcedOvertime",
+    "name": "Forced Overtime",
+    "color": [124, 124, 124],
+    "bandwidthPerLevel": 5,
+    "stats": [
+      {"id": "crRecoveryRate", "scalingEffect": 30},
+      {"id": "peakPerformanceTime", "scalingEffect": 30},
+      {"id": "crLossRate", "scalingEffect": -24},
+      {"id": "crToDeploy", "scalingEffect": 15, "startingLevel": 3},
+      {"id": "minCrew", "scalingEffect": 30, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "supplies": 3.0,
       "organics": 2.0,
@@ -38,7 +74,14 @@
     }
   },
   "HyperactiveCapacitors": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.HyperactiveCapacitors",
+    "name": "Hyperactive Capacitors",
+    "color": [143, 86, 182],
+    "bandwidthPerLevel": 15,
+    "stats": [
+      {"id": "fluxCapacity", "scalingEffect": 25},
+      {"id": "ventSpeed", "scalingEffect": 50},
+      {"id": "weaponFluxCost", "scalingEffect": 24, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "supplies": 1.0,
       "volatiles": 2.0,
@@ -49,7 +92,16 @@
     }
   },
   "OverchargedShields": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.OverchargedShields",
+    "name": "Overcharged Shields",
+    "color": [56, 187, 166],
+    "bandwidthPerLevel": 10,
+    "stats": [
+      {"id": "shieldFluxDam", "scalingEffect": -20},
+      {"id": "shieldArc", "scalingEffect": 40},
+      {"id": "shieldUnfoldRate", "scalingEffect": 40},
+      {"id": "shieldUpkeep", "scalingEffect": 32, "startingLevel": 3},
+      {"id": "shieldTurnRate", "scalingEffect": -16, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "supplies": 2.0,
       "volatiles": 1.0,
@@ -59,7 +111,15 @@
     }
   },
   "TracerRecoilCalculator": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.TracerRecoilCalculator",
+    "name": "Tracer Recoil Calculator",
+    "color": [215, 130, 60],
+    "bandwidthPerLevel": 5,
+    "stats": [
+      {"id": "recoilPerShot", "scalingEffect": -30},
+      {"id": "maxRecoil", "scalingEffect": -20},
+      {"id": "weaponHealth", "scalingEffect": 16},
+      {"id": "weaponTurnRate", "scalingEffect": -20, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "hand_weapons": 2.5,
       "volatiles": 1.0,
@@ -68,7 +128,14 @@
     }
   },
   "AdvancedFluxCoils": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.AdvancedFluxCoils",
+    "name": "Advanced Flux Coils",
+    "bandwidthPerLevel": 20,
+    "color": [105, 74, 227],
+    "stats": [
+      {"id": "fluxCapacity", "scalingEffect": 25},
+      {"id": "ventSpeed", "scalingEffect": 25},
+      {"id": "weaponFluxCost", "scalingEffect": -10}
+    ],
     "resourceRatios": {
       "supplies": 1.5,
       "volatiles": 2.0,
@@ -78,13 +145,21 @@
       "heavy_machinery": 2.0
     },
     "allowedFactions": [
-        "remnant",
-        "omega",
-        "derelict"
+      "remnant",
+      "omega",
+      "derelict"
     ]
   },
   "DerelictWeaponAssistant": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.DerelictWeaponAssistant",
+    "name": "Derelict Weapon Assistant",
+    "color": [170, 200, 75],
+    "bandwidthPerLevel": 10,
+    "stats": [
+      {"id": "recoilPerShot", "scalingEffect": -30},
+      {"id": "maxRecoil", "scalingEffect": -30},
+      {"id": "projectileSpeed", "scalingEffect": 20},
+      {"id": "ballisticFireRate", "scalingEffect": 10}
+    ],
     "resourceRatios": {
       "hand_weapons": 3.0,
       "supplies": 1.0,
@@ -97,7 +172,14 @@
     ]
   },
   "AuxiliarySensors": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.AuxiliarySensors",
+    "name": "Auxiliary Sensors",
+    "color": [178, 178, 178],
+    "bandwidthPerLevel": 2.5,
+    "stats": [
+      {"id": "sensorStrength", "scalingEffect": 50},
+      {"id": "sensorProfile", "scalingEffect": 12, "startingLevel": 3},
+      {"id": "minCrew", "scalingEffect": 16, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "rare_metals": 3.0,
       "metals": 2.0,
@@ -105,12 +187,38 @@
     }
   },
   "InterferenceShielding": {
-    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.InterferenceShielding",
+    "name": "Interference Shielding",
+    "color": [93, 59, 210],
+    "bandwidthPerLevel": 2.5,
+    "stats": [
+      {"id": "sensorProfile", "scalingEffect": -50},
+      {"id": "suppliesPerMonth", "scalingEffect": 16, "startingLevel": 3}
+    ],
     "resourceRatios": {
       "rare_metals": 3.0,
       "metals": 2.0,
       "volatiles": 1.0,
       "supplies": 2.5
     }
+  },
+  "IronShell": {
+    "name": "Iron Shell",
+    "color": [252,173,60],
+    "bandwidthPerLevel": 10,
+    "stats": [
+      {"id": "armorDamageTaken", "scalingEffect": -10},
+      {"id": "heDamageTaken", "scalingEffect": -20},
+      {"id": "kineticDamageTaken", "scalingEffect": 20, "startingLevel": 3},
+      {"id": "energyDamageTaken", "scalingEffect": 20, "startingLevel": 3},
+      {"id": "fragDamageTaken", "scalingEffect": 20, "startingLevel": 3}
+    ],
+    "resourceRatios": {
+      "volatiles": 1.5,
+      "metals": 2.0,
+      "rare_metals": 4.0
+    },
+    "allowedFactions": [
+      "ironshell"
+    ]
   }
 }

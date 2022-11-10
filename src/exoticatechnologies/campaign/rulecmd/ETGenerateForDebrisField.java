@@ -34,7 +34,11 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
 
     @Override
     public boolean doesCommandAddOptions() {
-        return false;
+        return true;
+    }
+
+    public int getOptionOrder(List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
+        return 2;
     }
 
     @Override
@@ -74,7 +78,6 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
                         Long seed = ScanUtils.getPerShipDataSeed(shipData, i);
                         if (seed == null) continue;
 
-
                         log.info("debris field: generating for fmId " + shipData.fleetMemberId);
 
                         ShipVariantAPI var = shipData.getVariant();
@@ -84,7 +87,7 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
 
                         ShipModFactory.getRandom().setSeed(seed);
 
-                        ShipModifications mods = ShipModFactory.generateRandom(var, null);
+                        ShipModifications mods = ShipModFactory.generateRandom(fm);
                         String entityId = ScanUtils.getPerShipDataId(shipData, i);
                         ETModPlugin.saveData(entityId, mods);
 
@@ -103,10 +106,9 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
         if(notableModsGenerated) {
             StringUtils.getTranslation("FleetScanner", "DebrisFieldHasNotableMods")
                     .addToTextPanel(dialog.getTextPanel());
-            dialog.getOptionPanel().setEnabled("ETScanDebrisField", true);
-        } else {
-            dialog.getOptionPanel().setEnabled("ETScanDebrisField", false);
+            dialog.getOptionPanel().addOption(StringUtils.getString("FleetScanner","DebrisFieldScanOption"), "ETScanDebrisField");
         }
+
         return false;
     }
 }

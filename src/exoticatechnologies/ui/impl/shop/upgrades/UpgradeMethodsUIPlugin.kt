@@ -10,12 +10,11 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
-import exoticatechnologies.modifications.upgrades.methods.ChipMethod
-import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod
+import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
+import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.StringTooltip
-import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.StringUtils
 
 class UpgradeMethodsUIPlugin(

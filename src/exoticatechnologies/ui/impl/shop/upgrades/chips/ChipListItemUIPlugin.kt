@@ -9,9 +9,10 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
-import exoticatechnologies.modifications.upgrades.methods.ChipMethod
+import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
+import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
 

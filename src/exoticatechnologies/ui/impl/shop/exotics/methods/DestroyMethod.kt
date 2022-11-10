@@ -7,10 +7,9 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.Utilities
 
 open class DestroyMethod : Method {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): String {
+    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String {
         mods.removeExotic(exotic)
         exotic.onDestroy(member)
 
@@ -60,7 +59,7 @@ open class DestroyMethod : Method {
     ): Map<String, Float>? {
         if (hovered) {
             if (exotic.getExtraBandwidth(member, mods) > 0) {
-                val resourceCosts: MutableMap<String, Float> = exotic.getResourceCostMap(member, mods, market)
+                val resourceCosts: MutableMap<String, Float> = mutableMapOf()
                 resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = -exotic.getExtraBandwidth(member, mods)
                 return resourceCosts
             }

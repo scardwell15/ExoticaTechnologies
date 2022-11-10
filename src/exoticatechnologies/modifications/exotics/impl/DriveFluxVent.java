@@ -10,11 +10,12 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
-import exoticatechnologies.modifications.exotics.Exotic;
 import lombok.Getter;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 import org.lazywizard.lazylib.VectorUtils;
 
 import java.awt.*;
@@ -29,14 +30,10 @@ public class DriveFluxVent extends Exotic {
     private static float FLUX_LEVEL_REQUIRED = 40f;
     private static float SPEED_BUFF_TIME = 4f;
 
-    @Getter private final Color mainColor = new Color(0x9D62C4);
+    @Getter private final Color color = new Color(0x9D62C4);
 
-    @Override
-    public void loadConfig() throws JSONException {
-        VENT_SPEED_INCREASE = (float) exoticSettings.getDouble("ventSpeedIncrease");
-        FORWARD_SPEED_INCREASE = (int) exoticSettings.getInt("forwardSpeedIncrease");
-        FLUX_LEVEL_REQUIRED = (float) exoticSettings.getDouble("fluxRequiredForBuff");
-        SPEED_BUFF_TIME = (float) exoticSettings.getDouble("buffDuration");
+    public DriveFluxVent(@NotNull String key, JSONObject settings) {
+        super(key, settings);
     }
 
     @Override
@@ -45,7 +42,7 @@ public class DriveFluxVent extends Exotic {
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
         return true;
@@ -54,7 +51,10 @@ public class DriveFluxVent extends Exotic {
     @Override
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
         Map<String, Float> resourceCosts = new HashMap<>();
-        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        resourceCosts.put(
+                "&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                        .format("name", getName())
+                        .toStringNoFormats(), 1f);
         return resourceCosts;
     }
 

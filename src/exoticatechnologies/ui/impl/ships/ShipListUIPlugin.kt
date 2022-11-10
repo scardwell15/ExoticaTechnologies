@@ -9,7 +9,6 @@ import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
-import java.awt.Color
 
 class ShipListUIPlugin(parentPanel: CustomPanelAPI) : ListUIPanelPlugin<FleetMemberAPI>(parentPanel) {
     override val listHeader = StringUtils.getTranslation("ShipListDialog", "ShipListHeader").toString()

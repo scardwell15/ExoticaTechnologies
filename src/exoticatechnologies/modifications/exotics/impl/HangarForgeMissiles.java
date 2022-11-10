@@ -6,17 +6,16 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
-import data.scripts.util.MagicSettings;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.awt.Color;
 import java.util.*;
@@ -30,15 +29,10 @@ public class HangarForgeMissiles extends Exotic {
 
     private static final Set<String> blacklistedWeapons = new HashSet<>();
 
-    @Getter private final Color mainColor = new Color(0xFF8902);
+    @Getter private final Color color = new Color(0xFF8902);
 
-    @Override
-    public void loadConfig() throws JSONException {
-        SECONDS_PER_RELOAD = (int) exoticSettings.getInt("secondsBetweenReloads");
-        PERCENT_RELOADED = (float) exoticSettings.getDouble("percentReloaded");
-
-        List<String> blacklist = MagicSettings.getList("exoticatechnologies", "exotic_HangarForgeMissiles_weaponBlacklist");
-        blacklistedWeapons.addAll(blacklist);
+    public HangarForgeMissiles(@NotNull String key, JSONObject settings) {
+        super(key, settings);
     }
 
     @Override
@@ -48,7 +42,7 @@ public class HangarForgeMissiles extends Exotic {
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         fleet.getCargo().getCredits().subtract(150000);
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
         return true;
@@ -57,8 +51,10 @@ public class HangarForgeMissiles extends Exotic {
     @Override
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
         Map<String, Float> resourceCosts = new HashMap<>();
-        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
-        resourceCosts.put(Commodities.CREDITS, 150000f);
+        resourceCosts.put(
+                "&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                        .format("name", getName())
+                        .toStringNoFormats(), 1f);
         return resourceCosts;
     }
 
@@ -96,14 +92,14 @@ public class HangarForgeMissiles extends Exotic {
         if (reloadInterval == null) {
             reloadInterval = createReloadInterval(ship);
 
-            //set up weapons
+            //reduce ammo for weapons
             for(WeaponAPI weapon : ship.getAllWeapons()) {
 
                 if (blacklistedWeapons.contains(weapon.getId())) {
                     continue;
                 }
 
-                if(weapon.getAmmoTracker() != null && weapon.getAmmoTracker().usesAmmo() && weapon.getAmmoTracker().getAmmoPerSecond() == 0f) {
+                if(shouldAffectWeapon(weapon)) {
                     int wepMaxAmmo = weapon.getMaxAmmo();
 
                     int newMaxAmmo = (int) Math.ceil(wepMaxAmmo * PERCENT_RELOADED / 100f);
@@ -126,7 +122,7 @@ public class HangarForgeMissiles extends Exotic {
         if(reloadInterval.intervalElapsed()) {
             boolean addedAmmo = false;
             for(WeaponAPI weapon : ship.getAllWeapons()) {
-                if(weapon.getAmmoTracker() != null && weapon.getAmmoTracker().usesAmmo() && weapon.getAmmoTracker().getAmmoPerSecond() == 0f) {
+                if(shouldAffectWeapon(weapon)) {
                     int ammo = weapon.getAmmoTracker().getAmmo();
                     int maxAmmo = weapon.getAmmoTracker().getMaxAmmo();
 
@@ -154,5 +150,12 @@ public class HangarForgeMissiles extends Exotic {
                 reloadInterval.setInterval(10f, 10f);
             }
         }
+    }
+
+    private boolean shouldAffectWeapon(WeaponAPI weapon) {
+        return weapon.getAmmoTracker() != null
+                && weapon.getAmmoTracker().usesAmmo()
+                && weapon.getAmmoTracker().getAmmoPerSecond() == 0f
+                && weapon.getSlot().getWeaponType().equals(WeaponAPI.WeaponType.MISSILE);
     }
 }

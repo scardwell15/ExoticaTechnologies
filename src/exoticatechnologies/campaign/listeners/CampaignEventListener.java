@@ -130,13 +130,16 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                 fm.setShipName(shipData.shipName);
             }
 
+            //just in case?
+            fm.updateStats();
+
 
             long seed = shipData.fleetMemberId.hashCode();
             ShipModFactory.getRandom().setSeed(seed);
 
             //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
             //it will never find one.
-            ShipModifications mods = ShipModFactory.generateRandom(var, null);
+            ShipModifications mods = ShipModFactory.generateRandom(fm);
             ETModPlugin.saveData(shipData.fleetMemberId, mods);
 
             Global.getSector().addTransientScript(new DerelictsEFScript(shipData.fleetMemberId, mods));
@@ -172,7 +175,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     long seed = shipData.fleetMemberId.hashCode();
                     ShipModFactory.getRandom().setSeed(seed);
 
-                    ShipModifications mods = ShipModFactory.generateRandom(var, null);
+                    ShipModifications mods = ShipModFactory.generateRandom(fm);
                     //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                     //it will never find one.
                     ETModPlugin.saveData(shipData.fleetMemberId, mods);

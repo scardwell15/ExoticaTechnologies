@@ -16,7 +16,8 @@ import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
@@ -34,17 +35,10 @@ public class PhasefieldEngine extends Exotic {
     private static float PHASE_COST_PERCENT_IF_NEGATIVE = -100f;
     private static float PHASE_COST_IF_ZERO = 20f;
 
-    @Getter private final Color mainColor = new Color(0xA94EFF);
+    @Getter private final Color color = new Color(0xA94EFF);
 
-    @Override
-    public void loadConfig() throws JSONException {
-        PHASE_RESET_INTERVAL = exoticSettings.getInt("phaseResetInterval");
-        INVULNERABLE_INTERVAL = exoticSettings.getInt("invulnerableInterval");
-
-        PHASE_COOLDOWN_PERCENT_REDUCTION = (float) exoticSettings.getDouble("phaseCooldownReduction");
-        PHASE_COST_PERCENT_REDUCTION = (float) exoticSettings.getDouble("phaseCostBaseReduction");
-        PHASE_COST_PERCENT_IF_NEGATIVE = (float) exoticSettings.getDouble("phaseCostModIfNegative");
-        PHASE_COST_IF_ZERO = (float) exoticSettings.getDouble("phaseCostIfZero");
+    public PhasefieldEngine(@NotNull String key, JSONObject settings) {
+        super(key, settings);
     }
 
     @Override
@@ -53,12 +47,12 @@ public class PhasefieldEngine extends Exotic {
     }
 
     @Override
-    public boolean canApply(ShipVariantAPI var) {
-        return var.getHullSpec().getShieldType() == ShieldAPI.ShieldType.PHASE;
+    public boolean canApply(ShipVariantAPI variant) {
+        return variant.getHints().contains(ShipHullSpecAPI.ShipTypeHints.PHASE);
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
         return true;
     }
@@ -66,7 +60,10 @@ public class PhasefieldEngine extends Exotic {
     @Override
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
         Map<String, Float> resourceCosts = new HashMap<>();
-        resourceCosts.put(Utilities.formatSpecialItem(ITEM), 1f);
+        resourceCosts.put(
+                "&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                        .format("name", getName())
+                        .toStringNoFormats(), 1f);
         return resourceCosts;
     }
 
@@ -194,12 +191,16 @@ public class PhasefieldEngine extends Exotic {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
+        if (ship.getPhaseCloak() == null) {
+            return;
+        }
+
         IntervalUtil phaseInterval = getPhaseCostInterval(ship);
         IntervalUtil invulnInterval = getInvulnerableInterval(ship);
 
         if(justExitedPhase(ship)) {
-            if (!ship.hasListenerOfClass(ESR_PhasefieldEngineListener.class)) {
-                ESR_PhasefieldEngineListener listener = new ESR_PhasefieldEngineListener(ship);
+            if (!ship.hasListenerOfClass(ET_PhasefieldEngineListener.class)) {
+                ET_PhasefieldEngineListener listener = new ET_PhasefieldEngineListener(ship);
                 ship.addListener(listener);
             }
 
@@ -221,8 +222,8 @@ public class PhasefieldEngine extends Exotic {
         if(invulnInterval != null) {
             invulnInterval.advance(amount);
             if(invulnInterval.intervalElapsed()) {
-                if (ship.hasListenerOfClass(ESR_PhasefieldEngineListener.class)) {
-                    ship.removeListenerOfClass(ESR_PhasefieldEngineListener.class);
+                if (ship.hasListenerOfClass(ET_PhasefieldEngineListener.class)) {
+                    ship.removeListenerOfClass(ET_PhasefieldEngineListener.class);
                 }
 
                 removeInvulnerableInterval(ship);
@@ -267,6 +268,10 @@ public class PhasefieldEngine extends Exotic {
     }
 
     public void maintainStatus(ShipAPI ship, String id, String spriteName, String translation, boolean isDebuff) {
+        if (ship.getPhaseCloak() == null) {
+            return;
+        }
+
         if(Global.getCombatEngine().getPlayerShip() != null
                 && Global.getCombatEngine().getPlayerShip().equals(ship)) {
             Global.getCombatEngine().maintainStatusForPlayerShip(
@@ -279,10 +284,10 @@ public class PhasefieldEngine extends Exotic {
     }
 
     // damage listener
-    private class ESR_PhasefieldEngineListener implements DamageTakenModifier {
+    private class ET_PhasefieldEngineListener implements DamageTakenModifier {
         private final ShipAPI ship;
 
-        public ESR_PhasefieldEngineListener(ShipAPI ship) {
+        public ET_PhasefieldEngineListener(ShipAPI ship) {
             this.ship = ship;
         }
 

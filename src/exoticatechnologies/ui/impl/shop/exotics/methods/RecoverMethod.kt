@@ -4,18 +4,14 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import exoticatechnologies.hullmods.ExoticaTechHM
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
-import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
-import kotlin.math.max
-import kotlin.math.min
 
 class RecoverMethod : DestroyMethod() {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): String {
+    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String {
         val fleet: CampaignFleetAPI = member.fleetData.fleet
 
         val stack = Utilities.getExoticChip(fleet.cargo, exotic.key)
@@ -30,7 +26,7 @@ class RecoverMethod : DestroyMethod() {
         /**
          * Super call
          */
-        super.apply(member, mods, exotic)
+        super.apply(member, mods, exotic, market)
 
         return StringUtils.getString("ExoticsDialog", "ExoticRecovered")
     }

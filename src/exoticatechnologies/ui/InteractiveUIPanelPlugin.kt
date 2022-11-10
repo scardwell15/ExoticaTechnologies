@@ -31,7 +31,6 @@ open class InteractiveUIPanelPlugin : BaseUIPanelPlugin() {
     }
 
     override fun processInput(events: List<InputEventAPI>) {
-        //check clickables, which can be any UI component
 
         if (highlightedButton != null) {
             checkHighlightedButton(highlightedButton!!, events)

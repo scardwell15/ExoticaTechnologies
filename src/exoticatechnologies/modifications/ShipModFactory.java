@@ -2,6 +2,7 @@ package exoticatechnologies.modifications;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import data.scripts.util.MagicSettings;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.ETModSettings;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 @Log4j
@@ -107,6 +109,10 @@ public class ShipModFactory {
     public static float generateBandwidth(FleetMemberAPI fm, String faction) {
         if (!ETModSettings.getBoolean(ETModSettings.RANDOM_BANDWIDTH)) {
             return ETModSettings.getFloat(ETModSettings.STARTING_BANDWIDTH);
+        }
+
+        if (Objects.equals(faction, Factions.OMEGA)) {
+            return 350f;
         }
 
         String manufacturer = fm.getHullSpec().getManufacturer();

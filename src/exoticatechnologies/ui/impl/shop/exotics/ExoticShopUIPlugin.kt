@@ -5,6 +5,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.ui.BaseUIPanelPlugin
+import exoticatechnologies.ui.StringTooltip
 import exoticatechnologies.ui.impl.shop.ShopMenuUIPlugin
 import exoticatechnologies.ui.tabs.TabButtonUIPlugin
 import exoticatechnologies.ui.tabs.TabbedPanelUIPlugin
@@ -73,5 +74,11 @@ class ExoticShopUIPlugin: ShopMenuUIPlugin() {
 
         override val activeColor: Color = Color(255, 215, 100, 255)
         override val baseColor: Color = Color(100, 75, 30, 255)
+
+        override fun createTabButton(holdingPanel: CustomPanelAPI, parentPlugin: TabbedPanelUIPlugin): TooltipMakerAPI {
+            val tooltip = super.createTabButton(holdingPanel, parentPlugin)
+            tooltip.addTooltipToPrevious(StringTooltip(tooltip, StringUtils.getString("ExoticsDialog","ExoticHelp")), TooltipMakerAPI.TooltipLocation.BELOW)
+            return tooltip
+        }
     }
 }

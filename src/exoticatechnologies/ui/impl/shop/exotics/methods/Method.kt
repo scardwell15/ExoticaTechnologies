@@ -6,7 +6,7 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 
 interface Method {
-    fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): String
+    fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String
     fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean
     fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean
     fun getButtonText(exotic: Exotic): String

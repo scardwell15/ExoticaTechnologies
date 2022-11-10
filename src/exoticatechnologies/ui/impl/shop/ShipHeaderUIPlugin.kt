@@ -11,6 +11,7 @@ import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthHandler
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
+import exoticatechnologies.ui.StringTooltip
 import exoticatechnologies.util.StringUtils
 import kotlin.math.max
 import kotlin.math.min
@@ -31,18 +32,17 @@ class ShipHeaderUIPlugin(
     var shipImgTooltip: TooltipMakerAPI? = null
 
     var shipTextTooltip: TooltipMakerAPI? = null
-    var baseBandwidthText: LabelAPI? = null
-    var exoticBandwidthText: LabelAPI? = null
+    var shipBandwidthText: LabelAPI? = null
+    var placeHelpTextNextToThisComponent: UIComponentAPI? = null
+    var usedBandwidthText: LabelAPI? = null
+    var bandwidthHelpText: LabelAPI? = null
 
     var bandwidthTooltip: TooltipMakerAPI? = null
     var bandwidthUpgradeLabel: LabelAPI? = null
     var bandwidthButton: ButtonAPI? = null
 
     override fun advancePanel(amount: Float) {
-        val newBandwidth = mods.getBandwidthWithExotics(member)
-        if (newBandwidth != lastBandwidth) {
-            setBandwidthText(newBandwidth)
-        }
+        setBandwidthText()
     }
 
     fun layoutPanel(tooltip: TooltipMakerAPI): CustomPanelAPI {
@@ -53,17 +53,32 @@ class ShipHeaderUIPlugin(
 
         // Ship image with tooltip of the ship class
         val shipImg = panel.createUIElement(iconSize, iconSize, false)
+        shipImgTooltip = shipImg
         shipImg.addShipList(1, 1, iconSize, Misc.getBasePlayerColor(), mutableListOf(member), 0f)
         panel.addUIElement(shipImg).inTL(0f, 0f)
 
         // Ship name, class, bandwidth
         val shipText = panel.createUIElement(panelWidth - iconSize, 22f * 3f, false)
+        shipTextTooltip = shipText
         shipText.setParaOrbitronLarge()
         shipText.addPara("${member.shipName} (${member.hullSpec.nameWithDesignationWithDashClass})", shipNameColor, 0f)
         shipText.setParaFontDefault()
 
-        baseBandwidthText = shipText.addPara("", 0f)
-        setBandwidthText(mods.getBandwidthWithExotics(member))
+        shipBandwidthText = shipText.addPara("", 0f)
+        usedBandwidthText = shipText.addPara("", 0f)
+        placeHelpTextNextToThisComponent = shipText.prev
+
+        bandwidthHelpText = shipText.addPara("[?]", Misc.getDarkHighlightColor(), 3f)
+        val bandwidthHelpString = StringUtils.getTranslation("BandwidthDialog", "BandwidthHelp")
+            .format("bandwidthLimit", BandwidthUtil.getFormattedBandwidth(Bandwidth.MAX_BANDWIDTH))
+            .toStringNoFormats()
+
+        shipText.addTooltipToPrevious(
+            StringTooltip(shipText, bandwidthHelpString),
+            TooltipMakerAPI.TooltipLocation.BELOW
+        )
+
+        setBandwidthText()
 
         panel.addUIElement(shipText).rightOfTop(shipImg, pad)
 
@@ -82,8 +97,6 @@ class ShipHeaderUIPlugin(
 
         panel.addUIElement(bandwidthTooltip).belowLeft(shipText, pad)
 
-        shipImgTooltip = shipImg
-        shipTextTooltip = shipText
 
         // done, add row to TooltipMakerAPI
         tooltip.addCustom(panel, opad)
@@ -91,50 +104,60 @@ class ShipHeaderUIPlugin(
         return panel
     }
 
-    private fun setBandwidthText(bandwidth: Float) {
+    private fun setBandwidthText() {
         val baseBandwidth = mods.getBaseBandwidth(member)
+        val bandwidthWithExotics = mods.getBandwidthWithExotics(member)
+        val usedBandwidth = mods.usedBandwidth
 
-        baseBandwidthText?.let {
-            modifyBandwidthText(it, baseBandwidth, "CommonOptions", "BaseBandwidthForShip")
-        }
-
-        if (bandwidth != baseBandwidth) {
+        if (baseBandwidth != bandwidthWithExotics) {
             //something installed that increases bandwidth. bandwidth value is exotic bandwidth
-            if (exoticBandwidthText == null) {
-                exoticBandwidthText = shipTextTooltip?.addPara("", 3f)
-
-                //reset position of text tooltip because of increased height
-                shipTextTooltip?.position!!.rightOfTop(shipImgTooltip, 0f)
-            }
-
-            exoticBandwidthText?.let {
-                modifyBandwidthText(it, bandwidth, "CommonOptions", "ExoticBandwidthForShip")
-            }
+            StringUtils.getTranslation("CommonOptions", "BandwidthWithExoticsForShip")
+                .format(
+                    "shipBandwidth",
+                    BandwidthUtil.getFormattedBandwidth(baseBandwidth),
+                    Bandwidth.getColor(baseBandwidth)
+                )
+                .format(
+                    "exoticBandwidth",
+                    "+" + BandwidthUtil.getFormattedBandwidth(bandwidthWithExotics - baseBandwidth),
+                    Misc.getPositiveHighlightColor()
+                )
+                .setLabelText(shipBandwidthText)
+        } else {
+            StringUtils.getTranslation("CommonOptions", "BandwidthForShip")
+                .format(
+                    "shipBandwidth",
+                    BandwidthUtil.getFormattedBandwidth(baseBandwidth),
+                    Bandwidth.getColor(baseBandwidth)
+                )
+                .setLabelText(shipBandwidthText)
         }
 
-        lastBandwidth = bandwidth
-    }
-
-    private fun modifyBandwidthText(
-        label: LabelAPI,
-        bandwidth: Float,
-        translationParent: String,
-        translationKey: String
-    ) {
-        label.text = StringUtils.getTranslation(translationParent, translationKey)
+        StringUtils.getTranslation("CommonOptions", "UsedBandwidthForShip")
             .format(
-                "shipBandwidth",
-                BandwidthUtil.getFormattedBandwidthWithName(bandwidth)
-            ).toStringNoFormats()
+                "usedBandwidth",
+                BandwidthUtil.getFormattedBandwidth(usedBandwidth),
+                Misc.getHighlightColor()
+            )
+            .format(
+                "allBandwidth",
+                BandwidthUtil.getFormattedBandwidthWithName(bandwidthWithExotics),
+                Bandwidth.getColor(bandwidthWithExotics)
+            )
+            .setLabelText(usedBandwidthText)
 
-        label.setHighlightColor(Bandwidth.getBandwidthColor(bandwidth))
-        label.setHighlight(BandwidthUtil.getFormattedBandwidthWithName(bandwidth))
+        bandwidthHelpText?.let {
+            it.position
+                .belowRight(placeHelpTextNextToThisComponent!!, 3f)
+                .setXAlignOffset(4 + it.computeTextWidth(usedBandwidthText!!.text))
+                .setYAlignOffset(it.computeTextHeight(usedBandwidthText!!.text))
+        }
     }
 
     private fun setBandwidthUpgradeLabel() {
         bandwidthUpgradeLabel?.let {
             if (mods.baseBandwidth >= Bandwidth.MAX_BANDWIDTH) {
-                modifyBandwidthUpgradeLabel(it, -1f, -1f, "ShipListDialog", "BandwidthUpgradePeak")
+                modifyBandwidthUpgradeLabel(it, -1f, -1f, "BandwidthDialog", "BandwidthUpgradePeak")
                 bandwidthButton?.isEnabled = false
             } else {
                 val marketMult = BandwidthHandler.getMarketBandwidthMult(market)

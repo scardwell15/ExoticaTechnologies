@@ -8,7 +8,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.upgrades.Upgrade;
-import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
+import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 

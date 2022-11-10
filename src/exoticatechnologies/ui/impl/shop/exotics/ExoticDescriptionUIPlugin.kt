@@ -18,7 +18,10 @@ class ExoticDescriptionUIPlugin(
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
-    private var displayDescription: Boolean = true
+
+    companion object {
+        private var displayDescription: Boolean = true
+    }
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -40,7 +43,7 @@ class ExoticDescriptionUIPlugin(
         descriptionTooltip = tooltip
 
         tooltip.setParaOrbitronLarge()
-        tooltip.addPara(exotic.name, exotic.mainColor, 0f)
+        tooltip.addPara(exotic.name, exotic.color, 0f)
         tooltip.setParaFontDefault()
 
         val buttonText: String

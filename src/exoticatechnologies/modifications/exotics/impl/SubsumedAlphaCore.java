@@ -10,13 +10,19 @@ import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class SubsumedAlphaCore extends Exotic {
 
     @Getter
-    private final Color mainColor = Color.cyan;
+    private final Color color = Color.cyan;
+
+    public SubsumedAlphaCore(@NotNull String key, JSONObject settings) {
+        super(key, settings);
+    }
 
     @Override
     public String getTextDescription() {
@@ -24,7 +30,7 @@ public class SubsumedAlphaCore extends Exotic {
     }
 
     @Override
-    public boolean shouldShow(FleetMemberAPI fm, ShipModifications es, MarketAPI market) {
+    public boolean shouldShow(FleetMemberAPI member, ShipModifications mods, MarketAPI market) {
         return false;
     }
 
@@ -34,14 +40,14 @@ public class SubsumedAlphaCore extends Exotic {
     }
 
     @Override
-    public boolean canApply(FleetMemberAPI fm) {
-        if (fm.getFleetData() == null
-                || fm.getFleetData().getFleet() == null) {
+    public boolean canApply(FleetMemberAPI member) {
+        if (member.getFleetData() == null
+                || member.getFleetData().getFleet() == null) {
             return false;
         }
 
-        if (fm.getFleetData().getFleet().getFaction().getId().equals(Factions.OMEGA)) {
-            return super.canApply(fm.getVariant());
+        if (member.getFleetData().getFleet().getFaction().getId().equals(Factions.OMEGA)) {
+            return super.canApply(member.getVariant());
         }
 
         return false;
@@ -53,7 +59,7 @@ public class SubsumedAlphaCore extends Exotic {
     }
 
     @Override
-    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+    public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         return true;
     }
 

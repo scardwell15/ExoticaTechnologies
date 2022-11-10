@@ -211,6 +211,13 @@ public class StringUtils {
             return this;
         }
 
+        public Translation formatWithModifier(String flag, Number value) {
+            formats.add(flag);
+            values.add(getModifier(value) + value.intValue());
+
+            return this;
+        }
+
         public Translation formatMult(String flag, Number value) {
             formats.add(flag);
             values.add(getFloat(value.floatValue()) + "x");

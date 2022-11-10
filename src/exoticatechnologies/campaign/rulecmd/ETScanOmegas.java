@@ -2,14 +2,11 @@ package exoticatechnologies.campaign.rulecmd;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.campaign.ScanUtils;
-import exoticatechnologies.modifications.ShipModFactory;
-import exoticatechnologies.modifications.ShipModifications;
 import lombok.extern.log4j.Log4j;
 
 import java.util.ArrayList;

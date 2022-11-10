@@ -10,13 +10,16 @@ import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exoticatechnologies.cargo.CrateItemPlugin;
 import exoticatechnologies.cargo.CrateSpecialData;
 import exoticatechnologies.modifications.ShipModifications;
-import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
+import org.json.JSONArray;
+import org.json.JSONException;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Utilities {
 
@@ -33,6 +36,10 @@ public class Utilities {
         add("rare_metals");
         add("heavy_machinery");
     }};
+
+    public static Color colorFromJSONArray(JSONArray arr) throws JSONException {
+        return new Color(arr.getInt(0), arr.getInt(1), arr.getInt(2), arr.optInt(3, 255));
+    }
 
     public static boolean isInside(float arg, float a, float b) {
         return (arg >= a && arg < b);

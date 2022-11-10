@@ -8,7 +8,7 @@ public class BandwidthUtil {
     }
 
     public static String getFormattedBandwidthWithName(float shipBandwidth) {
-        return getRoundedBandwidth(shipBandwidth) + " " + Bandwidth.getBandwidthName(shipBandwidth);
+        return getRoundedBandwidth(shipBandwidth) + " " + Bandwidth.getName(shipBandwidth);
     }
 
     public static String getRoundedBandwidth(float shipBandwidth) {

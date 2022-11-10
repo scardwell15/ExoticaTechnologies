@@ -1,5 +1,5 @@
 command,class,tags,syntax,help
-et_resetcosts,exoticatechnologies.commands.et_resetcosts,"dialog,campaign,market",esr_defaultUpgradeCosts (no arguments),"Extra System Reloaded upgrades now require resources"
-et_removecosts,exoticatechnologies.commands.et_removecosts,"dialog,campaign,market",esr_removeUpgradeCosts (no arguments),"Extra System Reloaded upgrades are now FREE"
-et_cleardata,exoticatechnologies.commands.et_cleardata,"campaign",esr_clearAllData (no arguments),"Clear all Extra System Reloaded data"
-et_reload,exoticatechnologies.commands.et_reload,"dialog,campaign,market",esr_reloadconfig (no arguments),"Reloads the configuration for Extra System Reloaded."
+et_resetcosts,exoticatechnologies.commands.et_resetcosts,"dialog,campaign,market",et_defaultUpgradeCosts (no arguments),"Exotica Technologies upgrades now require resources"
+et_removecosts,exoticatechnologies.commands.et_removecosts,"dialog,campaign,market",et_removeUpgradeCosts (no arguments),"Exotica Technologies upgrades are now FREE"
+et_cleardata,exoticatechnologies.commands.et_cleardata,"campaign",et_clearAllData (no arguments),"Clear all Exotica Technologies data"
+et_reload,exoticatechnologies.commands.et_reload,"dialog,campaign,market",et_reloadconfig (no arguments),"Reloads the configuration for Exotica Technologies."

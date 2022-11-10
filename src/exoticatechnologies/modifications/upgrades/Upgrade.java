@@ -4,94 +4,135 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModSettings;
+import exoticatechnologies.modifications.Modification;
 import exoticatechnologies.modifications.ShipModifications;
-import exoticatechnologies.modifications.upgrades.methods.UpgradeMethod;
+import exoticatechnologies.modifications.stats.UpgradeModEffect;
+import exoticatechnologies.modifications.stats.impl.UpgradeModEffectDict;
+import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("EmptyMethod")
-public abstract class Upgrade {
+public class Upgrade extends Modification {
     public static final String ITEM = "et_upgrade";
-    @Getter @Setter public String key;
-    @Getter @Setter public String name;
-    @Getter @Setter public String description;
-    @Getter protected JSONObject upgradeSettings;
-    @Getter protected final Map<String, Float> resourceRatios = new HashMap<>();
+    @Getter
+    @Setter
+    public String description;
+    @Getter
+    public float bandwidthUsage;
+    @Getter
+    protected final Map<String, Float> resourceRatios = new LinkedHashMap<>();
+    @Getter
+    public final Map<String, UpgradeModEffect> upgradeEffects = new LinkedHashMap<>();
+    private final Set<String> allowedFactions = new HashSet<>();
 
-    public static Upgrade get(String upgradeKey) {
-        return UpgradesHandler.UPGRADES.get(upgradeKey);
-    }
+    public Upgrade(@NotNull String key, @NotNull JSONObject settings) throws JSONException {
+        super(key, settings);
 
-    public abstract float getBandwidthUsage();
+        setColor(Utilities.colorFromJSONArray(settings.getJSONArray("color")));
+        description = StringUtils.getString(key, "description");
+        bandwidthUsage = (float) settings.getDouble("bandwidthPerLevel");
+        upgradeEffects.putAll(UpgradeModEffectDict.Companion.getStatsFromJSONArray(settings.getJSONArray("stats")));
 
-    public abstract void printStatInfoToTooltip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications mods);
-
-    public boolean shouldLoad() {
-        return true;
-    }
-
-    public boolean shouldShow(FleetMemberAPI fm, ShipModifications es, MarketAPI market) {
-        if (es.getUpgrade(this) > 0) {
-            return true;
-        }
-
-        return shouldShow();
-    }
-
-    public boolean shouldShow() {
-        return true;
-    }
-
-    public boolean canApply(ShipVariantAPI var) {
-        return true;
-    }
-
-    public boolean canApply(FleetMemberAPI fm) {
-        return canApply(fm.getVariant());
-    }
-
-    public boolean canUseUpgradeMethod(FleetMemberAPI fm, ShipModifications mods, UpgradeMethod method) {
-        return true;
-    }
-
-    public Color getColor() {
-        return Misc.getBasePlayerColor();
-    }
-
-    public final void setConfig(JSONObject upgradeSettings) throws JSONException {
-        this.upgradeSettings = upgradeSettings;
-        loadConfig();
-
-        resourceRatios.clear();
-        JSONObject settingRatios = upgradeSettings.getJSONObject("resourceRatios");
+        JSONObject settingRatios = settings.getJSONObject("resourceRatios");
         for (String resource : Utilities.RESOURCES_LIST) {
             float ratio = 0f;
-            if(settingRatios.has(resource)) {
+            if (settingRatios.has(resource)) {
                 //class cast exception indicates an improperly configured config
                 ratio = ((Number) settingRatios.getDouble(resource)).floatValue();
             }
             resourceRatios.put(resource, ratio);
         }
+
+        if (settings.has("allowedFactions")) {
+            JSONArray settingFactions = settings.getJSONArray("allowedFactions");
+            for (int i = 0; i < settingFactions.length(); i++) {
+                String factionId = settingFactions.getString(i);
+                allowedFactions.add(factionId);
+            }
+        }
     }
 
-    protected void loadConfig() throws JSONException {}
+    public static Upgrade get(String upgradeKey) {
+        return UpgradesHandler.UPGRADES.get(upgradeKey);
+    }
 
+    @Override
+    public boolean shouldShow(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @Nullable MarketAPI market) {
+        if (mods.getUpgrade(this) > 0) {
+            return true;
+        }
 
-    public String getBuffId() {
-        return "ESR_" + getName();
+        if (member.getFleetData() != null
+                && member.getFleetData().getFleet() != null) {
+            if (Misc.isPlayerOrCombinedContainingPlayer(member.getFleetData().getFleet())) {
+                if (Utilities.hasUpgradeChip(member.getFleetData().getFleet().getCargo(), this.getKey())) {
+                    return true;
+                }
+            }
+        }
+
+        if (!allowedFactions.isEmpty()) {
+            if (!allowedFactions.contains(member.getFleetData().getFleet().getFaction().getId())) {
+                return false;
+            }
+        }
+
+        return shouldShow();
+    }
+
+    @Override
+    public boolean shouldShow() {
+        return true;
+    }
+
+    @Override
+    public boolean canApply(FleetMemberAPI member) {
+        if (member.getHullId().contains("ziggurat")) {
+            return canApply(member.getVariant());
+        }
+
+        if (member.getFleetData() != null
+                && member.getFleetData().getFleet() != null) {
+            if (Misc.isPlayerOrCombinedContainingPlayer(member.getFleetData().getFleet())) {
+                if (Utilities.hasUpgradeChip(member.getFleetData().getFleet().getCargo(), this.getKey())) {
+                    return canApply(member.getVariant());
+                }
+            }
+        }
+
+        if (!allowedFactions.isEmpty()) {
+            if (member.getFleetData() != null
+                    && member.getFleetData().getFleet() == null
+                    && allowedFactions.contains(member.getFleetData().getFleet().getFaction().toString())) {
+                return canApply(member.getVariant());
+            }
+            return false;
+        }
+
+        return canApply(member.getVariant());
+    }
+
+    public boolean canUseUpgradeMethod(FleetMemberAPI member, ShipModifications mods, UpgradeMethod method) {
+        return true;
+    }
+
+    @Override
+    public @NotNull String getIcon() {
+        return "graphics/icons/upgrades/" + getKey().toLowerCase() + ".png";
     }
 
     private int getMaxLevel() {
@@ -102,12 +143,9 @@ public abstract class Upgrade {
         return getMaxLevel() != -1 ? getMaxLevel() : ETModSettings.getHullSizeToMaxLevel().get(hullSize);
     }
 
-    public String getIcon() {
-        return "graphics/icons/upgrades/" + getKey().toLowerCase() + ".png";
-    }
-
     /**
      * note: overrides should be done to the HullSize method
+     *
      * @param fm
      * @return
      */
@@ -115,31 +153,76 @@ public abstract class Upgrade {
         return getMaxLevel(fm.getHullSpec().getHullSize());
     }
 
-    public int getLevel(ETUpgrades upgrades) {
-        return upgrades.getUpgrade(this.getKey());
+    public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, ShipModifications mods) {
+        for (UpgradeModEffect effect : upgradeEffects.values()) {
+            effect.applyToStats(stats, fm, mods, this);
+        }
     }
 
-    public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {
-
+    public void applyUpgradeToShip(FleetMemberAPI member, ShipAPI ship, ShipModifications mods) {
+        for (UpgradeModEffect effect : upgradeEffects.values()) {
+            effect.applyToShip(ship, member, mods, this);
+        }
     }
 
-    public void applyUpgradeToShip(FleetMemberAPI fm, ShipAPI ship, int level, int maxLevel) {
-
+    public void advanceInCombat(ShipAPI ship, float amount, FleetMemberAPI member, ShipModifications mods) {
+        for (UpgradeModEffect effect : upgradeEffects.values()) {
+            effect.advanceInCombat(ship, amount, member, mods, this);
+        }
     }
 
-    public void advanceInCombat(ShipAPI ship, float amount, int level, float bandwidth) {
-
-    }
-
-    public void advanceInCampaign(FleetMemberAPI fm, int level, int maxLevel) {
-
+    public void advanceInCampaign(FleetMemberAPI member, ShipModifications mods, Float amount) {
+        for (UpgradeModEffect effect : upgradeEffects.values()) {
+            effect.advanceInCampaign(member, mods, this, amount);
+        }
     }
 
     public float getSpawnChance() {
         return 0.9f;
     }
 
-    public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ShipModifications systems, boolean expand);
+    public void modifyToolTip(TooltipMakerAPI tooltip, MutableShipStatsAPI stats, FleetMemberAPI member, ShipModifications mods, boolean expand) {
+        tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(mods.getUpgrade(this)));
+        if (expand) {
+            for (UpgradeModEffect effect : upgradeEffects.values()) {
+                effect.printToTooltip(tooltip, stats, member, mods, this);
+            }
+        }
+    }
+
+    public void modifyInShop(TooltipMakerAPI tooltip, FleetMemberAPI member, ShipModifications mods) {
+        Map<Integer, List<UpgradeModEffect>> levelToEffectMap = new HashMap<>();
+
+        for (Map.Entry<String, UpgradeModEffect> effectPair : upgradeEffects.entrySet()) {
+            UpgradeModEffect effect = effectPair.getValue();
+            int startingLevel = effect.getStartingLevel();
+            List<UpgradeModEffect> levelList;
+            if (!levelToEffectMap.containsKey(startingLevel)) {
+                levelList = new ArrayList<>();
+                levelToEffectMap.put(startingLevel, levelList);
+            } else {
+                levelList = levelToEffectMap.get(startingLevel);
+            }
+
+            levelList.add(effect);
+        }
+
+        for (int startingLevel = 0; startingLevel < getMaxLevel(member); startingLevel++) {
+            if (levelToEffectMap.containsKey(startingLevel)) {
+                List<UpgradeModEffect> levelList = levelToEffectMap.get(startingLevel);
+
+                if (startingLevel > 1) {
+                    StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
+                            .format("level", startingLevel)
+                            .addToTooltip(tooltip).getPosition().setYAlignOffset(-10);
+                }
+
+                for (UpgradeModEffect effect : levelList) {
+                    effect.printToShop(tooltip, member, mods, this);
+                }
+            }
+        }
+    }
 
     public SpecialItemData getNewSpecialItemData(int level) {
         return new SpecialItemData(Upgrade.ITEM, String.format("%s,%s", this.getKey(), level));
@@ -149,14 +232,14 @@ public abstract class Upgrade {
         int max = getMaxLevel(shipSelected.getHullSpec().getHullSize());
 
         float hullBaseValue = shipSelected.getHullSpec().getBaseValue();
-        if(hullBaseValue > 450000) {
+        if (hullBaseValue > 450000) {
             hullBaseValue = 225000;
         } else {
             hullBaseValue = (float) (hullBaseValue - (1d / 900000d) * Math.pow(hullBaseValue, 2));
         }
         hullBaseValue *= 0.01f;
 
-        float upgradeCostRatioByLevel = 0.25f + 0.75f * ((float)level / (float)max);
+        float upgradeCostRatioByLevel = 0.25f + 0.75f * ((float) level / (float) max);
         float upgradeCostByHull = hullBaseValue * upgradeCostRatioByLevel;
 
         Map<String, Integer> resourceCosts = new HashMap<>();
@@ -170,149 +253,8 @@ public abstract class Upgrade {
         return resourceCosts;
     }
 
-    private void addStatToTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float increase) {
-        StringUtils.getTranslation("CommonOptions", statFormatKey)
-                .format("stat", statName)
-                .formatPercWithModifier("percent", increase)
-                .addToTooltip(tooltip);
-    }
-
-    private void addStatMultToTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float increase) {
-        StringUtils.getTranslation("CommonOptions", statFormatKey)
-                .format("stat", statName)
-                .formatMult("percent", increase)
-                .addToTooltip(tooltip);
-    }
-
-    private void addStatToTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float increase, Float base) {
-        StringUtils.getTranslation("CommonOptions", statFormatKey)
-                .format("stat", statName)
-                .formatPercWithModifier("percent", increase)
-                .formatWithOneDecimalAndModifier("finalValue", base * increase / 100f)
-                .addToTooltip(tooltip);
-    }
-
-    private void addStatMultToTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float increase, Float base) {
-        StringUtils.getTranslation("CommonOptions", statFormatKey)
-                .format("stat", statName)
-                .formatMult("percent", increase)
-                .formatWithOneDecimalAndModifier("finalValue", base * increase)
-                .addToTooltip(tooltip);
-    }
-
-    protected void addBenefitToTooltip(TooltipMakerAPI tooltip, String translation, Float increase) {
-        addStatToTooltip(tooltip, "StatBenefit", getString(translation), increase);
-    }
-
-    protected void addBenefitToTooltipMult(TooltipMakerAPI tooltip, String translation, Float increase) {
-        addStatMultToTooltip(tooltip, "StatBenefit", getString(translation), increase);
-    }
-
-    protected void addBenefitToTooltip(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
-        addStatToTooltip(tooltip, "StatBenefitWithFinal", getString(translation), increase, base);
-    }
-
-    protected void addBenefitToTooltipMult(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
-        addStatMultToTooltip(tooltip, "StatBenefitWithFinal", getString(translation), increase, base);
-    }
-
-    protected void addMalusToTooltip(TooltipMakerAPI tooltip, String translation, Float increase) {
-        addStatToTooltip(tooltip, "StatMalus", getString(translation), increase);
-    }
-
-    protected void addMalusToTooltipMult(TooltipMakerAPI tooltip, String translation, Float increase) {
-        addStatMultToTooltip(tooltip, "StatMalus", getString(translation), increase);
-    }
-
-    protected void addMalusToTooltip(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
-        addStatToTooltip(tooltip, "StatMalusWithFinal", getString(translation), increase, base);
-    }
-
-    protected void addMalusToTooltipMult(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
-        addStatMultToTooltip(tooltip, "StatMalusWithFinal", getString(translation), increase, base);
-    }
-
-
-
-    private void addStatToShopTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float currValue, Float perLevel, Float finalValue) {
-        StringUtils.getTranslation("CommonOptions",statFormatKey)
-                .format("stat", statName)
-                .formatPercWithModifier("percent", currValue)
-                .formatPercWithModifier("perLevel", perLevel)
-                .formatPercWithModifier("finalValue", finalValue)
-                .addToTooltip(tooltip);
-    }
-
-    private void addStatMultToShopTooltip(TooltipMakerAPI tooltip, String statFormatKey, String statName, Float currValue, Float perLevel, Float finalValue) {
-        StringUtils.getTranslation("CommonOptions",statFormatKey)
-                .format("stat", statName)
-                .formatMult("percent", currValue)
-                .formatMultWithModifier("perLevel", perLevel)
-                .formatMult("finalValue", finalValue)
-                .addToTooltip(tooltip);
-    }
-
-    protected void addBenefitToShopTooltip(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, Float finalValue) {
-        addBenefitToShopTooltip(tooltip, translation, fm, mods, 1, finalValue);
-    }
-
-    protected void addBenefitToShopTooltipMult(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, Float finalValue) {
-        addBenefitToShopTooltipMult(tooltip, translation, fm, mods, 1, finalValue);
-    }
-
-    protected void addMalusToShopTooltip(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, Float finalValue) {
-        addMalusToShopTooltip(tooltip, translation, fm, mods, 1, finalValue);
-    }
-
-    protected void addMalusToShopTooltipMult(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, Float finalValue) {
-        addMalusToShopTooltipMult(tooltip, translation, fm, mods, 1, finalValue);
-    }
-
-    protected void addBenefitToShopTooltip(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, int startingLevel, Float finalValue) {
-        float perLevel = finalValue / (this.getMaxLevel(fm) - (startingLevel - 1));
-        float currValue = perLevel * Math.max(mods.getUpgrade(this) - (startingLevel - 1), 0);
-
-        addStatToShopTooltip(tooltip, "StatBenefitInShop", getString(translation), currValue, perLevel, finalValue);
-    }
-
-    protected void addBenefitToShopTooltipMult(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, int startingLevel, Float finalValue) {
-        finalValue = finalValue / 100f;
-        float perLevel = finalValue / (this.getMaxLevel(fm) - (startingLevel - 1));
-
-        int currLevel = mods.getUpgrade(this) - (startingLevel - 1);
-        float currValue = 1;
-        if (currLevel > 0) {
-            currValue = 1 + perLevel * currLevel;
-        }
-
-        finalValue = 1 + finalValue;
-
-        addStatMultToShopTooltip(tooltip, "StatBenefitInShop", getString(translation), currValue, perLevel, finalValue);
-    }
-
-    protected void addMalusToShopTooltip(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, int startingLevel, Float finalValue) {
-        float perLevel = finalValue / (this.getMaxLevel(fm) - (startingLevel - 1));
-        float currValue = perLevel * Math.max(mods.getUpgrade(this) - (startingLevel - 1), 0);
-
-        addStatToShopTooltip(tooltip, "StatMalusInShop", getString(translation), currValue, perLevel, finalValue);
-    }
-
-    protected void addMalusToShopTooltipMult(TooltipMakerAPI tooltip, String translation, FleetMemberAPI fm, ShipModifications mods, int startingLevel, Float finalValue) {
-        finalValue = finalValue / 100f;
-        float perLevel = finalValue / (this.getMaxLevel(fm) - (startingLevel - 1));
-
-        int currLevel = mods.getUpgrade(this) - (startingLevel - 1);
-        float currValue = 1;
-        if (currLevel > 0) {
-            currValue = 1 + perLevel * currLevel;
-        }
-
-        finalValue = 1 + finalValue;
-
-        addStatMultToShopTooltip(tooltip, "StatMalusInShop", getString(translation), currValue, perLevel, finalValue);
-    }
-
-    public String getString(String key) {
-        return StringUtils.getString(this.getKey(), key);
+    @Override
+    public String toString() {
+        return "Upgrade{name=" + getName() + "}";
     }
 }

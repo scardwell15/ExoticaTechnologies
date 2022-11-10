@@ -123,7 +123,7 @@ class ChipPanelUIPlugin(
                 .filter { (_, plugin) -> plugin.upgradeLevel > mods.getUpgrade(upgrade) }
                 .filter { (_, plugin) -> mods.hasBandwidthForUpgrade(member, upgrade, plugin.upgradeLevel) }
                 .filter { (stack, _) ->
-                    ChipMethod.getCreditCost(member, mods, upgrade, stack) > Global.getSector().playerFleet.cargo.credits.get()
+                    ChipMethod.getCreditCost(member, mods, upgrade, stack) <= Global.getSector().playerFleet.cargo.credits.get()
                 }
                 .map { (stack, _) -> stack }
 

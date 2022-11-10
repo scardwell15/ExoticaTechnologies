@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Exotic extends Modification {
@@ -102,7 +103,7 @@ public abstract class Exotic extends Modification {
     }
 
     public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, MarketAPI market) {
-        return null;
+        return new HashMap<>();
     }
 
 

@@ -14,7 +14,6 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -30,7 +29,7 @@ public abstract class Exotic extends Modification {
     @Setter
     protected String tooltip;
 
-    public Exotic(@NotNull String key, JSONObject settings) {
+    public Exotic(String key, JSONObject settings) {
         super(key, settings);
     }
 

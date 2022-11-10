@@ -6,11 +6,13 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.thoughtworks.xstream.XStream;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
+import exoticatechnologies.modifications.stats.impl.logistics.CrewSalaryEffect;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.ui.impl.shop.ShopManager;
@@ -144,7 +146,11 @@ public class ETModPlugin extends BaseModPlugin {
 		Global.getSector().removeTransientScript(campaignListener);
 		Global.getSector().removeListener(campaignListener);
 		Global.getSector().getListenerManager().removeListener(salvageListener);
+	}
 
+	@Override
+	public void configureXStream(XStream x) {
+		x.alias("salaryListener", CrewSalaryEffect.SalaryListener.class);
 	}
 
 	public static void removeHullmodsFromAutoFitGoalVariants() {

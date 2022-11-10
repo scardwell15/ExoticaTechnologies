@@ -17,8 +17,6 @@ import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +37,7 @@ public class Upgrade extends Modification {
     public final Map<String, UpgradeModEffect> upgradeEffects = new LinkedHashMap<>();
     private final Set<String> allowedFactions = new HashSet<>();
 
-    public Upgrade(@NotNull String key, @NotNull JSONObject settings) throws JSONException {
+    public Upgrade(String key, JSONObject settings) throws JSONException {
         super(key, settings);
 
         setColor(Utilities.colorFromJSONArray(settings.getJSONArray("color")));
@@ -71,7 +69,7 @@ public class Upgrade extends Modification {
     }
 
     @Override
-    public boolean shouldShow(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @Nullable MarketAPI market) {
+    public boolean shouldShow(FleetMemberAPI member, ShipModifications mods, MarketAPI market) {
         if (mods.getUpgrade(this) > 0) {
             return true;
         }
@@ -131,7 +129,7 @@ public class Upgrade extends Modification {
     }
 
     @Override
-    public @NotNull String getIcon() {
+    public String getIcon() {
         return "graphics/icons/upgrades/" + getKey().toLowerCase() + ".png";
     }
 

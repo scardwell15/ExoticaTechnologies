@@ -10,7 +10,6 @@ import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -20,7 +19,7 @@ public class SubsumedBetaCore extends Exotic {
     @Getter
     private final Color color = new Color(0x6AA900);
 
-    public SubsumedBetaCore(@NotNull String key, JSONObject settings) {
+    public SubsumedBetaCore(String key, JSONObject settings) {
         super(key, settings);
     }
 

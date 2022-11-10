@@ -16,7 +16,6 @@ import exoticatechnologies.util.StatUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -37,7 +36,7 @@ public class PhasefieldEngine extends Exotic {
 
     @Getter private final Color color = new Color(0xA94EFF);
 
-    public PhasefieldEngine(@NotNull String key, JSONObject settings) {
+    public PhasefieldEngine(String key, JSONObject settings) {
         super(key, settings);
     }
 

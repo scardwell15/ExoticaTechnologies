@@ -46,7 +46,9 @@ class ExoticResourcesUIPlugin(
         methods.forEach { method ->
             val hovered = method == activeMethod
             method.getResourceMap(member, mods, exotic, market, hovered)?.forEach { (key, cost) ->
-                resourceCosts.merge(key, cost, Float::plus)
+                resourceCosts[key]?.let {
+                    resourceCosts[key] = it.plus(cost)
+                }
             }
         }
 

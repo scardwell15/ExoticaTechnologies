@@ -6,11 +6,11 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
-import exoticatechnologies.ui.impl.shop.upgrades.methods.*;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin;
 import exoticatechnologies.ui.impl.shop.upgrades.UpgradeShopUIPlugin;
+import exoticatechnologies.ui.impl.shop.upgrades.methods.*;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,10 +50,10 @@ public class UpgradesHandler {
             JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/upgrades.json", "exoticatechnologies");
 
             Iterator upgIterator = settings.keys();
-            while(upgIterator.hasNext()) {
+            while (upgIterator.hasNext()) {
                 String upgKey = (String) upgIterator.next();
 
-                if(UPGRADES.containsKey(upgKey)) continue;
+                if (UPGRADES.containsKey(upgKey)) continue;
 
                 Upgrade upgrade;
                 try {
@@ -93,15 +93,15 @@ public class UpgradesHandler {
     }
 
     public static void addUpgrade(Upgrade upgrade) {
-        if(UPGRADES.containsKey(upgrade.getKey())) return;
+        if (UPGRADES.containsKey(upgrade.getKey())) return;
 
-        UPGRADES.put(upgrade.getKey(),upgrade);
+        UPGRADES.put(upgrade.getKey(), upgrade);
         UPGRADES_LIST.add(upgrade);
     }
 
     //can upgrade
     public static boolean canUseUpgradeMethods(FleetMemberAPI fm, ShipModifications mods, ShipAPI.HullSize hullSize, Upgrade upgrade, CampaignFleetAPI fleet, MarketAPI currMarket) {
-        if(mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidthWithExotics(fm)) {
+        if (mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidthWithExotics(fm)) {
             return false;
         }
 
@@ -119,7 +119,7 @@ public class UpgradesHandler {
     public static List<String> getWhitelistForFaction(String faction) {
         List<String> factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", "rngUpgradeWhitelist");
         try {
-            if(MagicSettings.modSettings.getJSONObject("exoticatechnologies").has(faction + "_UpgradeWhitelist")) {
+            if (MagicSettings.modSettings.getJSONObject("exoticatechnologies").has(faction + "_UpgradeWhitelist")) {
                 factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", faction + "_UpgradeWhitelist");
             }
         } catch (JSONException ex) {

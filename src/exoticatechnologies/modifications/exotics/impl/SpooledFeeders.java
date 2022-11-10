@@ -10,11 +10,10 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
-import exoticatechnologies.modifications.exotics.Exotic;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.lwjgl.input.Mouse;
 
@@ -32,9 +31,10 @@ public class SpooledFeeders extends Exotic {
     private static int BUFF_DURATION = 5;
     private static int DEBUFF_DURATION = 4;
 
-    @Getter private final Color color = new Color(0xD93636);
+    @Getter
+    private final Color color = new Color(0xD93636);
 
-    public SpooledFeeders(@NotNull String key, JSONObject settings) {
+    public SpooledFeeders(String key, JSONObject settings) {
         super(key, settings);
     }
 
@@ -94,7 +94,7 @@ public class SpooledFeeders extends Exotic {
     @Override
     public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
         Map<String, Object> customData = Global.getCombatEngine().getCustomData();
-        if(!customData.containsKey(getSpooledId(ship))) {
+        if (!customData.containsKey(getSpooledId(ship))) {
             customData.put(getIntervalId(ship), new IntervalUtil(COOLDOWN, COOLDOWN));
             customData.put(getSpooledId(ship), SpoolState.SPOOLED);
         }
@@ -102,13 +102,13 @@ public class SpooledFeeders extends Exotic {
         SpoolState spooled = (SpoolState) customData.get(getSpooledId(ship));
         IntervalUtil interval = (IntervalUtil) customData.get(getIntervalId(ship));
 
-        if(spooled == SpoolState.SPOOLED) {
+        if (spooled == SpoolState.SPOOLED) {
             maintainStatus(ship,
                     "graphics/icons/hullsys/ammo_feeder.png",
                     StringUtils.getString(this.getKey(), "statusReady"),
                     false);
 
-            if(canSpool(ship)) {
+            if (canSpool(ship)) {
                 for (WeaponAPI weapon : ship.getAllWeapons()) {
                     if (weapon.isFiring() && !(ship.getShipAI() != null && shouldSpool(weapon))) {
                         interval.setInterval(BUFF_DURATION, BUFF_DURATION);
@@ -129,7 +129,7 @@ public class SpooledFeeders extends Exotic {
         } else {
             interval.advance(amount);
 
-            if(interval.intervalElapsed()) {
+            if (interval.intervalElapsed()) {
                 if (spooled == SpoolState.BUFFED) {
                     interval.setInterval(DEBUFF_DURATION, DEBUFF_DURATION);
                     customData.put(getSpooledId(ship), SpoolState.DEBUFFED);
@@ -146,11 +146,11 @@ public class SpooledFeeders extends Exotic {
                 }
             } else if (spooled == SpoolState.BUFFED) {
                 maintainStatus(ship,
-                    "graphics/icons/hullsys/ammo_feeder.png",
-                    StringUtils.getTranslation(this.getKey(), "statusBuffText")
-                            .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
-                            .toString(),
-                    false);
+                        "graphics/icons/hullsys/ammo_feeder.png",
+                        StringUtils.getTranslation(this.getKey(), "statusBuffText")
+                                .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
+                                .toString(),
+                        false);
 
                 ship.getMutableStats().getBallisticRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_BUFF / 100f);
                 ship.getMutableStats().getEnergyRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_BUFF / 100f);
@@ -179,7 +179,7 @@ public class SpooledFeeders extends Exotic {
     }
 
     public void maintainStatus(ShipAPI ship, String spriteName, String translation, boolean isDebuff) {
-        if(isPlayerShip(ship)) {
+        if (isPlayerShip(ship)) {
             Global.getCombatEngine().maintainStatusForPlayerShip(
                     this.getBuffId(),
                     "graphics/icons/hullsys/ammo_feeder.png",

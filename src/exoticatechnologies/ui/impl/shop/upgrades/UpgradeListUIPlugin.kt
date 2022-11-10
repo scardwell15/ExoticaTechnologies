@@ -32,6 +32,6 @@ class UpgradeListUIPlugin(parentPanel: CustomPanelAPI,
             return true
         }
 
-        return item.shouldShow(member, mods, market) && item.canApply(member)
+        return item.shouldShow(member, mods, market!!) && item.canApply(member)
     }
 }

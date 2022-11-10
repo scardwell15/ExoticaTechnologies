@@ -12,7 +12,6 @@ import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import exoticatechnologies.modifications.exotics.Exotic;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -27,7 +26,7 @@ public class HangarForge extends Exotic {
 
     @Getter private final Color color = Color.GREEN;
 
-    public HangarForge(@NotNull String key, JSONObject settings) {
+    public HangarForge(String key, JSONObject settings) {
         super(key, settings);
     }
 

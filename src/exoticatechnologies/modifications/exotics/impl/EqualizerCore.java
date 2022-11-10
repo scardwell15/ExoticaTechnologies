@@ -14,7 +14,6 @@ import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -34,7 +33,7 @@ public class EqualizerCore extends Exotic {
 
     @Getter private final Color color = Color.orange.darker();
 
-    public EqualizerCore(@NotNull String key, JSONObject settings) {
+    public EqualizerCore(String key, JSONObject settings) {
         super(key, settings);
     }
 

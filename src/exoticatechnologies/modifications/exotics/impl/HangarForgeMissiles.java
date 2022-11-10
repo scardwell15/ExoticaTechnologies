@@ -14,7 +14,6 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.awt.Color;
@@ -31,7 +30,7 @@ public class HangarForgeMissiles extends Exotic {
 
     @Getter private final Color color = new Color(0xFF8902);
 
-    public HangarForgeMissiles(@NotNull String key, JSONObject settings) {
+    public HangarForgeMissiles(String key, JSONObject settings) {
         super(key, settings);
     }
 

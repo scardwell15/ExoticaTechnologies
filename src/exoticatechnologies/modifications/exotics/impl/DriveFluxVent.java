@@ -14,7 +14,6 @@ import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.lazywizard.lazylib.VectorUtils;
 
@@ -32,7 +31,7 @@ public class DriveFluxVent extends Exotic {
 
     @Getter private final Color color = new Color(0x9D62C4);
 
-    public DriveFluxVent(@NotNull String key, JSONObject settings) {
+    public DriveFluxVent(String key, JSONObject settings) {
         super(key, settings);
     }
 

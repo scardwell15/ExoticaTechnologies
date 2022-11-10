@@ -48,7 +48,9 @@ class UpgradeResourcesUIPlugin(
         UpgradesHandler.UPGRADE_METHODS.forEach { method ->
             val hovered = method == activeMethod
             method?.getResourceCostMap(member, mods, upgrade, market, hovered)?.forEach { (key, cost) ->
-                resourceCosts.merge(key, cost, Float::plus)
+                resourceCosts[key]?.let {
+                    resourceCosts[key] = it.plus(cost)
+                }
             }
         }
 

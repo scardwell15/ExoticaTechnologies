@@ -92,7 +92,7 @@ class CrewSalaryEffect : UpgradeModEffect() {
         }
     }
 
-    class SalaryListener : EconomyTickListener, TooltipMakerAPI.TooltipCreator {
+    open class SalaryListener : EconomyTickListener, TooltipMakerAPI.TooltipCreator {
         override fun reportEconomyTick(iterIndex: Int) {
             val lastIterInMonth = Global.getSettings().getFloat("economyIterPerMonth").toInt() - 1
             if (iterIndex != lastIterInMonth) return

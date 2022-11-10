@@ -12,7 +12,6 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -34,7 +33,7 @@ public class PlasmaFluxCatalyst extends Exotic {
 
     @Getter private final Color color = new Color(0x00BBFF);
 
-    public PlasmaFluxCatalyst(@NotNull String key, JSONObject settings) {
+    public PlasmaFluxCatalyst(String key, JSONObject settings) {
         super(key, settings);
     }
 

@@ -110,7 +110,7 @@ class CrewSalaryEffect : UpgradeModEffect() {
             val commissionedCrewsNode = report.getNode(fleetNode, "ET_CC_stipend")
             commissionedCrewsNode.upkeep = salaryCommission
             commissionedCrewsNode.name = "Salaries for Commissioned Crews"
-            commissionedCrewsNode.icon = Global.getSettings().getSpriteName("income_report", "cr")
+            commissionedCrewsNode.icon = Global.getSettings().getSpriteName("income_report", "crew")
             commissionedCrewsNode.tooltipCreator = this
         }
 

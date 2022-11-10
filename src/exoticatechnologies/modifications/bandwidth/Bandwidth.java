@@ -21,7 +21,7 @@ public enum Bandwidth {
     PRISTINE(200f, "pristine", new Color(150,100,200), 8),
     ULTIMATE(250f, "ultimate", new Color(255,100,255), 4),
     PERFECT(300f, "perfect", new Color(200,255,255), 1),
-    UNKNOWN(350f, "???", new Color(255, 153, 0), 0);
+    UNKNOWN(350f, "unknown", new Color(255, 153, 0), 0);
 
     public static final String BANDWIDTH_RESOURCE = "Bandwidth";
     public static final float BANDWIDTH_STEP = 5f;

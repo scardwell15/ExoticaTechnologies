@@ -1,5 +1,6 @@
 package exoticatechnologies.util;
 
+import com.fs.starfarer.api.Global;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -18,7 +19,6 @@ public class RenderUtils {
     public static void pushUIRenderingStack() {
         final int width = getWidth(),
                 height = getHeight();
-
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -43,6 +43,11 @@ public class RenderUtils {
     }
 
     public static void renderBox(float x, float y, float w, float h, Color color, float alpha) {
+        x = x * Global.getSettings().getScreenScaleMult();
+        y = y * Global.getSettings().getScreenScaleMult();
+        w = w * Global.getSettings().getScreenScaleMult();
+        h = h * Global.getSettings().getScreenScaleMult();
+
         GL11.glBegin(7);
         GL11.glColor4f((float) color.getRed() / 255.0F, (float) color.getGreen() / 255.0F, (float) color.getBlue() / 255.0F, alpha);
         GL11.glVertex2f(x - 1.0F, y - 1.0F);

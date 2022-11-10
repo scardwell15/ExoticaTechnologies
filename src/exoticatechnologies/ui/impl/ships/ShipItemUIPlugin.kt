@@ -23,14 +23,6 @@ class ShipItemUIPlugin(item: FleetMemberAPI, var mods: ShipModifications, privat
     var specialText: LabelAPI? = null
     var wasHovered: Boolean = false
 
-    override fun renderBelow(alphaMult: Float) {
-        if (bgColor.alpha > 0) {
-            RenderUtils.pushUIRenderingStack()
-            RenderUtils.renderBox(pos.x, pos.y, pos.width - 10f, pos.height, bgColor, bgColor.alpha / 255f)
-            RenderUtils.popUIRenderingStack()
-        }
-    }
-
     override fun advance(amount: Float) {
         val newSpecialValue = mods.upgradeMap.size + mods.exoticSet.size
         if (newSpecialValue != lastSpecialValue) {

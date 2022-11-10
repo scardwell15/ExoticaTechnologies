@@ -285,6 +285,7 @@
 		"ventSpeed": "Vent speed",
 		"hull": "Hull durability",
 		"armor": "Armor durability",
+		"empDamageTaken": "EMP damage taken",
 		"armorDamageTaken": "Armor damage taken",
 		"heDamageTaken": "HE damage taken",
 		"kineticDamageTaken": "Kinetic damage taken",

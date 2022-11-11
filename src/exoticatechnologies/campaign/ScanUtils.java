@@ -1,5 +1,6 @@
 package exoticatechnologies.campaign;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -191,8 +192,8 @@ public class ScanUtils {
     }
 
     public static void showNotableShipsPanel(InteractionDialogAPI dialog, List<FleetMemberAPI> members) {
-        float screenWidth = Display.getWidth();
-        float screenHeight = Display.getHeight();
+        float screenWidth = Global.getSettings().getScreenWidth();
+        float screenHeight = Global.getSettings().getScreenHeight();
 
         float allRowsHeight = (NOTABLE_SHIPS_ROW_HEIGHT + 10) * members.size() + 3;
 

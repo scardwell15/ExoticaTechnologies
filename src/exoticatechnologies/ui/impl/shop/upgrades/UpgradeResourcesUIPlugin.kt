@@ -8,8 +8,8 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
-import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.impl.shop.ResourcesUIPlugin
+import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 
 class UpgradeResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
@@ -48,8 +48,10 @@ class UpgradeResourcesUIPlugin(
         UpgradesHandler.UPGRADE_METHODS.forEach { method ->
             val hovered = method == activeMethod
             method?.getResourceCostMap(member, mods, upgrade, market, hovered)?.forEach { (key, cost) ->
-                resourceCosts[key]?.let {
-                    resourceCosts[key] = it.plus(cost)
+                if (resourceCosts[key] != null) {
+                    resourceCosts[key] = resourceCosts[key]!!.plus(cost)
+                } else {
+                    resourceCosts[key] = cost
                 }
             }
         }

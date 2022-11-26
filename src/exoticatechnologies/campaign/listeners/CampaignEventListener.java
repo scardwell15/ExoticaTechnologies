@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
@@ -306,6 +307,8 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
         if (!appliedData) {
             appliedData = true;
             for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getMembersWithFightersCopy()) {
+                if (fm.getHullSpec().getHullSize().equals(ShipAPI.HullSize.FIGHTER)) continue;
+
                 ShipModifications mods = ShipModLoader.get(fm);
                 if (mods != null) {
                     ExoticaTechHM.addToFleetMember(fm);

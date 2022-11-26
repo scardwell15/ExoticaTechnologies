@@ -14,6 +14,7 @@ import exoticatechnologies.integration.indevo.IndEvoUtil;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.stats.impl.logistics.CrewSalaryEffect;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
+import exoticatechnologies.modifications.upgrades.impl.CommissionedCrews;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.util.FleetMemberUtils;
 import lombok.extern.log4j.Log4j;
@@ -83,6 +84,7 @@ public class ETModPlugin extends BaseModPlugin {
 
     @Override
     public void configureXStream(XStream x) {
+        x.alias("salaryListener", CommissionedCrews.CommissionedSalaryListener.class);
         x.alias("salaryListener", CrewSalaryEffect.SalaryListener.class);
     }
 

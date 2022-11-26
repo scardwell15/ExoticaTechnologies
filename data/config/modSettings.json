@@ -91,16 +91,6 @@
       "PhasefieldEngine",
       "SpooledFeeders"
     ],
-    "rngUpgradeWhitelist": [
-      "ForcedOvertime",
-      "HyperactiveCapacitors",
-      "OverchargedShields",
-      "WeldedArmor",
-      "TracerRecoilCalculator",
-      "InfernalEngines",
-      "AuxiliarySensors",
-      "InterferenceShielding"
-    ],
 
     # below are faction whitelists. the way to go about this is to follow omega example
     # factionId_ExoticWhitelist and factionId_UpgradeWhitelist
@@ -112,26 +102,6 @@
       "SubsumedAlphaCore",
       "SubsumedBetaCore",
       "SubsumedGammaCore"
-    ],
-    "omega_UpgradeWhitelist": [
-      "AdvancedFluxCoils",
-      "DerelictWeaponAssistant"
-    ],
-
-    "remnant_UpgradeWhitelist": [
-      "AdvancedFluxCoils",
-      "InfernalEngines",
-      "OverchargedShields",
-      "WeldedArmor",
-      "TracerRecoilCalculator"
-    ],
-
-    "derelict_UpgradeWhitelist": [
-      "InfernalEngines",
-      "HyperactiveCapacitors",
-      "OverchargedShields",
-      "WeldedArmor",
-      "DerelictWeaponAssistant"
     ]
   }
 }

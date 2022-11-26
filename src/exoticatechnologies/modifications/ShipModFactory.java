@@ -8,12 +8,18 @@ import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.ETModSettings;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
+import exoticatechnologies.modifications.exotics.ETExotics;
+import exoticatechnologies.modifications.upgrades.ETUpgrades;
 import exoticatechnologies.util.Utilities;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -24,31 +30,20 @@ public class ShipModFactory {
     @Getter
     private static final Random random = new Random();
 
-    public static ShipModifications getForFleetMember(FleetMemberAPI fm) {
-        if (fm.getHullId().contains("ziggurat")) {
-            if (ETModPlugin.getZigguratDuplicateId() != null && ETModPlugin.hasData(ETModPlugin.getZigguratDuplicateId())) {
-                return ETModPlugin.getData(ETModPlugin.getZigguratDuplicateId());
-            } else {
-                ShipModifications mods = generateRandom(fm);
-
-                if (CampaignEventListener.isAppliedData()) {
-                    mods.save(fm);
-                }
-
-                return mods;
-            }
-        } else if (ETModPlugin.hasData(fm.getId())) {
-            return ETModPlugin.getData(fm.getId());
-        } else {
-            ShipModifications mods = new ShipModifications();
-            mods.setBandwidth(ShipModFactory.generateBandwidth(fm));
-
-            if (CampaignEventListener.isAppliedData()) {
-                mods.save(fm);
-            }
-
+    public static ShipModifications generateForFleetMember(FleetMemberAPI fm) {
+        ShipModifications mods = ShipModLoader.get(fm);
+        if (mods != null) {
             return mods;
         }
+
+        mods = new ShipModifications();
+        mods.setBandwidth(ShipModFactory.generateBandwidth(fm));
+
+        if (CampaignEventListener.isAppliedData()) {
+            ShipModLoader.set(fm, mods);
+        }
+
+        return mods;
     }
 
     private static String getFaction(FleetMemberAPI fm) {
@@ -76,20 +71,13 @@ public class ShipModFactory {
         return fm.getFleetData().getFleet().getFaction().getId();
     }
 
-    public static ShipModifications generateRandom(ShipVariantAPI var, String faction) {
-        ShipModifications mods = new ShipModifications();
-
-        mods.generate(var, faction);
-
-        return mods;
-    }
-
     public static ShipModifications generateRandom(FleetMemberAPI fm) {
-        if (ETModPlugin.hasData(fm.getId())) {
-            return ETModPlugin.getData(fm.getId());
+        ShipModifications mods = ShipModLoader.get(fm);
+        if (mods != null) {
+            return mods;
         }
 
-        ShipModifications mods = new ShipModifications();
+        mods = new ShipModifications();
 
         if (fm.getFleetData() == null || fm.getFleetData().getFleet() == null) {
             return mods;
@@ -100,7 +88,7 @@ public class ShipModFactory {
         mods.generate(fm, faction);
 
         if (CampaignEventListener.isAppliedData()) {
-            mods.save(fm);
+            ShipModLoader.set(fm, mods);
         }
 
         return mods;

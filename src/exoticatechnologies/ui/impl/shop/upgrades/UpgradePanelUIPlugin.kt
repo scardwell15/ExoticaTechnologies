@@ -13,6 +13,7 @@ import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
+import exoticatechnologies.ui.impl.shop.ModsModifier
 import exoticatechnologies.ui.impl.shop.upgrades.chips.ChipPanelUIPlugin
 import exoticatechnologies.util.RenderUtils
 import java.awt.Color
@@ -23,12 +24,13 @@ class UpgradePanelUIPlugin(
     var member: FleetMemberAPI,
     var mods: ShipModifications,
     var market: MarketAPI
-) : InteractiveUIPanelPlugin() {
+) : InteractiveUIPanelPlugin(), ModsModifier {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionPlugin: UpgradeDescriptionUIPlugin? = null
     private var resourcesPlugin: UpgradeResourcesUIPlugin? = null
     private var methodsPlugin: UpgradeMethodsUIPlugin? = null
     private var chipsPlugin: ChipPanelUIPlugin? = null
+    override var listeners: MutableList<ModsModifier.ModChangeListener> = mutableListOf()
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -76,19 +78,7 @@ class UpgradePanelUIPlugin(
         resourcesPlugin!!.destroyTooltip()
 
         method.apply(member, mods, upgrade, market)
-
-        /*
-        val tooltip = mainPanel!!.createUIElement(panelWidth / 2, panelHeight, false)
-        val timedPlugin = TimedUIPlugin(0.75f, UpgradedUIListener(this, tooltip))
-
-        val upgradedPanel: CustomPanelAPI =
-            mainPanel!!.createCustomPanel(panelWidth / 2, panelHeight, timedPlugin)
-        val upgradedTooltip = upgradedPanel.createUIElement(panelWidth / 2, panelHeight, false)
-        upgradedTooltip.addPara(displayString, 0f).position.inMid()
-
-        upgradedPanel.addUIElement(upgradedTooltip).inTL(0f, 0f)
-        tooltip.addCustom(upgradedPanel, 0f)
-        mainPanel!!.addUIElement(tooltip).inBR(0f, 0f) */
+        modifiedMods(member, mods)
 
         descriptionPlugin!!.resetDescription()
         resourcesPlugin!!.redisplayResourceCosts(method)

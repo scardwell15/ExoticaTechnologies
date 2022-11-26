@@ -12,6 +12,7 @@ import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.ETModPlugin
 import exoticatechnologies.integration.ironshell.IronShellIntegration
 import exoticatechnologies.modifications.ShipModFactory
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.stats.UpgradeModEffect
 import exoticatechnologies.modifications.upgrades.Upgrade
@@ -121,8 +122,8 @@ class CrewSalaryEffect : UpgradeModEffect() {
                 val fleet = Global.getSector().playerFleet ?: return 0
                 var increasedSalary = 0
                 for (fm in fleet.membersWithFightersCopy) {
-                    if (ETModPlugin.hasData(fm.id)) {
-                        val mods = ShipModFactory.getForFleetMember(fm)
+                    val mods = ShipModLoader.get(fm)
+                    if (mods != null) {
                         increasedSalary += getIncreasedSalaryForMember(fm, mods)
                     }
                 }

@@ -70,6 +70,14 @@ public class ETUpgrades {
         this.upgrades.remove(upgrade.getKey());
     }
 
+    public int getTotalLevels() {
+        int size = 0;
+        for (String key : this.upgrades.keySet()) {
+            size += this.upgrades.get(key);
+        }
+        return size;
+    }
+
     @Override
     public String toString() {
         return "ETUpgrades{" +

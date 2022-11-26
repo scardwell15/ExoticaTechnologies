@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import data.scripts.util.MagicSettings;
 import exoticatechnologies.modifications.ShipModifications;
@@ -115,17 +116,27 @@ public class UpgradesHandler {
         return false;
     }
 
-    //upgrade whitelist for faction
-    public static List<String> getWhitelistForFaction(String faction) {
-        List<String> factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", "rngUpgradeWhitelist");
-        try {
-            if (MagicSettings.modSettings.getJSONObject("exoticatechnologies").has(faction + "_UpgradeWhitelist")) {
-                factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", faction + "_UpgradeWhitelist");
+    public static List<Upgrade> getAllowedUpgrades(FleetMemberAPI member) {
+        List<Upgrade> upgrades = new ArrayList<>();
+
+        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if (upgrade.canApply(member)) {
+                upgrades.add(upgrade);
             }
-        } catch (JSONException ex) {
-            log.info("ET modSettings object doesn't exist. Is this a bug in MagicLib, or did you remove it?");
-            log.info("The actual exception follows.", ex);
         }
-        return factionAllowedUpgrades;
+
+        return upgrades;
+    }
+
+    public static List<Upgrade> getAllowedUpgrades(String faction, ShipVariantAPI var) {
+        List<Upgrade> upgrades = new ArrayList<>();
+
+        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if (upgrade.allowedForFaction(faction) && upgrade.canApply(var)) {
+                upgrades.add(upgrade);
+            }
+        }
+
+        return upgrades;
     }
 }

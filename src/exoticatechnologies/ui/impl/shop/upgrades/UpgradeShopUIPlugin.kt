@@ -1,20 +1,19 @@
 package exoticatechnologies.ui.impl.shop.upgrades
 
-import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.CustomPanelAPI
-import com.fs.starfarer.api.ui.CutStyle
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import exoticatechnologies.ui.BaseUIPanelPlugin
 import exoticatechnologies.ui.StringTooltip
+import exoticatechnologies.ui.impl.shop.ModsModifier
 import exoticatechnologies.ui.impl.shop.ShopMenuUIPlugin
 import exoticatechnologies.ui.tabs.TabButtonUIPlugin
 import exoticatechnologies.ui.tabs.TabbedPanelUIPlugin
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
-class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
+class UpgradeShopUIPlugin : ShopMenuUIPlugin(), ModsModifier {
     val pad: Float = 3f
     val opad: Float = 10f
     override var bgColor: Color = Color(150, 255, 200, 0)
@@ -38,11 +37,9 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
         listPanel = listPlugin.layoutPanels(UpgradesHandler.UPGRADES_LIST)
 
         listPlugin.addListener { member ->
-            run {
-                listPlugin.panelPluginMap.values.forEach { it.setBGColor(alpha = 0) }
-                listPlugin.panelPluginMap[member]?.setBGColor(alpha = 100)!!
-                showPanel(member)
-            }
+            listPlugin.panelPluginMap.values.forEach { it.setBGColor(alpha = 0) }
+            listPlugin.panelPluginMap[member]?.setBGColor(alpha = 100)!!
+            showPanel(member)
         }
 
         val panelPlugin = BaseUIPanelPlugin()
@@ -67,6 +64,10 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
             upgradePlugin.panelHeight = innerPanel!!.position.height
             activePanel = upgradePlugin.layoutPanels()
             activePanel!!.position.inTL(0f, 0f)
+
+            upgradePlugin.addModChangeListener { member, mods ->
+                modifiedMods(member, mods)
+            }
         }
     }
 
@@ -78,7 +79,10 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
 
         override fun createTabButton(holdingPanel: CustomPanelAPI, parentPlugin: TabbedPanelUIPlugin): TooltipMakerAPI {
             val tooltip = super.createTabButton(holdingPanel, parentPlugin)
-            tooltip.addTooltipToPrevious(StringTooltip(tooltip, StringUtils.getString("UpgradesDialog","UpgradeHelp")), TooltipMakerAPI.TooltipLocation.BELOW)
+            tooltip.addTooltipToPrevious(
+                StringTooltip(tooltip, StringUtils.getString("UpgradesDialog", "UpgradeHelp")),
+                TooltipMakerAPI.TooltipLocation.BELOW
+            )
             return tooltip
         }
     }

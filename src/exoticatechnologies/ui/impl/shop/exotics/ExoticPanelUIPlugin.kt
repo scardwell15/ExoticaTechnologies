@@ -9,6 +9,7 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
+import exoticatechnologies.ui.impl.shop.ModsModifier
 import exoticatechnologies.ui.impl.shop.exotics.methods.DestroyMethod
 import exoticatechnologies.ui.impl.shop.exotics.methods.InstallMethod
 import exoticatechnologies.ui.impl.shop.exotics.methods.Method
@@ -22,11 +23,12 @@ class ExoticPanelUIPlugin(
     var member: FleetMemberAPI,
     var mods: ShipModifications,
     var market: MarketAPI
-) : InteractiveUIPanelPlugin() {
+) : InteractiveUIPanelPlugin(), ModsModifier {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionPlugin: ExoticDescriptionUIPlugin? = null
     private var methodsPlugin: ExoticMethodsUIPlugin? = null
     private var resourcesPlugin: ExoticResourcesUIPlugin? = null
+    override var listeners: MutableList<ModsModifier.ModChangeListener> = mutableListOf()
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -77,19 +79,8 @@ class ExoticPanelUIPlugin(
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
-        val displayString = method.apply(member, mods, exotic, market)
-
-        /*val tooltip = mainPanel!!.createUIElement(panelWidth / 2, panelHeight, false)
-        val timedPlugin = TimedUIPlugin(0.75f, AppliedUIListener(this, tooltip))
-
-        val upgradedPanel: CustomPanelAPI =
-            mainPanel!!.createCustomPanel(panelWidth / 2, panelHeight, timedPlugin)
-        val upgradedTooltip = upgradedPanel.createUIElement(panelWidth / 2, panelHeight, false)
-        upgradedTooltip.addPara(displayString, 0f).position.inMid()
-
-        upgradedPanel.addUIElement(upgradedTooltip).inTL(0f, 0f)
-        tooltip.addCustom(upgradedPanel, 0f)
-        mainPanel!!.addUIElement(tooltip).inBR(0f, 0f)*/
+        method.apply(member, mods, exotic, market)
+        modifiedMods(member, mods)
 
         resourcesPlugin!!.redisplayResourceCosts(method)
         methodsPlugin!!.createTooltip()

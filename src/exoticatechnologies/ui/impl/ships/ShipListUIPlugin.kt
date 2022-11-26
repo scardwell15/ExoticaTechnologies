@@ -5,6 +5,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModFactory
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.RenderUtils
@@ -17,7 +18,7 @@ class ShipListUIPlugin(parentPanel: CustomPanelAPI) : ListUIPanelPlugin<FleetMem
         tooltip: TooltipMakerAPI,
         item: FleetMemberAPI
     ): ListItemUIPanelPlugin<FleetMemberAPI> {
-        val rowPlugin = ShipItemUIPlugin(item, ShipModFactory.getForFleetMember(item), this)
+        val rowPlugin = ShipItemUIPlugin(item, ShipModFactory.generateForFleetMember(item), this)
         rowPlugin.panelWidth = panelWidth
         rowPlugin.panelHeight = rowHeight
         rowPlugin.layoutPanel(tooltip)
@@ -46,5 +47,14 @@ class ShipListUIPlugin(parentPanel: CustomPanelAPI) : ListUIPanelPlugin<FleetMem
         )
 
         RenderUtils.popUIRenderingStack()
+    }
+
+    fun modsModified(member: FleetMemberAPI, mods: ShipModifications) {
+        panelPluginMap.filter { it.key == member}
+            .values.forEach {
+                if (it is ShipItemUIPlugin) {
+                    it.updateWithNewMods(mods)
+                }
+            }
     }
 }

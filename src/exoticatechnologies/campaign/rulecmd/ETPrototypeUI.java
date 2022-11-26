@@ -21,15 +21,9 @@ import java.util.Map;
 
 @Log4j
 public class ETPrototypeUI extends BaseCommandPlugin {
-    private static InteractionDialogAPI dialog;
-    private static Map<String, MemoryAPI> memoryMap;
-    private static final float SHIP_ROW_HEIGHT = 64f;
 
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
-        ETPrototypeUI.dialog = dialog;
-        ETPrototypeUI.memoryMap = memoryMap;
-
         List<FleetMemberAPI> fleetMembers = Global.getSector().getPlayerFleet().getFleetData().getMembersInPriorityOrder();
         Iterator<FleetMemberAPI> iterator = fleetMembers.iterator();
         while (iterator.hasNext()) {

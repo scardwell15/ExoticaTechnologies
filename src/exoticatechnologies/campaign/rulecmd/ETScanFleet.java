@@ -10,6 +10,8 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.campaign.ScanUtils;
+import exoticatechnologies.modifications.ShipModFactory;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import lombok.extern.log4j.Log4j;
 
@@ -19,8 +21,6 @@ import java.util.Map;
 
 @Log4j
 public class ETScanFleet extends BaseCommandPlugin {
-    private static final float NOTABLE_BANDWIDTH = 180f;
-
     @Override
     public boolean doesCommandAddOptions() {
         return false;
@@ -41,16 +41,9 @@ public class ETScanFleet extends BaseCommandPlugin {
             for (FleetMemberAPI fm : otherFleet.getMembersWithFightersCopy()) {
                 if (fm.isFighterWing()) continue;
 
-                if (ETModPlugin.hasData(fm.getId())) {
-                    ShipModifications mods = ETModPlugin.getData(fm.getId());
-
-                    log.info(String.format("ShipModifications info for ship [%s]: upg [%s] aug [%s] bdw [%s]",
-                            fm.getShipName(),
-                            mods.hasUpgrades(),
-                            mods.hasExotics(),
-                            mods.getBandwidthWithExotics(fm)));
-
-                    if (mods.hasUpgrades() || mods.hasExotics() || mods.getBandwidthWithExotics(fm) >= NOTABLE_BANDWIDTH) {
+                ShipModifications mods = ShipModLoader.get(fm);
+                if (mods != null) {
+                    if (ScanUtils.doesEntityHaveNotableMods(mods)) {
                         validSelectionList.add(fm);
                     }
                 }

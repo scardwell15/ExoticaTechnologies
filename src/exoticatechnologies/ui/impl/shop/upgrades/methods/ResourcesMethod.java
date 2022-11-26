@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exoticatechnologies.hullmods.ExoticaTechHM;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
@@ -56,7 +57,7 @@ public class ResourcesMethod implements UpgradeMethod {
         Utilities.takeResources(fm.getFleetData().getFleet(), market, upgradeCosts);
 
         mods.putUpgrade(upgrade);
-        mods.save(fm);
+        ShipModLoader.set(fm, mods);
         ExoticaTechHM.addToFleetMember(fm);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);

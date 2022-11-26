@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.hullmods.ExoticaTechHM;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.StringUtils;
@@ -61,7 +62,7 @@ public class RecoverMethod implements UpgradeMethod {
         mods.removeUpgrade(upgrade);
         fleet.getCargo().getCredits().subtract(creditCost);
 
-        mods.save(fm);
+        ShipModLoader.set(fm, mods);
         ExoticaTechHM.addToFleetMember(fm);
 
         return StringUtils.getString("UpgradesDialog", "UpgradeRecoveredSuccessfully");

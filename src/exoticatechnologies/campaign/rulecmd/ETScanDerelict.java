@@ -8,7 +8,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySp
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.campaign.ScanUtils;
-import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.*;
 import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 
@@ -30,7 +30,7 @@ public class ETScanDerelict extends BaseCommandPlugin {
         DerelictShipEntityPlugin plugin = (DerelictShipEntityPlugin) interactionTarget.getCustomPlugin();
         ShipRecoverySpecial.PerShipData shipData = plugin.getData().ship;
 
-        ShipModifications mods = getMods(interactionTarget, shipData);
+        ShipModifications mods = ShipModLoader.getForSpecialData(shipData);
         if (mods == null) {
             dialog.getOptionPanel().setEnabled(ruleId, false);
 
@@ -45,18 +45,5 @@ public class ETScanDerelict extends BaseCommandPlugin {
         }
 
         return true;
-    }
-
-    public ShipModifications getMods(SectorEntityToken entity, ShipRecoverySpecial.PerShipData shipData) {
-        if (shipData.fleetMemberId != null) {
-            if (ETModPlugin.hasData(shipData.fleetMemberId)) {
-                return ETModPlugin.getData(shipData.fleetMemberId);
-            }
-        } else {
-            if (ETModPlugin.hasData(entity.getId())) {
-                return ETModPlugin.getData(entity.getId());
-            }
-        }
-        return null;
     }
 }

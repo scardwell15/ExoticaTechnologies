@@ -23,7 +23,9 @@ import com.fs.starfarer.api.util.Pair;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.ETModSettings;
 import exoticatechnologies.hullmods.ExoticaTechHM;
+import exoticatechnologies.modifications.PersistentDataProvider;
 import exoticatechnologies.modifications.ShipModFactory;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.upgrades.Upgrade;
@@ -42,9 +44,11 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     private static final List<CampaignFleetAPI> activeFleets = new ArrayList<>();
     private final IntervalUtil interval = new IntervalUtil(2f, 2f);
     private final IntervalUtil cleaningInterval = new IntervalUtil(15f, 15f);
-    @Getter private static boolean appliedData = false;
+    @Getter
+    private static boolean appliedData = false;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private static boolean mergeCheck = false;
 
     private static final List<String> submarketIdsToCheckForSpecialItems = new ArrayList<>();
@@ -62,7 +66,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     /**
      * Apply ship modifications to everything in the next frame.
      */
-    public void invalidateShipModifications() {
+    public static void invalidateShipModifications() {
         appliedData = false;
     }
 
@@ -140,7 +144,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
             //it will never find one.
             ShipModifications mods = ShipModFactory.generateRandom(fm);
-            ETModPlugin.saveData(shipData.fleetMemberId, mods);
+            ShipModLoader.set(fm, mods);
 
             Global.getSector().addTransientScript(new DerelictsEFScript(shipData.fleetMemberId, mods));
             return;
@@ -178,14 +182,13 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     ShipModifications mods = ShipModFactory.generateRandom(fm);
                     //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                     //it will never find one.
-                    ETModPlugin.saveData(shipData.fleetMemberId, mods);
+                    ShipModLoader.set(fm, mods);
 
                     derelictVariantMap.put(shipData.fleetMemberId, mods);
                 }
 
                 Global.getSector().addTransientScript(new DerelictsEFScript(derelictVariantMap));
             }
-            return;
         }
     }
 
@@ -228,10 +231,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             fms.addAll(playerResult.getDestroyed());
 
             for (FleetMemberAPI fm : fms) {
-                ShipModifications mods = ETModPlugin.getData(fm.getId());
+                ShipModifications mods = ShipModLoader.get(fm);
                 if (mods != null) {
                     ExoticaTechHM.removeFromFleetMember(fm);
-                    ETModPlugin.removeData(fm.getId());
+                    ShipModLoader.remove(fm);
                 }
             }
         }
@@ -253,7 +256,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
         Map<Exotic, Integer> exotics = new HashMap<>();
 
         for (FleetMemberAPI fm : fms) {
-            ShipModifications mods = ETModPlugin.getData(fm.getId());
+            ShipModifications mods = ShipModLoader.get(fm);
             if (mods != null) {
                 for (Map.Entry<Upgrade, Integer> upgData : mods.getUpgradeMap().entrySet()) {
                     Upgrade upgrade = upgData.getKey();
@@ -302,26 +305,17 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     public void advance(float v) {
         if (!appliedData) {
             appliedData = true;
-            for (String fmId : ETModPlugin.getShipModificationMap().keySet()) {
-                FleetMemberAPI fm = CampaignEventListener.findFM(fmId);
-
-                if (fm != null) {
-                    ExoticaTechHM.addToFleetMember(fm);
-                }
-            }
-
             for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getMembersWithFightersCopy()) {
-                String fmId = fm.getId();
-                if (ETModPlugin.hasData(fmId)) {
+                ShipModifications mods = ShipModLoader.get(fm);
+                if (mods != null) {
                     ExoticaTechHM.addToFleetMember(fm);
-                } else {
-                    if (fm.getHullId().contains("ziggurat") && ETModPlugin.getZigguratDuplicateId() != null) {
-                        fmId = ETModPlugin.getZigguratDuplicateId();
-                        if (ETModPlugin.hasData(fmId)) {
-                            ExoticaTechHM.addToFleetMember(fm);
-                        }
-                    }
                 }
+                /*else if (fm.getHullId().contains("ziggurat") && ETModPlugin.getZigguratDuplicateId() != null) {
+                    fmId = ETModPlugin.getZigguratDuplicateId();
+                    if (ETModPlugin.hasData(fmId)) {
+                        ExoticaTechHM.addToFleetMember(fm);
+                    }
+                }*/
             }
         }
 
@@ -342,24 +336,13 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
             checkNearbyFleets();
 
-            //disgustingly get a ships of the fmIds
-            String[] fmIds = ETModPlugin.getShipModificationMap().keySet().toArray(new String[0]);
+            //just in case, i guess.
+            String[] fmIds = PersistentDataProvider.getShipModificationMap().keySet().toArray(new String[0]);
             for (String fmId : fmIds) {
                 if (findFM(fmId) == null) {
-
-                    if (!isInFleet(fmId, Global.getSector().getPlayerFleet())) {
-                        ETModPlugin.removeData(fmId);
-                    }
+                    PersistentDataProvider.getShipModificationMap().remove(fmId);
                 }
             }
-        }
-
-        interval.advance(v);
-        if (checkFleets || interval.intervalElapsed()) {
-            interval.setElapsed(0f);
-
-            dlog(String.format("Extra system instances active: [%s]", ETModPlugin.getShipModificationMap().size()));
-            dlog(String.format("Fleet instances active: [%s]", activeFleets.size()));
         }
     }
 
@@ -399,10 +382,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
     public static FleetMemberAPI findFM(String fmId) {
         if (Global.getSector().getPlayerFleet() != null) {
-            for (FleetMemberAPI playerFm : Global.getSector().getPlayerFleet().getMembersWithFightersCopy()) {
-                if (playerFm.getId().equals(fmId)) {
-                    return playerFm;
-                }
+
+            FleetMemberAPI fm = getFromFleet(fmId, Global.getSector().getPlayerFleet().getFleetData());
+            if (fm != null) {
+                return fm;
             }
         }
 
@@ -417,10 +400,9 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     private static FleetMemberAPI checkNearbyFleetsForFM(String fmId) {
         List<CampaignFleetAPI> fleets = Global.getSector().getCurrentLocation().getFleets();
         for (CampaignFleetAPI fleet : fleets) {
-            for (FleetMemberAPI fm : fleet.getMembersWithFightersCopy()) {
-                if (fm.getId().equals(fmId)) {
-                    return fm;
-                }
+            FleetMemberAPI fm = getFromFleet(fmId, fleet.getFleetData());
+            if (fm != null) {
+                return fm;
             }
         }
 
@@ -428,15 +410,22 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     }
 
     private static FleetMemberAPI checkStorageMarketsForFM(String fmId) {
-        for (MarketAPI market : Global.getSector().getEconomy().getMarketsCopy()) {
-            for (SubmarketAPI submarket : market.getSubmarketsCopy()) {
-                if (submarket.getCargoNullOk() != null) {
-                    CargoAPI storage = submarket.getCargoNullOk();
-                    if (storage.getMothballedShips() != null
-                            && storage.getMothballedShips().getMembersListWithFightersCopy() != null) {
+        for (LocationAPI location : Global.getSector().getAllLocations()) {
+            for (SectorEntityToken token : location.getAllEntities()) {
+                if (token.getMarket() != null) {
+                    for (SubmarketAPI submarket : token.getMarket().getSubmarketsCopy()) {
+                        if (submarket.getCargoNullOk() != null) {
+                            CargoAPI storage = submarket.getCargoNullOk();
 
-                        for (FleetMemberAPI fm : storage.getMothballedShips().getMembersListWithFightersCopy()) {
-                            if (fm.getId().equals(fmId)) {
+                            FleetMemberAPI fm = getFromFleet(fmId, storage.getMothballedShips());
+
+                            if (fm != null) {
+                                return fm;
+                            }
+
+                            fm = getFromFleet(fmId, storage.getFleetData());
+
+                            if (fm != null) {
                                 return fm;
                             }
                         }
@@ -486,7 +475,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             if (!isInFleet(fm.getId(), Global.getSector().getPlayerFleet())) {
                 dlog(String.format("Removed mods for member %s", fm.getId()));
-                ETModPlugin.removeData(fm.getId());
+                ShipModLoader.remove(fm);
             }
         }
     }
@@ -500,7 +489,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
             //generate random extra system
             ShipModifications mods = ShipModFactory.generateRandom(fm);
-            mods.save(fm);
+            ShipModLoader.set(fm, mods);
             ExoticaTechHM.addToFleetMember(fm);
 
             dlog(String.format("Added modifications to member %s", fm.getShipName()));
@@ -527,14 +516,26 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             return false;
         }
 
-        for (FleetMemberAPI fleetMember : fleet.getFleetData().getMembersListCopy()) {
-            if (fleetMember.isFighterWing()) continue;
+        return isInFleet(fmId, fleet.getFleetData());
+    }
 
-            if (fmId.equals(fleetMember.getId())) {
-                return true;
+    private static boolean isInFleet(String fmId, FleetDataAPI fleetData) {
+        return getFromFleet(fmId, fleetData) != null;
+    }
+
+
+    private static FleetMemberAPI getFromFleet(String fmId, FleetDataAPI fleetData) {
+        if (fleetData != null) {
+            for (FleetMemberAPI fleetMember : fleetData.getMembersListCopy()) {
+                if (fleetMember.isFighterWing()) continue;
+
+                if (fmId.equals(fleetMember.getId())) {
+                    return fleetMember;
+                }
             }
         }
-        return false;
+
+        return null;
     }
 
     private static void dlog(String format, Object... args) {

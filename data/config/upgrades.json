@@ -21,6 +21,7 @@
     "name": "Commissioned Crews",
     "color": [230, 200, 25],
     "bandwidthPerLevel": 5,
+    "spawnChance": 0,
     "stats": [
       {"id": "crewSalary", "scalingEffect": 25},
       {"id": "suppliesPerMonth", "scalingEffect": -30},
@@ -60,6 +61,7 @@
     "name": "Forced Overtime",
     "color": [124, 124, 124],
     "bandwidthPerLevel": 5,
+    "spawnChance": 60,
     "stats": [
       {"id": "crRecoveryRate", "scalingEffect": 30},
       {"id": "peakPerformanceTime", "scalingEffect": 30},
@@ -130,6 +132,7 @@
   "AdvancedFluxCoils": {
     "name": "Advanced Flux Coils",
     "bandwidthPerLevel": 20,
+    "spawnChance": 300,
     "color": [105, 74, 227],
     "stats": [
       {"id": "fluxCapacity", "scalingEffect": 25},
@@ -154,6 +157,7 @@
     "name": "Derelict Weapon Assistant",
     "color": [170, 200, 75],
     "bandwidthPerLevel": 10,
+    "spawnChance": 300,
     "stats": [
       {"id": "recoilPerShot", "scalingEffect": -30},
       {"id": "maxRecoil", "scalingEffect": -30},
@@ -175,6 +179,7 @@
     "name": "Auxiliary Sensors",
     "color": [178, 178, 178],
     "bandwidthPerLevel": 2.5,
+    "spawnChance": 75,
     "stats": [
       {"id": "sensorStrength", "scalingEffect": 50},
       {"id": "sensorProfile", "scalingEffect": 12, "startingLevel": 3},
@@ -190,6 +195,7 @@
     "name": "Interference Shielding",
     "color": [93, 59, 210],
     "bandwidthPerLevel": 2.5,
+    "spawnChance": 75,
     "stats": [
       {"id": "sensorProfile", "scalingEffect": -50},
       {"id": "suppliesPerMonth", "scalingEffect": 16, "startingLevel": 3}
@@ -205,6 +211,7 @@
     "name": "Iron Shell",
     "color": [252,173,60],
     "bandwidthPerLevel": 10,
+    "spawnChance": 300,
     "stats": [
       {"id": "armorDamageTaken", "scalingEffect": -10},
       {"id": "heDamageTaken", "scalingEffect": -20},

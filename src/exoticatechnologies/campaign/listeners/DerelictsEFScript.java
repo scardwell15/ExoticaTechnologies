@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exoticatechnologies.hullmods.ExoticaTechHM;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
@@ -95,7 +96,7 @@ public class DerelictsEFScript implements EveryFrameScript {
             }
 
             if (mods != null) {
-                mods.save(fm);
+                ShipModLoader.set(fm, mods);
                 ExoticaTechHM.addToFleetMember(fm);
             }
         }

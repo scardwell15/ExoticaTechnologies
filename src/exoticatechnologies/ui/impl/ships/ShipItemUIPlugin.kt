@@ -9,22 +9,28 @@ import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
-import exoticatechnologies.util.RenderUtils
 import java.awt.Color
 
-class ShipItemUIPlugin(item: FleetMemberAPI, var mods: ShipModifications, private val listPanel: ListUIPanelPlugin<FleetMemberAPI>
+class ShipItemUIPlugin(
+    item: FleetMemberAPI, var mods: ShipModifications, private val listPanel: ListUIPanelPlugin<FleetMemberAPI>
 ) : ListItemUIPanelPlugin<FleetMemberAPI>(item) {
     private val pad = 3f
     private val opad = 10f
     override var panelWidth: Float = 304f
     override var panelHeight: Float = 64f
     override var bgColor: Color = Color(200, 200, 200, 0)
-    var lastSpecialValue: Int = -1
+    var lastSpecialValue: Float = -1f
     var specialText: LabelAPI? = null
     var wasHovered: Boolean = false
 
+    fun updateWithNewMods(mods: ShipModifications) {
+        this.mods = mods
+        val newSpecialValue = mods.value
+        setSpecialText(newSpecialValue)
+    }
+
     override fun advance(amount: Float) {
-        val newSpecialValue = mods.upgradeMap.size + mods.exoticSet.size
+        val newSpecialValue = mods.value
         if (newSpecialValue != lastSpecialValue) {
             setSpecialText(newSpecialValue)
         }
@@ -46,7 +52,7 @@ class ShipItemUIPlugin(item: FleetMemberAPI, var mods: ShipModifications, privat
         shipText.addPara(item.shipName, shipNameColor, 0f)
         shipText.addPara(item.hullSpec.hullNameWithDashClass, 0f)
 
-        val specialValue = mods.upgradeMap.size + mods.exoticSet.size
+        val specialValue = mods.value
         specialText = shipText.addPara("", Misc.getTextColor(), 0f)
         setSpecialText(specialValue)
 
@@ -60,7 +66,7 @@ class ShipItemUIPlugin(item: FleetMemberAPI, var mods: ShipModifications, privat
         return panel!!
     }
 
-    private fun setSpecialText(newSpecialValue: Int) {
+    private fun setSpecialText(newSpecialValue: Float) {
         lastSpecialValue = newSpecialValue
 
         val upgrades: Int = mods.upgradeMap.size

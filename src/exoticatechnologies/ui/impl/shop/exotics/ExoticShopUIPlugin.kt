@@ -6,6 +6,7 @@ import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.ui.BaseUIPanelPlugin
 import exoticatechnologies.ui.StringTooltip
+import exoticatechnologies.ui.impl.shop.ModsModifier
 import exoticatechnologies.ui.impl.shop.ShopMenuUIPlugin
 import exoticatechnologies.ui.tabs.TabButtonUIPlugin
 import exoticatechnologies.ui.tabs.TabbedPanelUIPlugin
@@ -61,11 +62,15 @@ class ExoticShopUIPlugin: ShopMenuUIPlugin() {
 
         activeExotic = exotic
         if (activeExotic != null) {
-            val upgradePlugin = ExoticPanelUIPlugin(innerPanel!!, exotic!!, member!!, mods!!, market!!)
-            upgradePlugin.panelWidth = innerPanel!!.position.width
-            upgradePlugin.panelHeight = innerPanel!!.position.height
-            activePanel = upgradePlugin.layoutPanels()
+            val exoticPlugin = ExoticPanelUIPlugin(innerPanel!!, exotic!!, member!!, mods!!, market!!)
+            exoticPlugin.panelWidth = innerPanel!!.position.width
+            exoticPlugin.panelHeight = innerPanel!!.position.height
+            activePanel = exoticPlugin.layoutPanels()
             activePanel!!.position.inTL(0f, 0f)
+
+            exoticPlugin.addModChangeListener { member, mods ->
+                modifiedMods(member, mods)
+            }
         }
     }
 

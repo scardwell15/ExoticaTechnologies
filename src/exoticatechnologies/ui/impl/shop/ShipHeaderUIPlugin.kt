@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.*
 import com.fs.starfarer.api.util.Misc
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthHandler
@@ -40,6 +41,8 @@ class ShipHeaderUIPlugin(
     var bandwidthTooltip: TooltipMakerAPI? = null
     var bandwidthUpgradeLabel: LabelAPI? = null
     var bandwidthButton: ButtonAPI? = null
+
+    val listeners: MutableList<ModsModifier.ModChangeListener> = mutableListOf()
 
     override fun advancePanel(amount: Float) {
         setBandwidthText()
@@ -212,7 +215,8 @@ class ShipHeaderUIPlugin(
 
         val newBandwidth = min(mods.baseBandwidth + increase, Bandwidth.MAX_BANDWIDTH)
         mods.setBandwidth(newBandwidth)
-        mods.save(member)
+
+        ShipModLoader.set(member, mods)
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 0.75f)
     }
@@ -221,5 +225,16 @@ class ShipHeaderUIPlugin(
         bandwidthButton?.isChecked = false
         doBandwidthUpgrade()
         setBandwidthUpgradeLabel()
+        modifiedMods(member, mods)
+    }
+
+    fun modifiedMods(member: FleetMemberAPI, mods: ShipModifications) {
+        listeners.forEach {
+            it.changedMods(member, mods)
+        }
+    }
+
+    fun addListener(listener: ModsModifier.ModChangeListener) {
+        listeners.add(listener)
     }
 }

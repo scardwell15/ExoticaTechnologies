@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.hullmods.ExoticaTechHM;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
@@ -58,7 +59,7 @@ public class CreditsMethod implements UpgradeMethod {
         Global.getSector().getPlayerFleet().getCargo().getCredits().subtract(creditCost);
 
         mods.putUpgrade(upgrade);
-        mods.save(fm);
+        ShipModLoader.set(fm, mods);
         ExoticaTechHM.addToFleetMember(fm);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);

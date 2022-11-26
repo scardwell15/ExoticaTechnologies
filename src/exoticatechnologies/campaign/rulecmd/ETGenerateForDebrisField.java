@@ -16,6 +16,7 @@ import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.campaign.ScanUtils;
 import exoticatechnologies.campaign.listeners.DerelictsEFScript;
 import exoticatechnologies.modifications.ShipModFactory;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
@@ -66,32 +67,20 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
                         FleetMemberAPI fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
                         if (shipData.fleetMemberId == null) {
                             shipData.fleetMemberId = fm.getId();
-
-                            if (ETModPlugin.hasData(fm.getId())) {
-                                notableModsGenerated = true;
-                                break;
-                            }
                         } else {
                             fm.setId(shipData.fleetMemberId);
                         }
 
-                        Long seed = ScanUtils.getPerShipDataSeed(shipData, i);
-                        if (seed == null) continue;
-
                         log.info("debris field: generating for fmId " + shipData.fleetMemberId);
-
-                        ShipVariantAPI var = shipData.getVariant();
 
                         //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                         //it will never find one.
 
-                        ShipModFactory.getRandom().setSeed(seed);
-
+                        ShipModFactory.getRandom().setSeed(shipData.fleetMemberId.hashCode());
                         ShipModifications mods = ShipModFactory.generateRandom(fm);
-                        String entityId = ScanUtils.getPerShipDataId(shipData, i);
-                        ETModPlugin.saveData(entityId, mods);
+                        ShipModLoader.set(fm, mods);
 
-                        derelictVariantMap.put(entityId, mods);
+                        derelictVariantMap.put(String.valueOf(shipData.fleetMemberId.hashCode()), mods);
 
                         if(ScanUtils.doesEntityHaveNotableMods(mods)) {
                             notableModsGenerated = true;

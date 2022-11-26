@@ -14,34 +14,28 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesGenerator;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import lombok.extern.log4j.Log4j;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.*;
 
 @Log4j
 public class ShipModifications {
-    //per fleet member!
-    private static final float CHANCE_OF_UPGRADES = 0.4f;
-
     ShipModifications() {
         this.upgrades = new ETUpgrades();
         this.exotics = new ETExotics();
     }
 
+    ShipModifications(float bandwidth, ETUpgrades upgrades, ETExotics exotics) {
+        this.bandwidth = bandwidth;
+        this.upgrades = upgrades;
+        this.exotics = exotics;
+    }
+
     public boolean shouldApplyHullmod() {
         return this.upgrades.hasUpgrades()
                 || this.exotics.hasAnyExotic();
-    }
-
-    public void save(FleetMemberAPI fm) {
-        ETModPlugin.saveData(fm.getId(), this);
-
-        if (fm.getHullId().contains("ziggurat")) {
-            if (ETModPlugin.getZigguratDuplicateId() == null) {
-                ETModPlugin.setZigguratDuplicateId(fm.getId());
-            } else {
-                ETModPlugin.saveData(ETModPlugin.getZigguratDuplicateId(), this);
-            }
-        }
     }
 
     /**
@@ -74,6 +68,10 @@ public class ShipModifications {
 
         this.exotics = ExoticsGenerator.generate(fm, faction, this.getBaseBandwidth(fm));
         this.upgrades = UpgradesGenerator.generate(fm, faction, this.getBandwidthWithExotics(fm));
+    }
+
+    public float getValue() {
+        return bandwidth + this.exotics.getList().size() + this.upgrades.getTotalLevels();
     }
 
     //bandwidth
@@ -156,6 +154,7 @@ public class ShipModifications {
 
         return exoticSet;
     }
+
     public boolean hasExotic(String key) {
         return exotics.hasExotic(key);
     }
@@ -177,8 +176,8 @@ public class ShipModifications {
     }
 
     //upgrades
-    private ETUpgrades upgrades = null;
-    protected ETUpgrades getUpgrades() {
+    protected ETUpgrades upgrades = null;
+    public ETUpgrades getUpgrades() {
         return upgrades;
     }
 

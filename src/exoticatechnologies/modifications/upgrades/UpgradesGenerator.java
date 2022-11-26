@@ -8,7 +8,6 @@ import data.scripts.util.MagicSettings;
 import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.util.Utilities;
 import lombok.extern.log4j.Log4j;
-import org.json.JSONException;
 
 import java.util.List;
 import java.util.Map;
@@ -23,8 +22,8 @@ public class UpgradesGenerator {
         Map<String, Float> factionUpgradeChances = MagicSettings.getFloatMap("exoticatechnologies", "factionUpgradeChances");
         Map<String, Float> factionPerUpgradeMult = MagicSettings.getFloatMap("exoticatechnologies", "factionPerUpgradeMult");
 
-        List<String> factionAllowedUpgrades = getAllowedForFaction(faction);
-        if (factionAllowedUpgrades.isEmpty()) {
+        List<Upgrade> allowedUpgrades = UpgradesHandler.getAllowedUpgrades(faction, var);
+        if (allowedUpgrades.isEmpty()) {
             return null;
         }
 
@@ -47,7 +46,7 @@ public class UpgradesGenerator {
             perUpgradeMult *= (1 + smodCount * 0.5f);
 
             ShipAPI.HullSize hullSize = var.getHullSpec().getHullSize();
-            WeightedRandomPicker<Upgrade> upgradePicker = getPicker(random, factionAllowedUpgrades);
+            WeightedRandomPicker<Upgrade> upgradePicker = getPicker(random, allowedUpgrades);
 
             while (random.nextFloat() < (bandwidth / 100f * perUpgradeMult)) {
                 Upgrade upgrade = null;
@@ -87,8 +86,8 @@ public class UpgradesGenerator {
         Map<String, Float> factionUpgradeChances = MagicSettings.getFloatMap("exoticatechnologies", "factionUpgradeChances");
         Map<String, Float> factionPerUpgradeMult = MagicSettings.getFloatMap("exoticatechnologies", "factionPerUpgradeMult");
 
-        List<String> factionAllowedUpgrades = getAllowedForFaction(faction);
-        if (factionAllowedUpgrades.isEmpty()) {
+        List<Upgrade> allowedUpgrades = UpgradesHandler.getAllowedUpgrades(fm);
+        if (allowedUpgrades.isEmpty()) {
             return null;
         }
 
@@ -112,7 +111,7 @@ public class UpgradesGenerator {
             perUpgradeMult *= (1 + smodCount * 0.5f);
 
             ShipAPI.HullSize hullSize = fm.getHullSpec().getHullSize();
-            WeightedRandomPicker<Upgrade> upgradePicker = getPicker(random, factionAllowedUpgrades);
+            WeightedRandomPicker<Upgrade> upgradePicker = getPicker(random, allowedUpgrades);
 
             while (random.nextFloat() < (bandwidth / 100f * perUpgradeMult)) {
                 Upgrade upgrade = null;
@@ -136,7 +135,7 @@ public class UpgradesGenerator {
                 }
 
                 if (upgrade != null) {
-                    if (random.nextFloat() < (upgrade.getSpawnChance() * (1 + 0.2f * smodCount))) {
+                    if (random.nextFloat() < (upgrade.getSpawnChance() / 100f * (1 + 0.2f * smodCount))) {
                         upgrades.addUpgrades(upgrade, 1);
                     }
 
@@ -150,32 +149,10 @@ public class UpgradesGenerator {
         return upgrades;
     }
 
-    private static List<String> getAllowedForFaction(String faction) {
-        List<String> factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", "rngUpgradeWhitelist");
+    private static WeightedRandomPicker<Upgrade> getPicker(Random random, List<Upgrade> allowedUpgrades) {
+        WeightedRandomPicker<Upgrade> upgradePicker = new WeightedRandomPicker<>(random);
 
-        if (faction != null) {
-            try {
-                if(MagicSettings.modSettings.getJSONObject("exoticatechnologies").has(faction + "_UpgradeWhitelist")) {
-                    factionAllowedUpgrades = MagicSettings.getList("exoticatechnologies", faction + "_UpgradeWhitelist");
-                }
-            } catch (JSONException ex) {
-                log.info("ET modSettings object doesn't exist. Is this a bug in MagicLib, or did you remove it?");
-                log.info("The actual exception follows.", ex);
-            }
-        }
-
-        return factionAllowedUpgrades;
-    }
-
-    private static WeightedRandomPicker<Upgrade> getPicker(Random random, List<String> allowedUpgrades) {
-        WeightedRandomPicker<Upgrade> upgradePicker = new WeightedRandomPicker<>();
-
-        for (String upgradeKey : allowedUpgrades) {
-            Upgrade upgrade = UpgradesHandler.UPGRADES.get(upgradeKey);
-            if (upgrade == null) {
-                log.info(String.format("%s upgrade does not exist", upgradeKey));
-                continue;
-            }
+        for (Upgrade upgrade : allowedUpgrades) {
             upgradePicker.add(upgrade, upgrade.getSpawnChance());
         }
 

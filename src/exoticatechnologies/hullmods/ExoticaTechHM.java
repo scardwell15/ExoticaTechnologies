@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.modifications.ShipModFactory;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
@@ -40,7 +41,7 @@ public class ExoticaTechHM extends BaseHullMod {
             return;
         }
 
-        ShipModifications mods = ShipModFactory.getForFleetMember(fm);
+        ShipModifications mods = ShipModFactory.generateForFleetMember(fm);
         ShipVariantAPI shipVariant = fm.getVariant();
 
         if(shipVariant.hasHullMod("exoticatech")) {
@@ -98,20 +99,10 @@ public class ExoticaTechHM extends BaseHullMod {
         return hullmodColor;
     }
 
-    public ShipModifications getModifications(MutableShipStatsAPI stats) {
-        FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
-        if(fm == null) return null;
-
-        return getModifications(fm);
-    }
-
-    public ShipModifications getModifications(FleetMemberAPI fm) {
-        return ShipModFactory.getForFleetMember(fm);
-    }
 
     @Override
     public void advanceInCampaign(FleetMemberAPI fm, float amount) {
-        ShipModifications mods = this.getModifications(fm);
+        ShipModifications mods = ShipModLoader.get(fm);
         if(mods == null) {
             fm.getVariant().removePermaMod("exoticatech");
             return;
@@ -133,7 +124,7 @@ public class ExoticaTechHM extends BaseHullMod {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if(member == null) return;
 
-        ShipModifications mods = this.getModifications(member);
+        ShipModifications mods = ShipModLoader.get(member);
         if(mods == null) return;
 
         float bandwidth = mods.getBandwidthWithExotics(member);
@@ -170,7 +161,7 @@ public class ExoticaTechHM extends BaseHullMod {
             log.info("Failed to get modules", e);
         }
 
-        ShipModifications mods = this.getModifications(fm);
+        ShipModifications mods = ShipModLoader.get(fm);
 
         if (mods == null) {
             fm.getVariant().removePermaMod("exoticatech");
@@ -198,7 +189,7 @@ public class ExoticaTechHM extends BaseHullMod {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if(member == null) return;
 
-        ShipModifications mods = this.getModifications(member);
+        ShipModifications mods = ShipModLoader.get(member);
         if(mods == null) return;
 
         float bandwidth = mods.getBandwidthWithExotics(member);
@@ -233,7 +224,7 @@ public class ExoticaTechHM extends BaseHullMod {
             return;
         }
 
-        ShipModifications mods = this.getModifications(fm);
+        ShipModifications mods = ShipModLoader.get(fm);
         if (mods == null) return;
         float bandwidth = mods.getBandwidthWithExotics(fm);
         String bandwidthString = BandwidthUtil.getFormattedBandwidthWithName(bandwidth);

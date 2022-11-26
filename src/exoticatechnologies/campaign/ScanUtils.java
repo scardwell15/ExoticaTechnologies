@@ -8,20 +8,22 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.modifications.ShipModFactory;
-import exoticatechnologies.modifications.exotics.Exotic;
-import exoticatechnologies.modifications.exotics.ExoticsHandler;
+import exoticatechnologies.modifications.ShipModLoader;
+import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
+import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
-import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.ui.java.TabbedCustomUIPanelPlugin;
 import exoticatechnologies.util.StringUtils;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.lwjgl.opengl.Display;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -63,11 +65,11 @@ public class ScanUtils {
     }
 
     public static boolean isPerShipDataNotable(ShipRecoverySpecial.PerShipData shipData, int i) {
-        String entityId = getPerShipDataId(shipData, i);
-        if (entityId == null) return false;
-
-        return ETModPlugin.hasData(entityId)
-                && ScanUtils.doesEntityHaveNotableMods(ETModPlugin.getData(entityId));
+        ShipModifications mods = ShipModLoader.getForSpecialData(shipData);
+        if (mods != null) {
+            return ScanUtils.doesEntityHaveNotableMods(mods);
+        }
+        return false;
     }
 
     public static List<FleetMemberAPI> getNotableFleetMembers(CampaignFleetAPI fleet) {
@@ -88,16 +90,9 @@ public class ScanUtils {
     }
 
     public static boolean isFleetMemberNotable(FleetMemberAPI fm) {
-        if (ETModPlugin.hasData(fm.getId())) {
-            ShipModifications mods = ETModPlugin.getData(fm.getId());
-
-            log.info(String.format("ShipModifications info for ship [%s]: upg [%s] aug [%s] bdw [%s]",
-                    fm.getShipName(),
-                    mods.hasUpgrades(),
-                    mods.hasExotics(),
-                    mods.getBandwidthWithExotics(fm)));
-
-            return doesEntityHaveNotableMods(mods);
+        ShipModifications mods = ShipModLoader.get(fm);
+        if (mods != null) {
+            return ScanUtils.doesEntityHaveNotableMods(mods);
         }
         return false;
     }
@@ -206,6 +201,7 @@ public class ScanUtils {
 
     /**
      * Handles drawing of the custom dialog that shows notable ships' info.
+     *
      * @author Histidine
      */
     protected static class NotableShipsDialogDelegate implements CustomDialogDelegate {
@@ -245,7 +241,7 @@ public class ScanUtils {
             float textWidth = 240;
             Color f = member.getCaptain().getFaction().getBaseUIColor();
 
-            ShipModifications mods = ShipModFactory.getForFleetMember(member);
+            ShipModifications mods = ShipModFactory.generateForFleetMember(member);
 
             ScanCustomUIPanelPlugin scanMemberPanelPlugin = new ScanCustomUIPanelPlugin(tooltip, panelWidth - 340, mods, member.getHullSpec().getHullSize());
             CustomPanelAPI rowHolder = outer.createCustomPanel(panelWidth, NOTABLE_SHIPS_ROW_HEIGHT, scanMemberPanelPlugin);
@@ -288,10 +284,12 @@ public class ScanUtils {
         }
 
         @Override
-        public void customDialogConfirm() {}
+        public void customDialogConfirm() {
+        }
 
         @Override
-        public void customDialogCancel() {}
+        public void customDialogCancel() {
+        }
 
         @Override
         public CustomUIPanelPlugin getCustomPanelPlugin() {

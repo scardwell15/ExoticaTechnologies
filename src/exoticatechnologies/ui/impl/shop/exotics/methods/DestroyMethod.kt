@@ -3,6 +3,7 @@ package exoticatechnologies.ui.impl.shop.exotics.methods
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.exotics.Exotic
@@ -13,7 +14,7 @@ open class DestroyMethod : Method {
         mods.removeExotic(exotic)
         exotic.onDestroy(member)
 
-        mods.save(member)
+        ShipModLoader.set(member, mods)
         ExoticaTechHM.addToFleetMember(member)
 
         return StringUtils.getString("ExoticsDialog", "ExoticDestroyed")

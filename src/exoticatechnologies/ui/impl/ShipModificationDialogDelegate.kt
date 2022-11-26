@@ -43,6 +43,10 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
                 modPlugin.showPanel(member)
             }
         }
+
+        modPlugin.addModChangeListener { member, mods ->
+            listPlugin.modsModified(member, mods)
+        }
     }
 
     override fun hasCancelButton(): Boolean {
@@ -50,11 +54,11 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
     }
 
     override fun getConfirmText(): String {
-        return StringUtils.getString("Options","leave")
+        return StringUtils.getString("Options", "leave")
     }
 
     override fun getCancelText(): String {
-        return StringUtils.getString("Options","cancel")
+        return StringUtils.getString("Options", "cancel")
     }
 
     override fun customDialogConfirm() {

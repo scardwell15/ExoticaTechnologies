@@ -304,6 +304,9 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
     @Override
     public void advance(float v) {
+        //There is an annoying bug with Persistent Data. Ships are created before it is loaded, causing hullmods
+        //to be cleared off of FleetMemberAPIs.
+        //This check fixes it.
         if (!appliedData) {
             appliedData = true;
             for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getMembersWithFightersCopy()) {

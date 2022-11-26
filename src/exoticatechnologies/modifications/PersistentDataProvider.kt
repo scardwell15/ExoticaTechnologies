@@ -4,13 +4,17 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.campaign.listeners.CampaignEventListener
 
-class PersistentDataProvider: ShipModLoader.Provider {
+class PersistentDataProvider: VariantTagProvider() {
     fun getFromId(id: String): ShipModifications? {
         return shipModificationMap[id]
     }
 
     override fun get(member: FleetMemberAPI): ShipModifications? {
-        return getFromId(member.id)
+        val mods: ShipModifications? = getFromId(member.id)
+        if (mods != null) {
+            super.set(member, mods) //set variant tag
+        }
+        return mods
     }
 
     override fun set(member: FleetMemberAPI, mods: ShipModifications) {
@@ -20,8 +24,6 @@ class PersistentDataProvider: ShipModLoader.Provider {
     }
 
     override fun remove(member: FleetMemberAPI) {
-        throw RuntimeException("This provider is not intended to be used.")
-
         shipModificationMap.remove(member.id)
     }
 
@@ -30,22 +32,14 @@ class PersistentDataProvider: ShipModLoader.Provider {
         var inst: PersistentDataProvider = PersistentDataProvider()
 
         val ET_PERSISTENTUPGRADEMAP = "ET_MODMAP"
-        private var loadedMap: MutableMap<String, ShipModifications>? = null
 
         @JvmStatic
         val shipModificationMap: MutableMap<String, ShipModifications>
             get() {
-                if (loadedMap == null)
-                    loadModificationData()
-                return loadedMap!!
+                if (Global.getSector().persistentData[ET_PERSISTENTUPGRADEMAP] == null) {
+                    Global.getSector().persistentData[ET_PERSISTENTUPGRADEMAP] = HashMap<String, ShipModifications>()
+                }
+                return Global.getSector().persistentData[ET_PERSISTENTUPGRADEMAP] as MutableMap<String, ShipModifications>
             }
-
-        private fun loadModificationData() {
-            if (Global.getSector().persistentData[ET_PERSISTENTUPGRADEMAP] == null) {
-                Global.getSector().persistentData[ET_PERSISTENTUPGRADEMAP] = HashMap<String, ShipModifications>()
-            }
-            loadedMap = Global.getSector().persistentData[ET_PERSISTENTUPGRADEMAP] as MutableMap<String, ShipModifications>?
-            CampaignEventListener.invalidateShipModifications()
-        }
     }
 }

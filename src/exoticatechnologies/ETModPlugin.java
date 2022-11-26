@@ -36,6 +36,7 @@ public class ETModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
+        CampaignEventListener.invalidateShipModifications();
         FleetMemberUtils.moduleMap.clear();
         ShopManager.getShopMenuUIPlugins().clear();
 

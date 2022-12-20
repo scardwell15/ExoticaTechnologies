@@ -153,4 +153,6 @@ public abstract class Exotic extends Modification {
     }
 
     public abstract void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand);
+
+    public void applyExoticToFighter(FleetMemberAPI member, ShipAPI fighter, ShipAPI ship, float bandwidth, String id) {}
 }

@@ -318,4 +318,25 @@ public class ExoticaTechHM extends BaseHullMod {
             }
         }
     }
+
+    @Override
+    public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
+        FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
+        if(member == null) return;
+
+        ShipModifications mods = ShipModLoader.get(member);
+        if(mods == null) return;
+
+        float bandwidth = mods.getBandwidthWithExotics(member);
+
+        for(Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
+            if(!mods.hasExotic(exotic)) continue;
+            exotic.applyExoticToFighter(member, fighter, ship, bandwidth, id);
+        }
+
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if(!mods.hasUpgrade(upgrade)) continue;
+            upgrade.applyUpgradeToFighter(member, fighter, ship, mods);
+        }
+    }
 }

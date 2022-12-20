@@ -265,4 +265,6 @@ public class Upgrade extends Modification {
     public String toString() {
         return "Upgrade{name=" + getName() + "}";
     }
+
+    public void applyUpgradeToFighter(FleetMemberAPI member, ShipAPI fighter, ShipAPI ship, ShipModifications mods) {}
 }

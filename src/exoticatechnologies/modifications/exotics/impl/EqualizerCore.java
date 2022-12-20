@@ -32,6 +32,8 @@ public class EqualizerCore extends Exotic {
     private static int RANGE_TOP_BUFF = -50; //per 100 units
 
     @Getter private final Color color = Color.orange.darker();
+    private static float RANGE_INCREASE_DAMAGE_DECREASE = -20;
+    private static float RANGE_DECREASE_DAMAGE_INCREASE = 17.5f;
 
     public EqualizerCore(String key, JSONObject settings) {
         super(key, settings);
@@ -69,6 +71,8 @@ public class EqualizerCore extends Exotic {
                     .format("rangeBonus", RANGE_BOTTOM_BUFF)
                     .format("highRangeThreshold", RANGE_LIMIT_TOP)
                     .format("rangeMalus", Math.abs(RANGE_TOP_BUFF))
+                    .format("rangeIncreaseDamageDecrease", -RANGE_INCREASE_DAMAGE_DECREASE)
+                    .format("rangeDecreaseDamageIncrease", RANGE_DECREASE_DAMAGE_INCREASE)
                     .addToTooltip(tooltip, title);
         }
     }
@@ -86,8 +90,19 @@ public class EqualizerCore extends Exotic {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
+
         if (!ship.hasListenerOfClass(ET_EqualizerCoreListener.class)) {
+            for (WeaponAPI weapon : ship.getAllWeapons()) {
+                if (weapon.getType() == WeaponAPI.WeaponType.MISSILE) continue;
+                if (weapon.getSpec().getMaxRange() <= RANGE_LIMIT_BOTTOM) {
+                    weapon.getDamage().getModifier().modifyPercent(this.getBuffId(), RANGE_INCREASE_DAMAGE_DECREASE);
+                } else if (weapon.getSpec().getMaxRange() > RANGE_LIMIT_TOP) {
+                    float buff = (RANGE_DECREASE_DAMAGE_INCREASE * (weapon.getSpec().getMaxRange() - RANGE_LIMIT_TOP) / 100);
+                    weapon.getDamage().getModifier().modifyPercent(this.getBuffId(), buff);
+                }
+            }
             ship.addListener(new ET_EqualizerCoreListener());
+
         }
     }
 

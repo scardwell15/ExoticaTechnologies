@@ -28,6 +28,8 @@ public class DriveFluxVent extends Exotic {
     private static int FORWARD_SPEED_INCREASE = 50;
     private static float FLUX_LEVEL_REQUIRED = 40f;
     private static float SPEED_BUFF_TIME = 4f;
+    private static float ENGINE_DAMAGE_TAKEN_PERCENT = 40f;
+    private static float WEAPON_RANGE_PERCENT = -10;
 
     @Getter private final Color color = new Color(0x9D62C4);
 
@@ -65,6 +67,8 @@ public class DriveFluxVent extends Exotic {
                     .format("speedThreshold", FLUX_LEVEL_REQUIRED)
                     .format("speedBonus", String.valueOf(FORWARD_SPEED_INCREASE))
                     .format("speedBonusTime", SPEED_BUFF_TIME)
+                    .format("engineDamageTakenMult", ENGINE_DAMAGE_TAKEN_PERCENT)
+                    .format("weaponRangeMult", -WEAPON_RANGE_PERCENT)
                     .addToTooltip(tooltip, title);
         }
     }
@@ -72,6 +76,9 @@ public class DriveFluxVent extends Exotic {
     @Override
     public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
         stats.getVentRateMult().modifyPercent(this.getBuffId(), VENT_SPEED_INCREASE);
+        stats.getEngineDamageTakenMult().modifyPercent(getBuffId(), ENGINE_DAMAGE_TAKEN_PERCENT);
+        stats.getBallisticWeaponRangeBonus().modifyPercent(getBuffId(), WEAPON_RANGE_PERCENT);
+        stats.getEnergyWeaponRangeBonus().modifyPercent(getBuffId(), WEAPON_RANGE_PERCENT);
     }
 
     private String getDriveStateId(ShipAPI ship) {

@@ -15,16 +15,19 @@ import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import org.json.JSONObject;
+import org.lazywizard.lazylib.MathUtils;
 
 import java.awt.Color;
 import java.util.*;
 
+@SuppressWarnings("IntegerDivisionInFloatingPointContext")
 public class HangarForgeMissiles extends Exotic {
     private static final String ITEM = "et_hangarforge";
 
     private static final float COST_CREDITS = 150000;
     private static int SECONDS_PER_RELOAD = 60;
     private static float PERCENT_RELOADED = 50f;
+    private static float MALFUNCTION_CHANCE = 0.45f;
 
     private static final Set<String> blacklistedWeapons = new HashSet<>();
 
@@ -63,6 +66,7 @@ public class HangarForgeMissiles extends Exotic {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("reloadSize", PERCENT_RELOADED)
                     .format("reloadTime", SECONDS_PER_RELOAD)
+                    .format("malfunctionChance", MALFUNCTION_CHANCE*100)
                     .addToTooltip(tooltip, title);
         }
     }
@@ -112,6 +116,7 @@ public class HangarForgeMissiles extends Exotic {
                     int newAmmo = Math.min(newMaxAmmo, weapon.getAmmoTracker().getAmmo());
                     weapon.setAmmo(newAmmo);
                     weapon.getAmmoTracker().setAmmo(newAmmo);
+
                 }
             }
         }
@@ -129,6 +134,11 @@ public class HangarForgeMissiles extends Exotic {
                         int ammoToReload = ammo + (int) Math.ceil(maxAmmo * PERCENT_RELOADED / 100f);
                         weapon.getAmmoTracker().setAmmo((int) Math.min(maxAmmo, ammoToReload));
                         addedAmmo = true;
+
+                        float randomFloat = MathUtils.getRandom().nextFloat();
+                        if (MALFUNCTION_CHANCE > randomFloat) {
+                            weapon.disable(false);
+                        }
                     }
                 }
             }
@@ -155,6 +165,7 @@ public class HangarForgeMissiles extends Exotic {
         return weapon.getAmmoTracker() != null
                 && weapon.getAmmoTracker().usesAmmo()
                 && weapon.getAmmoTracker().getAmmoPerSecond() == 0f
+                && weapon.getAmmoTracker().getMaxAmmo() > 1f
                 && weapon.getSlot().getWeaponType().equals(WeaponAPI.WeaponType.MISSILE);
     }
 }

@@ -3,6 +3,7 @@ package exoticatechnologies.modifications.exotics.impl;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -23,6 +24,9 @@ public class HangarForge extends Exotic {
 
     private static float RATE_DECREASE_MODIFIER = -35f;
     private static float FIGHTER_REPLACEMENT_TIME_BONUS = -15f;
+    private static float FIGHTER_DAMAGE_TAKEN_MULT = -10f;
+    private static float FIGHTER_ENGAGEMENT_RANGE_MULT = -50f;
+    private static float FIGHTER_SPEED_MULT = -20f;
 
     @Getter private final Color color = Color.GREEN;
 
@@ -64,6 +68,9 @@ public class HangarForge extends Exotic {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("replacementRateIncrease", FIGHTER_REPLACEMENT_TIME_BONUS)
                     .format("rateDecreaseBuff", RATE_DECREASE_MODIFIER)
+                    .format("damageTakenIncrease", -FIGHTER_DAMAGE_TAKEN_MULT)
+                    .format("engagementRangeReduction", -FIGHTER_ENGAGEMENT_RANGE_MULT)
+                    .format("fighterSpeedIncrease", -FIGHTER_SPEED_MULT)
                     .addToTooltip(tooltip, title);
         }
     }
@@ -74,5 +81,17 @@ public class HangarForge extends Exotic {
 
         float timeMult = 1f / ((100f + FIGHTER_REPLACEMENT_TIME_BONUS) / 100f);
         stats.getFighterRefitTimeMult().modifyMult(getBuffId(), timeMult);
+        stats.getFighterWingRange().modifyPercent(getBuffId(), FIGHTER_ENGAGEMENT_RANGE_MULT);
+    }
+
+    @Override
+    public void applyExoticToFighter(FleetMemberAPI member, ShipAPI fighter, ShipAPI ship, float bandwidth, String id) {
+        if (fighter == null) return;
+        MutableShipStatsAPI stats = fighter.getMutableStats();
+        stats.getArmorDamageTakenMult().modifyPercent(id, FIGHTER_DAMAGE_TAKEN_MULT);
+        stats.getShieldDamageTakenMult().modifyPercent(id, FIGHTER_DAMAGE_TAKEN_MULT);
+        stats.getHullDamageTakenMult().modifyPercent(id, FIGHTER_DAMAGE_TAKEN_MULT);
+
+        stats.getMaxSpeed().modifyPercent(id, FIGHTER_SPEED_MULT);
     }
 }

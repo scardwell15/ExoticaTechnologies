@@ -8,6 +8,8 @@ import exoticatechnologies.modifications.stats.UpgradeMutableStatEffect
 import exoticatechnologies.modifications.upgrades.Upgrade
 
 class TurnRateEffect : UpgradeMutableStatEffect() {
+    override var hullmodShowsFinalValue: Boolean = false
+
     override val key: String
         get() = "turnRate"
 

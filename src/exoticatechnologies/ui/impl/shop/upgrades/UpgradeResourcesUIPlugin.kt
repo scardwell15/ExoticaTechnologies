@@ -4,20 +4,19 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import exoticatechnologies.ui.impl.shop.ResourcesUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
+import exoticatechnologies.util.getMods
 
 class UpgradeResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     member: FleetMemberAPI,
-    mods: ShipModifications,
     var market: MarketAPI
-) : ResourcesUIPlugin(member, mods) {
+) : ResourcesUIPlugin(member) {
     override var mainPanel: CustomPanelAPI? = null
     private var resourcesTooltip: TooltipMakerAPI? = null
 
@@ -39,6 +38,7 @@ class UpgradeResourcesUIPlugin(
     }
 
     fun redisplayResourceCosts(activeMethod: UpgradeMethod?) {
+        val mods = member.getMods()
         destroyTooltip()
 
         //gather resource costs first, across all upgrade methods

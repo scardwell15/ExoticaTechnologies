@@ -8,17 +8,16 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
+import exoticatechnologies.util.getMods
 import kotlin.math.absoluteValue
 
 abstract class ResourcesUIPlugin(
-    var member: FleetMemberAPI,
-    var mods: ShipModifications): InteractiveUIPanelPlugin() {
+    var member: FleetMemberAPI): InteractiveUIPanelPlugin() {
     abstract var mainPanel: CustomPanelAPI?
 
     fun displayResourceCosts(resourceCosts: MutableMap<String, Float>): TooltipMakerAPI {
@@ -47,10 +46,12 @@ abstract class ResourcesUIPlugin(
     }
 
     fun addBandwidthString(tooltip: TooltipMakerAPI, bandwidth: Float) {
-        val used = mods.usedBandwidth
-        if (bandwidth > 0f) {
+        val mods = member.getMods()
+        val used = mods.getUsedBandwidth()
+
+        if (bandwidth != 0f) {
             var bandwidthString = "+${BandwidthUtil.getFormattedBandwidth(bandwidth.absoluteValue)}"
-            if (bandwidth > 0) {
+            if (bandwidth > 0f) {
                 StringUtils.getTranslation("UpgradeCosts", "BandwidthUsedWithUpgrade")
                     .format("usedBandwidth", BandwidthUtil.getFormattedBandwidth(used))
                     .format("upgradeBandwidth", bandwidthString)

@@ -26,9 +26,7 @@ abstract class TabPanelUIPlugin: BaseUIPanelPlugin() {
     }
 
     fun activated(plugin: TabbedPanelUIPlugin) {
-        tabPlugin!!.let {
-            it.activated(plugin)
-        }
+        tabPlugin!!.activated(plugin)
     }
 
     fun deactivated(plugin: TabbedPanelUIPlugin) {

@@ -9,12 +9,16 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class ResourcesMethod implements UpgradeMethod {
+public class ResourcesMethod extends DefaultUpgradeMethod {
+    @Getter
+    public String key = "resources";
+
     @Override
     public String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
         return StringUtils.getString("UpgradeMethods", "ResourcesOption");
@@ -26,11 +30,11 @@ public class ResourcesMethod implements UpgradeMethod {
     }
 
     @Override
-    public boolean canUse(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+    public boolean canUse(FleetMemberAPI member, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         if (upgrade.getResourceRatios().isEmpty()) return false;
 
-        Map<String, Integer> upgradeCosts = upgrade.getResourceCosts(fm, es.getUpgrade(upgrade));
-        Map<String, Integer> totalStacks = Utilities.getTotalResources(fm.getFleetData().getFleet(), market, upgradeCosts.keySet());
+        Map<String, Integer> upgradeCosts = upgrade.getResourceCosts(member, mods.getUpgrade(upgrade));
+        Map<String, Integer> totalStacks = Utilities.getTotalResources(member.getFleetData().getFleet(), market, upgradeCosts.keySet());
 
         boolean canUpgrade = true;
         for (Map.Entry<String, Integer> upgradeCost : upgradeCosts.entrySet()) {
@@ -42,12 +46,8 @@ public class ResourcesMethod implements UpgradeMethod {
             totalStacks.put(upgradeCost.getKey(), remaining);
         }
 
-        return canUpgrade;
-    }
-
-    @Override
-    public boolean canShow(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
-        return true;
+        return canUpgrade
+                && super.canUse(member, mods, upgrade, market);
     }
 
     @Override
@@ -82,15 +82,5 @@ public class ResourcesMethod implements UpgradeMethod {
         }
 
         return resourceCosts;
-    }
-
-    @Override
-    public boolean usesBandwidth() {
-        return true;
-    }
-
-    @Override
-    public boolean usesLevel() {
-        return true;
     }
 }

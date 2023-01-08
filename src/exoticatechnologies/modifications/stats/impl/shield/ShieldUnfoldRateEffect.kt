@@ -6,6 +6,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.stats.UpgradeMutableStatEffect
 
 class ShieldUnfoldRateEffect : UpgradeMutableStatEffect() {
+    override var hullmodShowsFinalValue: Boolean = false
+
     override val key: String
         get() = "shieldUnfoldRate"
 

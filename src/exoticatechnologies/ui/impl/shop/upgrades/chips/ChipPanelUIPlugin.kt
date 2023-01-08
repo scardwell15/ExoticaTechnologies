@@ -14,12 +14,12 @@ import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
+import exoticatechnologies.util.getMods
 
 class ChipPanelUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     var member: FleetMemberAPI,
-    var mods: ShipModifications,
     var market: MarketAPI
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -36,7 +36,7 @@ class ChipPanelUIPlugin(
 
         val upgradeChips: List<CargoStackAPI> = getUpgradeChips(member.fleetData.fleet.cargo)
 
-        listPlugin = ChipListUIPlugin(listPanel, member, mods)
+        listPlugin = ChipListUIPlugin(listPanel, member)
         listPlugin!!.panelWidth = panelWidth
         listPlugin!!.panelHeight = panelHeight - 28
         listPlugin!!.layoutPanels(upgradeChips).position.inTL(0f, 0f)
@@ -105,7 +105,7 @@ class ChipPanelUIPlugin(
      * gets all valid upgrade chips for member from cargo
      */
     fun getUpgradeChips(cargo: CargoAPI): List<CargoStackAPI> {
-        return Companion.getUpgradeChips(cargo, member, mods, upgrade)
+        return Companion.getUpgradeChips(cargo, member, member.getMods(), upgrade)
     }
 
     companion object {
@@ -120,7 +120,7 @@ class ChipPanelUIPlugin(
                 .filter { it.plugin is UpgradeSpecialItemPlugin }
                 .map { it to it.plugin as UpgradeSpecialItemPlugin }
                 .filter { (_, plugin) -> plugin.upgradeId == upgrade.key }
-                .filter { (_, plugin) -> plugin.upgradeLevel > mods.getUpgrade(upgrade) }
+                .filter { (_, plugin) -> plugin.upgradeLevel > mods.getUpgrade(upgrade) && plugin.upgradeLevel <= upgrade.getMaxLevel(member) }
                 .filter { (_, plugin) -> mods.hasBandwidthForUpgrade(member, upgrade, plugin.upgradeLevel) }
                 .filter { (stack, _) ->
                     ChipMethod.getCreditCost(member, mods, upgrade, stack) <= Global.getSector().playerFleet.cargo.credits.get()

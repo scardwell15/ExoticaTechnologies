@@ -78,11 +78,10 @@ public class ButtonData {
         if (isChecked(events)) {
             if (!wasChecked) {
                 wasChecked = true;
-                checkChanged = true;
             } else {
                 wasChecked = false;
-                checkChanged = true;
             }
+            checkChanged = true;
         }
 
         boolean isHighlighted = isHighlighted(events);

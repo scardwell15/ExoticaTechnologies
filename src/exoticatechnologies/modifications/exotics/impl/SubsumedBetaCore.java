@@ -39,14 +39,14 @@ public class SubsumedBetaCore extends Exotic {
     }
 
     @Override
-    public boolean canApply(FleetMemberAPI member) {
+    public boolean canApply(FleetMemberAPI member, ShipModifications mods) {
         if (member.getFleetData() == null
                 || member.getFleetData().getFleet() == null) {
             return false;
         }
 
         if (member.getFleetData().getFleet().getFaction().toString().equals(Factions.OMEGA)) {
-            return super.canApply(member.getVariant());
+            return super.canApplyToVariant(member.getVariant());
         }
 
         return false;

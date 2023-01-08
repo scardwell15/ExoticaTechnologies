@@ -20,7 +20,9 @@ import lombok.Setter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChipMethod implements UpgradeMethod {
+public class ChipMethod extends DefaultUpgradeMethod {
+    @Getter
+    public String key = "chip";
     @Getter
     @Setter
     public CargoStackAPI upgradeChipStack = null;
@@ -42,7 +44,8 @@ public class ChipMethod implements UpgradeMethod {
             return Global.getSector().getPlayerFleet().getCargo().getCredits().get() >= creditCost;
         }
 
-        return !ChipPanelUIPlugin.Companion.getUpgradeChips(fm.getFleetData().getFleet().getCargo(), fm, mods, upgrade).isEmpty();
+        return !ChipPanelUIPlugin.Companion.getUpgradeChips(fm.getFleetData().getFleet().getCargo(), fm, mods, upgrade).isEmpty()
+                && super.canUse(fm, mods, upgrade, market);
     }
 
     @Override
@@ -134,15 +137,5 @@ public class ChipMethod implements UpgradeMethod {
         }
 
         return resourceCosts;
-    }
-
-    @Override
-    public boolean usesBandwidth() {
-        return true;
-    }
-
-    @Override
-    public boolean usesLevel() {
-        return true;
     }
 }

@@ -73,14 +73,6 @@ public abstract class Exotic extends Modification {
         return false;
     }
 
-    public boolean shouldLoad() {
-        return true;
-    }
-
-    public boolean shouldShow(FleetMemberAPI member, ShipModifications mods, MarketAPI market) {
-        return true;
-    }
-
     public void printDescriptionToTooltip(FleetMemberAPI fm, TooltipMakerAPI tooltip) {
         StringUtils.getTranslation(this.getKey(), "description")
                 .addToTooltip(tooltip);
@@ -144,8 +136,8 @@ public abstract class Exotic extends Modification {
         return true;
     }
 
-    public float getSpawnChance(float chanceMult) {
-        return 0.05f * chanceMult;
+    public float getSalvageChance(float chanceMult) {
+        return 0.2f * chanceMult;
     }
 
     public SpecialItemData getNewSpecialItemData() {

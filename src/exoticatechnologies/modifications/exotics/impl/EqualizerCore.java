@@ -2,9 +2,7 @@ package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.combat.listeners.WeaponBaseRangeModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -30,6 +28,8 @@ public class EqualizerCore extends Exotic {
     private static int RANGE_BOTTOM_BUFF = 200;
     private static int RANGE_LIMIT_TOP = 800;
     private static int RANGE_TOP_BUFF = -50; //per 100 units
+
+    private static float RANGE_DECREASE_DAMAGE_INCREASE = 10f;
 
     @Getter private final Color color = Color.orange.darker();
 
@@ -69,6 +69,7 @@ public class EqualizerCore extends Exotic {
                     .format("rangeBonus", RANGE_BOTTOM_BUFF)
                     .format("highRangeThreshold", RANGE_LIMIT_TOP)
                     .format("rangeMalus", Math.abs(RANGE_TOP_BUFF))
+                    .format("rangeDecreaseDamageIncrease", RANGE_DECREASE_DAMAGE_INCREASE)
                     .addToTooltip(tooltip, title);
         }
     }
@@ -87,6 +88,15 @@ public class EqualizerCore extends Exotic {
     @Override
     public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
         if (!ship.hasListenerOfClass(ET_EqualizerCoreListener.class)) {
+
+            for (WeaponAPI weapon : ship.getAllWeapons()) {
+                if (weapon.getType() == WeaponAPI.WeaponType.MISSILE) continue;
+                if (weapon.getSpec().getMaxRange() > RANGE_LIMIT_TOP) {
+                    float buff = (RANGE_DECREASE_DAMAGE_INCREASE * (weapon.getSpec().getMaxRange() - RANGE_LIMIT_TOP) / 100);
+                    weapon.getDamage().getModifier().modifyPercent(this.getBuffId(), buff);
+                }
+            }
+
             ship.addListener(new ET_EqualizerCoreListener());
         }
     }

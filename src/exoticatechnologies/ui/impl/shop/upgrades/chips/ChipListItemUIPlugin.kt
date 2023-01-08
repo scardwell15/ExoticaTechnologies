@@ -5,20 +5,18 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
-import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class ChipListItemUIPlugin(item: CargoStackAPI,
                            var member: FleetMemberAPI,
-                           var mods: ShipModifications,
                            private val listPanel: ListUIPanelPlugin<CargoStackAPI>
                         ) : ListItemUIPanelPlugin<CargoStackAPI>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
@@ -27,6 +25,7 @@ class ChipListItemUIPlugin(item: CargoStackAPI,
     override var panelHeight: Float = 64f
 
     override fun layoutPanel(tooltip: TooltipMakerAPI): CustomPanelAPI {
+        val mods = member.getMods()
         val upgrade: Upgrade = getUpgrade()
         val rowPanel: CustomPanelAPI =
             listPanel.parentPanel.createCustomPanel(panelWidth, panelHeight, this)

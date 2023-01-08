@@ -7,7 +7,6 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
@@ -21,7 +20,6 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySp
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
-import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.ETModSettings;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.PersistentDataProvider;
@@ -45,8 +43,6 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
     private static final List<CampaignFleetAPI> activeFleets = new ArrayList<>();
     private final IntervalUtil interval = new IntervalUtil(2f, 2f);
     private final IntervalUtil cleaningInterval = new IntervalUtil(15f, 15f);
-    @Getter
-    private static boolean appliedData = false;
 
     @Getter
     @Setter
@@ -62,13 +58,6 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
     public CampaignEventListener(boolean permaRegister) {
         super(permaRegister);
-    }
-
-    /**
-     * Apply ship modifications to everything in the next frame.
-     */
-    public static void invalidateShipModifications() {
-        appliedData = false;
     }
 
     @Override
@@ -304,27 +293,6 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
     @Override
     public void advance(float v) {
-        //There is an annoying bug with Persistent Data. Ships are created before it is loaded, causing hullmods
-        //to be cleared off of FleetMemberAPIs.
-        //This check fixes it.
-        if (!appliedData) {
-            appliedData = true;
-            for (FleetMemberAPI fm : Global.getSector().getPlayerFleet().getMembersWithFightersCopy()) {
-                if (fm.getHullSpec().getHullSize().equals(ShipAPI.HullSize.FIGHTER)) continue;
-
-                ShipModifications mods = ShipModLoader.get(fm);
-                if (mods != null) {
-                    ExoticaTechHM.addToFleetMember(fm);
-                }
-                /*else if (fm.getHullId().contains("ziggurat") && ETModPlugin.getZigguratDuplicateId() != null) {
-                    fmId = ETModPlugin.getZigguratDuplicateId();
-                    if (ETModPlugin.hasData(fmId)) {
-                        ExoticaTechHM.addToFleetMember(fm);
-                    }
-                }*/
-            }
-        }
-
         if (mergeCheck && !Global.getSector().getCampaignUI().isShowingMenu()) {
             mergeCheck = false;
             Utilities.mergeChipsIntoCrate(Global.getSector().getPlayerFleet().getCargo());

@@ -13,10 +13,10 @@ open class InteractiveUIPanelPlugin : BaseUIPanelPlugin() {
     open fun advancePanel(amount: Float) {
     }
 
-    override fun advance(amount: Float) {
+    final override fun advance(amount: Float) {
         var checkedButton: ButtonAPI? = null
         buttons.forEach { (button, _) ->
-            if (button.isChecked) {
+            if (button.isChecked && button.isEnabled) {
                 checkedButton = button
                 return@forEach
             }

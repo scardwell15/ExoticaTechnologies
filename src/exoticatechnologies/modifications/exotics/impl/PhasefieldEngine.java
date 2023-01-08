@@ -46,8 +46,8 @@ public class PhasefieldEngine extends Exotic {
     }
 
     @Override
-    public boolean canApply(ShipVariantAPI variant) {
-        return variant.getHints().contains(ShipHullSpecAPI.ShipTypeHints.PHASE);
+    public boolean canApplyToVariant(ShipVariantAPI variant) {
+        return variant.getHullSpec().getHints().contains(ShipHullSpecAPI.ShipTypeHints.PHASE);
     }
 
     @Override

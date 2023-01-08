@@ -4,12 +4,11 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModFactory
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.fixVariant
 
 class ShipListUIPlugin(parentPanel: CustomPanelAPI) : ListUIPanelPlugin<FleetMemberAPI>(parentPanel) {
     override val listHeader = StringUtils.getTranslation("ShipListDialog", "ShipListHeader").toString()
@@ -18,11 +17,15 @@ class ShipListUIPlugin(parentPanel: CustomPanelAPI) : ListUIPanelPlugin<FleetMem
         tooltip: TooltipMakerAPI,
         item: FleetMemberAPI
     ): ListItemUIPanelPlugin<FleetMemberAPI> {
-        val rowPlugin = ShipItemUIPlugin(item, ShipModFactory.generateForFleetMember(item), this)
+        val rowPlugin = ShipItemUIPlugin(item, this)
         rowPlugin.panelWidth = panelWidth
         rowPlugin.panelHeight = rowHeight
         rowPlugin.layoutPanel(tooltip)
         return rowPlugin
+    }
+
+    override fun pickedItem(item: FleetMemberAPI) {
+        item.fixVariant()
     }
 
     override fun renderBelow(alphaMult: Float) {
@@ -47,14 +50,5 @@ class ShipListUIPlugin(parentPanel: CustomPanelAPI) : ListUIPanelPlugin<FleetMem
         )
 
         RenderUtils.popUIRenderingStack()
-    }
-
-    fun modsModified(member: FleetMemberAPI, mods: ShipModifications) {
-        panelPluginMap.filter { it.key == member}
-            .values.forEach {
-                if (it is ShipItemUIPlugin) {
-                    it.updateWithNewMods(mods)
-                }
-            }
     }
 }

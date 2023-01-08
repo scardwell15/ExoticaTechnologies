@@ -7,17 +7,19 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exoticatechnologies.hullmods.ExoticaTechHM;
-import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.upgrades.Upgrade;
-import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod;
+import exoticatechnologies.ui.impl.shop.upgrades.methods.DefaultUpgradeMethod;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RelicComponentUpgradeMethod implements UpgradeMethod {
+public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
+    @Getter
+    public String key = "relicComponents";
     private static final String OPTION = "ETShipExtraUpgradeApplyIndEvoRelics";
 
     @Override
@@ -35,17 +37,15 @@ public class RelicComponentUpgradeMethod implements UpgradeMethod {
     }
 
     @Override
-    public boolean canUse(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
-        int level = es.getUpgrade(upgrade);
-        int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, level);
-        int totalComponents = getTotalComponents(fm.getFleetData().getFleet(), market);
+    public boolean canUse(FleetMemberAPI member, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
+        int level = mods.getUpgrade(upgrade);
+        int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(member, upgrade, level);
+        int totalComponents = getTotalComponents(member.getFleetData().getFleet(), market);
 
-        return (totalComponents - upgradeCost) >= 0;
-    }
-
-    @Override
-    public boolean canShow(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
-        return true;
+        return (totalComponents - upgradeCost) >= 0
+                && upgrade.canApply(member, mods)
+                && mods.getUpgrade(upgrade) + 1 < upgrade.getMaxLevel(member)
+                && mods.getUsedBandwidth() + upgrade.getBandwidthUsage() < mods.getBandwidthWithExotics(member);
     }
 
     @Override
@@ -120,15 +120,5 @@ public class RelicComponentUpgradeMethod implements UpgradeMethod {
         float taken = Math.min(current, cost);
         cargo.removeCommodity(id, taken);
         return (int) (cost - taken);
-    }
-
-    @Override
-    public boolean usesBandwidth() {
-        return true;
-    }
-
-    @Override
-    public boolean usesLevel() {
-        return true;
     }
 }

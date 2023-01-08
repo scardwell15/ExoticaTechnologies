@@ -27,6 +27,10 @@ abstract class ModEffect<T : Modification> {
 
     }
 
+    open fun applyToFighter(ship: ShipAPI, fighter: ShipAPI, member: FleetMemberAPI, mods: ShipModifications, mod: T) {
+        applyToStats(fighter.mutableStats, member, mods, mod)
+    }
+
     open fun advanceInCombat(ship: ShipAPI, amount: Float, member: FleetMemberAPI, mods: ShipModifications, mod: T) {
 
     }

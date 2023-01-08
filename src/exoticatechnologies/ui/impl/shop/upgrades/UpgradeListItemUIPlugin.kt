@@ -5,17 +5,17 @@ import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModifications
+import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class UpgradeListItemUIPlugin(
     item: Upgrade,
     var member: FleetMemberAPI,
-    var mods: ShipModifications,
     private val listPanel: ListUIPanelPlugin<Upgrade>
 ) : ListItemUIPanelPlugin<Upgrade>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
@@ -26,12 +26,32 @@ class UpgradeListItemUIPlugin(
 
     var upgradeLevel: Int = 0
     var levelText: LabelAPI? = null
+    var lastValue = 0f
+
     override fun advance(amount: Float) {
-        if (mods.getUpgrade(item) != upgradeLevel) {
-            upgradeLevel = mods.getUpgrade(item)
-            StringUtils.getTranslation("UpgradesDialog", "UpgradeLevel")
-                .format("level", upgradeLevel)
-                .setLabelText(levelText)
+        val mods = member.getMods()
+
+        val newValue = mods.getValue()
+        if (newValue != lastValue) {
+            lastValue = newValue
+
+            if (mods.getUpgrade(item) != upgradeLevel) {
+                upgradeLevel = mods.getUpgrade(item)
+                StringUtils.getTranslation("UpgradesDialog", "UpgradeLevel")
+                    .format("level", upgradeLevel, Misc.getHighlightColor())
+                    .setLabelText(levelText!!)
+            }
+
+            if (upgradeLevel == 0) {
+                levelText!!.text = ""
+
+                if (!item.canApply(member, mods)) {
+                    val newText = StringUtils.getString("Conditions", "CannotApplyTitle")
+                    levelText!!.text = newText
+                    levelText!!.setHighlightColor(Color(200,100,100))
+                    levelText!!.setHighlight(newText)
+                }
+            }
         }
     }
 

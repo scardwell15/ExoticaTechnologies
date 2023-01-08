@@ -87,10 +87,15 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
 
     abstract fun createPanelForItem(tooltip: TooltipMakerAPI, item: T): ListItemUIPanelPlugin<T>?
 
-    fun pickedItem(item: T) {
+    fun itemClicked(item: T) {
+        pickedItem(item)
+
         listeners.forEach {
             it.pickedItem(item)
         }
+    }
+
+    open fun pickedItem(item: T) {
     }
 
     fun addListener(listener: ListListener<T>) {

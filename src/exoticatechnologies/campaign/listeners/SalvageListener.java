@@ -63,7 +63,7 @@ public class SalvageListener implements ShowLootListener {
                     int quantity = potExotic.getValue();
 
                     for (int i = 0; i < quantity; i++) {
-                        if (exotic.getSpawnChance(1.5f) > 0 && random.nextFloat() <= exotic.getSpawnChance(1.5f)) {
+                        if (exotic.getSalvageChance(1.5f) > 0 && random.nextFloat() <= exotic.getSalvageChance(1.5f)) {
                             //generate exotic and add to loot
                             loot.addSpecial(exotic.getNewSpecialItemData(), 1);
                         }

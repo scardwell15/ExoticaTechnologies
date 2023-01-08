@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications.bandwidth;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
 import exoticatechnologies.modifications.ShipModFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public enum Bandwidth {
         if(BANDWIDTH_LIST.indexOf(this) == BANDWIDTH_LIST.size() - 1) {
             return bandwidth;
         }
+
         float nextBandwidth = BANDWIDTH_LIST.get(BANDWIDTH_LIST.indexOf(this) + 1).getBandwidth();
         return Math.round(ShipModFactory.getRandomNumberInRange(bandwidth, nextBandwidth));
     }
@@ -59,20 +61,29 @@ public enum Bandwidth {
     }
 
     public static Bandwidth generate(float mult) {
-        int highNumber = 0;
-        for(Bandwidth b : values()) {
-            highNumber += b.getWeight();
-        }
+        return getPicker(mult).pick(ShipModFactory.getRandom());
+    }
 
-        int chosen = (int) (ShipModFactory.getRandomNumberInRange(80 * (mult - 1), highNumber * (1 + (mult - 1) * 0.04f)));
-        for(Bandwidth b : values()) {
-            chosen -= b.getWeight();
+    public static WeightedRandomPicker<Bandwidth> getPicker(float mult) {
+        WeightedRandomPicker<Bandwidth> picker = new WeightedRandomPicker<>();
 
-            if(chosen <= 0) {
-                return b;
+        Bandwidth[] values = values();
+        for (int i = 0; i < values.length; i++) {
+            Bandwidth b = values[i];
+
+            int weight = b.weight;
+            if (i < values.length / 2) {
+                weight *= (1 - (mult - 1) / 2);
+            } else {
+                weight *= (1 + (mult - 1) / 2);
+            }
+
+            if (weight > 0) {
+                picker.add(b, weight);
             }
         }
-        return NORMAL;
+
+        return picker;
     }
 
     public static Map<Float, Bandwidth> getBandwidthMap() {

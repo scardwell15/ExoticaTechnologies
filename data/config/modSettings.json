@@ -14,16 +14,13 @@
       "ms_orbitalShipyard": 1.0
     },
 
-    # average bandwidth weight multiplier
-    "factionBandwidthMult": {
-      "remnant": 1.66,
-      "derelict": 0.75,
-      "hegemony": 1.25,
-      "persean_league": 0.9,
-      "tritachyon": 1.4,
-      "pirates": 0.75,
-      "luddic_path": 0.75,
-    },
+    "factionsWithConfigs": [
+      "omega",
+      "remnant",
+      "derelict",
+      "ironshell",
+      "tahlan_legioinfernalis"
+    ],
 
     # takes the manufacturer of the ship instead, but otherwise acts the same as above.
     # note that these stack!
@@ -31,56 +28,7 @@
       "Sindrian Fuel Company": 0.75
     },
 
-    # chance to add any amount of upgrades to a ship
-    # default chance is 0.4 (40%)
-    "factionUpgradeChances": {
-      "omega": 1.0,
-      "remnant": 0.75,
-      "derelict": 0.5,
-      "persean_league": 0.5,
-      "pirates": 0.52,
-      "mercenary": 0.45,
-      "luddic_church": 0.0,
-      "luddic_path": 0.1,
-      "tritachyon": 0.2,
-      "scavengers": 0.75
-    },
-
-    # multiplier to chance to add any upgrade to the ship, given the above is true.
-    "factionPerUpgradeMult": {
-      "omega": 20.0,
-      "remnant": 3.5,
-      "derelict": 10.0,
-      "persean_league": 2.0,
-      "mercenary": 3.0,
-      "luddic_path": 6.6,
-      "tritachyon": 1.25,
-      "scavengers": 0.5
-    },
-
-    # chance to add any amount of exotics to a ship
-    # default chance is 0.1 (10%)
-    "factionExoticChances": {
-      "omega": 1.0,
-      "remnant": 0.3,
-      "pirates": 0.125,
-      "luddic_church": 0.0,
-      "persean_league": 0.15,
-      "tritachyon": 0.2,
-      "scavengers": 0.25
-    },
-
-    # multiplier to chance to add any exotic to the ship, given the above is true.
-    "factionPerExoticMult": {
-      "omega": 20.0,
-      "remnant": 3.0,
-      "derelict": 6.0,
-      "tritachyon": 2.0,
-      "scavengers": 0.5
-    },
-
-
-    # below are global whitelists for exotics that can generate on any fleet.
+    # below are global whitelists for exotics/upgrades that can generate on any fleet.
     # if a faction whitelist exists, it will be used instead.
     "rngExoticWhitelist": [
       "PlasmaFluxCatalyst",
@@ -89,19 +37,20 @@
       "HangarForge",
       "HangarForgeMissiles",
       "PhasefieldEngine",
-      "SpooledFeeders"
-    ],
-
-    # below are faction whitelists. the way to go about this is to follow omega example
-    # factionId_ExoticWhitelist and factionId_UpgradeWhitelist
-    "omega_ExoticWhitelist": [
-      "PlasmaFluxCatalyst",
-      "DriveFluxVent",
-      "HangarForgeMissiles",
       "SpooledFeeders",
-      "SubsumedAlphaCore",
-      "SubsumedBetaCore",
-      "SubsumedGammaCore"
+      "FullMetalSalvo"
+    ],
+    "rngUpgradeWhitelist": [
+      "WeldedArmor",
+      "AssaultWings",
+      "AuxiliarySensors",
+      "ForcedOvertime",
+      "HyperactiveCapacitors",
+      "InfernalEngines",
+      "OverchargedShields",
+      "TracerRecoilCalculator",
+      "InterferenceShielding",
+      "GuidanceComputers"
     ]
   }
 }

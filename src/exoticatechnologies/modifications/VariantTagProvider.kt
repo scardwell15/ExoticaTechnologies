@@ -86,11 +86,11 @@ open class VariantTagProvider : ShipModLoader.Provider {
             val savedObj = JSONObject()
             savedObj.put(BANDWIDTH_KEY, mods.getBaseBandwidth(member).toDouble())
             if (mods.hasUpgrades()) {
-                savedObj.put(UPGRADES_KEY, JSONObject(mods.getUpgrades().map))
+                savedObj.put(UPGRADES_KEY, JSONObject(mods.upgrades.map))
             }
 
             if (mods.hasExotics()) {
-                savedObj.put(EXOTICS_KEY, JSONArray(mods.getExotics().list))
+                savedObj.put(EXOTICS_KEY, JSONArray(mods.exotics.list))
             }
 
             return savedObj.toString()

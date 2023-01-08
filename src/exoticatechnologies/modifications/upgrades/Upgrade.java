@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.ETModSettings;
 import exoticatechnologies.modifications.Modification;
 import exoticatechnologies.modifications.ShipModifications;
@@ -17,7 +16,6 @@ import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,14 +28,14 @@ public class Upgrade extends Modification {
     @Setter
     public String description;
     @Getter
-    public float bandwidthUsage;
-    @Getter
     protected final Map<String, Float> resourceRatios = new LinkedHashMap<>();
     @Getter
-    public final Map<String, UpgradeModEffect> upgradeEffects = new LinkedHashMap<>();
-    private final Set<String> allowedFactions = new HashSet<>();
-    @Getter
+    public final List<UpgradeModEffect> upgradeEffects = new ArrayList<>();
+    public float bandwidthUsage;
     public float spawnChance;
+    public boolean showInStoreIfNotInstalled;
+    public boolean chipFirstInstall;
+    public boolean chipOnlyInstall;
 
     public Upgrade(String key, JSONObject settings) throws JSONException {
         super(key, settings);
@@ -45,8 +43,12 @@ public class Upgrade extends Modification {
         setColor(Utilities.colorFromJSONArray(settings.getJSONArray("color")));
         description = StringUtils.getString(key, "description");
         bandwidthUsage = (float) settings.getDouble("bandwidthPerLevel");
-        upgradeEffects.putAll(UpgradeModEffectDict.Companion.getStatsFromJSONArray(settings.getJSONArray("stats")));
-        spawnChance = (float) settings.optDouble("spawnChance", 100f);
+        upgradeEffects.addAll(UpgradeModEffectDict.Companion.getStatsFromJSONArray(settings.getJSONArray("stats")));
+
+        spawnChance = (float) settings.optDouble("spawnChance", 1f);
+        showInStoreIfNotInstalled = settings.optBoolean("showInStoreIfNotInstalled", true);
+        chipFirstInstall = settings.optBoolean("chipFirstInstall");
+        chipOnlyInstall = settings.optBoolean("chipOnlyInstall");
 
         JSONObject settingRatios = settings.getJSONObject("resourceRatios");
         for (String resource : Utilities.RESOURCES_LIST) {
@@ -56,14 +58,6 @@ public class Upgrade extends Modification {
                 ratio = ((Number) settingRatios.getDouble(resource)).floatValue();
             }
             resourceRatios.put(resource, ratio);
-        }
-
-        if (settings.has("allowedFactions")) {
-            JSONArray settingFactions = settings.getJSONArray("allowedFactions");
-            for (int i = 0; i < settingFactions.length(); i++) {
-                String factionId = settingFactions.getString(i);
-                allowedFactions.add(factionId);
-            }
         }
     }
 
@@ -77,68 +71,33 @@ public class Upgrade extends Modification {
             return true;
         }
 
-        if (member.getFleetData() != null
-                && member.getFleetData().getFleet() != null) {
-            if (Misc.isPlayerOrCombinedContainingPlayer(member.getFleetData().getFleet())) {
+        if (!showInStoreIfNotInstalled) {
+            if (member.getFleetData().getFleet().isPlayerFleet()) {
                 if (Utilities.hasUpgradeChip(member.getFleetData().getFleet().getCargo(), this.getKey())) {
-                    return true;
+                    return super.shouldShow(member, mods, market);
                 }
-            }
-        }
-
-        if (!allowedFactions.isEmpty()) {
-            if (!allowedFactions.contains(member.getFleetData().getFleet().getFaction().getId())) {
-                return false;
-            }
-        }
-
-        return shouldShow();
-    }
-
-    @Override
-    public boolean shouldShow() {
-        return true;
-    }
-
-    @Override
-    public boolean canApply(FleetMemberAPI member) {
-        if (member.getFleetData() != null
-                && member.getFleetData().getFleet() != null) {
-            if (Misc.isPlayerOrCombinedContainingPlayer(member.getFleetData().getFleet())) {
-                if (Utilities.hasUpgradeChip(member.getFleetData().getFleet().getCargo(), this.getKey())) {
-                    return canApply(member.getVariant());
-                }
-            }
-        }
-
-        if (!allowedFactions.isEmpty()) {
-            String faction = null;
-            if (member.getHullId().contains("ziggurat")) {
-                faction = "omega";
-            } else if (member.getFleetData() != null
-                    && member.getFleetData().getFleet() != null) {
-                faction = member.getFleetData().getFleet().getFaction().getId();
-            }
-
-            if (faction == null || !allowedForFaction(faction)) {
-                return false;
-            }
-        }
-
-        return canApply(member.getVariant());
-    }
-
-    public boolean canUseUpgradeMethod(FleetMemberAPI member, ShipModifications mods, UpgradeMethod method) {
-        return true;
-    }
-
-    public boolean allowedForFaction(String faction) {
-        if (!allowedFactions.isEmpty()) {
-            if (allowedFactions.contains(faction)) {
-                return true;
             }
             return false;
         }
+
+        return super.shouldShow(member, mods, market);
+    }
+
+    public boolean canUseUpgradeMethod(FleetMemberAPI member, ShipModifications mods, UpgradeMethod method) {
+        if (method.getKey().equals("recover")) {
+            return true;
+        }
+
+        if (chipOnlyInstall) {
+            if (!method.getKey().equals("chip")) {
+                return false;
+            }
+        }
+
+        if (chipFirstInstall && !mods.hasUpgrade(this) && !method.getKey().equals("chip")) {
+            return false;
+        }
+
         return true;
     }
 
@@ -166,25 +125,37 @@ public class Upgrade extends Modification {
     }
 
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, ShipModifications mods) {
-        for (UpgradeModEffect effect : upgradeEffects.values()) {
-            effect.applyToStats(stats, fm, mods, this);
+        for (UpgradeModEffect effect : upgradeEffects) {
+            if (!effect.getAppliesToFighters()) {
+                effect.applyToStats(stats, fm, mods, this);
+            }
         }
     }
 
     public void applyUpgradeToShip(FleetMemberAPI member, ShipAPI ship, ShipModifications mods) {
-        for (UpgradeModEffect effect : upgradeEffects.values()) {
-            effect.applyToShip(ship, member, mods, this);
+        for (UpgradeModEffect effect : upgradeEffects) {
+            if (!effect.getAppliesToFighters()) {
+                effect.applyToShip(ship, member, mods, this);
+            }
+        }
+    }
+
+    public void applyUpgradeToFighters(FleetMemberAPI member, ShipAPI ship, ShipAPI fighter, ShipModifications mods) {
+        for (UpgradeModEffect effect : upgradeEffects) {
+            if (effect.getAppliesToFighters()) {
+                effect.applyToFighter(ship, fighter, member, mods, this);
+            }
         }
     }
 
     public void advanceInCombat(ShipAPI ship, float amount, FleetMemberAPI member, ShipModifications mods) {
-        for (UpgradeModEffect effect : upgradeEffects.values()) {
+        for (UpgradeModEffect effect : upgradeEffects) {
             effect.advanceInCombat(ship, amount, member, mods, this);
         }
     }
 
     public void advanceInCampaign(FleetMemberAPI member, ShipModifications mods, Float amount) {
-        for (UpgradeModEffect effect : upgradeEffects.values()) {
+        for (UpgradeModEffect effect : upgradeEffects) {
             effect.advanceInCampaign(member, mods, this, amount);
         }
     }
@@ -192,7 +163,7 @@ public class Upgrade extends Modification {
     public void modifyToolTip(TooltipMakerAPI tooltip, MutableShipStatsAPI stats, FleetMemberAPI member, ShipModifications mods, boolean expand) {
         tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(mods.getUpgrade(this)));
         if (expand) {
-            for (UpgradeModEffect effect : upgradeEffects.values()) {
+            for (UpgradeModEffect effect : upgradeEffects) {
                 effect.printToTooltip(tooltip, stats, member, mods, this);
             }
         }
@@ -201,8 +172,7 @@ public class Upgrade extends Modification {
     public void modifyInShop(TooltipMakerAPI tooltip, FleetMemberAPI member, ShipModifications mods) {
         Map<Integer, List<UpgradeModEffect>> levelToEffectMap = new HashMap<>();
 
-        for (Map.Entry<String, UpgradeModEffect> effectPair : upgradeEffects.entrySet()) {
-            UpgradeModEffect effect = effectPair.getValue();
+        for (UpgradeModEffect effect : upgradeEffects) {
             int startingLevel = effect.getStartingLevel();
             List<UpgradeModEffect> levelList;
             if (!levelToEffectMap.containsKey(startingLevel)) {
@@ -259,6 +229,14 @@ public class Upgrade extends Modification {
         }
 
         return resourceCosts;
+    }
+
+    public float getSpawnChance() {
+        return spawnChance;
+    }
+
+    public float getBandwidthUsage() {
+        return bandwidthUsage;
     }
 
     @Override

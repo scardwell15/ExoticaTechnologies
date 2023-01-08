@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.thoughtworks.xstream.XStream;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
+import exoticatechnologies.config.FactionConfigLoader;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
@@ -32,11 +33,11 @@ public class ETModPlugin extends BaseModPlugin {
         ETModSettings.loadModSettings();
         UpgradesHandler.initialize();
         ExoticsHandler.initialize();
+        FactionConfigLoader.load();
     }
 
     @Override
     public void onGameLoad(boolean newGame) {
-        CampaignEventListener.invalidateShipModifications();
         FleetMemberUtils.moduleMap.clear();
         ShopManager.getShopMenuUIPlugins().clear();
 

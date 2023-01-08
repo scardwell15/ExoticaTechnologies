@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
 import exoticatechnologies.util.StringUtils;
@@ -46,15 +45,6 @@ public class CrateItemDialog implements InteractionDialogPlugin {
                 cratePlugin.getCargo().removeAll(availableCargo);
 
                 playerCargo.removeAll(selectedCargo);
-
-                for (CargoStackAPI stack : availableCargo.getStacksCopy()) {
-                    if (stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
-                        ((UpgradeSpecialItemPlugin) stack.getPlugin()).setIgnoreCrate(true);
-                    } else if (stack.getPlugin() instanceof ExoticSpecialItemPlugin) {
-                        ((ExoticSpecialItemPlugin) stack.getPlugin()).setIgnoreCrate(true);
-                    }
-                }
-
                 playerCargo.addAll(availableCargo);
 
                 for (CargoStackAPI stack : cratePlugin.getCargo().getStacksCopy()) {

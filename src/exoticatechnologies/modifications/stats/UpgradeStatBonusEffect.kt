@@ -17,10 +17,7 @@ abstract class UpgradeStatBonusEffect : UpgradeModEffect() {
         mods: ShipModifications,
         mod: Upgrade
     ): Float {
-        if (handleAsMult()) {
-            return getStat(stats).getMultBonus(mod.key).getValue()
-        }
-        return getStat(stats).getPercentBonus(mod.key).getValue()
+        return getCurrentEffect(member, mods, mod)
     }
 
     override fun applyToStats(

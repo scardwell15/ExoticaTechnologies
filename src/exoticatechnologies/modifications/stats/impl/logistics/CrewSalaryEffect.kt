@@ -9,9 +9,7 @@ import com.fs.starfarer.api.impl.campaign.shared.SharedData
 import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
-import exoticatechnologies.ETModPlugin
 import exoticatechnologies.integration.ironshell.IronShellIntegration
-import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.stats.UpgradeModEffect
@@ -75,15 +73,19 @@ class CrewSalaryEffect : UpgradeModEffect() {
 
     companion object {
         fun getIncreasedSalaryForMember(member: FleetMemberAPI, mods: ShipModifications): Int {
-            return mods.upgradeMap.keys.sumOf { getIncreasedSalaryForMember(member, mods, it) }
+            return mods.getUpgradeMap().keys.sumOf { getIncreasedSalaryForMember(member, mods, it) }
         }
 
         fun getIncreasedSalaryForMember(member: FleetMemberAPI, mods: ShipModifications, mod: Upgrade): Int {
-            mod.upgradeEffects["crewSalary"]?.let {
+            getCrewSalaryEffect(mod.upgradeEffects)?.let {
                 val actualCrew = member.minCrew
                 return (it.getCurrentEffect(member, mods, mod) * actualCrew).roundToInt()
             }
             return 0
+        }
+
+        fun getCrewSalaryEffect(list: List<UpgradeModEffect>): UpgradeModEffect? {
+            return list.firstOrNull { it.key == "crewSalary" }
         }
 
         fun addListenerIfNotAdded() {

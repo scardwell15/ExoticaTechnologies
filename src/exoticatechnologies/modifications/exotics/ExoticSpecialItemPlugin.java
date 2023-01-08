@@ -13,7 +13,7 @@ import java.awt.*;
 public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
 
     @Getter
-    protected String exoticId;
+    public String exoticId;
     @Getter @Setter
     protected boolean ignoreCrate = false;
 

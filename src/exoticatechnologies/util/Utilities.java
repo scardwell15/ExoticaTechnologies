@@ -253,6 +253,10 @@ public class Utilities {
         }
     }
 
+    public static boolean hasChip(CargoAPI cargo, String id) {
+        return hasExoticChip(cargo, id) || hasUpgradeChip(cargo, id);
+    }
+
     public static CargoStackAPI getExoticChip(CargoAPI cargo, String id) {
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
             if(stack.isSpecialStack()) {

@@ -52,6 +52,7 @@
 			"HangarForgeMissiles": "graphics/icons/exotics/hangarforgemissiles.png",
 			"HangarForge": "graphics/icons/exotics/hangarforge.png",
 			"PhasefieldEngine": "graphics/icons/exotics/phasefieldengine.png",
+			"FullMetalSalvo": "graphics/icons/exotics/fullmetalsalvo.png",
 			"SubsumedAlphaCore": "graphics/icons/exotics/subsumedalphacore.png",
 			"SubsumedBetaCore": "graphics/icons/exotics/subsumedbetacore.png",
 			"SubsumedGammaCore": "graphics/icons/exotics/subsumedgammacore.png"
@@ -68,7 +69,10 @@
 			"TracerRecoilCalculator": "graphics/icons/upgrades/tracerrecoilcalculator.png",
 			"DerelictWeaponAssistant": "graphics/icons/upgrades/derelictweaponassistant.png",
 			"AuxiliarySensors": "graphics/icons/upgrades/auxiliarysensors.png",
-			"InterferenceShielding": "graphics/icons/upgrades/interferenceshielding.png"
+			"InterferenceShielding": "graphics/icons/upgrades/interferenceshielding.png",
+			"AssaultWings": "graphics/icons/upgrades/assaultwings.png",
+			"GuidanceComputers": "graphics/icons/upgrades/guidancecomputers.png",
+			"HelDrives": "graphics/icons/upgrades/heldrives.png"
 		}
 	}
 }

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.MutableStat
 import exoticatechnologies.modifications.stats.UpgradeMutableStatEffect
 
 class EnergyDamageTakenEffect : UpgradeMutableStatEffect() {
+    override var hullmodShowsFinalValue: Boolean = false
     override var negativeIsBuff: Boolean = true
 
     override val key: String

@@ -6,14 +6,13 @@ import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import exoticatechnologies.ui.BaseUIPanelPlugin
 import exoticatechnologies.ui.StringTooltip
-import exoticatechnologies.ui.impl.shop.ModsModifier
 import exoticatechnologies.ui.impl.shop.ShopMenuUIPlugin
 import exoticatechnologies.ui.tabs.TabButtonUIPlugin
 import exoticatechnologies.ui.tabs.TabbedPanelUIPlugin
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
-class UpgradeShopUIPlugin : ShopMenuUIPlugin(), ModsModifier {
+class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
     val pad: Float = 3f
     val opad: Float = 10f
     override var bgColor: Color = Color(150, 255, 200, 0)
@@ -32,7 +31,7 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin(), ModsModifier {
         val panel = holdingPanel.createCustomPanel(panelWidth, panelHeight, this)
 
 
-        val listPlugin = UpgradeListUIPlugin(panel, member!!, mods!!, market)
+        val listPlugin = UpgradeListUIPlugin(panel, member!!, market)
         listPlugin.panelHeight = panelHeight - 22f
         listPanel = listPlugin.layoutPanels(UpgradesHandler.UPGRADES_LIST)
 
@@ -59,15 +58,11 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin(), ModsModifier {
 
         activeUpgrade = upgrade
         if (activeUpgrade != null) {
-            val upgradePlugin = UpgradePanelUIPlugin(innerPanel!!, upgrade!!, member!!, mods!!, market!!)
+            val upgradePlugin = UpgradePanelUIPlugin(innerPanel!!, upgrade!!, member!!, market!!)
             upgradePlugin.panelWidth = innerPanel!!.position.width
             upgradePlugin.panelHeight = innerPanel!!.position.height
             activePanel = upgradePlugin.layoutPanels()
             activePanel!!.position.inTL(0f, 0f)
-
-            upgradePlugin.addModChangeListener { member, mods ->
-                modifiedMods(member, mods)
-            }
         }
     }
 

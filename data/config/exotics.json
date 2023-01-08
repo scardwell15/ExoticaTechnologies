@@ -1,78 +1,43 @@
 {
-    #keep in mind that some of these settings are scripted effects.
-    #setting these to zero or below zero may have unintended effects
-    #beyond just making the game easier/harder.
-
   "SpooledFeeders": {
       "name": "Spooled Feeders",
-
-      "exoticClass": "exoticatechnologies.modifications.exotics.impl.SpooledFeeders",
-      #the below settings are percentages, so 100 means doubled
-      "weaponFireRateBuff": 100.0, #after shooting
-      "weaponFireRateDebuff": -33.0, #after buff ends
-      "buffCooldown": 16,
-      "buffActiveTime": 5,
-      "debuffActiveTime": 4,
+      "tag": "weaponFeeders",
+      "exoticClass": "exoticatechnologies.modifications.exotics.impl.SpooledFeeders"
+  },
+  "FullMetalSalvo": {
+    "name": "Full Metal Salvo",
+    "tag": "weaponFeeders",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.FullMetalSalvo"
   },
   "PlasmaFluxCatalyst": {
       "name": "Plasma Flux Catalyst",
-
       "exoticClass": "exoticatechnologies.modifications.exotics.impl.PlasmaFluxCatalyst"
   },
   "DriveFluxVent": {
     "name": "Drive Flux Vent",
-
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.DriveFluxVent",
-
-    "ventSpeedIncrease": 30.0, #buff to flux dissipation while venting
-    "forwardSpeedIncrease": 30, #forward speed boost
-    "fluxRequiredForBuff": 50.0, #required flux percentage to trigger the boost
-    "buffDuration": 4.0 #amount of time buff is active after venting
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.DriveFluxVent"
   },
   "EqualizerCore": {
     "name": "Equalizer Core",
-
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.EqualizerCore",
-
-    "recoilReduction": -25.0,
-    "weaponTurnRateIncrease": 50.0,
-
-    "rangeBottomBounds": 550, #weapons with base range below this
-    "rangeBottomBuff": 200, #receive a flat bonus of this.
-
-    "rangeTopBounds": 800, #weapons with base range above this
-    "rangeTopBuff": -50 #receive a flat bonus of this.
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.EqualizerCore"
   },
   "HangarForge": {
     "name": "Hangar Forge",
-
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HangarForge",
-
-    "fighterReplacementBuff": -15.0, #decreases the time to replace a fighter
-    "replacementRateDecreaseSpeed": -35.0 #this decreases the rate at which it degrades
+    "conditions": [
+      {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have a launch bay."}
+    ]
   },
   "HangarForgeMissiles": {
     "name": "Hacked Missile Forge",
-
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.HangarForgeMissiles",
-
-    "secondsBetweenReloads": 90,
-    "percentReloaded": 50.0
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.HangarForgeMissiles"
   },
   "PhasefieldEngine": {
     "name": "Phasefield Engine",
-
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasefieldEngine",
-
-    "phaseResetInterval": 8, #amount of time unphased before the cost to phase resets
-    "invulnerableInterval": 2, #amount of time invulnerable when unphasing
-
-    "phaseCooldownReduction": -50.0, #reduces phase cooldown time by this amount.
-
-    "phaseCostModIfNegative": -100.0, #if phase cost is negative, apply this modifier.
-    "phaseCostIfZero": 20.0, #percent of base flux capacity
-    "phaseCostBaseReduction": -75.0 #reduces phase cost by this amount.
-    #this reduction applies after the other mods here.
+    "conditions": [
+      {"id": "hasPhase", "operator": "==", "expected": true, "cannotApplyReason": "The ship must be a phase ship, or have a phase ship system."}
+    ]
   },
   "AlphaSubcore": {
     "name": "Alpha Subcore",

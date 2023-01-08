@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -31,10 +32,10 @@ public class AlphaSubcore extends HullmodExotic {
     }
 
     @Override
-    public boolean canApply(FleetMemberAPI member) {
+    public boolean canApply(FleetMemberAPI member, ShipModifications mods) {
         if(member.getFleetData() == null
                 || member.getFleetData().getFleet() == null) {
-            return canApply(member.getVariant());
+            return canApplyToVariant(member.getVariant());
         }
 
         if (!Misc.isPlayerOrCombinedContainingPlayer(member.getFleetData().getFleet())) {
@@ -43,10 +44,10 @@ public class AlphaSubcore extends HullmodExotic {
                     || member.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_PATH)) {
                 return false;
             }
-            return canApply(member.getVariant());
+            return canApplyToVariant(member.getVariant());
         }
 
-        return canApply(member.getVariant());
+        return canApplyToVariant(member.getVariant());
     }
 
     @Override
@@ -78,6 +79,7 @@ public class AlphaSubcore extends HullmodExotic {
     @Override
     public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
         onInstall(fm);
+        stats.getDynamic().getStat(Stats.DEPLOYMENT_POINTS_MOD).modifyPercent(getBuffId(), 20, "Alpha Subcore");
     }
 
     /**

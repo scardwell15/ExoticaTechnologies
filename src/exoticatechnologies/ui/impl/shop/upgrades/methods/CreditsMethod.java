@@ -11,12 +11,16 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class CreditsMethod implements UpgradeMethod {
+public class CreditsMethod extends DefaultUpgradeMethod {
+    @Getter
+    public String key = "credits";
+
     @Override
     public String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
         int level = es.getUpgrade(upgrade);
@@ -33,23 +37,19 @@ public class CreditsMethod implements UpgradeMethod {
     }
 
     @Override
-    public String getOptionTooltip(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+    public String getOptionTooltip(FleetMemberAPI member, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         return StringUtils.getString("UpgradeMethods", "CreditsUpgradeTooltip");
     }
 
     @Override
-    public boolean canUse(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+    public boolean canUse(FleetMemberAPI member, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         if (upgrade.getResourceRatios().isEmpty()) return false;
 
-        int level = es.getUpgrade(upgrade);
-        int creditCost = getFinalCreditCost(fm, upgrade, level, market);
+        int level = mods.getUpgrade(upgrade);
+        int creditCost = getFinalCreditCost(member, upgrade, level, market);
 
-        return Global.getSector().getPlayerFleet().getCargo().getCredits().get() >= creditCost;
-    }
-
-    @Override
-    public boolean canShow(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
-        return true;
+        return Global.getSector().getPlayerFleet().getCargo().getCredits().get() >= creditCost
+                && super.canUse(member, mods, upgrade, market);
     }
 
     @Override
@@ -128,15 +128,5 @@ public class CreditsMethod implements UpgradeMethod {
         resourceCosts.put(Commodities.CREDITS, cost);
 
         return resourceCosts;
-    }
-
-    @Override
-    public boolean usesBandwidth() {
-        return true;
-    }
-
-    @Override
-    public boolean usesLevel() {
-        return true;
     }
 }

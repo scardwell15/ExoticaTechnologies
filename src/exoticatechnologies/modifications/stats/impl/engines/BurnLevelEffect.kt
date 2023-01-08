@@ -5,6 +5,8 @@ import com.fs.starfarer.api.combat.MutableStat
 import exoticatechnologies.modifications.stats.UpgradeMutableStatEffect
 
 class BurnLevelEffect : UpgradeMutableStatEffect() {
+    override var hullmodShowsFinalValue: Boolean = false
+
     override val key: String
         get() = "burnLevel"
 

@@ -6,7 +6,6 @@ import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.util.Misc;
-import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.campaign.ScanUtils;
 import exoticatechnologies.modifications.*;
 import exoticatechnologies.util.StringUtils;

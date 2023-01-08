@@ -1,6 +1,5 @@
 package exoticatechnologies.commands;
 
-import com.fs.starfarer.api.Global;
 import exoticatechnologies.ETModPlugin;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;

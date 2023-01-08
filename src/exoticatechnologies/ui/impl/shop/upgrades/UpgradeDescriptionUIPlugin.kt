@@ -4,18 +4,17 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class UpgradeDescriptionUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
-    var member: FleetMemberAPI,
-    var mods: ShipModifications
+    var member: FleetMemberAPI
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
@@ -36,6 +35,8 @@ class UpgradeDescriptionUIPlugin(
     }
 
     fun resetDescription() {
+        val mods = member.getMods()
+
         if (descriptionTooltip != null) {
             mainPanel!!.removeComponent(descriptionTooltip)
         }

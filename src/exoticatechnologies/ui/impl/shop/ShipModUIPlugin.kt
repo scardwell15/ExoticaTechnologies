@@ -19,11 +19,9 @@ import kotlin.math.max
 class ShipModUIPlugin(
     val dialog: InteractionDialogAPI,
     var parentPanel: CustomPanelAPI, override var panelWidth: Float, override var panelHeight: Float
-) : InteractiveUIPanelPlugin(), ModsModifier {
+) : InteractiveUIPanelPlugin() {
     private val pad = 3f
     private val opad = 10f
-
-    override var listeners: MutableList<ModsModifier.ModChangeListener> = mutableListOf()
 
     private var innerPanel: CustomPanelAPI? = null
     private var innerTooltip: TooltipMakerAPI? = null
@@ -84,7 +82,7 @@ class ShipModUIPlugin(
 
         val tooltip = innerPanel!!.createUIElement(panelWidth, panelHeight, false)
 
-        val rowPlugin = ShipHeaderUIPlugin(dialog, member, mods, innerPanel!!)
+        val rowPlugin = ShipHeaderUIPlugin(dialog, member, innerPanel!!)
         rowPlugin.panelWidth = panelWidth
         rowPlugin.panelHeight = max(panelHeight * 0.1f, Global.getSettings().screenHeight * 0.16f)
         shipHeaderPanel = rowPlugin.layoutPanel(tooltip)
@@ -108,14 +106,7 @@ class ShipModUIPlugin(
             tabHolderPlugin.lineColor = plugin.getTabButtonUIPlugin().baseColor
             if (plugin is ShopMenuUIPlugin) {
                 plugin.member = member
-                plugin.mods = ShipModFactory.generateForFleetMember(member)
                 plugin.market = dialog.interactionTarget.market
-            }
-
-            if (plugin is ModsModifier) {
-                plugin.addModChangeListener { member, mods ->
-                    modifiedMods(member, mods)
-                }
             }
         }
 

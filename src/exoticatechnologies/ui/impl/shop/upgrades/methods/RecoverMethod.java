@@ -12,11 +12,15 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RecoverMethod implements UpgradeMethod {
+    @Getter
+    public String key = "recover";
+
     @Override
     public String getOptionText(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         int creditCost = getCreditCost(fm, mods, upgrade);

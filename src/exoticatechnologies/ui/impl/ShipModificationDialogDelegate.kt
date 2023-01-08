@@ -43,10 +43,6 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
                 modPlugin.showPanel(member)
             }
         }
-
-        modPlugin.addModChangeListener { member, mods ->
-            listPlugin.modsModified(member, mods)
-        }
     }
 
     override fun hasCancelButton(): Boolean {

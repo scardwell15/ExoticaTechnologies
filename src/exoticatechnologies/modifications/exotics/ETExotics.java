@@ -3,7 +3,9 @@ package exoticatechnologies.modifications.exotics;
 import lombok.extern.log4j.Log4j;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Log4j
 public class ETExotics {
@@ -51,6 +53,30 @@ public class ETExotics {
 
     public boolean hasAnyExotic() {
         return !this.exotics.isEmpty();
+    }
+
+    public List<String> getTags() {
+        Set<String> tagSet = new HashSet<>();
+        for (String key : exotics) {
+            Exotic exotic = ExoticsHandler.EXOTICS.get(key);
+            if (exotic.getTag() != null) {
+                tagSet.add(exotic.getTag());
+            }
+        }
+
+        List<String> tags = new ArrayList<>(tagSet);
+        return tags;
+    }
+
+    public List<Exotic> getConflicts(String tag) {
+        List<Exotic> exotics = new ArrayList<>();
+        for (String key : this.exotics) {
+            Exotic exotic = ExoticsHandler.EXOTICS.get(key);
+            if (exotic.getTag() != null && exotic.getTag().equals(tag)) {
+                exotics.add(exotic);
+            }
+        }
+        return exotics;
     }
 
     @Override

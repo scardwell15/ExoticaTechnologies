@@ -6,47 +6,44 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
-import exoticatechnologies.ui.impl.shop.ModsModifier
 import exoticatechnologies.ui.impl.shop.upgrades.chips.ChipPanelUIPlugin
 import exoticatechnologies.util.RenderUtils
+import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class UpgradePanelUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     var member: FleetMemberAPI,
-    var mods: ShipModifications,
     var market: MarketAPI
-) : InteractiveUIPanelPlugin(), ModsModifier {
+) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionPlugin: UpgradeDescriptionUIPlugin? = null
     private var resourcesPlugin: UpgradeResourcesUIPlugin? = null
     private var methodsPlugin: UpgradeMethodsUIPlugin? = null
     private var chipsPlugin: ChipPanelUIPlugin? = null
-    override var listeners: MutableList<ModsModifier.ModChangeListener> = mutableListOf()
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         mainPanel = panel
 
-        descriptionPlugin = UpgradeDescriptionUIPlugin(mainPanel!!, upgrade, member, mods)
+        descriptionPlugin = UpgradeDescriptionUIPlugin(mainPanel!!, upgrade, member)
         descriptionPlugin!!.panelWidth = panelWidth / 2f
         descriptionPlugin!!.panelHeight = panelHeight
         descriptionPlugin!!.layoutPanels().position.inTL(0f, 0f)
 
-        resourcesPlugin = UpgradeResourcesUIPlugin(mainPanel!!, upgrade, member, mods, market)
+        resourcesPlugin = UpgradeResourcesUIPlugin(mainPanel!!, upgrade, member, market)
         resourcesPlugin!!.panelWidth = panelWidth / 2f - 6f
         resourcesPlugin!!.panelHeight = panelHeight / 10f * 7f - 6f
         resourcesPlugin!!.layoutPanels().position.inTR(3f, 3f)
 
-        methodsPlugin = UpgradeMethodsUIPlugin(mainPanel!!, upgrade, member, mods, market)
+        methodsPlugin = UpgradeMethodsUIPlugin(mainPanel!!, upgrade, member, market)
         methodsPlugin!!.panelWidth = panelWidth / 2f - 6f
         methodsPlugin!!.panelHeight = panelHeight / 10f * 3f - 6f
         methodsPlugin!!.layoutPanels().position.inBR(3f, 13f)
@@ -74,11 +71,12 @@ class UpgradePanelUIPlugin(
     }
 
     fun doUpgradeWithMethod(upgrade: Upgrade, method: UpgradeMethod) {
+        val mods = member.getMods()
+
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
         method.apply(member, mods, upgrade, market)
-        modifiedMods(member, mods)
 
         descriptionPlugin!!.resetDescription()
         resourcesPlugin!!.redisplayResourceCosts(method)
@@ -89,7 +87,7 @@ class UpgradePanelUIPlugin(
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
-        chipsPlugin = ChipPanelUIPlugin(mainPanel!!, upgrade, member, mods, market)
+        chipsPlugin = ChipPanelUIPlugin(mainPanel!!, upgrade, member, market)
         chipsPlugin!!.panelWidth = panelWidth / 2 - 6f
         chipsPlugin!!.panelHeight = panelHeight - 6f
         chipsPlugin!!.layoutPanels().position.inTR(9f, 3f)
@@ -105,7 +103,7 @@ class UpgradePanelUIPlugin(
         methodsPlugin!!.createTooltip()
     }
 
-    fun clickedChipStack(stack: CargoStackAPI, plugin: UpgradeSpecialItemPlugin) {
+    fun clickedChipStack(stack: CargoStackAPI) {
         chipsPlugin!!.destroyTooltip()
         chipsPlugin = null
 
@@ -135,7 +133,7 @@ class UpgradePanelUIPlugin(
         }
 
         override fun checked(stack: CargoStackAPI, plugin: UpgradeSpecialItemPlugin) {
-            mainPlugin.clickedChipStack(stack, plugin)
+            mainPlugin.clickedChipStack(stack)
         }
     }
 

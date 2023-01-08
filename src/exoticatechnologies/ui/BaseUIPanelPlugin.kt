@@ -7,9 +7,6 @@ import exoticatechnologies.util.RenderUtils
 import java.awt.Color
 import kotlin.math.min
 
-fun Color.modify(red: Int = this.red, green: Int = this.green, blue: Int = this.blue, alpha: Int = this.alpha) =
-    Color(red, green, blue, alpha)
-
 open class BaseUIPanelPlugin: CustomUIPanelPlugin {
     lateinit var pos: PositionAPI
     open var panelWidth: Float = 0f

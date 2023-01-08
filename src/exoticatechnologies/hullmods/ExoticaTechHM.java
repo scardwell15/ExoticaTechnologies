@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -21,6 +20,7 @@ import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.util.ExtensionsKt;
 import exoticatechnologies.util.FleetMemberUtils;
 import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
@@ -50,26 +50,13 @@ public class ExoticaTechHM extends BaseHullMod {
 
         if (mods.shouldApplyHullmod()) {
 
-            if(shipVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
-                shipVariant = shipVariant.clone();
-                shipVariant.setOriginalVariant(null);
-                shipVariant.setSource(VariantSource.REFIT);
-                fm.setVariant(shipVariant, false, false);
-            }
-
+            ExtensionsKt.fixVariant(fm);
             shipVariant.addPermaMod("exoticatech");
 
             for (String moduleVariantId : shipVariant.getStationModules().keySet()) {
                 ShipVariantAPI moduleVariant = shipVariant.getModuleVariant(moduleVariantId);
 
                 if (moduleVariant != null) {
-                    if (moduleVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
-                        moduleVariant = moduleVariant.clone();
-                        moduleVariant.setOriginalVariant(null);
-                        moduleVariant.setSource(VariantSource.REFIT);
-                        shipVariant.setModuleVariant(moduleVariantId, moduleVariant);
-                    }
-
                     moduleVariant.addPermaMod("exoticatech");
                 }
             }
@@ -202,6 +189,20 @@ public class ExoticaTechHM extends BaseHullMod {
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if(!mods.hasUpgrade(upgrade)) continue;
             upgrade.applyUpgradeToShip(member, ship, mods);
+        }
+    }
+
+    @Override
+    public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
+        FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
+        if(member == null) return;
+
+        ShipModifications mods = ShipModLoader.get(member);
+        if(mods == null) return;
+
+        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if(!mods.hasUpgrade(upgrade)) continue;
+            upgrade.applyUpgradeToFighters(member, ship, fighter, mods);
         }
     }
 

@@ -1,0 +1,24 @@
+{
+  "exoticChance": 0.5,
+  "upgradeChance": 1.0,
+  "bandwidthMult": 2.0,
+  "allowedExotics": {
+    "PlasmaFluxCatalyst": 0.5,
+    "DriveFluxVent": 0.3,
+    "HangarForgeMissiles": 0.5,
+    "SpooledFeeders": 0.5,
+    "FullMetalSalvo": 0.5,
+    "PhaseFieldEngine": 0.16,
+    "HangarForge": 0.4,
+    "AlphaSubcore": 0.75
+  },
+  "allowedUpgrades": {
+    "AdvancedFluxCoils": 0.9,
+    "OverchargedShields": 0.5,
+    "InfernalEngines": 0.5,
+    "TracerRecoilCalculator": 0.5,
+    "WeldedArmor": 0.25,
+    "AssaultWings": 0.67,
+    "GuidanceComputers": 0.5
+  }
+}

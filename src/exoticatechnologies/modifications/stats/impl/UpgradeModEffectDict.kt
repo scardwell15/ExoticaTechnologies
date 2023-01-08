@@ -6,6 +6,7 @@ import exoticatechnologies.modifications.stats.impl.cr.CRRecoveryRateEffect
 import exoticatechnologies.modifications.stats.impl.cr.CRToDeployEffect
 import exoticatechnologies.modifications.stats.impl.cr.PeakPerformanceTimeEffect
 import exoticatechnologies.modifications.stats.impl.engines.*
+import exoticatechnologies.modifications.stats.impl.fighters.FighterRangeEffect
 import exoticatechnologies.modifications.stats.impl.flux.FluxCapacityEffect
 import exoticatechnologies.modifications.stats.impl.flux.VentSpeedEffect
 import exoticatechnologies.modifications.stats.impl.health.*
@@ -38,6 +39,8 @@ abstract class UpgradeModEffectDict {
                         EngineHealthEffect(),
                         MaxSpeedEffect(),
                         TurnRateEffect(),
+                        //fighters
+                        FighterRangeEffect(),
                         //flux
                         FluxCapacityEffect(),
                         VentSpeedEffect(),
@@ -74,33 +77,32 @@ abstract class UpgradeModEffectDict {
                         WeaponFluxCostEffect(),
                         WeaponHealthEffect(),
                         WeaponTurnRateEffect(),
+                        MissileHealthEffect(),
+                        MissileTurnEffect(),
+                        MissileTurnAccelEffect(),
+                        MissileDamageEffect(),
+                        MissileSpeedEffect()
                     )
-                        .map { it.key to it }
-                        .forEach { (key, effect) ->
-                            mutableDict!!.put(key, effect)
+                        .forEach {
+                            mutableDict!![it.key] = it
                         }
                 }
 
                 return mutableDict!!
             }
 
-        fun getStatsFromJSONArray(arr: JSONArray): Map<String, UpgradeModEffect> {
-            val map: LinkedHashMap<String, UpgradeModEffect> = linkedMapOf()
+        fun getStatsFromJSONArray(arr: JSONArray): List<UpgradeModEffect> {
+            val list: MutableList<UpgradeModEffect> = mutableListOf()
             for (i in 0 until arr.length()) {
                 val effect = getStatFromJSONObj(arr.getJSONObject(i))
-                map[effect.key] = effect
+                list.add(effect)
             }
-            return map
+            return list
         }
 
         fun getStatFromJSONObj(obj: JSONObject): UpgradeModEffect {
             val effect = getStatFromDict(obj.getString("id"))
-
-            effect.baseEffect = obj.optFloat("baseEffect", 0f)
-            effect.scalingEffect = obj.optFloat("scalingEffect", 0f)
-            effect.startingLevel = obj.optInt("startingLevel", 1).coerceAtLeast(1)
-            effect.hidden = obj.optBoolean("baseEffect", false)
-
+            effect.setup(obj)
             return effect
         }
 

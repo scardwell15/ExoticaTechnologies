@@ -1,13 +1,7 @@
 package exoticatechnologies.modifications.upgrades;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import data.scripts.util.MagicSettings;
-import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin;
 import exoticatechnologies.ui.impl.shop.upgrades.UpgradeShopUIPlugin;
@@ -100,39 +94,11 @@ public class UpgradesHandler {
         UPGRADES_LIST.add(upgrade);
     }
 
-    //can upgrade
-    public static boolean canUseUpgradeMethods(FleetMemberAPI fm, ShipModifications mods, ShipAPI.HullSize hullSize, Upgrade upgrade, CampaignFleetAPI fleet, MarketAPI currMarket) {
-        if (mods.getUsedBandwidth() + upgrade.getBandwidthUsage() > mods.getBandwidthWithExotics(fm)) {
-            return false;
-        }
-
-        for (UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
-            if (method.canShow(fm, mods, upgrade, currMarket)
-                    && method.canUse(fm, mods, upgrade, currMarket)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static List<Upgrade> getAllowedUpgrades(FleetMemberAPI member) {
         List<Upgrade> upgrades = new ArrayList<>();
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if (upgrade.canApply(member)) {
-                upgrades.add(upgrade);
-            }
-        }
-
-        return upgrades;
-    }
-
-    public static List<Upgrade> getAllowedUpgrades(String faction, ShipVariantAPI var) {
-        List<Upgrade> upgrades = new ArrayList<>();
-
-        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if (upgrade.allowedForFaction(faction) && upgrade.canApply(var)) {
+            if (upgrade.canApply(member, null)) {
                 upgrades.add(upgrade);
             }
         }

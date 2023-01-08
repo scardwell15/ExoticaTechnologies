@@ -4,6 +4,6 @@ import exoticatechnologies.ui.ButtonHandler
 
 class ListItemButtonHandler<T>(val rowPlugin: ListItemUIPanelPlugin<T>, val listPlugin: ListUIPanelPlugin<T>): ButtonHandler() {
     override fun checked() {
-        listPlugin.pickedItem(rowPlugin.item)
+        listPlugin.itemClicked(rowPlugin.item)
     }
 }

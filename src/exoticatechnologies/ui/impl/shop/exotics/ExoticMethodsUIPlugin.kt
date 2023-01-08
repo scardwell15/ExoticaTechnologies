@@ -1,24 +1,31 @@
 package exoticatechnologies.ui.impl.shop.exotics
 
+import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.CargoAPI
+import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.impl.campaign.ids.Stats
 import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
+import exoticatechnologies.cargo.CrateItemPlugin
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
+import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.StringTooltip
 import exoticatechnologies.ui.impl.shop.exotics.methods.Method
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.getMods
+import java.awt.Color
 
 class ExoticMethodsUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     var member: FleetMemberAPI,
-    var mods: ShipModifications,
     var market: MarketAPI,
     var methods: List<Method>
 ) : InteractiveUIPanelPlugin() {
@@ -30,31 +37,77 @@ class ExoticMethodsUIPlugin(
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         mainPanel = panel
 
-        createTooltip()
-
+        showTooltip()
         parentPanel.addComponent(panel).inTR(0f, 0f)
 
         return panel
     }
 
-    fun createTooltip() {
+    fun showTooltip() {
+        val mods = member.getMods()
         val tooltip = mainPanel!!.createUIElement(panelWidth, panelHeight, false)
         methodsTooltip = tooltip
 
-        tooltip.addTitle(StringUtils.getString("UpgradeMethods", "UpgradeMethodsTitle"))
+        var prev: UIComponentAPI? = null
+        if (mods.hasExotic(exotic)) {
+            tooltip.addTitle(StringUtils.getString("ExoticsDialog", "InstalledTitle"))
+        } else if (!exotic.canApply(member, mods)) {
+            tooltip.addTitle(StringUtils.getString("Conditions", "CannotApplyTitle"), Color(200, 100, 100))
+            showCannotApply(mods, tooltip)
+
+            prev = tooltip.prev
+        } else if (!isUnderExoticLimit(member, mods)) {
+            tooltip.addTitle(StringUtils.getString("Conditions", "CannotApplyTitle"), Color(200, 100, 100))
+
+            StringUtils.getTranslation("Conditions", "CannotApplyBecauseTooManyExotics")
+                .addToTooltip(tooltip, Color(100, 200, 100))
+
+            prev = tooltip.prev
+        } else {
+            tooltip.addTitle(StringUtils.getString("UpgradeMethods", "UpgradeMethodsTitle"))
+        }
+
+
+        showMethods(tooltip, mods, prev)
+
+        mainPanel!!.addUIElement(tooltip).inTL(0f, 0f)
+    }
+
+    fun showCannotApply(mods: ShipModifications, tooltip: TooltipMakerAPI) {
+        val reasons: List<String> = exotic.getCannotApplyReasons(member, mods)
+
+        if (reasons.isNotEmpty()) {
+            reasons.forEach {
+                tooltip.addPara(it, 1f)
+            }
+        } else if (!exotic.checkTags(member, mods, exotic.tag)) {
+            val names: List<String> = mods.getModsThatConflict(exotic.tag!!).map { it.name }
+
+            StringUtils.getTranslation("Conditions", "CannotApplyBecauseTags")
+                .format("conflictMods", names.joinToString(", "))
+                .addToTooltip(tooltip)
+        }
+    }
+
+    fun showMethods(tooltip: TooltipMakerAPI, mods: ShipModifications, lastComponent: UIComponentAPI? = tooltip.prev) {
 
         //this list automatically places buttons on new rows if the previous row had too many
         var lastButton: UIComponentAPI? = null
-        var nextButtonX = 0
-        var rowYOffset = 25
+        var nextButtonX = 0f
+        var rowYOffset = 25f
+
+        if (lastComponent != null) {
+            rowYOffset += lastComponent.position.height
+        }
+
         for (method in methods) {
             val buttonText = method.getButtonText(exotic)
             tooltip.setButtonFontDefault()
 
-            val buttonWidth: Float = tooltip.computeStringWidth(buttonText) + 10f
+            val buttonWidth: Float = tooltip.computeStringWidth(buttonText) + 16f
             if (nextButtonX + buttonWidth >= panelWidth) {
-                nextButtonX = 0
-                rowYOffset += 24
+                nextButtonX = 0f
+                rowYOffset += 24f
                 lastButton = null
             }
 
@@ -72,16 +125,14 @@ class ExoticMethodsUIPlugin(
                 buttons[methodButton] = MethodButtonHandler(method, this)
 
                 if (lastButton == null) {
-                    methodButton.position.inTL(0f, rowYOffset.toFloat())
+                    methodButton.position.inTL(0f, rowYOffset)
                 } else {
                     methodButton.position.rightOfTop(lastButton, 3f)
                 }
                 lastButton = methodButton
-                nextButtonX += 100
+                nextButtonX += 100f
             }
         }
-
-        mainPanel!!.addUIElement(tooltip).inTL(0f, 0f)
     }
 
     fun destroyTooltip() {
@@ -155,6 +206,55 @@ class ExoticMethodsUIPlugin(
          */
         open fun unhighlighted(method: Method): Boolean {
             return false
+        }
+    }
+
+    /**
+     * gets all valid upgrade chips for member from cargo
+     */
+    fun getExoticChips(cargo: CargoAPI): List<CargoStackAPI> {
+        return Companion.getExoticChips(cargo, member, member.getMods(), exotic)
+    }
+
+    companion object {
+        val useTheMethodThatMakesHartleyverseStronger = false
+        fun getMaxExotics(member: FleetMemberAPI): Int {
+            if (useTheMethodThatMakesHartleyverseStronger) {
+                return member.stats.dynamic.getStat(Stats.MAX_PERMANENT_HULLMODS_MOD).modifiedInt
+            } else {
+                var limit = 2
+                if (Global.getSector().playerStats.hasSkill("best_of_the_best")) {
+                    limit++
+                }
+                return limit
+            }
+        }
+
+        fun isUnderExoticLimit(member: FleetMemberAPI, mods: ShipModifications): Boolean {
+            return getMaxExotics(member) > mods.getExoticSet().size
+        }
+
+        fun getExoticChips(cargo: CargoAPI, member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): List<CargoStackAPI> {
+            val stacks: List<CargoStackAPI> = cargo.stacksCopy
+                .flatMap { stack ->
+                    if (stack.plugin is CrateItemPlugin)
+                        getChipsFromCrate(stack, member, mods, exotic)
+                    else
+                        listOf(stack)
+                }
+                .filter { it.plugin is ExoticSpecialItemPlugin }
+                .map { it to it.plugin as ExoticSpecialItemPlugin }
+                .filter { (_, plugin) -> plugin.exoticId == exotic.key }
+                .map { (stack, _) -> stack }
+
+            return stacks
+        }
+
+        /**
+         * gets all valid upgrade chips for member from crate
+         */
+        fun getChipsFromCrate(stack: CargoStackAPI, member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): List<CargoStackAPI> {
+            return getExoticChips((stack.plugin as CrateItemPlugin).cargo, member, mods, exotic)
         }
     }
 }

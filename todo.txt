@@ -1,9 +1,3 @@
-Limit exotics to 2 per ship, 3 with skill that increases S-Mods
-Revert alpha subcore change
-
-Daemon upgrade: https://game-icons.net/1x1/lorc/angular-spider.html
-- tbd
-
 Daemon exotic:
 - Reactive Damper
 - when taking damage to armor, pop a 1s damper field
@@ -11,3 +5,15 @@ Daemon exotic:
 - only works on damage over 100
 - cooldown tbd
 - passive downside is increased armor damage taken
+
+
+changelog:
+- upgrade and exotic configuration now allow conditions for installation to be set
+- rewrote faction configuration completely, now allows per-exotic and per-upgrade weights
+- upgrade, exotic and bandwidth generation are now more consistent, and you should see more
+- added assault wings upgrade
+- added guidance computer upgrade
+- added funny upgrade for some tahlan stuff
+- reworked Hangar Forge exotic
+- Alpha Subcore exotic now increases DP cost by 20%
+- added cap to amount of exotics that can be installed through the shop. AI fleets and salvaged ships can still generate with as many exotics as exist.

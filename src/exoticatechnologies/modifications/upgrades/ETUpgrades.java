@@ -4,8 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import exoticatechnologies.ETModSettings;
 import lombok.extern.log4j.Log4j;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Log4j
 public class ETUpgrades {
@@ -72,10 +71,34 @@ public class ETUpgrades {
 
     public int getTotalLevels() {
         int size = 0;
-        for (String key : this.upgrades.keySet()) {
-            size += this.upgrades.get(key);
+        for (Integer value : this.upgrades.values()) {
+            size += value;
         }
         return size;
+    }
+
+    public List<String> getTags() {
+        Set<String> tagSet = new HashSet<>();
+        for (String key : upgrades.keySet()) {
+            Upgrade upgrade = UpgradesHandler.UPGRADES.get(key);
+            if (upgrade.getTag() != null) {
+                tagSet.add(upgrade.getTag());
+            }
+        }
+
+        List<String> tags = new ArrayList<>(tagSet);
+        return tags;
+    }
+
+    public List<Upgrade> getConflicts(String tag) {
+        List<Upgrade> upgrades = new ArrayList<>();
+        for (String key : this.upgrades.keySet()) {
+            Upgrade upgrade = UpgradesHandler.UPGRADES.get(key);
+            if (upgrade.getTag() != null && upgrade.getTag().equals(tag)) {
+                upgrades.add(upgrade);
+            }
+        }
+        return upgrades;
     }
 
     @Override

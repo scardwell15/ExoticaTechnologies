@@ -11,6 +11,8 @@ import java.util.Map;
  * An UpgradeMethod represents a way for an upgrade to be attained through the upgrade dialog.
  */
 public interface UpgradeMethod {
+    String getKey();
+
     /**
      * The option text
      * @return the option text

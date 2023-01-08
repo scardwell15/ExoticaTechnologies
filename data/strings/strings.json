@@ -43,7 +43,7 @@
 
 		"BandwidthUsed": "*${usedBandwidth}* used",
 		"BandwidthUsedByUpgrade": "=${upgradeBandwidth}=",
-		"StoryPointCost": "*${storyPoints} story points*"
+		"StoryPointCost": "*${storyPoints} story points*",
 	},
 	"FleetScanner": {
 		"ShipBandwidthShort": "Bandwidth: *${bandwidth}*",
@@ -102,7 +102,8 @@
 		"InstallExotic": "Install",
 		"InstallExoticChip": "Use chip",
 		"RecoverExotic": "Recover chip",
-		"DestroyExotic": "Destroy"
+		"DestroyExotic": "Destroy",
+		"InstalledTitle": "INSTALLED"
 	},
 	"ExoticCosts": {
 		"BandwidthGivenByExotic": "Max bandwidth: *${bandwidth}* (*${exoticBandwidth}*)"
@@ -119,7 +120,8 @@
 		"ResourceTextWithCost": "${name}: *${amount}* (=${cost}=)",
 		"ResourceTextWithPay": "${name}: *${amount}* (^${cost}^)",
 		"UpgradeChipsHeader": "Chips",
-		"UpgradeDrawbackAfterLevel": "Starting at =level ${level}=:"
+		"UpgradeDrawbackAfterLevel": "Starting at =level ${level}=:",
+		"MaxLevelTitle": "MAXIMUM LEVEL"
 	},
 	"UpgradeCosts": {
 		"UpgradeCostTitle": "Price",
@@ -175,20 +177,21 @@
 		"description": "This core is dedicated to managing weaponry to an degree that rivals even Alpha Cores given control of weapon arrays, with one unique quirk: effective ordnance ranges of non-missile weapons are equalized to a certain degree. The core, in its Terms of Use, swears by its Stronger than an Alpha trademark, and it can't be used for anything but weapons.. supposedly.",
 		"tooltip": "Improve recoil control and weapon turn rate. Equalizes weapon base ranges to a middle-ground range.",
 		"needItem": "You need an ${itemName} to install this.",
-		"longDescription": "Reduces recoil by *${recoilReduction}%%*. Increases weapon turn rate by *${weaponTurnBonus}%%*. Autofire leading is nearly perfected. Weapons with at most *${lowRangeThreshold} base range* have it increased by *${rangeBonus}*. Weapons with at least *${highRangeThreshold} base range* have it reduced by =${rangeMalus}= per 100 units over."
+		"longDescription": "Reduces recoil by *${recoilReduction}%%*. Increases weapon turn rate by *${weaponTurnBonus}%%*. Autofire leading is nearly perfected. Weapons with at most *${lowRangeThreshold} base range* have it increased by *${rangeBonus}*. Weapons with at least *${highRangeThreshold} base range* have it reduced by =${rangeMalus}= and damage increased by *${rangeDecreaseDamageIncrease}%%* per 100 units over."
 	},
 	"HangarForge": {
-		"description": "A Hangar Forge can be used to produce fightercraft at a rate far faster than comparatively-primitive mechanics and other automated equipment ever could. In addition, the forge is much more resilient to the effects of extreme fighter losses, although the crew loss in such a scenario is always unfortunate.",
-		"tooltip": "Decreases fighter replacement time. Reduces the rate at which the replacement rate decreases as well.",
+		"description": "A Hangar Forge can be used to produce fightercraft at a rate far faster than comparatively-primitive mechanics and other automated equipment ever could. Each fighter bay that has one installed becomes much less resilient to the effects of fighter loss because of the space a single forge occupies.",
+		"tooltip": "Increases the rate at which the replacement rate decreases. Fighters may be instantly redeployed upon destruction.",
 		"needItem": "You need a ${itemName} to install this.",
-		"longDescription": "Reduces fighter replacement rates by *${replacementRateIncrease}%%*. Reduces the rate at which replacement rate degrades by *${rateDecreaseBuff}%%*."
+		"longDescription": "Increases the rate at which replacement rate degrades by *${rateDecreaseBuff}%%*. *Half* of the total number of fighters can be *instantly re-deployed* if they are destroyed. This effect recharges every minute.",
+		"statusText": "FREE REPLACEMENTS: ${freeReplacements}"
 	},
 	"HangarForgeMissiles": {
 		"description": "Corrupting a hangar microforge to fabricate the most delicate components of missiles is possible, given a few engineers skilled with Domain technology. Their services don't come cheap, however, and the forge itself takes up a lot of space.",
 		"tooltip": "Reloads some of all non-reloading missile's ammunition capacity periodically. Reduces non-reloading missile capacity.",
 		"needCredits": "You need ${credits} to install this.",
 		"needItem": "You need a ${itemName} to install this.",
-		"longDescription": "Reduces non-reloading missile capacity to =${reloadSize}%%=, or to a minimum of one burst. Reloads all of any non-reloading missile's ammunition capacity every *${reloadTime} seconds*.",
+		"longDescription": "Reduces non-reloading missile capacity to =${reloadSize}%%=, or to a minimum of one burst. Reloads all of any non-reloading missile's ammunition capacity every *${reloadTime} seconds*. This only affects missiles with more than 1 ammo.",
 		"statusReloaded": "Reloaded weapons!"
 	},
 	"PhasefieldEngine": {
@@ -200,6 +203,15 @@
 		"statusTitle": "PHASEFIELD ENGINE",
 		"statusInvulnerable": "DMG RESIST INCREASED (${noDamageDuration})",
 		"statusPhasedTimes": "PHASED ${phasedTimes} TIMES, REFRESH IN ${refreshTime}"
+	},
+	"FullMetalSalvo": {
+		"description": "Overcharging weapon systems results in a massive increase to damage and projectile speeds, but the power such a system controller takes along with the potential damage from overcharging the power of weaponry causes a long term effect on the rate of fire of weapons on board the ship.",
+		"tooltip": "A salvo starts when a weapon is fired, giving a massive damage and projectile speed boost for a very short period. Rate of fire on the ship is reduced permanently.",
+		"longDescription": "Weapon damage and projectile speed is increased by *${damageBoost}%%* for *${boostTime} seconds* when a weapon is fired. The system takes *${cooldown} seconds* to recharge. Weapon fire rate is reduced by =${firerateMalus}%%= permanently.",
+		"statusTitle": "FULL METAL SALVO",
+		"statusBuffText": "APOCALYPSE",
+		"statusRecharging": "READY IN ${remainingTime} SECONDS",
+		"statusReady": "READY"
 	},
 	"SubsumedAlphaCore": {
 		"description": "There's a faint trace of an Alpha-level AI coming from the ship. Whether it actually wants to be there requires a much closer look.",
@@ -250,7 +262,17 @@
 	"IronShell": {
 		"description": "Improvements and modifications are made to the armor to increase the space between individual plates of armor. This type of spaced armor is more effective versus high explosive damage, but doesn't fare as well against other kind of weaponry."
 	},
+	"AssaultWings": {
+		"description": "Fighters are given additional armoring and flux capacity, but the equipment puts an extra strain on how far away they can be from a carrier."
+	},
+	"GuidanceComputers": {
+		"description": "Advanced guidance computers replace some of the payload of a missile, increasing its tracking ability and health but reducing damage dealt."
+	},
+	"HelDrives": {
+		"description": "An engine upgrade package as often found on Daemon-type ships, utilising seemingly long lost Domain-era plasma injectors to supercharge a ship's drive system. While vastly improving any ship's agility in all regards, the induced stress exceeds the design limits of standard drive units, rendering them more susceptible to damage."
+	},
 	"ModEffects": {
+		"FighterStatName": "Fighter ${stat}",
 		"StatBenefit": "${stat}: *${percent}*",
 		"StatBenefitWithFinal": "${stat}: *${percent}* (*${finalValue}*)",
 		"StatBenefitInShop": "${stat}: *${percent}* (*${perLevel}*/lvl, max: ^${finalValue}^)",
@@ -299,8 +321,21 @@
 		"weaponHealth": "Weapon health",
 		"weaponTurnRate": "Weapon turn rate",
 		"weaponFluxCost": "Weapon flux costs",
+		"missileDamage": "Missile damage",
+		"missileHealth": "Missile health",
+		"missileSpeed": "Missile speed",
+		"missileTurnRate": "Missile turn rate",
+		"missileTurnAcceleration": "Missile turn acceleration",
+		"fighterWingRange": "Fighter engagement range",
 		"crewSalary": "Crew salary increased to =${salaryIncrease} credits= for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=.",
 		"crewSalaryShop": "Salary increased to =${salaryIncrease} credits= (=${perLevel}=/lvl) for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=.",
 		"crewSalaryShopIronShell": "Salary increased to =${salaryIncrease} credits= (=${perLevel}=/lvl) for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=. This is refundable under Hegemony tax regulation."
+	},
+	"Conditions": {
+		"CannotApplyTitle": "CANNOT INSTALL",
+		"CannotApplyBecauseTags": "Conflicts with ${conflictMods}.",
+		"CannotApplyBecauseBandwidth": "The ship does not have enough bandwidth.",
+		"CannotApplyBecauseLevel": "The ship has the max level for this upgrade.",
+		"CannotApplyBecauseTooManyExotics": "The ship has reached its capacity for exotics, which is 2, increased by 1 if the *Best of the Best* skill is unlocked."
 	}
 }

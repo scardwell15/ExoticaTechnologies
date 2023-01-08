@@ -1,25 +1,17 @@
 package exoticatechnologies.modifications;
 
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import data.scripts.util.MagicSettings;
-import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.ETModSettings;
-import exoticatechnologies.campaign.listeners.CampaignEventListener;
+import exoticatechnologies.config.FactionConfig;
+import exoticatechnologies.config.FactionConfigLoader;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
-import exoticatechnologies.modifications.exotics.ETExotics;
-import exoticatechnologies.modifications.upgrades.ETUpgrades;
 import exoticatechnologies.util.Utilities;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -27,7 +19,6 @@ import java.util.Random;
 @Log4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ShipModFactory {
-    @Getter
     private static final Random random = new Random();
 
     public static ShipModifications generateForFleetMember(FleetMemberAPI fm) {
@@ -36,12 +27,10 @@ public class ShipModFactory {
             return mods;
         }
 
+        ShipModFactory.getRandom().setSeed(fm.getId().hashCode());
         mods = new ShipModifications();
         mods.setBandwidth(ShipModFactory.generateBandwidth(fm));
-
-        if (CampaignEventListener.isAppliedData()) {
-            ShipModLoader.set(fm, mods);
-        }
+        ShipModLoader.set(fm, mods);
 
         return mods;
     }
@@ -86,10 +75,7 @@ public class ShipModFactory {
         String faction = getFaction(fm);
 
         mods.generate(fm, faction);
-
-        if (CampaignEventListener.isAppliedData()) {
-            ShipModLoader.set(fm, mods);
-        }
+        ShipModLoader.set(fm, mods);
 
         return mods;
     }
@@ -105,16 +91,16 @@ public class ShipModFactory {
 
         String manufacturer = fm.getHullSpec().getManufacturer();
 
-        Map<String, Float> factionBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "factionBandwidthMult");
-        Map<String, Float> manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult");
-
         float mult = 1.0f;
-        if (factionBandwidthMult.containsKey(faction)) {
-            mult = factionBandwidthMult.get(faction);
-        }
 
+        Map<String, Float> manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult");
         if (manufacturerBandwidthMult.containsKey(manufacturer)) {
             mult = manufacturerBandwidthMult.get(manufacturer);
+        }
+
+        FactionConfig factionConfig = FactionConfigLoader.getFactionConfig(faction);
+        if (factionConfig.getBandwidthMult() != 1.0) {
+            mult = (float) factionConfig.getBandwidthMult();
         }
 
         mult += (Utilities.getSModCount(fm));
@@ -129,9 +115,8 @@ public class ShipModFactory {
 
         log.info(String.format("Generating bandwidth for fm ID [%s]", fm.getId()));
 
-        if (fm.getFleetData() != null) {
-            String faction = getFaction(fm);
-
+        String faction = getFaction(fm);
+        if (faction != null) {
             return generateBandwidth(fm, faction);
         }
 
@@ -148,5 +133,9 @@ public class ShipModFactory {
         } else {
             return random.nextInt(max - min + 1) + min;
         }
+    }
+
+    public static Random getRandom() {
+        return random;
     }
 }

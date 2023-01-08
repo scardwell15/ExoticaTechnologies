@@ -154,7 +154,8 @@ public class HangarForgeMissiles extends Exotic {
     private boolean shouldAffectWeapon(WeaponAPI weapon) {
         return weapon.getAmmoTracker() != null
                 && weapon.getAmmoTracker().usesAmmo()
+                && weapon.getAmmoTracker().getMaxAmmo() > 1
                 && weapon.getAmmoTracker().getAmmoPerSecond() == 0f
-                && weapon.getSlot().getWeaponType().equals(WeaponAPI.WeaponType.MISSILE);
+                && weapon.getType().equals(WeaponAPI.WeaponType.MISSILE);
     }
 }

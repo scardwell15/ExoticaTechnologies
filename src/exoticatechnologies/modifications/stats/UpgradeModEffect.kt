@@ -4,18 +4,43 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.StringUtils.Translation
+import org.json.JSONObject
+import org.lazywizard.lazylib.ext.json.optFloat
 
 abstract class UpgradeModEffect : ModEffect<Upgrade>() {
     open var baseEffect: Float = 0f
     open var scalingEffect: Float = 0f
+    open var flat: Boolean = false
     open var negativeIsBuff: Boolean = false
     open var positiveAlsoMult: Boolean = false
     open var startingLevel: Int = 1
-    open var hullmodShowsFinalValue: Boolean = true
     open var hidden: Boolean = false
+    open var appliesToFighters: Boolean = false
+    open var hullmodShowsFinalValue: Boolean = true
+        get() = !appliesToFighters && field
+
+    override fun getName(): String {
+        if (appliesToFighters) {
+            return StringUtils.getTranslation("ModEffects","FighterStatName")
+                .format("stat", Misc.lcFirst(super.getName()))
+                .toStringNoFormats()
+        }
+        return super.getName()
+    }
+
+    open fun setup(obj: JSONObject) {
+        baseEffect = obj.optFloat("baseEffect", 0f)
+        scalingEffect = obj.optFloat("scalingEffect", 0f)
+        startingLevel = obj.optInt("startingLevel", 1).coerceAtLeast(1)
+        hidden = obj.optBoolean("hidden", false)
+        appliesToFighters = obj.optBoolean("appliesToFighters", false)
+        flat = obj.optBoolean("flat", false)
+    }
 
     fun getRatio(member: FleetMemberAPI, mods: ShipModifications, mod: Upgrade): Float {
         if (mods.getUpgrade(mod) >= startingLevel) {
@@ -26,16 +51,14 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         return 0f
     }
 
-    open fun getBaseValue(member: FleetMemberAPI) {
-
-    }
-
     open fun getCurrentEffect(member: FleetMemberAPI, mods: ShipModifications, mod: Upgrade): Float {
         val effect = baseEffect + scalingEffect * getRatio(member, mods, mod)
         if (handleAsMult()) {
             return 1 + (effect / 100)
-        } else {
+        } else if (flat) {
             return effect
+        } else {
+            return effect / 100
         }
     }
 
@@ -65,11 +88,47 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
     ): Float
 
     open fun handleAsMult(): Boolean {
-        return positiveAlsoMult || scalingEffect < 0
+        return !flat && (positiveAlsoMult || scalingEffect < 0)
     }
 
     open fun shouldHide(member: FleetMemberAPI): Boolean {
         return false
+    }
+
+    open fun getStatTranslationParent(): String {
+        return "ModEffects"
+    }
+
+    open fun getStatTranslationForTooltipBenefit(showFinal: Boolean): Translation {
+        if (showFinal) {
+            return StringUtils.getTranslation(getStatTranslationParent(), "StatBenefitWithFinal")
+        } else {
+            return StringUtils.getTranslation(getStatTranslationParent(), "StatBenefit")
+        }
+    }
+
+    open fun getStatTranslationForTooltipMalus(showFinal: Boolean): Translation {
+        if (showFinal) {
+            return StringUtils.getTranslation(getStatTranslationParent(), "StatMalusWithFinal")
+        } else {
+            return StringUtils.getTranslation(getStatTranslationParent(), "StatMalus")
+        }
+    }
+
+    open fun getStatTranslationForShopBenefit(hidePerLevel: Boolean): Translation {
+        if (hidePerLevel) {
+            return StringUtils.getTranslation(getStatTranslationParent(), "StatBenefitInShopMaxed")
+        } else {
+            return StringUtils.getTranslation(getStatTranslationParent(), "StatBenefitInShop")
+        }
+    }
+
+    open fun getStatTranslationForShopMalus(hidePerLevel: Boolean): Translation {
+        if (hidePerLevel) {
+            return StringUtils.getTranslation(getStatTranslationParent(), "StatMalusInShopMaxed")
+        } else {
+            return StringUtils.getTranslation(getStatTranslationParent(), "StatMalusInShop")
+        }
     }
 
     override fun printToTooltip(
@@ -87,7 +146,12 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
             if ((scalingEffect > 0 && positiveAlsoMult) || (scalingEffect < 0 && negativeIsBuff)) {
                 return addMultBenefitToTooltip(tooltip, stats, member, mods, mod)
             }
-            return addMultDrawbackToTooltip(tooltip, stats, member, mods, mod)
+            return addMultMalusToTooltip(tooltip, stats, member, mods, mod)
+        } else if (flat) {
+            if (scalingEffect > 0 || negativeIsBuff) {
+                return addFlatBenefitToTooltip(tooltip, stats, member, mods, mod)
+            }
+            return addFlatMalusToTooltip(tooltip, stats, member, mods, mod)
         }
         return addPercentBenefitToTooltip(tooltip, stats, member, mods, mod)
     }
@@ -99,18 +163,25 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         mods: ShipModifications,
         mod: Upgrade
     ): LabelAPI {
-        if (hullmodShowsFinalValue) {
-            return StringUtils.getTranslation("ModEffects", "StatBenefitWithFinal")
-                .format("stat", getName())
-                .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
-                .formatWithOneDecimalAndModifier("finalValue", getEffectiveValue(stats, member, mods, mod))
-                .addToTooltip(tooltip)
-        } else {
-            return StringUtils.getTranslation("ModEffects", "StatBenefit")
-                .format("stat", getName())
-                .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        }
+        return getStatTranslationForTooltipBenefit(hullmodShowsFinalValue)
+            .format("stat", getName())
+            .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod) * 100f)
+            .formatWithOneDecimalAndModifier("finalValue", getEffectiveValue(stats, member, mods, mod))
+            .addToTooltip(tooltip)
+    }
+
+    fun addFlatBenefitToTooltip(
+        tooltip: TooltipMakerAPI,
+        stats: MutableShipStatsAPI,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        mod: Upgrade
+    ): LabelAPI {
+        return getStatTranslationForTooltipBenefit(hullmodShowsFinalValue)
+            .format("stat", getName())
+            .formatWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
+            .formatWithOneDecimalAndModifier("finalValue", getEffectiveValue(stats, member, mods, mod))
+            .addToTooltip(tooltip)
     }
 
     fun addMultBenefitToTooltip(
@@ -120,39 +191,39 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         mods: ShipModifications,
         mod: Upgrade
     ): LabelAPI {
-        if (hullmodShowsFinalValue) {
-            return StringUtils.getTranslation("ModEffects", "StatBenefitWithFinal")
-                .format("stat", getName())
-                .formatMult("percent", getCurrentEffect(member, mods, mod))
-                .formatMult("finalValue", getEffectiveValue(stats, member, mods, mod))
-                .addToTooltip(tooltip)
-        } else {
-            return StringUtils.getTranslation("ModEffects", "StatBenefit")
-                .format("stat", getName())
-                .formatMult("percent", getCurrentEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        }
+        return getStatTranslationForTooltipBenefit(hullmodShowsFinalValue)
+            .format("stat", getName())
+            .formatMult("percent", getCurrentEffect(member, mods, mod))
+            .formatMult("finalValue", getEffectiveValue(stats, member, mods, mod))
+            .addToTooltip(tooltip)
     }
 
-    fun addMultDrawbackToTooltip(
+    fun addFlatMalusToTooltip(
         tooltip: TooltipMakerAPI,
         stats: MutableShipStatsAPI,
         member: FleetMemberAPI,
         mods: ShipModifications,
         mod: Upgrade
     ): LabelAPI {
-        if (mods.isMaxLevel(member, mod)) {
-            return StringUtils.getTranslation("ModEffects", "StatMalusWithFinal")
-                .format("stat", getName())
-                .formatMult("percent", getCurrentEffect(member, mods, mod))
-                .formatMult("finalValue", getEffectiveValue(stats, member, mods, mod))
-                .addToTooltip(tooltip)
-        } else {
-            return StringUtils.getTranslation("ModEffects", "StatMalus")
-                .format("stat", getName())
-                .formatMult("percent", getCurrentEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        }
+        return getStatTranslationForTooltipMalus(hullmodShowsFinalValue)
+            .format("stat", getName())
+            .formatWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
+            .formatWithOneDecimalAndModifier("finalValue", getEffectiveValue(stats, member, mods, mod))
+            .addToTooltip(tooltip)
+    }
+
+    fun addMultMalusToTooltip(
+        tooltip: TooltipMakerAPI,
+        stats: MutableShipStatsAPI,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        mod: Upgrade
+    ): LabelAPI {
+        return getStatTranslationForTooltipMalus(hullmodShowsFinalValue)
+            .format("stat", getName())
+            .formatMult("percent", getCurrentEffect(member, mods, mod))
+            .formatMult("finalValue", getEffectiveValue(stats, member, mods, mod))
+            .addToTooltip(tooltip)
     }
 
     override fun printToShop(
@@ -171,6 +242,12 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
             } else {
                 return addMultDrawbackToShop(tooltip, member, mods, mod)
             }
+        } else if (flat) {
+            if (scalingEffect > 0 || negativeIsBuff) {
+                return addFlatBenefitToShop(tooltip, member, mods, mod)
+            } else {
+                return addFlatMalusToShop(tooltip, member, mods, mod)
+            }
         } else {
             if ((negativeIsBuff && scalingEffect < 0) || (!negativeIsBuff && scalingEffect > 0)) {
                 return addPercentBenefitToShop(tooltip, member, mods, mod)
@@ -180,25 +257,46 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         }
     }
 
+    fun addFlatBenefitToShop(
+        tooltip: TooltipMakerAPI,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        mod: Upgrade
+    ): LabelAPI {
+        return getStatTranslationForShopBenefit(mods.isMaxLevel(member, mod))
+            .format("stat", getName())
+            .formatWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
+            .formatWithOneDecimalAndModifier("perLevel", getPerLevelEffect(member, mods, mod))
+            .formatWithOneDecimalAndModifier("finalValue", getFinalEffect(member, mods, mod))
+            .addToTooltip(tooltip)
+    }
+
+    fun addFlatMalusToShop(
+        tooltip: TooltipMakerAPI,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        mod: Upgrade
+    ): LabelAPI {
+        return getStatTranslationForShopMalus(mods.isMaxLevel(member, mod))
+            .format("stat", getName())
+            .formatWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
+            .formatWithOneDecimalAndModifier("perLevel", getPerLevelEffect(member, mods, mod))
+            .formatWithOneDecimalAndModifier("finalValue", getFinalEffect(member, mods, mod))
+            .addToTooltip(tooltip)
+    }
+
     fun addPercentBenefitToShop(
         tooltip: TooltipMakerAPI,
         member: FleetMemberAPI,
         mods: ShipModifications,
         mod: Upgrade
     ): LabelAPI {
-        if (mods.isMaxLevel(member, mod)) {
-            return StringUtils.getTranslation("ModEffects", "StatBenefitInShopMaxed")
-                .format("stat", getName())
-                .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        } else {
-            return StringUtils.getTranslation("ModEffects", "StatBenefitInShop")
-                .format("stat", getName())
-                .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
-                .formatPercWithOneDecimalAndModifier("perLevel", getPerLevelEffect(member, mods, mod))
-                .formatPercWithOneDecimalAndModifier("finalValue", getFinalEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        }
+        return getStatTranslationForShopBenefit(mods.isMaxLevel(member, mod))
+            .format("stat", getName())
+            .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod) * 100f)
+            .formatPercWithOneDecimalAndModifier("perLevel", getPerLevelEffect(member, mods, mod))
+            .formatPercWithOneDecimalAndModifier("finalValue", getFinalEffect(member, mods, mod))
+            .addToTooltip(tooltip)
     }
 
     fun addPercentDrawbackToShop(
@@ -207,20 +305,12 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         mods: ShipModifications,
         mod: Upgrade
     ): LabelAPI {
-        val effect = getCurrentEffect(member, mods, mod)
-        if (mods.isMaxLevel(member, mod)) {
-            return StringUtils.getTranslation("ModEffects", "StatMalusInShopMaxed")
-                .format("stat", getName())
-                .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        } else {
-            return StringUtils.getTranslation("ModEffects", "StatMalusInShop")
-                .format("stat", getName())
-                .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod))
-                .formatPercWithOneDecimalAndModifier("perLevel", getPerLevelEffect(member, mods, mod))
-                .formatPercWithOneDecimalAndModifier("finalValue", getFinalEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        }
+        return getStatTranslationForShopMalus(mods.isMaxLevel(member, mod))
+            .format("stat", getName())
+            .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod) * 100f)
+            .formatPercWithOneDecimalAndModifier("perLevel", getPerLevelEffect(member, mods, mod))
+            .formatPercWithOneDecimalAndModifier("finalValue", getFinalEffect(member, mods, mod))
+            .addToTooltip(tooltip)
     }
 
     fun addMultBenefitToShop(
@@ -229,19 +319,12 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         mods: ShipModifications,
         mod: Upgrade
     ): LabelAPI {
-        if (mods.isMaxLevel(member, mod)) {
-            return StringUtils.getTranslation("ModEffects", "StatBenefitInShopMaxed")
-                .format("stat", getName())
-                .formatMult("percent", getFinalEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        } else {
-            return StringUtils.getTranslation("ModEffects", "StatBenefitInShop")
-                .format("stat", getName())
-                .formatMult("percent", getCurrentEffect(member, mods, mod))
-                .formatMultWithModifier("perLevel", getPerLevelEffect(member, mods, mod))
-                .formatMult("finalValue", getFinalEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        }
+        return getStatTranslationForShopBenefit(mods.isMaxLevel(member, mod))
+            .format("stat", getName())
+            .formatMult("percent", getCurrentEffect(member, mods, mod))
+            .formatMultWithModifier("perLevel", getPerLevelEffect(member, mods, mod))
+            .formatMult("finalValue", getFinalEffect(member, mods, mod))
+            .addToTooltip(tooltip)
     }
 
     fun addMultDrawbackToShop(
@@ -250,18 +333,11 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         mods: ShipModifications,
         mod: Upgrade
     ): LabelAPI {
-        if (mods.isMaxLevel(member, mod)) {
-            return StringUtils.getTranslation("ModEffects", "StatMalusInShopMaxed")
-                .format("stat", getName())
-                .formatMult("percent", getFinalEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        } else {
-            return StringUtils.getTranslation("ModEffects", "StatMalusInShop")
-                .format("stat", getName())
-                .formatMult("percent", getCurrentEffect(member, mods, mod))
-                .formatMultWithModifier("perLevel", getPerLevelEffect(member, mods, mod))
-                .formatMult("finalValue", getFinalEffect(member, mods, mod))
-                .addToTooltip(tooltip)
-        }
+        return getStatTranslationForShopMalus(mods.isMaxLevel(member, mod))
+            .format("stat", getName())
+            .formatMult("percent", getCurrentEffect(member, mods, mod))
+            .formatMultWithModifier("perLevel", getPerLevelEffect(member, mods, mod))
+            .formatMult("finalValue", getFinalEffect(member, mods, mod))
+            .addToTooltip(tooltip)
     }
 }

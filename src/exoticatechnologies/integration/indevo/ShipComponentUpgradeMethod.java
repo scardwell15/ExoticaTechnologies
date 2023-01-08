@@ -10,13 +10,16 @@ import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.upgrades.Upgrade;
-import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod;
+import exoticatechnologies.ui.impl.shop.upgrades.methods.DefaultUpgradeMethod;
 import exoticatechnologies.util.StringUtils;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShipComponentUpgradeMethod implements UpgradeMethod {
+public class ShipComponentUpgradeMethod extends DefaultUpgradeMethod {
+    @Getter
+    public String key = "shipComponents";
     @Override
     public String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
         return StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsOption")
@@ -32,17 +35,15 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
     }
 
     @Override
-    public boolean canUse(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
-        int level = es.getUpgrade(upgrade);
-        int upgradeCost = IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, level);
-        int totalComponents = getTotalComponents(fm.getFleetData().getFleet(), market);
+    public boolean canUse(FleetMemberAPI member, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
+        int level = mods.getUpgrade(upgrade);
+        int upgradeCost = IndEvoUtil.getUpgradeShipComponentPrice(member, upgrade, level);
+        int totalComponents = getTotalComponents(member.getFleetData().getFleet(), market);
 
-        return (totalComponents - upgradeCost) >= 0;
-    }
-
-    @Override
-    public boolean canShow(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
-        return true;
+        return (totalComponents - upgradeCost) >= 0
+                && upgrade.canApply(member, mods)
+                && mods.getUpgrade(upgrade) + 1 < upgrade.getMaxLevel(member)
+                && mods.getUsedBandwidth() + upgrade.getBandwidthUsage() < mods.getBandwidthWithExotics(member);
     }
 
     @Override
@@ -118,15 +119,5 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
         float taken = Math.min(current, cost);
         cargo.removeCommodity(id, taken);
         return (int) (cost - taken);
-    }
-
-    @Override
-    public boolean usesBandwidth() {
-        return true;
-    }
-
-    @Override
-    public boolean usesLevel() {
-        return true;
     }
 }

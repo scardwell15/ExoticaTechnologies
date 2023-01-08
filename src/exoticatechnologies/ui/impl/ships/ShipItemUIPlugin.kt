@@ -7,12 +7,14 @@ import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModifications
+import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
+import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class ShipItemUIPlugin(
-    item: FleetMemberAPI, var mods: ShipModifications, private val listPanel: ListUIPanelPlugin<FleetMemberAPI>
+    item: FleetMemberAPI, private val listPanel: ListUIPanelPlugin<FleetMemberAPI>
 ) : ListItemUIPanelPlugin<FleetMemberAPI>(item) {
     private val pad = 3f
     private val opad = 10f
@@ -24,19 +26,20 @@ class ShipItemUIPlugin(
     var wasHovered: Boolean = false
 
     fun updateWithNewMods(mods: ShipModifications) {
-        this.mods = mods
-        val newSpecialValue = mods.value
+        val newSpecialValue = mods.getValue()
         setSpecialText(newSpecialValue)
     }
 
     override fun advance(amount: Float) {
-        val newSpecialValue = mods.value
+        val mods = item.getMods()
+        val newSpecialValue = mods.getValue()
         if (newSpecialValue != lastSpecialValue) {
             setSpecialText(newSpecialValue)
         }
     }
 
     override fun layoutPanel(tooltip: TooltipMakerAPI): CustomPanelAPI {
+        val mods = item.getMods()
         val shipNameColor = item.captain.faction.baseUIColor
 
         val rowPanel: CustomPanelAPI =
@@ -52,7 +55,7 @@ class ShipItemUIPlugin(
         shipText.addPara(item.shipName, shipNameColor, 0f)
         shipText.addPara(item.hullSpec.hullNameWithDashClass, 0f)
 
-        val specialValue = mods.value
+        val specialValue = mods.getValue()
         specialText = shipText.addPara("", Misc.getTextColor(), 0f)
         setSpecialText(specialValue)
 
@@ -69,13 +72,16 @@ class ShipItemUIPlugin(
     private fun setSpecialText(newSpecialValue: Float) {
         lastSpecialValue = newSpecialValue
 
-        val upgrades: Int = mods.upgradeMap.size
-        val exotics: Int = mods.exoticSet.size
+        val mods = item.getMods()
+        val bandwidth: Float = mods.getBandwidthWithExotics(item)
+        val bandwidthColor: Color = Bandwidth.getColor(bandwidth)
+        val upgrades: Int = mods.getUpgradeMap().size
+        val exotics: Int = mods.getExoticSet().size
 
         specialText?.let {
-            it.text = "$upgrades | $exotics"
-            it.setHighlightColors(Misc.getEnergyMountColor(), Misc.getHighlightColor())
-            it.setHighlight("$upgrades", "$exotics")
+            it.text = "$bandwidth | $upgrades | $exotics"
+            it.setHighlightColors(bandwidthColor, Misc.getEnergyMountColor(), Misc.getHighlightColor())
+            it.setHighlight("$bandwidth", "$upgrades", "$exotics")
         }
     }
 

@@ -5,17 +5,16 @@ import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class ExoticItemUIPlugin(
     item: Exotic,
     var member: FleetMemberAPI,
-    var mods: ShipModifications,
     private val listPanel: ListUIPanelPlugin<Exotic>
 ) : ListItemUIPanelPlugin<Exotic>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
@@ -26,7 +25,9 @@ class ExoticItemUIPlugin(
 
     var installed: Boolean = false
     var installedText: LabelAPI? = null
+
     override fun advance(amount: Float) {
+        val mods = member.getMods()
         if (mods.hasExotic(item) != installed) {
             installed = mods.hasExotic(item)
             if (installed) {

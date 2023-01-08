@@ -7,19 +7,19 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.*
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModLoader
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthHandler
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.StringTooltip
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.getMods
 import kotlin.math.max
 import kotlin.math.min
 
 class ShipHeaderUIPlugin(
     dialog: InteractionDialogAPI,
-    var member: FleetMemberAPI, var mods: ShipModifications, var parentPanel: CustomPanelAPI
+    var member: FleetMemberAPI, var parentPanel: CustomPanelAPI
 ) : InteractiveUIPanelPlugin() {
     private val pad = 3f
     private val opad = 10f
@@ -41,8 +41,6 @@ class ShipHeaderUIPlugin(
     var bandwidthTooltip: TooltipMakerAPI? = null
     var bandwidthUpgradeLabel: LabelAPI? = null
     var bandwidthButton: ButtonAPI? = null
-
-    val listeners: MutableList<ModsModifier.ModChangeListener> = mutableListOf()
 
     override fun advancePanel(amount: Float) {
         setBandwidthText()
@@ -108,9 +106,10 @@ class ShipHeaderUIPlugin(
     }
 
     private fun setBandwidthText() {
+        val mods = member.getMods()
         val baseBandwidth = mods.getBaseBandwidth(member)
         val bandwidthWithExotics = mods.getBandwidthWithExotics(member)
-        val usedBandwidth = mods.usedBandwidth
+        val usedBandwidth = mods.getUsedBandwidth()
 
         if (baseBandwidth != bandwidthWithExotics) {
             //something installed that increases bandwidth. bandwidth value is exotic bandwidth
@@ -158,13 +157,14 @@ class ShipHeaderUIPlugin(
     }
 
     private fun setBandwidthUpgradeLabel() {
+        val mods = member.getMods()
         bandwidthUpgradeLabel?.let {
-            if (mods.baseBandwidth >= Bandwidth.MAX_BANDWIDTH) {
+            if (mods.getBaseBandwidth() >= Bandwidth.MAX_BANDWIDTH) {
                 modifyBandwidthUpgradeLabel(it, -1f, -1f, "BandwidthDialog", "BandwidthUpgradePeak")
                 bandwidthButton?.isEnabled = false
             } else {
                 val marketMult = BandwidthHandler.getMarketBandwidthMult(market)
-                val upgradePrice = BandwidthHandler.getBandwidthUpgradePrice(member, mods.baseBandwidth, marketMult)
+                val upgradePrice = BandwidthHandler.getBandwidthUpgradePrice(member, mods.getBaseBandwidth(), marketMult)
                 val newBandwidth = Bandwidth.BANDWIDTH_STEP * marketMult
 
                 if (member.fleetData.fleet.cargo.credits.get() < upgradePrice) {
@@ -207,15 +207,15 @@ class ShipHeaderUIPlugin(
     }
 
     private fun doBandwidthUpgrade() {
+        val mods = member.getMods()
         val marketMult = BandwidthHandler.getMarketBandwidthMult(market)
         val increase = Bandwidth.BANDWIDTH_STEP * marketMult
-        val upgradePrice = BandwidthHandler.getBandwidthUpgradePrice(member, mods.baseBandwidth, marketMult)
+        val upgradePrice = BandwidthHandler.getBandwidthUpgradePrice(member, mods.getBaseBandwidth(), marketMult)
 
         member.fleetData.fleet.cargo.credits.subtract(upgradePrice)
 
-        val newBandwidth = min(mods.baseBandwidth + increase, Bandwidth.MAX_BANDWIDTH)
+        val newBandwidth = min(mods.getBaseBandwidth() + increase, Bandwidth.MAX_BANDWIDTH)
         mods.setBandwidth(newBandwidth)
-
         ShipModLoader.set(member, mods)
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 0.75f)
@@ -225,16 +225,5 @@ class ShipHeaderUIPlugin(
         bandwidthButton?.isChecked = false
         doBandwidthUpgrade()
         setBandwidthUpgradeLabel()
-        modifiedMods(member, mods)
-    }
-
-    fun modifiedMods(member: FleetMemberAPI, mods: ShipModifications) {
-        listeners.forEach {
-            it.changedMods(member, mods)
-        }
-    }
-
-    fun addListener(listener: ModsModifier.ModChangeListener) {
-        listeners.add(listener)
     }
 }

@@ -1,5 +1,7 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
+import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
@@ -7,6 +9,7 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.exotics.Exotic
+import exoticatechnologies.ui.impl.shop.exotics.ExoticMethodsUIPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
@@ -25,12 +28,15 @@ class InstallMethod : Method {
         ExoticaTechHM.addToFleetMember(member)
         exotic.onInstall(member)
 
+        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
+
         return StringUtils.getString("ExoticsDialog", "ExoticInstalled")
     }
 
     override fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean {
         return !mods.hasExotic(exotic)
-                && exotic.canApply(member)
+                && exotic.canApply(member, mods)
+                && ExoticMethodsUIPlugin.isUnderExoticLimit(member, mods)
                 && (exotic.canAfford(member.fleetData.fleet, market) || Utilities.hasExoticChip(member.fleetData.fleet.cargo, exotic.key))
     }
 
@@ -54,7 +60,14 @@ class InstallMethod : Method {
         hovered: Boolean
     ): Map<String, Float>? {
         if (hovered) {
-            val resourceCosts: MutableMap<String, Float> = exotic.getResourceCostMap(member, mods, market)
+            val resourceCosts: MutableMap<String, Float>
+            val stacks: List<CargoStackAPI> = ExoticMethodsUIPlugin.getExoticChips(member.fleetData.fleet.cargo, member, mods, exotic)
+            if (stacks.isNotEmpty()) {
+                resourceCosts = mutableMapOf()
+                resourceCosts[Utilities.formatSpecialItem(exotic.newSpecialItemData)] = 1f
+            } else {
+                resourceCosts = exotic.getResourceCostMap(member, mods, market)
+            }
 
             if (exotic.getExtraBandwidth(member, mods) > 0) {
                 resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = exotic.getExtraBandwidth(member, mods)

@@ -1,5 +1,6 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
@@ -17,6 +18,8 @@ open class DestroyMethod : Method {
         ShipModLoader.set(member, mods)
         ExoticaTechHM.addToFleetMember(member)
 
+        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
+
         return StringUtils.getString("ExoticsDialog", "ExoticDestroyed")
     }
 
@@ -32,7 +35,7 @@ open class DestroyMethod : Method {
             }
 
             if (extraBandwidth > 0) {
-                return (shipBandwidth - mods.usedBandwidth) > extraBandwidth
+                return (shipBandwidth - mods.getUsedBandwidth()) > extraBandwidth
             }
             return true
         }

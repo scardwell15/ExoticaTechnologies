@@ -6,6 +6,8 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 
 abstract class UpgradeStatBonusWithFinalEffect : UpgradeStatBonusEffect() {
+    override var hullmodShowsFinalValue = true
+
     abstract fun getBaseValue(stats: MutableShipStatsAPI, member: FleetMemberAPI): Float
 
     override fun getEffectiveValue(
@@ -14,9 +16,8 @@ abstract class UpgradeStatBonusWithFinalEffect : UpgradeStatBonusEffect() {
         mods: ShipModifications,
         mod: Upgrade
     ): Float {
-        if (handleAsMult()) {
-            return getCurrentEffect(member, mods, mod) * getBaseValue(stats, member)
-        }
-        return getCurrentEffect(member, mods, mod) / 100f * getBaseValue(stats, member)
+        val currEffect = getCurrentEffect(member, mods, mod)
+        val base = getBaseValue(stats, member)
+        return currEffect * base
     }
 }

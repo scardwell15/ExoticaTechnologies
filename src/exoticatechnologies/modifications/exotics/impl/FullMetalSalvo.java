@@ -2,19 +2,24 @@ package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import data.scripts.util.MagicTargeting;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 import org.json.JSONObject;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.vector.Vector;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -81,6 +86,7 @@ public class FullMetalSalvo extends Exotic {
         return ship.getShipAI() != null || Mouse.isButtonDown(0);
     }
 
+
     @Override
     public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
         Map<String, Object> customData = Global.getCombatEngine().getCustomData();
@@ -93,56 +99,80 @@ public class FullMetalSalvo extends Exotic {
         IntervalUtil interval = (IntervalUtil) customData.get(getIntervalId(ship));
 
         if (spooled == SalvoState.READY) {
-            maintainStatus(ship,
-                    "graphics/icons/hullsys/ammo_feeder.png",
-                    StringUtils.getString(this.getKey(), "statusReady"),
-                    false);
-
-            if (canSpool(ship)) {
-                for (WeaponAPI weapon : ship.getAllWeapons()) {
-                    if (weapon.isFiring() && (ship.getShipAI() == null || shouldSpool(weapon))) {
-                        interval.setInterval(BUFF_DURATION, BUFF_DURATION);
-                        customData.put(getSpooledId(ship), SalvoState.BUFFED);
-
-                        ship.addAfterimage(new Color(255, 0, 0, 150), 0, 0, 0, 0, 0f, 0.1f, 4.6f, 0.25f, true, true, true);
-                        break;
-                    }
-                }
-            }
+            ready(ship, interval);
         } else {
             interval.advance(amount);
 
-            if (interval.intervalElapsed()) {
-                if (spooled == SalvoState.BUFFED) {
-                    interval.setInterval(COOLDOWN, COOLDOWN);
-                    customData.put(getSpooledId(ship), SalvoState.RECHARGE);
-
-                    ship.addAfterimage(new Color(0, 100, 255, 150), 0, 0, 0, 0, 0f, 0.1f, 3.3f, 0.25f, true, true, true);
-
-                    ship.getMutableStats().getBallisticWeaponDamageMult().unmodifyMult(this.getBuffId());
-                    ship.getMutableStats().getEnergyWeaponDamageMult().unmodifyMult(this.getBuffId());
-                    ship.getMutableStats().getProjectileSpeedMult().unmodifyMult(this.getBuffId());
-                } else if (spooled == SalvoState.RECHARGE) {
-                    customData.put(getSpooledId(ship), SalvoState.READY);
-                }
-            } else if (spooled == SalvoState.BUFFED) {
-                maintainStatus(ship,
-                        "graphics/icons/hullsys/ammo_feeder.png",
-                        StringUtils.getTranslation(this.getKey(), "statusBuffText")
-                                .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
-                                .toString(),
-                        false);
-
-                ship.getMutableStats().getBallisticWeaponDamageMult().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
-                ship.getMutableStats().getEnergyWeaponDamageMult().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
-                ship.getMutableStats().getProjectileSpeedMult().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
+            if (spooled == SalvoState.BUFFED) {
+                buffed(ship, interval);
             } else if (spooled == SalvoState.RECHARGE) {
-                maintainStatus(ship,
-                        "graphics/icons/hullsys/ammo_feeder.png",
-                        StringUtils.getTranslation(this.getKey(), "statusRecharging")
-                                .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
-                                .toString(),
-                        false);
+                recharge(ship, interval);
+            }
+        }
+    }
+
+    public void ready(ShipAPI ship, IntervalUtil interval) {
+        Map<String, Object> customData = Global.getCombatEngine().getCustomData();
+
+        maintainStatus(ship,
+                "graphics/icons/hullsys/ammo_feeder.png",
+                StringUtils.getString(this.getKey(), "statusReady"),
+                false);
+
+        if (canSpool(ship)) {
+            for (WeaponAPI weapon : ship.getAllWeapons()) {
+                if (weapon.isFiring() && (ship.getShipAI() == null || shouldSpool(weapon))) {
+                    interval.setInterval(BUFF_DURATION, BUFF_DURATION);
+                    customData.put(getSpooledId(ship), SalvoState.BUFFED);
+
+                    ship.addAfterimage(new Color(255, 0, 0, 150), 0, 0, 0, 0, 0f, 0.1f, 1.75f, 0.25f, true, true, true);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void buffed(ShipAPI ship, IntervalUtil interval) {
+        Map<String, Object> customData = Global.getCombatEngine().getCustomData();
+        if (interval.intervalElapsed()) {
+            interval.setInterval(COOLDOWN, COOLDOWN);
+            customData.put(getSpooledId(ship), SalvoState.RECHARGE);
+
+            ship.getMutableStats().getProjectileSpeedMult().unmodifyMult(this.getBuffId());
+        } else {
+            gigaProjectiles(ship);
+
+            maintainStatus(ship,
+                    "graphics/icons/hullsys/ammo_feeder.png",
+                    StringUtils.getTranslation(this.getKey(), "statusBuffText")
+                            .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
+                            .toString(),
+                    false);
+        }
+    }
+
+    public void recharge(ShipAPI ship, IntervalUtil interval) {
+
+        Map<String, Object> customData = Global.getCombatEngine().getCustomData();
+        if (interval.intervalElapsed()) {
+            customData.put(getSpooledId(ship), SalvoState.READY);
+        } else {
+            maintainStatus(ship,
+                    "graphics/icons/hullsys/ammo_feeder.png",
+                    StringUtils.getTranslation(this.getKey(), "statusRecharging")
+                            .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
+                            .toString(),
+                    false);
+        }
+    }
+
+    public void gigaProjectiles(ShipAPI source) {
+        source.getMutableStats().getProjectileSpeedMult().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
+
+        for (DamagingProjectileAPI proj : Global.getCombatEngine().getProjectiles()) {
+            if (proj.getSource().equals(source)) {
+                proj.getDamage().getModifier().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
+                proj.getVelocity().scale(1 + DAMAGE_BUFF / 100f);
             }
         }
     }

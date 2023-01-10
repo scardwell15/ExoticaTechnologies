@@ -79,7 +79,6 @@ public class AlphaSubcore extends HullmodExotic {
     @Override
     public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
         onInstall(fm);
-        stats.getDynamic().getStat(Stats.DEPLOYMENT_POINTS_MOD).modifyPercent(getBuffId(), 20, "Alpha Subcore");
     }
 
     /**

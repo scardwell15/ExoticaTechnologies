@@ -15,7 +15,11 @@ abstract class UpgradeMutableStatEffect : UpgradeModEffect() {
         mods: ShipModifications,
         mod: Upgrade
     ): Float {
-        return getCurrentEffect(member, mods, mod) * getStat(stats).baseValue
+        if (flat) {
+            return getCurrentEffect(member, mods, mod)
+        } else {
+            return getCurrentEffect(member, mods, mod) * getStat(stats).baseValue
+        }
     }
 
     override fun applyToStats(

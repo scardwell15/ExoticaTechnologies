@@ -58,7 +58,7 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         } else if (flat) {
             return effect
         } else {
-            return effect / 100
+            return effect / 100f
         }
     }
 

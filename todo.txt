@@ -8,12 +8,6 @@ Daemon exotic:
 
 
 changelog:
-- upgrade and exotic configuration now allow conditions for installation to be set
-- rewrote faction configuration completely, now allows per-exotic and per-upgrade weights
-- upgrade, exotic and bandwidth generation are now more consistent, and you should see more
-- added assault wings upgrade
-- added guidance computer upgrade
-- added funny upgrade for some tahlan stuff
-- reworked Hangar Forge exotic
-- Alpha Subcore exotic now increases DP cost by 20%
-- added cap to amount of exotics that can be installed through the shop. AI fleets and salvaged ships can still generate with as many exotics as exist.
+- removed alpha subcore's non-functioning downside. its primary downside is not having a more interesting exotic
+- full metal salvo now works for the initial burst of damage
+- fixed some stats not applying completely (i.e. 100x less than they should be)

@@ -8,6 +8,4 @@ Daemon exotic:
 
 
 changelog:
-- removed alpha subcore's non-functioning downside. its primary downside is not having a more interesting exotic
-- full metal salvo now works for the initial burst of damage
-- fixed some stats not applying completely (i.e. 100x less than they should be)
+- fixed some stats not applying completely (i.e. 100x less than they should be) (again)

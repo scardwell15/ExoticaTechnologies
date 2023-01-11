@@ -23,7 +23,7 @@
     "bandwidthPerLevel": 5,
     "spawnChance": 0,
     "stats": [
-      {"id": "crewSalary", "scalingEffect": 25},
+      {"id": "crewSalary", "scalingEffect": 25, "flat": true},
       {"id": "suppliesPerMonth", "scalingEffect": -30},
       {"id": "repairRateAfterBattle", "scalingEffect": 20},
       {"id": "fuelUse", "scalingEffect": -20},

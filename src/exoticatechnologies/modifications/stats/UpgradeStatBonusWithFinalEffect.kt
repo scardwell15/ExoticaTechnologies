@@ -16,8 +16,18 @@ abstract class UpgradeStatBonusWithFinalEffect : UpgradeStatBonusEffect() {
         mods: ShipModifications,
         mod: Upgrade
     ): Float {
-        val currEffect = getCurrentEffect(member, mods, mod)
-        val base = getBaseValue(stats, member)
-        return currEffect * base
+        if (handleAsMult()) {
+            val base = getBaseValue(stats, member)
+            val currEffect = getCurrentEffect(member, mods, mod)
+            val final = base * -(1 - currEffect)
+            return final
+        } else if (flat) {
+            return getCurrentEffect(member, mods, mod)
+        } else {
+            val base = getBaseValue(stats, member)
+            val currEffect = getCurrentEffect(member, mods, mod)
+            val final = base * currEffect
+            return final
+        }
     }
 }

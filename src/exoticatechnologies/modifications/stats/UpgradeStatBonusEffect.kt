@@ -35,10 +35,14 @@ abstract class UpgradeStatBonusEffect : UpgradeModEffect() {
         mods: ShipModifications,
         mod: Upgrade
     ) {
+        val currEffect = getCurrentEffect(member, mods, mod)
+
         if (handleAsMult()) {
-            stat.modifyMult(mod.key, getCurrentEffect(member, mods, mod))
+            stat.modifyMult(mod.key, currEffect)
+        } else if (flat) {
+            stat.modifyFlat(mod.key, currEffect)
         } else {
-            stat.modifyPercent(mod.key, getCurrentEffect(member, mods, mod))
+            stat.modifyPercent(mod.key, currEffect * 100f)
         }
     }
 }

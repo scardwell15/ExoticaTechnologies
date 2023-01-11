@@ -152,8 +152,13 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
                 return addFlatBenefitToTooltip(tooltip, stats, member, mods, mod)
             }
             return addFlatMalusToTooltip(tooltip, stats, member, mods, mod)
+        } else {
+            if ((negativeIsBuff && scalingEffect < 0) || (!negativeIsBuff && scalingEffect > 0)) {
+                return addPercentBenefitToTooltip(tooltip, stats, member, mods, mod)
+            } else {
+                return addPercentMalusToTooltip(tooltip, stats, member, mods, mod)
+            }
         }
-        return addPercentBenefitToTooltip(tooltip, stats, member, mods, mod)
     }
 
     fun addPercentBenefitToTooltip(
@@ -164,6 +169,20 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         mod: Upgrade
     ): LabelAPI {
         return getStatTranslationForTooltipBenefit(hullmodShowsFinalValue)
+            .format("stat", getName())
+            .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod) * 100f)
+            .formatWithOneDecimalAndModifier("finalValue", getEffectiveValue(stats, member, mods, mod))
+            .addToTooltip(tooltip)
+    }
+
+    fun addPercentMalusToTooltip(
+        tooltip: TooltipMakerAPI,
+        stats: MutableShipStatsAPI,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        mod: Upgrade
+    ): LabelAPI {
+        return getStatTranslationForTooltipMalus(hullmodShowsFinalValue)
             .format("stat", getName())
             .formatPercWithOneDecimalAndModifier("percent", getCurrentEffect(member, mods, mod) * 100f)
             .formatWithOneDecimalAndModifier("finalValue", getEffectiveValue(stats, member, mods, mod))
@@ -184,20 +203,6 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
             .addToTooltip(tooltip)
     }
 
-    fun addMultBenefitToTooltip(
-        tooltip: TooltipMakerAPI,
-        stats: MutableShipStatsAPI,
-        member: FleetMemberAPI,
-        mods: ShipModifications,
-        mod: Upgrade
-    ): LabelAPI {
-        return getStatTranslationForTooltipBenefit(hullmodShowsFinalValue)
-            .format("stat", getName())
-            .formatMult("percent", getCurrentEffect(member, mods, mod))
-            .formatMult("finalValue", getEffectiveValue(stats, member, mods, mod))
-            .addToTooltip(tooltip)
-    }
-
     fun addFlatMalusToTooltip(
         tooltip: TooltipMakerAPI,
         stats: MutableShipStatsAPI,
@@ -212,7 +217,21 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
             .addToTooltip(tooltip)
     }
 
-    fun addMultMalusToTooltip(
+    open fun addMultBenefitToTooltip(
+        tooltip: TooltipMakerAPI,
+        stats: MutableShipStatsAPI,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        mod: Upgrade
+    ): LabelAPI {
+        return getStatTranslationForTooltipBenefit(hullmodShowsFinalValue)
+            .format("stat", getName())
+            .formatMult("percent", getCurrentEffect(member, mods, mod))
+            .formatWithOneDecimalAndModifier("finalValue", getEffectiveValue(stats, member, mods, mod))
+            .addToTooltip(tooltip)
+    }
+
+    open fun addMultMalusToTooltip(
         tooltip: TooltipMakerAPI,
         stats: MutableShipStatsAPI,
         member: FleetMemberAPI,
@@ -222,7 +241,7 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
         return getStatTranslationForTooltipMalus(hullmodShowsFinalValue)
             .format("stat", getName())
             .formatMult("percent", getCurrentEffect(member, mods, mod))
-            .formatMult("finalValue", getEffectiveValue(stats, member, mods, mod))
+            .formatWithOneDecimalAndModifier("finalValue", getEffectiveValue(stats, member, mods, mod))
             .addToTooltip(tooltip)
     }
 

@@ -218,6 +218,13 @@ public class StringUtils {
             return this;
         }
 
+        public Translation formatFloatWithModifier(String flag, Number value) {
+            formats.add(flag);
+            values.add(getModifier(value) + getFloat(value));
+
+            return this;
+        }
+
         public Translation formatMult(String flag, Number value) {
             formats.add(flag);
             values.add(getFloat(value.floatValue()) + "x");
@@ -280,6 +287,10 @@ public class StringUtils {
 
         private static String getFloatWithModifier(Number value) {
             return getModifier(value) + Misc.getRoundedValueMaxOneAfterDecimal(value.floatValue());
+        }
+
+        private static String getFloatLessRoundWithModifier(Number value) {
+            return getModifier(value) + Misc.getRoundedValue(value.floatValue());
         }
 
         public String toString() {

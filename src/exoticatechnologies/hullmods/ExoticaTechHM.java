@@ -308,6 +308,8 @@ public class ExoticaTechHM extends BaseHullMod {
 
     public static void removeHullModFromVariant(ShipVariantAPI v) {
         v.removePermaMod("exoticatech");
+        v.removeMod("exoticatech");
+        v.removeSuppressedMod("exoticatech");
 
         List<String> slots = v.getModuleSlots();
         if (slots == null || slots.isEmpty()) return;

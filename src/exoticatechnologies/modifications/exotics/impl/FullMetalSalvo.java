@@ -170,7 +170,7 @@ public class FullMetalSalvo extends Exotic {
         source.getMutableStats().getProjectileSpeedMult().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
 
         for (DamagingProjectileAPI proj : Global.getCombatEngine().getProjectiles()) {
-            if (proj.getSource().equals(source)) {
+            if (proj.getSource().equals(source) && proj.getElapsed() <= Global.getCombatEngine().getElapsedInLastFrame()) {
                 proj.getDamage().getModifier().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
                 proj.getVelocity().scale(1 + DAMAGE_BUFF / 100f);
             }

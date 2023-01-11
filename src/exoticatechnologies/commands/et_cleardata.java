@@ -11,7 +11,9 @@ public class et_cleardata implements BaseCommand {
     {
         if ( context.isInCampaign() )
         {
-            ETModPlugin.removeHullmodsFromEveryVariant();
+            ETModPlugin.removeDataFromFleetsAndMarkets();
+            ETModPlugin.removeListeners();
+
             return CommandResult.SUCCESS;
         } else {
             Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);

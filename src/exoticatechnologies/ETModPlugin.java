@@ -2,7 +2,8 @@ package exoticatechnologies;
 
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -12,6 +13,7 @@ import exoticatechnologies.campaign.listeners.SalvageListener;
 import exoticatechnologies.config.FactionConfigLoader;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
+import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.stats.impl.logistics.CrewSalaryEffect;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
@@ -78,10 +80,14 @@ public class ETModPlugin extends BaseModPlugin {
         Global.getSector().addListener(campaignListener);
     }
 
-    private static void removeListeners() {
+    public static void removeListeners() {
         Global.getSector().removeTransientScript(campaignListener);
         Global.getSector().removeListener(campaignListener);
         Global.getSector().getListenerManager().removeListener(salvageListener);
+
+        if (Global.getSector().getListenerManager().hasListener(CrewSalaryEffect.SalaryListener.class)) {
+            Global.getSector().getListenerManager().removeListener(CrewSalaryEffect.SalaryListener.class);
+        }
     }
 
     @Override
@@ -102,18 +108,63 @@ public class ETModPlugin extends BaseModPlugin {
         }
     }
 
-    public static void removeHullmodsFromEveryVariant() {
+    public static void removeDataFromFleetsAndMarkets() {
         try {
-            for (CampaignFleetAPI campaignFleetAPI : Global.getSector().getCurrentLocation().getFleets()) {
-                for (FleetMemberAPI member : campaignFleetAPI.getFleetData().getMembersListCopy()) {
-                    ExoticaTechHM.removeHullModFromVariant(member.getVariant());
-                    Console.showMessage("Cleared ET data from: " + member.getShipName());
+            for (LocationAPI loc : Global.getSector().getAllLocations()) {
+                for (CampaignFleetAPI campaignFleetAPI : loc.getFleets()) {
+                    for (FleetMemberAPI member : campaignFleetAPI.getFleetData().getMembersListCopy()) {
+                        ExoticaTechHM.removeHullModFromVariant(member.getVariant());
+                        ShipModLoader.remove(member);
+                        Console.showMessage("Cleared ET data from: " + member.getShipName());
+                    }
+                }
+
+                for (SectorEntityToken token : loc.getAllEntities()) {
+                    if (token.getMarket() != null) {
+                        for (SubmarketAPI submarket : token.getMarket().getSubmarketsCopy()) {
+                            if (submarket.getCargoNullOk() != null) {
+                                removeAllCargo(submarket.getCargo());
+                            }
+                        }
+                    }
+
+                    try {
+                        if (token.getCargo() != null) {
+                            removeAllCargo(token.getCargo());
+                        }
+                    } finally {}
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         removeHullmodsFromAutoFitGoalVariants();
+    }
+
+    public static void removeAllCargo(CargoAPI cargo) {
+        for (CargoStackAPI stack : cargo.getStacksCopy()) {
+            if (stack.isSpecialStack() && stack.getSpecialItemSpecIfSpecial().hasTag("exotica")) {
+                stack.getCargo().removeStack(stack);
+            }
+        }
+
+        if (cargo.getFleetData() != null) {
+            for (FleetMemberAPI member : cargo.getFleetData().getMembersListCopy()) {
+                if (member.getVariant() != null) {
+                    ExoticaTechHM.removeHullModFromVariant(member.getVariant());
+                }
+                ShipModLoader.remove(member);
+            }
+        }
+
+        if (cargo.getMothballedShips() != null) {
+            for (FleetMemberAPI member : cargo.getMothballedShips().getMembersListCopy()) {
+                if (member.getVariant() != null) {
+                    ExoticaTechHM.removeHullModFromVariant(member.getVariant());
+                }
+                ShipModLoader.remove(member);
+            }
+        }
     }
 
     public static void setDebugUpgradeCosts(boolean set) {

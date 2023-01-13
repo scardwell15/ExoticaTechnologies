@@ -17,6 +17,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
     constructor() : this(-1f, ETUpgrades(), ETExotics())
 
     companion object {
+        @JvmStatic
         private val log = Logger.getLogger(Companion::class.java)
     }
 

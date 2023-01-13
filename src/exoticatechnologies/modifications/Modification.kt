@@ -11,6 +11,7 @@ import java.awt.Color
 
 abstract class Modification(val key: String, val settings: JSONObject) {
     companion object {
+        @JvmStatic
         private val log = Logger.getLogger(Modification::class.java)
     }
 

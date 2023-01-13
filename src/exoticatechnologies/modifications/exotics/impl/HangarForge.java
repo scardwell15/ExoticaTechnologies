@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
@@ -162,9 +163,19 @@ public class HangarForge extends Exotic {
     }
 
     private static int calculateMaxReplacements(ShipAPI ship) {
+        if (ship.getVariant() == null || ship.getVariant().getWings() == null) {
+            return 1;
+        }
+
         int wingCount = 0;
+
         for (String wingId : ship.getVariant().getWings()) {
-            wingCount += Global.getSettings().getFighterWingSpec(wingId).getNumFighters();
+            FighterWingSpecAPI spec = Global.getSettings().getFighterWingSpec(wingId);
+            if (spec != null) {
+                wingCount += spec.getNumFighters();
+            } else {
+                wingCount += 1;
+            }
         }
 
         return wingCount;

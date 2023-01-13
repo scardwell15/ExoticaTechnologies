@@ -1,23 +1,25 @@
 {
-  "exoticChance": 0.25,
-  "upgradeChance": 0.85,
-  "bandwidthMult": 1.33,
+  "exoticChance": 0.12,
+  "upgradeChance": 0.66,
+  "bandwidthMult": 1,
   "allowedExotics": {
-    "PlasmaFluxCatalyst": 0.16,
-    "HangarForgeMissiles": 0.5,
-    "SpooledFeeders": 0.6,
+    "PlasmaFluxCatalyst": 0.45,
+    "HangarForgeMissiles": 0.4,
+    "SpooledFeeders": 0.4,
     "FullMetalSalvo": 0.6,
-    "HangarForge": 0.4,
-    "EqualizerCore": 0.5
+    "HangarForge": 0.5,
+    "EqualizerCore": 0.15,
+    "PhasefieldEngine": 0.2
   },
   "allowedUpgrades": {
-    "OverchargedShields": 0.5,
-    "TracerRecoilCalculator": 1.2,
-    "WeldedArmor": 0.66,
-    "AssaultWings": 0.75,
+    "OverchargedShields": 0.7,
+    "InfernalEngines": 1,
+    "TracerRecoilCalculator": 1,
+    "WeldedArmor": 0.75,
+    "AssaultWings": 1.5,
     "HyperactiveCapacitors": 1,
-    "GuidanceComputers": 1,
-    "HelDrives": 1.5
+    "ForcedOvertime": 0.2,
+    "GuidanceComputers": 0.5
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

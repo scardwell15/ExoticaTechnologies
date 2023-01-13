@@ -13,11 +13,11 @@
     "SubsumedGammaCore": 5.0
   },
   "allowedUpgrades": {
-    "DerelictWeaponAssistant": 1.0,
-    "AdvancedFluxCoils": 1.0,
-    "OverchargedShields": 0.5,
-    "InfernalEngines": 0.5,
-    "WeldedArmor": 0.5,
-    "AssaultWings": 0.5
+    "DerelictWeaponAssistant": 2.0,
+    "AdvancedFluxCoils": 2.0,
+    "OverchargedShields": 1.0,
+    "InfernalEngines": 1.0,
+    "WeldedArmor": 1.0,
+    "AssaultWings": 1.0
   }
 }

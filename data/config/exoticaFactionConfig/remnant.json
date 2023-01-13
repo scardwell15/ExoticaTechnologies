@@ -13,12 +13,12 @@
     "AlphaSubcore": 0.75
   },
   "allowedUpgrades": {
-    "AdvancedFluxCoils": 0.9,
-    "OverchargedShields": 0.5,
-    "InfernalEngines": 0.5,
-    "TracerRecoilCalculator": 0.5,
-    "WeldedArmor": 0.25,
-    "AssaultWings": 0.67,
-    "GuidanceComputers": 0.5
+    "AdvancedFluxCoils": 1.8,
+    "OverchargedShields": 1,
+    "InfernalEngines": 1,
+    "TracerRecoilCalculator": 1,
+    "WeldedArmor": 0.5,
+    "AssaultWings": 1.3,
+    "GuidanceComputers": 1
   }
 }

@@ -41,9 +41,7 @@ public class ShipComponentUpgradeMethod extends DefaultUpgradeMethod {
         int totalComponents = getTotalComponents(member.getFleetData().getFleet(), market);
 
         return (totalComponents - upgradeCost) >= 0
-                && upgrade.canApply(member, mods)
-                && mods.getUpgrade(upgrade) + 1 < upgrade.getMaxLevel(member)
-                && mods.getUsedBandwidth() + upgrade.getBandwidthUsage() < mods.getBandwidthWithExotics(member);
+                && super.canUse(member, mods, upgrade, market);
     }
 
     @Override

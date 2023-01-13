@@ -12,12 +12,12 @@
     "EqualizerCore": 0.6
   },
   "allowedUpgrades": {
-    "OverchargedShields": 0.1,
-    "InfernalEngines": 0.75,
-    "DerelictWeaponAssistant": 0.9,
-    "WeldedArmor": 0.75,
-    "AssaultWings": 0.33,
-    "HyperactiveCapacitors": 0.1,
-    "GuidanceComputers": 0.5
+    "OverchargedShields": 0.5,
+    "InfernalEngines": 1.5,
+    "DerelictWeaponAssistant": 1.75,
+    "WeldedArmor": 1.5,
+    "AssaultWings": 1,
+    "HyperactiveCapacitors": 0.25,
+    "GuidanceComputers": 1
   }
 }

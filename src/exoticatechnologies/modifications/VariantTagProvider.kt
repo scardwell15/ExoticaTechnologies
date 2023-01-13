@@ -1,5 +1,7 @@
 package exoticatechnologies.modifications
 
+import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.CoreUITabId
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.exotics.ETExotics
@@ -7,6 +9,8 @@ import exoticatechnologies.modifications.upgrades.ETUpgrades
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.ref.WeakReference
+import java.util.WeakHashMap
 
 open class VariantTagProvider : ShipModLoader.Provider {
     companion object {
@@ -14,25 +18,58 @@ open class VariantTagProvider : ShipModLoader.Provider {
         var inst: VariantTagProvider = VariantTagProvider()
     }
 
+    var currGets: Int = 0
+    val maxGetsPerMember: Int = 10
+
+    val cache: MutableMap<FleetMemberAPI, ShipModifications> = WeakHashMap()
     val EXOTICA_INDICATOR = "$\$EXOTICA$$"
     val UPGRADES_KEY = "upgrades"
     val EXOTICS_KEY = "exotics"
     val BANDWIDTH_KEY = "baseBandwidth"
 
     override fun get(member: FleetMemberAPI): ShipModifications? {
+        val members: Int = Global.getSector()?.playerFleet?.numMembersFast ?: 0
+        if (currGets++ >= maxGetsPerMember * members) {
+            cache.clear()
+            currGets = 0
+        }
+
+        val cacheMods: ShipModifications? = cache.keys
+            .filter { it == member }
+            .firstNotNullOfOrNull { cache[it] }
+
+        if (cacheMods != null) {
+            return cacheMods
+        }
+
         val variant: ShipVariantAPI = member.variant
             ?: return null
 
-        return getFromVariant(variant)
+        getFromVariant(variant)?.let {
+            if (Global.getSector().campaignUI.currentCoreTab == CoreUITabId.REFIT || Global.getSector().campaignUI.currentCoreTab == CoreUITabId.FLEET) {
+                return it
+            } else {
+                cache[member] = it
+            }
+            return it
+        }
+        return null
     }
 
     override fun set(member: FleetMemberAPI, mods: ShipModifications) {
-        removeFromTags(member.variant)
+        remove(member)
         member.variant.addTag(EXOTICA_INDICATOR + convertToJson(member, mods))
+        cache[member] = mods
     }
 
     override fun remove(member: FleetMemberAPI) {
         removeFromTags(member.variant)
+
+        cache.keys
+            .filter { it == member || (member.fleetData != null && !member.fleetData.membersListCopy.contains(member)) }
+            .forEach {
+                cache.remove(it)
+            }
     }
 
     private fun removeFromTags(variant: ShipVariantAPI) {

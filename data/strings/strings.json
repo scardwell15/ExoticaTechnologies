@@ -228,9 +228,11 @@
 	"WeldedArmor": {
 		"description": "Improve hull and armor by welding additional armor plates, but reduce EMP resistance and weapon and engine health due to the additional conduits and weight."
 	},
+	"PinataConfig": {
+		"description": "Strips off armor plating in exchange for a very thick coat of hull. The ship won't actually explode into confetti, but armor typically does a very good job at keeping a hull together."
+	},
 	"InfernalEngines": {
 		"description": "Improve max speed, burn level, acceleration, max turn rate, and turn acceleration, but reduce deceleration and increase fuel use."
-
 	},
 	"ForcedOvertime": {
 		"description": "Improve peak performance time and CR deployment cost by keeping non-essential crew ready at all times, but increase CR degradation rate and minimum crew, and decrease CR regeneration rate after combat. The improvements are stronger on smaller ship types."

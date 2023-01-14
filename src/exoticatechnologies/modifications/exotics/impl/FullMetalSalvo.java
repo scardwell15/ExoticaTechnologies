@@ -2,24 +2,21 @@ package exoticatechnologies.modifications.exotics.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.combat.DamagingProjectileAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
-import data.scripts.util.MagicTargeting;
+import com.fs.starfarer.combat.entities.Missile;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.util.reflect.FieldWrapper;
+import exoticatechnologies.util.reflect.FieldWrapperKT;
+import exoticatechnologies.util.reflect.ReflectionUtil;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 import org.json.JSONObject;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.util.vector.Vector;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -172,7 +169,22 @@ public class FullMetalSalvo extends Exotic {
         for (DamagingProjectileAPI proj : Global.getCombatEngine().getProjectiles()) {
             if (proj.getSource().equals(source) && proj.getElapsed() <= Global.getCombatEngine().getElapsedInLastFrame()) {
                 proj.getDamage().getModifier().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
-                proj.getVelocity().scale(1 + DAMAGE_BUFF / 100f);
+
+                if (proj instanceof Missile) {
+                    Missile missile = (Missile) proj;
+
+                    try {
+                        FieldWrapperKT<Float> missileSpeed = ReflectionUtil.getObjectFieldWrapper(missile, "maxSpeed", float.class);
+                        missileSpeed.setValue(missileSpeed.getValue() * (1 + DAMAGE_BUFF / 100f));
+
+                        missile.getEngineController().getStats().getMaxSpeed().modifyMult(getBuffId(), 1 + DAMAGE_BUFF / 100f);
+                        missile.getEngineController().getStats().getAcceleration().modifyMult(getBuffId(), 1 + DAMAGE_BUFF / 100f);
+                    } catch (Throwable ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    proj.getVelocity().scale(1 + DAMAGE_BUFF / 100f);
+                }
             }
         }
     }

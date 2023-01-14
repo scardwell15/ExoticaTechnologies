@@ -3,6 +3,7 @@
     "name": "Welded Armor",
     "color": [90, 225, 60],
     "bandwidthPerLevel": 15,
+    "tag": "weldedarmor",
     "stats": [
       {"id": "hull", "scalingEffect": 30},
       {"id": "armor", "scalingEffect": 30},
@@ -15,6 +16,22 @@
       "metals": 3.5,
       "rare_metals": 3.0,
       "heavy_machinery": 0.5
+    }
+  },
+  "PinataConfig": {
+    "name": "Piñata Config",
+    "color": [225, 120, 200],
+    "bandwidthPerLevel": 15,
+    "tag": "weldedarmor",
+    "stats": [
+      {"id": "hull", "scalingEffect": 50},
+      {"id": "empDamageTaken", "scalingEffect": -50},
+      {"id": "armor", "scalingEffect": -20}
+    ],
+    "resourceRatios": {
+      "volatiles": 1.0,
+      "metals": 6.0,
+      "heavy_machinery": 1.0
     }
   },
   "CommissionedCrews": {

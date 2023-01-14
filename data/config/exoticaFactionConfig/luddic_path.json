@@ -11,7 +11,8 @@
   "allowedUpgrades": {
     "InfernalEngines": 1.75,
     "TracerRecoilCalculator": 0.3,
-    "WeldedArmor": 1.75,
+    "WeldedArmor": 1.5,
+    "PinataConfig": 1.5,
     "AssaultWings": 1.25,
     "HyperactiveCapacitors": 0.3,
     "ForcedOvertime": 1,

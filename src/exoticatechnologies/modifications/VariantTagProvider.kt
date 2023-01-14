@@ -64,12 +64,6 @@ open class VariantTagProvider : ShipModLoader.Provider {
 
     override fun remove(member: FleetMemberAPI) {
         removeFromTags(member.variant)
-
-        cache.keys
-            .filter { it == member || (member.fleetData != null && !member.fleetData.membersListCopy.contains(member)) }
-            .forEach {
-                cache.remove(it)
-            }
     }
 
     private fun removeFromTags(variant: ShipVariantAPI) {

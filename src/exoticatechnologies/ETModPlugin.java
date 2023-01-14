@@ -24,6 +24,13 @@ import lombok.extern.log4j.Log4j;
 import org.lazywizard.console.Console;
 import org.lazywizard.lazylib.MathUtils;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.ProtectionDomain;
+
 @Log4j
 public class ETModPlugin extends BaseModPlugin {
     private static boolean debugUpgradeCosts = false;

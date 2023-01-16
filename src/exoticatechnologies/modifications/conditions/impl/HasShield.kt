@@ -11,9 +11,17 @@ import exoticatechnologies.modifications.conditions.OperatorCondition
 class HasShield: OperatorCondition() {
     override val key = "hasShield"
     override fun getActual(member: FleetMemberAPI, mods: ShipModifications?): Any? {
-        return member.variant.hullSpec.shieldType != ShieldAPI.ShieldType.PHASE
-                && (member.variant.hullSpec.shieldType != ShieldAPI.ShieldType.NONE
-                || member.variant.hasHullMod("frontshield"))
-                && !member.variant.hasHullMod("shield_shunt")
+        member.variant?.let {
+            if (member.variant.hasHullMod("shield_shunt")) {
+                return false;
+            }
+
+            if (member.variant.hasHullMod("frontshield")) {
+                return true;
+            }
+        }
+
+        return member.hullSpec.shieldType != ShieldAPI.ShieldType.PHASE
+                && member.hullSpec.shieldType != ShieldAPI.ShieldType.NONE
     }
 }

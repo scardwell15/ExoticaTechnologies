@@ -19,6 +19,8 @@ import org.json.JSONObject;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -177,8 +179,14 @@ public class FullMetalSalvo extends Exotic {
                         FieldWrapperKT<Float> missileSpeed = ReflectionUtil.getObjectFieldWrapper(missile, "maxSpeed", float.class);
                         missileSpeed.setValue(missileSpeed.getValue() * (1 + DAMAGE_BUFF / 100f));
 
-                        missile.getEngineController().getStats().getMaxSpeed().modifyMult(getBuffId(), 1 + DAMAGE_BUFF / 100f);
-                        missile.getEngineController().getStats().getAcceleration().modifyMult(getBuffId(), 1 + DAMAGE_BUFF / 100f);
+                        FieldWrapperKT<Object> engineStatsField = ReflectionUtil.getObjectFieldWrapper(missile, "engineStats", Object.class);
+                        Object engineStats = engineStatsField.getValue();
+
+                        MutableStat speedStat = (MutableStat) MethodHandles.lookup().findVirtual(engineStats.getClass(), "getMaxSpeed", MethodType.methodType(MutableStat.class)).invoke(engineStats);
+                        speedStat.modifyMult(getBuffId(), 1 + DAMAGE_BUFF / 100f);
+
+                        MutableStat accelStat = (MutableStat) MethodHandles.lookup().findVirtual(engineStats.getClass(), "getAcceleration", MethodType.methodType(MutableStat.class)).invoke(engineStats);
+                        accelStat.modifyMult(getBuffId(), 1 + DAMAGE_BUFF / 100f);
                     } catch (Throwable ex) {
                         throw new RuntimeException(ex);
                     }

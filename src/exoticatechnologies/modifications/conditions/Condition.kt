@@ -20,7 +20,11 @@ interface Condition {
 }
 
 abstract class OperatorCondition: Condition {
-    val log: Logger = Logger.getLogger(OperatorCondition::class.java)
+    companion object {
+        @JvmStatic
+        private val log: Logger = Logger.getLogger(OperatorCondition::class.java)
+    }
+
     private var operatorString: String = "none"
     protected val operator: Operator
         get() = Operator.get(operatorString)

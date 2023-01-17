@@ -14,7 +14,9 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.upgrades.Upgrade;
+import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import lombok.extern.log4j.Log4j;
 
 import java.util.*;
@@ -34,16 +36,17 @@ public class SalvageListener implements ShowLootListener {
             if (fleet.getMemoryWithoutUpdate().contains("$exotica_drops")) {
 
                 //yeah
-                Pair<Map<Upgrade, Map<Integer, Integer>>, Map<Exotic, Integer>> potentialDrops =
-                        (Pair<Map<Upgrade, Map<Integer, Integer>>, Map<Exotic, Integer>>) fleet.getMemoryWithoutUpdate().get("$exotica_drops");
+                Pair<Map<String, Map<Integer, Integer>>, Map<String, Integer>> potentialDrops =
+                        (Pair<Map<String, Map<Integer, Integer>>, Map<String, Integer>>) fleet.getMemoryWithoutUpdate().get("$exotica_drops");
 
+                fleet.getMemoryWithoutUpdate().unset("$exotica_drops");
 
-                Map<Upgrade, Map<Integer, Integer>> potentialUpgrades = potentialDrops.one;
-                Map<Exotic, Integer> potentialExotics = potentialDrops.two;
+                Map<String, Map<Integer, Integer>> potentialUpgrades = potentialDrops.one;
+                Map<String, Integer> potentialExotics = potentialDrops.two;
                 Random random = Misc.getRandom(ETModPlugin.getSectorSeedString().hashCode(), 100);
 
-                for (Map.Entry<Upgrade, Map<Integer, Integer>> potUpg : potentialUpgrades.entrySet()) {
-                    Upgrade upgrade = potUpg.getKey();
+                for (Map.Entry<String, Map<Integer, Integer>> potUpg : potentialUpgrades.entrySet()) {
+                    Upgrade upgrade = UpgradesHandler.UPGRADES.get(potUpg.getKey());
 
                     for (Map.Entry<Integer, Integer> upgLvlQty : potUpg.getValue().entrySet()) {
                         int level = upgLvlQty.getKey();
@@ -58,8 +61,8 @@ public class SalvageListener implements ShowLootListener {
                     }
                 }
 
-                for (Map.Entry<Exotic, Integer> potExotic : potentialExotics.entrySet()) {
-                    Exotic exotic = potExotic.getKey();
+                for (Map.Entry<String, Integer> potExotic : potentialExotics.entrySet()) {
+                    Exotic exotic = ExoticsHandler.EXOTICS.get(potExotic.getKey());
                     int quantity = potExotic.getValue();
 
                     for (int i = 0; i < quantity; i++) {

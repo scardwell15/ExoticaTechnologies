@@ -237,13 +237,13 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
         fms.addAll(otherResult.getDisabled());
         fms.addAll(otherResult.getDestroyed());
 
-        Pair<Map<Upgrade, Map<Integer, Integer>>, Map<Exotic, Integer>> potentialDrops = getDrops(fms);
+        Pair<Map<String, Map<Integer, Integer>>, Map<String, Integer>> potentialDrops = getDrops(fms);
         result.getBattle().getPrimary(result.getBattle().getNonPlayerSide()).getMemoryWithoutUpdate().set("$exotica_drops", potentialDrops, 0);
     }
 
-    private static Pair<Map<Upgrade, Map<Integer, Integer>>, Map<Exotic, Integer>> getDrops(List<FleetMemberAPI> fms) {
-        Map<Upgrade, Map<Integer, Integer>> upgradesMap = new HashMap<>();
-        Map<Exotic, Integer> exotics = new HashMap<>();
+    private static Pair<Map<String, Map<Integer, Integer>>, Map<String, Integer>> getDrops(List<FleetMemberAPI> fms) {
+        Map<String, Map<Integer, Integer>> upgradesMap = new HashMap<>();
+        Map<String, Integer> exotics = new HashMap<>();
 
         for (FleetMemberAPI fm : fms) {
             ShipModifications mods = ShipModLoader.get(fm);
@@ -252,11 +252,11 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     Upgrade upgrade = upgData.getKey();
                     int level = upgData.getValue();
 
-                    if (!upgradesMap.containsKey(upgrade)) {
-                        upgradesMap.put(upgrade, new HashMap<Integer, Integer>());
+                    if (!upgradesMap.containsKey(upgrade.getKey())) {
+                        upgradesMap.put(upgrade.getKey(), new HashMap<Integer, Integer>());
                     }
 
-                    Map<Integer, Integer> perUpgradeMap = upgradesMap.get(upgrade);
+                    Map<Integer, Integer> perUpgradeMap = upgradesMap.get(upgrade.getKey());
                     if (!perUpgradeMap.containsKey(level)) {
                         perUpgradeMap.put(level, 1);
                     } else {
@@ -269,10 +269,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                         continue;
                     }
 
-                    if (!exotics.containsKey(exotic)) {
-                        exotics.put(exotic, 1);
+                    if (!exotics.containsKey(exotic.getKey())) {
+                        exotics.put(exotic.getKey(), 1);
                     } else {
-                        exotics.put(exotic, exotics.get(exotic) + 1);
+                        exotics.put(exotic.getKey(), exotics.get(exotic.getKey()) + 1);
                     }
                 }
             }

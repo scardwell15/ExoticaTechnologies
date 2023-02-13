@@ -148,9 +148,15 @@ public class Upgrade extends Modification {
         }
     }
 
-    public void advanceInCombat(ShipAPI ship, float amount, FleetMemberAPI member, ShipModifications mods) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, FleetMemberAPI member, ShipModifications mods) {
         for (UpgradeModEffect effect : upgradeEffects) {
-            effect.advanceInCombat(ship, amount, member, mods, this);
+            effect.advanceInCombatUnpaused(ship, amount, member, mods, this);
+        }
+    }
+
+    public void advanceInCombatAlways(ShipAPI ship, FleetMemberAPI member, ShipModifications mods) {
+        for (UpgradeModEffect effect : upgradeEffects) {
+            effect.advanceInCombatAlways(ship, member, mods, this);
         }
     }
 
@@ -161,12 +167,16 @@ public class Upgrade extends Modification {
     }
 
     public void modifyToolTip(TooltipMakerAPI tooltip, MutableShipStatsAPI stats, FleetMemberAPI member, ShipModifications mods, boolean expand) {
-        tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(mods.getUpgrade(this)));
+        TooltipMakerAPI imageText = tooltip.beginImageWithText(this.getIcon(), 64f);
+
+        imageText.addPara(this.getName() + " (%s)", 0f, this.getColor(), String.valueOf(mods.getUpgrade(this)));
         if (expand) {
             for (UpgradeModEffect effect : upgradeEffects) {
-                effect.printToTooltip(tooltip, stats, member, mods, this);
+                effect.printToTooltip(imageText, stats, member, mods, this);
             }
         }
+
+        tooltip.addImageWithText(5f);
     }
 
     public void modifyInShop(TooltipMakerAPI tooltip, FleetMemberAPI member, ShipModifications mods) {

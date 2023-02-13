@@ -1,8 +1,16 @@
 package exoticatechnologies.modifications
 
+import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI.HullSize
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.ui.Alignment
+import com.fs.starfarer.api.ui.CustomPanelAPI
+import com.fs.starfarer.api.ui.TooltipMakerAPI
+import com.fs.starfarer.api.ui.UIComponentAPI
+import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.bandwidth.Bandwidth
+import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.modifications.exotics.ETExotics
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticsGenerator
@@ -11,7 +19,9 @@ import exoticatechnologies.modifications.upgrades.ETUpgrades
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesGenerator
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
+import exoticatechnologies.util.StringUtils
 import org.apache.log4j.Logger
+import java.awt.Color
 
 class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, var exotics: ETExotics) {
     constructor() : this(-1f, ETUpgrades(), ETExotics())
@@ -209,5 +219,95 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
                 ", modules=" + exotics +
                 ", upgrades=" + upgrades +
                 '}'
+    }
+
+    private val tooltipColor = Misc.getTextColor()
+    private val infoColor = Misc.getPositiveHighlightColor()
+    fun populateTooltip(
+        member: FleetMemberAPI,
+        stats: MutableShipStatsAPI,
+        mainTooltip: TooltipMakerAPI,
+        width: Float,
+        height: Float = 350f,
+        expandUpgrades: Boolean,
+        expandExotics: Boolean,
+        noScroller: Boolean = false
+    ) {
+        val bandwidth: Float = this.getBandwidthWithExotics(member)
+        val bandwidthString = BandwidthUtil.getFormattedBandwidthWithName(bandwidth)
+
+        mainTooltip.addPara("The ship has %s bandwidth.", 0f, Bandwidth.getColor(bandwidth), bandwidthString)
+
+
+        //shitty special case
+        val panelHeight = if (noScroller) height - 386 else height
+        val customPanelAPI: CustomPanelAPI = Global.getSettings().createCustom(width, panelHeight, null)
+        val scrollTooltip = customPanelAPI.createUIElement(width, height, !noScroller)
+
+        var tooltip: TooltipMakerAPI = scrollTooltip
+
+        if (!noScroller) {
+            val innerHeight = (this.getExoticSet().size + this.getUpgradeMap().size) * 84f + 44f
+            val innerPanel = customPanelAPI.createCustomPanel(width, innerHeight, null)
+            tooltip = innerPanel.createUIElement(width, innerHeight, false)
+            innerPanel.addUIElement(tooltip)
+            scrollTooltip.addCustom(innerPanel, 0f)
+        }
+
+        var addedExoticSection = false
+        try {
+            for (exotic in ExoticsHandler.EXOTIC_LIST) {
+                if (!this.hasExotic(exotic.key)) continue
+                if (!addedExoticSection) {
+                    addedExoticSection = true
+                    tooltip.addSectionHeading(
+                        StringUtils.getString("FleetScanner", "ExoticHeader"),
+                        Alignment.MID,
+                        6f
+                    )
+                }
+
+                val imageText = tooltip.beginImageWithText(exotic.icon, 64f)
+                imageText.addTitle(exotic.name, exotic.color)
+                val title = imageText.prev
+                exotic.modifyToolTip(imageText, title, member, this, expandExotics)
+                tooltip.addImageWithText(3f)
+
+                tooltip.setParaFontDefault()
+                tooltip.setParaFontColor(tooltipColor)
+            }
+        } catch (th: Throwable) {
+            log.info("Caught exotic description exception", th)
+            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
+        }
+
+        var addedUpgradeSection = false
+        try {
+            for (upgrade in UpgradesHandler.UPGRADES_LIST) {
+                if (this.getUpgrade(upgrade) < 1) continue
+                if (!addedUpgradeSection) {
+                    addedUpgradeSection = true
+                    tooltip.addSectionHeading(
+                        StringUtils.getString("FleetScanner", "UpgradeHeader"),
+                        Alignment.MID,
+                        6f
+                    )
+                }
+                upgrade.modifyToolTip(tooltip, stats, member, this, expandUpgrades)
+                tooltip.setParaFontDefault()
+                tooltip.setParaFontColor(tooltipColor)
+            }
+        } catch (th: Throwable) {
+            log.info("Caught upgrade description exception", th)
+            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
+        }
+
+        customPanelAPI.addUIElement(scrollTooltip).inTL(-10f, 6f)
+        mainTooltip.addCustom(customPanelAPI, 0f)
+        mainTooltip.setForceProcessInput(true)
+    }
+
+    fun populateTooltip(member: FleetMemberAPI, mainTooltip: TooltipMakerAPI, width: Float, height: Float = 350f, expandUpgrades: Boolean, expandExotics: Boolean, noScroller: Boolean = false) {
+        populateTooltip(member, member.stats, mainTooltip, width, height, expandUpgrades, expandExotics, noScroller)
     }
 }

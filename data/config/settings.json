@@ -37,7 +37,8 @@
 		"exoticatechnologies.campaign.rulecmd"
 	],
 	"plugins": {
-		"ESCampaignPlugin":"exoticatechnologies.campaign.listeners.ETCampaignPlugin"
+		"ESCampaignPlugin":"exoticatechnologies.campaign.listeners.ETCampaignPlugin",
+		"ETCombatPlugin":"exoticatechnologies.combat.ExoticaEveryFramePlugin"
 	},
 	"graphics": {
 		"ui": {
@@ -53,6 +54,9 @@
 			"HangarForge": "graphics/icons/exotics/hangarforge.png",
 			"PhasefieldEngine": "graphics/icons/exotics/phasefieldengine.png",
 			"FullMetalSalvo": "graphics/icons/exotics/fullmetalsalvo.png",
+			"TierIIIDriveSystem": "graphics/icons/exotics/tieriiidrivesystem.png",
+			"ReactiveDamperField": "graphics/icons/exotics/reactivedamperfield.png",
+			"DaemonCore": "graphics/icons/exotics/daemoncore.png",
 			"SubsumedAlphaCore": "graphics/icons/exotics/subsumedalphacore.png",
 			"SubsumedBetaCore": "graphics/icons/exotics/subsumedbetacore.png",
 			"SubsumedGammaCore": "graphics/icons/exotics/subsumedgammacore.png"
@@ -73,6 +77,7 @@
 			"InterferenceShielding": "graphics/icons/upgrades/interferenceshielding.png",
 			"AssaultWings": "graphics/icons/upgrades/assaultwings.png",
 			"GuidanceComputers": "graphics/icons/upgrades/guidancecomputers.png",
+			"AntimatterBoosters": "graphics/icons/upgrades/antimatterboosters.png",
 			"HelDrives": "graphics/icons/upgrades/heldrives.png"
 		}
 	}

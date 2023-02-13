@@ -28,8 +28,6 @@ class InstallMethod : Method {
         ExoticaTechHM.addToFleetMember(member)
         exotic.onInstall(member)
 
-        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
-
         return StringUtils.getString("ExoticsDialog", "ExoticInstalled")
     }
 

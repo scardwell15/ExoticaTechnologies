@@ -56,4 +56,24 @@ public class RenderUtils {
         GL11.glVertex2f(x - 1.0F, y + h + 1.0F);
         GL11.glEnd();
     }
+
+    public static Color getAliveUIColor() {
+        return Global.getSettings().getColor("textFriendColor");
+    }
+
+    public static Color getDeadUIColor() {
+        return Global.getSettings().getColor("textNeutralColor");
+    }
+
+    public static Color getEnemyUIColor() {
+        return Global.getSettings().getColor("textEnemyColor");
+    }
+
+    public static Color mergeColors(Color fromColor, Color toColor, float ratio) {
+        float r = fromColor.getRed() * (1 - ratio) + toColor.getRed() * ratio;
+        float g = fromColor.getGreen() * (1 - ratio) + toColor.getGreen() * ratio;
+        float b = fromColor.getBlue() * (1 - ratio) + toColor.getBlue() * ratio;
+        float a = fromColor.getAlpha() * (1 - ratio) + toColor.getAlpha() * ratio;
+        return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+    }
 }

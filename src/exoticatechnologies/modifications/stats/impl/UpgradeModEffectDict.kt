@@ -81,7 +81,8 @@ abstract class UpgradeModEffectDict {
                         MissileTurnEffect(),
                         MissileTurnAccelEffect(),
                         MissileDamageEffect(),
-                        MissileSpeedEffect()
+                        MissileSpeedEffect(),
+                        MissileRangeEffect()
                     )
                         .forEach {
                             mutableDict!![it.key] = it

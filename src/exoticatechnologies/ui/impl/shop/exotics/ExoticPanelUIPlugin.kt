@@ -1,5 +1,6 @@
 package exoticatechnologies.ui.impl.shop.exotics
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
@@ -78,6 +79,8 @@ class ExoticPanelUIPlugin(
         resourcesPlugin!!.destroyTooltip()
 
         method.apply(member, mods, exotic, market)
+
+        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
 
         resourcesPlugin!!.redisplayResourceCosts(method)
         methodsPlugin!!.showTooltip()

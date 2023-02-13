@@ -2,9 +2,9 @@ package exoticatechnologies.ui.tabs
 
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.ui.BaseUIPanelPlugin
+import exoticatechnologies.ui.InteractiveUIPanelPlugin
 
-abstract class TabPanelUIPlugin: BaseUIPanelPlugin() {
+abstract class TabPanelUIPlugin : InteractiveUIPanelPlugin() {
     protected var tabPlugin: TabButtonUIPlugin? = null
     protected var tabText: String = "TabText"
 

@@ -4,11 +4,13 @@
   "bandwidthMult": 1.33,
   "allowedExotics": {
     "PlasmaFluxCatalyst": 0.16,
-    "HangarForgeMissiles": 0.5,
-    "SpooledFeeders": 0.6,
-    "FullMetalSalvo": 0.6,
-    "HangarForge": 0.4,
-    "EqualizerCore": 0.5
+    "HangarForgeMissiles": 0.4,
+    "SpooledFeeders": 0.5,
+    "FullMetalSalvo": 0.5,
+    "ReactiveDamperField": 0.9,
+    "HangarForge": 0.25,
+    "EqualizerCore": 0.4,
+    "DaemonCore": 0.9
   },
   "allowedUpgrades": {
     "OverchargedShields": 0.5,
@@ -17,7 +19,7 @@
     "AssaultWings": 0.75,
     "HyperactiveCapacitors": 1,
     "GuidanceComputers": 1,
-    "HelDrives": 1.5
+    "HelDrives": 1.66
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

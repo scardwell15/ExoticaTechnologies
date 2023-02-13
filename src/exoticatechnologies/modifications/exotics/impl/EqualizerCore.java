@@ -86,7 +86,7 @@ public class EqualizerCore extends Exotic {
     }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
         if (!ship.hasListenerOfClass(ET_EqualizerCoreListener.class)) {
 
             for (WeaponAPI weapon : ship.getAllWeapons()) {

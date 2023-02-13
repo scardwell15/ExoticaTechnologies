@@ -6,15 +6,17 @@ import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
-import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.combat.entities.Missile;
+import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
-import exoticatechnologies.util.reflect.FieldWrapper;
+import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.reflect.FieldWrapperKT;
 import exoticatechnologies.util.reflect.ReflectionUtil;
 import exoticatechnologies.util.StringUtils;
+import exoticatechnologies.util.states.StateWithNext;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.lwjgl.input.Mouse;
 
@@ -67,107 +69,33 @@ public class FullMetalSalvo extends Exotic {
         stats.getEnergyRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_DEBUFF / 100f);
     }
 
-    private String getIntervalId(ShipAPI ship) {
-        return ship.getId() + this.getKey() + "interval";
-    }
-
-
-    private String getSpooledId(ShipAPI ship) {
-        return ship.getId() + this.getKey() + "spooled";
-    }
-
-    private boolean shouldSpool(WeaponAPI weapon) {
+    private static boolean shouldSpoolAI(WeaponAPI weapon) {
         if (weapon.getSlot().getWeaponType() == WeaponAPI.WeaponType.MISSILE) return false;
         return !weapon.hasAIHint(WeaponAPI.AIHints.PD) && !weapon.hasAIHint(WeaponAPI.AIHints.PD_ONLY);
     }
 
-    private boolean canSpool(ShipAPI ship) {
+    private static boolean canSpool(ShipAPI ship) {
         return ship.getShipAI() != null || Mouse.isButtonDown(0);
     }
 
+    @Override
+    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+        SalvoState state = getSalvoState(ship);
+        state.advanceAlways(ship);
+    }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
-        Map<String, Object> customData = Global.getCombatEngine().getCustomData();
-        if (!customData.containsKey(getSpooledId(ship))) {
-            customData.put(getIntervalId(ship), new IntervalUtil(COOLDOWN, COOLDOWN));
-            customData.put(getSpooledId(ship), SalvoState.READY);
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+        SalvoState state = getSalvoState(ship);
+
+        if (Global.getCombatEngine().isPaused()) {
+            return;
         }
 
-        SalvoState spooled = (SalvoState) customData.get(getSpooledId(ship));
-        IntervalUtil interval = (IntervalUtil) customData.get(getIntervalId(ship));
-
-        if (spooled == SalvoState.READY) {
-            ready(ship, interval);
-        } else {
-            interval.advance(amount);
-
-            if (spooled == SalvoState.BUFFED) {
-                buffed(ship, interval);
-            } else if (spooled == SalvoState.RECHARGE) {
-                recharge(ship, interval);
-            }
-        }
-    }
-
-    public void ready(ShipAPI ship, IntervalUtil interval) {
-        Map<String, Object> customData = Global.getCombatEngine().getCustomData();
-
-        maintainStatus(ship,
-                "graphics/icons/hullsys/ammo_feeder.png",
-                StringUtils.getString(this.getKey(), "statusReady"),
-                false);
-
-        if (canSpool(ship)) {
-            for (WeaponAPI weapon : ship.getAllWeapons()) {
-                if (weapon.isFiring() && (ship.getShipAI() == null || shouldSpool(weapon))) {
-                    interval.setInterval(BUFF_DURATION, BUFF_DURATION);
-                    customData.put(getSpooledId(ship), SalvoState.BUFFED);
-
-                    ship.addAfterimage(new Color(255, 0, 0, 150), 0, 0, 0, 0, 0f, 0.1f, 1.75f, 0.25f, true, true, true);
-                    break;
-                }
-            }
-        }
-    }
-
-    public void buffed(ShipAPI ship, IntervalUtil interval) {
-        Map<String, Object> customData = Global.getCombatEngine().getCustomData();
-        if (interval.intervalElapsed()) {
-            interval.setInterval(COOLDOWN, COOLDOWN);
-            customData.put(getSpooledId(ship), SalvoState.RECHARGE);
-
-            ship.getMutableStats().getProjectileSpeedMult().unmodifyMult(this.getBuffId());
-        } else {
-            gigaProjectiles(ship);
-
-            maintainStatus(ship,
-                    "graphics/icons/hullsys/ammo_feeder.png",
-                    StringUtils.getTranslation(this.getKey(), "statusBuffText")
-                            .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
-                            .toString(),
-                    false);
-        }
-    }
-
-    public void recharge(ShipAPI ship, IntervalUtil interval) {
-
-        Map<String, Object> customData = Global.getCombatEngine().getCustomData();
-        if (interval.intervalElapsed()) {
-            customData.put(getSpooledId(ship), SalvoState.READY);
-        } else {
-            maintainStatus(ship,
-                    "graphics/icons/hullsys/ammo_feeder.png",
-                    StringUtils.getTranslation(this.getKey(), "statusRecharging")
-                            .format("remainingTime", Math.round(interval.getIntervalDuration() - interval.getElapsed()))
-                            .toString(),
-                    false);
-        }
+        state.advance(ship, amount);
     }
 
     public void gigaProjectiles(ShipAPI source) {
-        source.getMutableStats().getProjectileSpeedMult().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
-
         for (DamagingProjectileAPI proj : Global.getCombatEngine().getProjectiles()) {
             if (proj.getSource().equals(source) && proj.getElapsed() <= Global.getCombatEngine().getElapsedInLastFrame()) {
                 proj.getDamage().getModifier().modifyMult(this.getBuffId(), 1 + DAMAGE_BUFF / 100f);
@@ -197,25 +125,117 @@ public class FullMetalSalvo extends Exotic {
         }
     }
 
-    public static boolean isPlayerShip(ShipAPI ship) {
-        return Global.getCombatEngine().getPlayerShip() != null
-                && Global.getCombatEngine().getPlayerShip().equals(ship);
+    private static String STATE_KEY = "et_salvo_state";
+    private SalvoState getSalvoState(ShipAPI ship) {
+        SalvoState state = (SalvoState) ship.getCustomData().get(STATE_KEY);
+        if (state == null) {
+            state = new ReadyState();
+            ship.setCustomData(STATE_KEY, state);
+        }
+        return state;
     }
 
-    public void maintainStatus(ShipAPI ship, String spriteName, String translation, boolean isDebuff) {
-        if (isPlayerShip(ship)) {
-            Global.getCombatEngine().maintainStatusForPlayerShip(
-                    this.getBuffId(),
-                    "graphics/icons/hullsys/ammo_feeder.png",
-                    StringUtils.getString(this.getKey(), "statusTitle"),
-                    translation,
-                    false);
+    private String getSalvoStatusBarText() {
+        return StringUtils.getString(this.getKey(), "statusBarText");
+    }
+
+    private abstract class SalvoState extends StateWithNext {
+        SalvoState() {
+            super(STATE_KEY);
+        }
+
+        public abstract void advanceAlways(ShipAPI ship);
+    }
+
+    boolean run = false;
+    private class ReadyState extends SalvoState {
+        @Override
+        protected void advanceShip(@NotNull ShipAPI ship, float amount) {
+            if (canSpool(ship)) {
+                for (WeaponAPI weapon : ship.getAllWeapons()) {
+                    if (weapon.isFiring() && (ship.getShipAI() == null || shouldSpoolAI(weapon))) {
+                        setNextState(ship);
+                        ship.addAfterimage(new Color(255, 0, 0, 150), 0, 0, 0, 0, 0f, 0.1f, 1.75f, 0.25f, true, true, true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void advanceAlways(ShipAPI ship) {
+            MagicUI.drawInterfaceStatusBar(ship, 1f, RenderUtils.getAliveUIColor(), RenderUtils.getAliveUIColor(), 0, FullMetalSalvo.this.getSalvoStatusBarText(), -1);
+        }
+
+        @Override
+        protected float getDuration() {
+            return 0f;
+        }
+
+        @NotNull
+        @Override
+        protected StateWithNext getNextState() {
+            return new BuffedState();
         }
     }
 
-    private enum SalvoState {
-        READY,
-        BUFFED,
-        RECHARGE
+    private class BuffedState extends SalvoState {
+        @Override
+        protected void advanceShip(@NotNull ShipAPI ship, float amount) {
+            gigaProjectiles(ship);
+        }
+
+        @Override
+        public void advanceAlways(ShipAPI ship) {
+            MagicUI.drawInterfaceStatusBar(ship, 1f - this.getProgressRatio(), RenderUtils.getAliveUIColor(), RenderUtils.getAliveUIColor(), 0, FullMetalSalvo.this.getSalvoStatusBarText(), -1);
+        }
+
+        @Override
+        protected float getDuration() {
+            return BUFF_DURATION;
+        }
+
+        @Override
+        protected boolean intervalExpired(@NotNull ShipAPI ship) {
+            setNextState(ship);
+            return true;
+        }
+
+        @NotNull
+        @Override
+        protected StateWithNext getNextState() {
+            return new CooldownState();
+        }
+    }
+
+    private class CooldownState extends SalvoState {
+        @Override
+        protected void advanceShip(@NotNull ShipAPI ship, float amount) {
+        }
+
+        @Override
+        public void advanceAlways(ShipAPI ship) {
+            float ratio = this.getProgressRatio();
+            Color progressBarColor = RenderUtils.mergeColors(RenderUtils.getEnemyUIColor(), RenderUtils.getAliveUIColor(), ratio);
+
+            MagicUI.drawInterfaceStatusBar(ship, ratio, progressBarColor, RenderUtils.getAliveUIColor(), 0, FullMetalSalvo.this.getSalvoStatusBarText(), -1);
+        }
+
+        @Override
+        protected boolean intervalExpired(@NotNull ShipAPI ship) {
+            setNextState(ship);
+            return true;
+        }
+
+        @Override
+        protected float getDuration() {
+            return COOLDOWN;
+        }
+
+        @NotNull
+        @Override
+        protected StateWithNext getNextState() {
+            return new ReadyState();
+        }
     }
 }

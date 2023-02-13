@@ -3,6 +3,8 @@ package exoticatechnologies.modifications.exotics;
 import com.fs.starfarer.api.Global;
 import data.scripts.util.MagicSettings;
 import exoticatechnologies.modifications.exotics.impl.HullmodExotic;
+import exoticatechnologies.ui.impl.shop.ShopManager;
+import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.extern.log4j.Log4j;
@@ -24,6 +26,7 @@ public class ExoticsHandler {
 
     public static void initialize() {
         ExoticsHandler.populateExotics();
+        ShopManager.addMenu(new ExoticShopUIPlugin());
     }
 
     public static void populateExotics() {

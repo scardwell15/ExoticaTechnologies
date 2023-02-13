@@ -18,8 +18,6 @@ open class DestroyMethod : Method {
         ShipModLoader.set(member, mods)
         ExoticaTechHM.addToFleetMember(member)
 
-        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
-
         return StringUtils.getString("ExoticsDialog", "ExoticDestroyed")
     }
 

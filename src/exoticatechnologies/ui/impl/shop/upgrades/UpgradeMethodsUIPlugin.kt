@@ -107,7 +107,6 @@ class UpgradeMethodsUIPlugin(
     }
 
     fun showMethods(mods: ShipModifications, tooltip: TooltipMakerAPI, lastComponent: UIComponentAPI? = null) {
-
         //this list automatically places buttons on new rows if the previous row had too many
         var lastButton: UIComponentAPI? = null
         var nextButtonX = 0f

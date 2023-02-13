@@ -8,6 +8,6 @@ class MinimumCrew : OperatorCondition() {
     override val key = "minimumCrew"
 
     override fun getActual(member: FleetMemberAPI, mods: ShipModifications?): Any? {
-        return member.minCrew
+        return member.hullSpec.minCrew
     }
 }

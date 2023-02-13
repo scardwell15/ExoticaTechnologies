@@ -177,7 +177,8 @@ abstract class ConditionDict {
                         GlobalMemory(),
                         HasShield(),
                         HasPhase(),
-                        MinimumCrew()
+                        MinimumCrew(),
+                        CargoSpace()
                     )
                         .forEach {
                             mutableDict!![it.key] = it

@@ -87,7 +87,7 @@ public class RecoverMethod implements UpgradeMethod {
         return (int) creditCost;
     }
 
-    private static int getCreditCost(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade) {
+    public static int getCreditCost(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade) {
         float resourceCreditCost = getCreditCostForResources(upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade)));
 
         return (int) (resourceCreditCost * 0.166);

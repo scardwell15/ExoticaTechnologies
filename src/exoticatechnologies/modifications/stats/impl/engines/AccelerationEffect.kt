@@ -5,8 +5,6 @@ import com.fs.starfarer.api.combat.MutableStat
 import exoticatechnologies.modifications.stats.UpgradeMutableStatEffect
 
 class AccelerationEffect : UpgradeMutableStatEffect() {
-    override var hullmodShowsFinalValue: Boolean = false
-
     override val key: String
         get() = "acceleration"
 

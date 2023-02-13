@@ -1,5 +1,6 @@
 package exoticatechnologies.ui.impl.shop.upgrades
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
@@ -8,11 +9,11 @@ import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
-import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
-import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.chips.ChipPanelUIPlugin
+import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
+import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.getMods
 import java.awt.Color
@@ -77,6 +78,8 @@ class UpgradePanelUIPlugin(
         resourcesPlugin!!.destroyTooltip()
 
         method.apply(member, mods, upgrade, market)
+
+        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
 
         descriptionPlugin!!.resetDescription()
         resourcesPlugin!!.redisplayResourceCosts(method)

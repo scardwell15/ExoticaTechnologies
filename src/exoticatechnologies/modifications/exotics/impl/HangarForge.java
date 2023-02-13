@@ -12,10 +12,12 @@ import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
-import exoticatechnologies.modifications.exotics.Exotic;
 import lombok.Getter;
 import org.json.JSONObject;
 
@@ -30,7 +32,8 @@ public class HangarForge extends Exotic {
 
     private static float RATE_DECREASE_MODIFIER = 25f;
 
-    @Getter private final Color color = Color.GREEN;
+    @Getter
+    private final Color color = Color.GREEN;
 
     public HangarForge(String key, JSONObject settings) {
         super(key, settings);
@@ -79,15 +82,23 @@ public class HangarForge extends Exotic {
     }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+        int replacements = getFreeReplacements(ship);
+        IntervalUtil replacementInterval = getReplacementInterval(ship);
+
+        if (replacementInterval != null) {
+            MagicUI.drawInterfaceStatusBar(ship, replacementInterval.getElapsed() / replacementInterval.getIntervalDuration(), RenderUtils.getAliveUIColor(), RenderUtils.getAliveUIColor(),
+                    0f, StringUtils.getString(this.getKey(), "statusBarText"), replacements);
+        }
+    }
+
+    @Override
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
         int replacements = getFreeReplacements(ship);
 
-        maintainStatus(ship,
-                this.getBuffId(),
-                StringUtils.getTranslation(this.getKey(), "statusText")
-                        .format("freeReplacements", replacements)
-                        .toStringNoFormats()
-        );
+        if (Global.getCombatEngine().isPaused()) {
+            return;
+        }
 
         if (replacements < calculateMaxReplacements(ship)) {
             advanceReplacementInterval(ship, amount);
@@ -111,7 +122,6 @@ public class HangarForge extends Exotic {
         int dead = 0;
 
         if (bay.getWing() != null && bay.getWing().getWingMembers() != null) {
-            dead += (getNumFighters(bay) - bay.getWing().getWingMembers().size());
             for (ShipAPI ship : bay.getWing().getWingMembers()) {
                 if (!ship.isAlive()) {
                     dead++;
@@ -120,10 +130,6 @@ public class HangarForge extends Exotic {
         }
 
         return dead;
-    }
-
-    public static int getNumFighters(FighterLaunchBayAPI bay) {
-        return bay.getWing().getSpec().getNumFighters() + bay.getExtraDeployments();
     }
 
     public static void advanceReplacementInterval(ShipAPI ship, float amount) {
@@ -182,7 +188,7 @@ public class HangarForge extends Exotic {
     }
 
     public void maintainStatus(ShipAPI ship, String id, String translation) {
-        if(Global.getCombatEngine().getPlayerShip() != null
+        if (Global.getCombatEngine().getPlayerShip() != null
                 && Global.getCombatEngine().getPlayerShip().equals(ship)) {
             Global.getCombatEngine().maintainStatusForPlayerShip(
                     id,

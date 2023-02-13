@@ -3,3 +3,6 @@ et_resetcosts,exoticatechnologies.commands.et_resetcosts,"dialog,campaign,market
 et_removecosts,exoticatechnologies.commands.et_removecosts,"dialog,campaign,market",et_removeUpgradeCosts (no arguments),"Exotica Technologies upgrades are now FREE"
 et_cleardata,exoticatechnologies.commands.et_cleardata,"campaign",et_clearAllData (no arguments),"Clear all Exotica Technologies data"
 et_reload,exoticatechnologies.commands.et_reload,"dialog,campaign,market",et_reloadconfig (no arguments),"Reloads the configuration for Exotica Technologies."
+et_listmods,exoticatechnologies.commands.et_listmods,"dialog,campaign,market",et_listmods (no arguments),"Lists all modifications."
+et_addexotic,exoticatechnologies.commands.et_addexotic,"dialog,campaign,market",et_addexotic <exoticId>,"Adds an exotic chip to your fleet's inventory."
+et_addupgrade,exoticatechnologies.commands.et_addupgrade,"dialog,campaign,market",et_addupgrade <upgradeId> <level>,"Adds an upgrade chip to your fleet's inventory."

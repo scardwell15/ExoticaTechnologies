@@ -9,15 +9,20 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
-import exoticatechnologies.modifications.exotics.Exotic;
+import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
 import org.json.JSONObject;
 
-import java.awt.Color;
-import java.util.*;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class HangarForgeMissiles extends Exotic {
     private static final String ITEM = "et_hangarforge";
@@ -86,8 +91,19 @@ public class HangarForgeMissiles extends Exotic {
     }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
         IntervalUtil reloadInterval = getReloadInterval(ship);
+
+        if (reloadInterval != null) {
+            MagicUI.drawInterfaceStatusBar(ship, reloadInterval.getElapsed() / reloadInterval.getIntervalDuration(), RenderUtils.getAliveUIColor(), RenderUtils.getAliveUIColor(),
+                    0f, StringUtils.getString(this.getKey(), "statusBarText"), -1);
+        }
+    }
+
+    @Override
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+        IntervalUtil reloadInterval = getReloadInterval(ship);
+
         if (reloadInterval == null) {
             reloadInterval = createReloadInterval(ship);
 
@@ -114,6 +130,10 @@ public class HangarForgeMissiles extends Exotic {
                     weapon.getAmmoTracker().setAmmo(newAmmo);
                 }
             }
+        }
+
+        if (Global.getCombatEngine().isPaused()) {
+            return;
         }
 
         reloadInterval.advance(amount);

@@ -69,8 +69,8 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
     class UpgradeTabUIPlugin : TabButtonUIPlugin(StringUtils.getString("UpgradesDialog", "OpenUpgradeOptions")) {
         override var panelWidth = 100f
 
-        override val activeColor: Color = Color(220, 220, 220, 255)
-        override val baseColor: Color = Color(120, 120, 130, 255)
+        override val activeColor: Color = Color(100, 180, 220, 255)
+        override val baseColor: Color = Color(60, 80, 100, 255)
 
         override fun createTabButton(holdingPanel: CustomPanelAPI, parentPlugin: TabbedPanelUIPlugin): TooltipMakerAPI {
             val tooltip = super.createTabButton(holdingPanel, parentPlugin)

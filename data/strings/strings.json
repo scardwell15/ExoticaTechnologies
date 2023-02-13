@@ -84,6 +84,13 @@
 		"MoveOption": "Move",
 		"CancelOption": "Cancel"
 	},
+	"OverviewDialog": {
+		"OverviewTabText": "Overview",
+		"ExpandExotics": "Expand exotics",
+		"ExpandUpgrades": "Expand upgrades",
+		"ClearExotics": "Recover exotics (${storyPoints} SP)",
+		"ClearUpgrades": "Recover upgrades (${creditsText})"
+	},
 	"BandwidthDialog": {
 		"OpenBandwidthOptions": "Bandwidth",
 		"BandwidthUpgradeCost": "Ship bandwidth can be increased by &${bonusBandwidth}& for *${costCredits}* credits. You have *${credits}* credits.",
@@ -147,6 +154,7 @@
 		"tooltip": "Increases weapon firerate substantially when a weapon fires. Rate of fire slows for a time after.",
 		"longDescription": "Weapon fire rate is increased by *${firerateBoost}%%* for *${boostTime} seconds* when a weapon is fired. After this time, weapon fire rate is reduced by =${firerateMalus}%%= for *${malusTime} seconds*. This can occur once every *${cooldownTime} seconds*. If ship is under player control, a non-missile weapon has to be fired manually for effect to take place. If ship is under AI control, any non-PD weapon triggers the effect.",
 		"needItem": "You need a ${itemName} to install this.",
+		"statusBarText": "SPOOL",
 		"statusTitle": "SPOOLED FEEDERS",
 		"statusBuffText": "GIVE THEM HELL",
 		"statusDebuffText": "FEEL THE BURN",
@@ -167,9 +175,10 @@
 	},
 	"DriveFluxVent": {
 		"description": "An experimental flux vent that can only function under the intense heat that ship thrusters generate. It excels at venting flux, so well in fact that the thrusters around it receive a temporary increase in power that only shows in the forward direction. This effect resides for a couple seconds after venting as well. Crew members remark that the purple glow of the engines is one of the prettiest sights to ever see, but the reduced ability to retreat never lets them be at ease.",
-		"tooltip": "Increases vent speed, and forward speed is increased while and shortly after venting.",
+		"tooltip": "Increases vent speed. Venting improves forward speed and acceleration, while decreasing deceleration.",
 		"needItem": "You need a ${itemName} to install this.",
-		"longDescription": "Increases vent speed by *${ventBonus}%%*. If venting is started while flux is *above ${speedThreshold}%%*, forward speed is increased by *${speedBonus}* while venting and for *${speedBonusTime} seconds* afterwards.",
+		"longDescription": "Increases vent speed by *${ventBonus}%%*. If venting is started while flux is *above ${speedThreshold}%%*, forward speed is increased by *${speedBonus}*, acceleration is increased by *50%%*, and deceleration is decreased by =50%%=, while venting and for *${speedBonusTime} seconds* afterwards.",
+		"statusBarText": "D.VENT",
 		"statusTitle": "DRIVE FLUX VENT",
 		"statusSpeedBonus": "INCREASED FORWARD VELOCITY"
 	},
@@ -184,6 +193,7 @@
 		"tooltip": "Increases the rate at which the replacement rate decreases. Fighters may be instantly redeployed upon destruction.",
 		"needItem": "You need a ${itemName} to install this.",
 		"longDescription": "Increases the rate at which replacement rate degrades by *${rateDecreaseBuff}%%*. *Half* of the total number of fighters can be *instantly re-deployed* if they are destroyed. This effect recharges every minute.",
+		"statusBarText": "H.FORGE",
 		"statusText": "FREE REPLACEMENTS: ${freeReplacements}"
 	},
 	"HangarForgeMissiles": {
@@ -191,6 +201,7 @@
 		"tooltip": "Reloads some of all non-reloading missile's ammunition capacity periodically. Reduces non-reloading missile capacity.",
 		"needCredits": "You need ${credits} to install this.",
 		"needItem": "You need a ${itemName} to install this.",
+		"statusBarText": "M.FORGE",
 		"longDescription": "Reduces non-reloading missile capacity to =${reloadSize}%%=, or to a minimum of one burst. Reloads all of any non-reloading missile's ammunition capacity every *${reloadTime} seconds*. This only affects missiles with more than 1 ammo.",
 		"statusReloaded": "Reloaded weapons!"
 	},
@@ -200,6 +211,7 @@
 		"needPhaseShip": "Only phase ships can install this.",
 		"needItem": "You need an ${itemName} to install this.",
 		"longDescription": "Phase activation cost is reduced by *${phaseCostReduction}x*, but =doubles= every time you use it in a period of *${phaseResetTime} seconds*. The ship receives *66%% reduced damage* which fades over time for *${noDamageTime} seconds* when exiting phase. Ships with a base negative phase flux cost will instead =cost flux=, and ships with a base zero phase flux cost will cost =${zeroFluxCost}%% of base flux capacity=.",
+		"statusBarText": "P.FIELD",
 		"statusTitle": "PHASEFIELD ENGINE",
 		"statusInvulnerable": "DMG RESIST INCREASED (${noDamageDuration})",
 		"statusPhasedTimes": "PHASED ${phasedTimes} TIMES, REFRESH IN ${refreshTime}"
@@ -208,10 +220,30 @@
 		"description": "Overcharging weapon systems results in a massive increase to damage and projectile speeds, but the power such a system controller takes along with the potential damage from overcharging the power of weaponry causes a long term effect on the rate of fire of weapons on board the ship.",
 		"tooltip": "A salvo starts when a weapon is fired, giving a massive damage and projectile speed boost for a very short period. Rate of fire on the ship is reduced permanently.",
 		"longDescription": "Weapon damage and projectile speed is increased by *${damageBoost}%%* for *${boostTime} seconds* when a weapon is fired. The system takes *${cooldown} seconds* to recharge. Weapon fire rate is reduced by =${firerateMalus}%%= permanently.",
+		"statusBarText": "SALVO",
 		"statusTitle": "FULL METAL SALVO",
 		"statusBuffText": "APOCALYPSE",
 		"statusRecharging": "READY IN ${remainingTime} SECONDS",
 		"statusReady": "READY"
+	},
+	"TierIIIDriveSystem": {
+		"description": "Pressurized fuel tanks increase the rate of fuel injection to a custom burn drive, speeding up the entire fleet. A favorite among logistics fleets, the technology required to keep pressurized fuel stable requires almost all of the cargo space, but the technology scales up extremely well and allows for a large amount of fuel to be stored.",
+		"tooltip": "Replaces most of the ship's cargo capacity with fuel storage. Burn speed is increased while the fleet's fuel reserves are high.",
+		"needItem": "You need a ${itemName} to install this.",
+		"longDescription": "Replaces =${cargoToFuelPercent}%% of cargo capacity= and converts it to *fuel storage*. If the fleet is above *${burnBonusFuelReq}%% fuel*, burn speed of the fleet is increased by *${burnBonus}*.",
+	},
+	"ReactiveDamperField": {
+		"description": "A grid of sensors mostly found on Daemon-type ships, integrated with an artificial intelligence on board able to harden the ship's armor when detecting a threat severe enough to cause significant damage. The sheer amount of connections required between the intelligence and sensors weakens the armor significantly when not protected by this dampening field.",
+		"tooltip": "If taking damage over a certain amount, dampen the initial hit and all damage for a short period of time. This effect has a cooldown. Increases armor damage taken when the damper field is not active.",
+		"needItem": "You need a ${itemName} to install this.",
+		"longDescription": "Activates a damper field for *${damperDuration} seconds*, reducing all damage taken by *${damperReduction}%%*, when taking damage over *${triggeringDamage}*. It has a =${damperCooldown}= second cooldown. Armor damage taken is increased by =${armorDamageTaken}%%=.",
+		"statusBarText": "DAMPER",
+	},
+	"DaemonCore": {
+		"description": "A Daemon Core is far more efficient at all things warfare-related: ordnance calculations, ammunition placement, and diverting energy from non-efficient subsystems, such as reactive armor and shield emitters.",
+		"tooltip": "Increases usable bandwidth of the ship. Reduces ordnance point costs for weapons and fighters. Increases damage dealt and received.",
+		"needItem": "You need a ${itemName} to install this.",
+		"longDescription": "Increases bandwidth by *60 TB/s*. Reduces ordnance point costs for weapons by *1/2/4* based on weapon size, and for fighters and bombers by *2/4*. Increases damage *dealt* and =received= by &20%%&."
 	},
 	"SubsumedAlphaCore": {
 		"description": "There's a faint trace of an Alpha-level AI coming from the ship. Whether it actually wants to be there requires a much closer look.",

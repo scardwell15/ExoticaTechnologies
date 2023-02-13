@@ -19,6 +19,7 @@ import exoticatechnologies.modifications.stats.impl.logistics.CrewSalaryEffect;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.modifications.upgrades.impl.CommissionedCrews;
 import exoticatechnologies.ui.impl.shop.ShopManager;
+import exoticatechnologies.ui.impl.shop.overview.OverviewPanelUIPlugin;
 import exoticatechnologies.util.FleetMemberUtils;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.console.Console;
@@ -40,6 +41,7 @@ public class ETModPlugin extends BaseModPlugin {
     @Override
     public void onApplicationLoad() {
         ETModSettings.loadModSettings();
+
         UpgradesHandler.initialize();
         ExoticsHandler.initialize();
         FactionConfigLoader.load();
@@ -52,6 +54,7 @@ public class ETModPlugin extends BaseModPlugin {
 
         ETModSettings.loadModSettings();
 
+        ShopManager.addMenu(new OverviewPanelUIPlugin());
         UpgradesHandler.initialize();
         ExoticsHandler.initialize();
 

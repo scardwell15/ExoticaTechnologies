@@ -10,13 +10,17 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
+import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
-import exoticatechnologies.util.StatUtils;
+import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
+import exoticatechnologies.util.states.StateWithNext;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
@@ -34,7 +38,8 @@ public class PhasefieldEngine extends Exotic {
     private static float PHASE_COST_PERCENT_IF_NEGATIVE = -100f;
     private static float PHASE_COST_IF_ZERO = 20f;
 
-    @Getter private final Color color = new Color(0xA94EFF);
+    @Getter
+    private final Color color = new Color(0xA94EFF);
 
     public PhasefieldEngine(String key, JSONObject settings) {
         super(key, settings);
@@ -43,11 +48,6 @@ public class PhasefieldEngine extends Exotic {
     @Override
     public boolean canAfford(CampaignFleetAPI fleet, MarketAPI market) {
         return Utilities.hasItem(fleet.getCargo(), ITEM);
-    }
-
-    @Override
-    public boolean canApplyToVariant(ShipVariantAPI variant) {
-        return variant.getHullSpec().getHints().contains(ShipHullSpecAPI.ShipTypeHints.PHASE);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class PhasefieldEngine extends Exotic {
 
     @Override
     public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
-        if(fm.getHullSpec().getShieldSpec().getPhaseCost() == 0) {
+        if (fm.getHullSpec().getShieldSpec().getPhaseCost() == 0) {
             stats.getPhaseCloakActivationCostBonus().modifyFlat(getBuffId() + "base", PHASE_COST_IF_ZERO / 100f);
         } else if (fm.getHullSpec().getShieldSpec().getPhaseCost() < 0) {
             stats.getPhaseCloakActivationCostBonus().modifyMult(getBuffId() + "base", -1f);
@@ -93,64 +93,16 @@ public class PhasefieldEngine extends Exotic {
         ship.getMutableStats().getPhaseCloakActivationCostBonus().unmodify("phase_anchor");
     }
 
-    private String getPhaseStateId(ShipAPI ship) {
-        return String.format("%s_%s_phasestate", this.getBuffId(), ship.getId());
-    }
-
-    private ShipSystemAPI.SystemState getLastPhaseState(ShipAPI ship) {
-        Object val = Global.getCombatEngine().getCustomData().get(getPhaseStateId(ship));
-        if(val != null) {
-            return (ShipSystemAPI.SystemState) val;
-        }
-        return null;
-    }
-
-    private void setPhaseState(ShipAPI ship) {
-        Global.getCombatEngine().getCustomData().put(getPhaseStateId(ship), ship.getPhaseCloak().getState());
-    }
-
-    private String getPhaseCostId(ShipAPI ship) {
-        return String.format("%s_%s_phasecooldown", this.getBuffId(), ship.getId());
-    }
-
-    private IntervalUtil getPhaseCostInterval(ShipAPI ship) {
-        Object val = Global.getCombatEngine().getCustomData().get(getPhaseCostId(ship));
-        if(val != null) {
-            return (IntervalUtil) val;
-        }
-        return null;
-    }
-
-    private IntervalUtil createPhaseCostInterval(ShipAPI ship) {
-        IntervalUtil phaseCostInterval = new IntervalUtil(PHASE_RESET_INTERVAL, PHASE_RESET_INTERVAL);
-        Global.getCombatEngine().getCustomData().put(getPhaseCostId(ship), phaseCostInterval);
-        return phaseCostInterval;
-    }
-
-    private void removePhaseCostInterval(ShipAPI ship) {
-        Global.getCombatEngine().getCustomData().remove(getPhaseCostId(ship));
-    }
-
     private String getInvulverableId(ShipAPI ship) {
         return String.format("%s_%s_invulnerable", this.getBuffId(), ship.getId());
     }
 
     private IntervalUtil getInvulnerableInterval(ShipAPI ship) {
         Object val = Global.getCombatEngine().getCustomData().get(getInvulverableId(ship));
-        if(val != null) {
+        if (val != null) {
             return (IntervalUtil) val;
         }
         return null;
-    }
-
-    private IntervalUtil createInvulverableInterval(ShipAPI ship) {
-        IntervalUtil invulnInterval = new IntervalUtil(INVULNERABLE_INTERVAL, INVULNERABLE_INTERVAL);
-        Global.getCombatEngine().getCustomData().put(getInvulverableId(ship), invulnInterval);
-        return invulnInterval;
-    }
-
-    private void removeInvulnerableInterval(ShipAPI ship) {
-        Global.getCombatEngine().getCustomData().remove(getInvulverableId(ship));
     }
 
     private String getTimesPhasedId(ShipAPI ship) {
@@ -159,10 +111,10 @@ public class PhasefieldEngine extends Exotic {
 
     private int getTimesPhasedInInterval(ShipAPI ship) {
         Object val = Global.getCombatEngine().getCustomData().get(getTimesPhasedId(ship));
-        if(val != null) {
+        if (val != null) {
             return (int) val;
         }
-        return -1;
+        return 0;
     }
 
     private void addToTimesPhased(ShipAPI ship) {
@@ -173,113 +125,24 @@ public class PhasefieldEngine extends Exotic {
         Global.getCombatEngine().getCustomData().remove(getTimesPhasedId(ship));
     }
 
-    private boolean isPhasing(ShipAPI ship) {
-        ShipSystemAPI.SystemState currState = ship.getPhaseCloak().getState();
-        return currState == ShipSystemAPI.SystemState.IN || currState == ShipSystemAPI.SystemState.ACTIVE;
-    }
+    @Override
+    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+        if (ship.getPhaseCloak() == null) {
+            return;
+        }
 
-    private boolean justEnteredPhase(ShipAPI ship) {
-        ShipSystemAPI.SystemState lastState = getLastPhaseState(ship);
-        return ship.getPhaseCloak().getState() == ShipSystemAPI.SystemState.IN && lastState == ShipSystemAPI.SystemState.IDLE;
-    }
-
-    private boolean justExitedPhase(ShipAPI ship) {
-        ShipSystemAPI.SystemState lastState = getLastPhaseState(ship);
-        return ship.getPhaseCloak().getState() == ShipSystemAPI.SystemState.OUT && (lastState == ShipSystemAPI.SystemState.ACTIVE || lastState == ShipSystemAPI.SystemState.IN);
+        FieldState state = getState(ship);
+        state.advanceAlways(ship);
     }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
         if (ship.getPhaseCloak() == null) {
             return;
         }
 
-        IntervalUtil phaseInterval = getPhaseCostInterval(ship);
-        IntervalUtil invulnInterval = getInvulnerableInterval(ship);
-
-        if(justExitedPhase(ship)) {
-            if (!ship.hasListenerOfClass(ET_PhasefieldEngineListener.class)) {
-                ET_PhasefieldEngineListener listener = new ET_PhasefieldEngineListener(ship);
-                ship.addListener(listener);
-            }
-
-            if (invulnInterval == null) {
-                createInvulverableInterval(ship);
-            } else {
-                invulnInterval.setInterval(INVULNERABLE_INTERVAL, INVULNERABLE_INTERVAL);
-            }
-        } else if (justEnteredPhase(ship)) {
-            if (phaseInterval == null) {
-                createPhaseCostInterval(ship);
-            } else {
-                phaseInterval.setInterval(PHASE_RESET_INTERVAL, PHASE_RESET_INTERVAL);
-            }
-            addToTimesPhased(ship);
-            ship.getMutableStats().getPhaseCloakActivationCostBonus().modifyMult(this.getBuffId(), (float) Math.pow(2, getTimesPhasedInInterval(ship)));
-        }
-
-        if(invulnInterval != null) {
-            invulnInterval.advance(amount);
-            if(invulnInterval.intervalElapsed()) {
-                if (ship.hasListenerOfClass(ET_PhasefieldEngineListener.class)) {
-                    ship.removeListenerOfClass(ET_PhasefieldEngineListener.class);
-                }
-
-                removeInvulnerableInterval(ship);
-            } else {
-                String invulnText = StringUtils.getTranslation(this.getKey(), "statusInvulnerable")
-                        .format("noDamageDuration", StatUtils.formatFloatUnrounded(INVULNERABLE_INTERVAL - invulnInterval.getElapsed()))
-                        .toString();
-
-                ship.addAfterimage(new Color(255, 0, 255, 5), 0, 0, 0, 0, 0f, 0f, 0.1f, 0.75f, true, true, true);
-                ship.addAfterimage(new Color(255, 0, 255), 0, 0, 0, 0, 5f, 0f, 0.1f, 0.75f, true, false, false);
-
-                maintainStatus(
-                        ship,
-                        getInvulverableId(ship),
-                        "graphics/icons/hullsys/temporal_shell.png",
-                        invulnText,
-                        false);
-            }
-        }
-
-        if (phaseInterval != null) {
-            String phasedTimesText = String.format("PHASED %s TIMES, REFRESH IN %s", getTimesPhasedInInterval(ship), StatUtils.formatFloatUnrounded(PHASE_RESET_INTERVAL - phaseInterval.getElapsed()));
-
-            maintainStatus(
-                    ship,
-                    getTimesPhasedId(ship),
-                    "graphics/icons/hullsys/temporal_shell.png",
-                    phasedTimesText,
-                    true);
-
-            if(!isPhasing(ship)) {
-                phaseInterval.advance(amount);
-                if (phaseInterval.intervalElapsed()) {
-                    removeTimesPhased(ship);
-                    removePhaseCostInterval(ship);
-                    ship.getMutableStats().getPhaseCloakActivationCostBonus().unmodifyMult(this.getBuffId());
-                }
-            }
-        }
-
-        setPhaseState(ship);
-    }
-
-    public void maintainStatus(ShipAPI ship, String id, String spriteName, String translation, boolean isDebuff) {
-        if (ship.getPhaseCloak() == null) {
-            return;
-        }
-
-        if(Global.getCombatEngine().getPlayerShip() != null
-                && Global.getCombatEngine().getPlayerShip().equals(ship)) {
-            Global.getCombatEngine().maintainStatusForPlayerShip(
-                    id,
-                    "graphics/icons/hullsys/temporal_shell.png",
-                    StringUtils.getString(this.getKey(), "statusTitle"),
-                    translation,
-                    false);
-        }
+        FieldState state = getState(ship);
+        state.advance(ship, amount);
     }
 
     // damage listener
@@ -292,7 +155,7 @@ public class PhasefieldEngine extends Exotic {
 
         @Override
         public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damageAPI, Vector2f point, boolean shieldHit) {
-            if(target == this.ship) {
+            if (target == this.ship) {
                 IntervalUtil interval = getInvulnerableInterval(this.ship);
                 if (interval != null) {
                     damageAPI.getModifier().modifyMult(PhasefieldEngine.this.getBuffId(), 0.66f * (INVULNERABLE_INTERVAL - interval.getElapsed()) / INVULNERABLE_INTERVAL);
@@ -300,6 +163,173 @@ public class PhasefieldEngine extends Exotic {
                 }
             }
             return null;
+        }
+    }
+
+    private static String STATE_KEY = "et_phasefieldengine_state";
+
+    private FieldState getState(ShipAPI ship) {
+        FieldState state = (FieldState) ship.getCustomData().get(STATE_KEY);
+        if (state == null) {
+            state = new ReadyState();
+            ship.setCustomData(STATE_KEY, state);
+        }
+        return state;
+    }
+
+    private String getStatusBarText() {
+        return StringUtils.getString(this.getKey(), "statusBarText");
+    }
+
+    private abstract class FieldState extends StateWithNext {
+        FieldState() {
+            super(STATE_KEY);
+        }
+
+        public abstract void advanceAlways(ShipAPI ship);
+    }
+
+    private class ReadyState extends FieldState {
+        @Override
+        protected void advanceShip(@NotNull ShipAPI ship, float amount) {
+            //if phased, set state to phased, set state
+            if (ship.getPhaseCloak().getState() == ShipSystemAPI.SystemState.IN
+                    || ship.getPhaseCloak().getState() == ShipSystemAPI.SystemState.ACTIVE) {
+                setNextState(ship);
+            }
+        }
+
+        @Override
+        public void advanceAlways(ShipAPI ship) {
+            MagicUI.drawInterfaceStatusBar(ship, 1f, RenderUtils.getAliveUIColor(), RenderUtils.getAliveUIColor(), 0, PhasefieldEngine.this.getStatusBarText(), getTimesPhasedInInterval(ship));
+        }
+
+        @Override
+        protected float getDuration() {
+            return 0f;
+        }
+
+        @NotNull
+        @Override
+        protected StateWithNext getNextState() {
+            return new PhasedState();
+        }
+    }
+
+    private static Color PHASED_STATE_COLOR = new Color(170, 140, 220);
+
+    private class PhasedState extends FieldState {
+        @Override
+        protected void init(@NotNull ShipAPI ship) {
+            if (ship.hasListenerOfClass(ET_PhasefieldEngineListener.class)) {
+                ship.removeListenerOfClass(ET_PhasefieldEngineListener.class);
+            }
+
+            addToTimesPhased(ship);
+            ship.getMutableStats().getPhaseCloakActivationCostBonus().modifyMult(PhasefieldEngine.this.getBuffId(), (float) Math.pow(2, getTimesPhasedInInterval(ship)));
+        }
+
+        @Override
+        protected void advanceShip(@NotNull ShipAPI ship, float amount) {
+            //if unphased, set state to invuln
+            if (ship.getPhaseCloak().getState() == ShipSystemAPI.SystemState.OUT
+                    || ship.getPhaseCloak().getState() == ShipSystemAPI.SystemState.COOLDOWN
+                    || ship.getPhaseCloak().getState() == ShipSystemAPI.SystemState.IDLE) {
+                setNextState(ship);
+            }
+        }
+
+        @Override
+        public void advanceAlways(ShipAPI ship) {
+            MagicUI.drawInterfaceStatusBar(ship, 1f, PHASED_STATE_COLOR, PHASED_STATE_COLOR, 1f, PhasefieldEngine.this.getStatusBarText(), getTimesPhasedInInterval(ship));
+        }
+
+        @Override
+        protected float getDuration() {
+            return 0f;
+        }
+
+        @NotNull
+        @Override
+        protected StateWithNext getNextState() {
+            return new BuffedState();
+        }
+    }
+
+    private class BuffedState extends FieldState {
+        @Override
+        protected void init(@NotNull ShipAPI ship) {
+            if (!ship.hasListenerOfClass(ET_PhasefieldEngineListener.class)) {
+                ET_PhasefieldEngineListener listener = new ET_PhasefieldEngineListener(ship);
+                ship.addListener(listener);
+            }
+        }
+
+        @Override
+        protected void advanceShip(@NotNull ShipAPI ship, float amount) {
+        }
+
+        @Override
+        public void advanceAlways(ShipAPI ship) {
+            MagicUI.drawInterfaceStatusBar(ship, 1f - this.getProgressRatio(), RenderUtils.getAliveUIColor(), RenderUtils.getAliveUIColor(), 1f, PhasefieldEngine.this.getStatusBarText(), getTimesPhasedInInterval(ship));
+        }
+
+        @Override
+        protected float getDuration() {
+            return INVULNERABLE_INTERVAL;
+        }
+
+        @Override
+        protected boolean intervalExpired(@NotNull ShipAPI ship) {
+            setNextState(ship);
+            return true;
+        }
+
+        @NotNull
+        @Override
+        protected StateWithNext getNextState() {
+            return new CooldownState();
+        }
+    }
+
+    private class CooldownState extends ReadyState {
+        private float endTime;
+        @Override
+        protected void init(@NotNull ShipAPI ship) {
+            endTime = Global.getCombatEngine().getTotalElapsedTime(false) + ship.getPhaseCloak().getCooldown();
+
+            if (ship.hasListenerOfClass(ET_PhasefieldEngineListener.class)) {
+                ship.removeListenerOfClass(ET_PhasefieldEngineListener.class);
+            }
+        }
+
+        @Override
+        public void advanceAlways(ShipAPI ship) {
+            float resetRatio = this.getProgressRatio();
+
+            float remaining = endTime - Global.getCombatEngine().getTotalElapsedTime(false);
+            float cooldownRatio = MathUtils.clamp(remaining / ship.getPhaseCloak().getCooldown(), 0f, 1f);
+
+            MagicUI.drawInterfaceStatusBar(ship, 1f - cooldownRatio, RenderUtils.getAliveUIColor(), RenderUtils.getAliveUIColor(), 1f - resetRatio, PhasefieldEngine.this.getStatusBarText(), getTimesPhasedInInterval(ship));
+        }
+
+        @Override
+        protected boolean intervalExpired(@NotNull ShipAPI ship) {
+            removeTimesPhased(ship);
+            ship.getMutableStats().getPhaseCloakActivationCostBonus().unmodifyMult(PhasefieldEngine.this.getBuffId());
+            setNextState(ship);
+            return true;
+        }
+
+        @Override
+        protected float getDuration() {
+            return PHASE_RESET_INTERVAL;
+        }
+
+        @NotNull
+        @Override
+        protected StateWithNext getNextState() {
+            return new ReadyState();
         }
     }
 }

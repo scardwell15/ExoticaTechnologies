@@ -60,7 +60,6 @@ public class ResourcesMethod extends DefaultUpgradeMethod {
         ShipModLoader.set(fm, mods);
         ExoticaTechHM.addToFleetMember(fm);
 
-        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
                 .format("name", upgrade.getName())
                 .format("level", mods.getUpgrade(upgrade))

@@ -271,6 +271,27 @@
       "hand_weapons": 0.5
     }
   },
+  "AntimatterBoosters": {
+    "name": "Antimatter Boosters",
+    "color": [220, 120, 180],
+    "bandwidthPerLevel": 5,
+    "spawnChance": 3.0,
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
+    "stats": [
+      { "id": "missileSpeed", "scalingEffect": 25 },
+      { "id": "missileHealth", "scalingEffect": 30 },
+      { "id": "missileRange", "scalingEffect": 20 },
+      { "id": "missileTurnRate", "scalingEffect": -33 },
+      { "id": "missileTurnAcceleration", "scalingEffect": -33, "hidden": true },
+    ],
+    "resourceRatios": {
+      "rare_metals": 0.5,
+      "volatiles": 4.0,
+      "heavy_machinery": 3.0,
+      "hand_weapons": 0.5
+    }
+  },
   "IronShell": {
     "name": "Iron Shell",
     "color": [252,173,60],

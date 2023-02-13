@@ -128,7 +128,15 @@ public abstract class Exotic extends Modification {
 
     }
 
-    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+
+    }
+
+    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+
+    }
+
+    public void advanceInCampaign(FleetMemberAPI member, ShipModifications mods, Float amount) {
 
     }
 

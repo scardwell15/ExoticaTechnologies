@@ -37,7 +37,6 @@ public class UpgradesHandler {
         UpgradesHandler.populateUpgrades();
 
         ShopManager.addMenu(new UpgradeShopUIPlugin());
-        ShopManager.addMenu(new ExoticShopUIPlugin());
     }
 
     public static void populateUpgrades() {

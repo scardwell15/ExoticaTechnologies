@@ -39,6 +39,27 @@
       {"id": "hasPhase", "operator": "==", "expected": true, "cannotApplyReason": "The ship must be a phase ship, or have a phase ship system."}
     ]
   },
+  "TierIIIDriveSystem": {
+    "name": "Tier IIIb Drive System",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.TierIIIDriveSystem",
+    "conditions": [
+      {"id": "cargoSpace", "operator": ">=", "expected": 400, "cannotApplyReason": "The ship must have at least 400 cargo capacity."}
+    ]
+  },
+  "ReactiveDamperField": {
+    "name": "Reactive Damper Field",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.ReactiveDamperField",
+    "conditions": [
+      {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."}
+    ]
+  },
+  "DaemonCore": {
+    "name": "Daemon Core",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.DaemonCore",
+    "conditions": [
+      {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."}
+    ]
+  },
   "AlphaSubcore": {
     "name": "Alpha Subcore",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore"

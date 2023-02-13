@@ -32,25 +32,6 @@ public class AlphaSubcore extends HullmodExotic {
     }
 
     @Override
-    public boolean canApply(FleetMemberAPI member, ShipModifications mods) {
-        if(member.getFleetData() == null
-                || member.getFleetData().getFleet() == null) {
-            return canApplyToVariant(member.getVariant());
-        }
-
-        if (!Misc.isPlayerOrCombinedContainingPlayer(member.getFleetData().getFleet())) {
-            if(member.getFleetData().getFleet().getFaction().getId().equals(Factions.HEGEMONY)
-                    || member.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_CHURCH)
-                    || member.getFleetData().getFleet().getFaction().getId().equals(Factions.LUDDIC_PATH)) {
-                return false;
-            }
-            return canApplyToVariant(member.getVariant());
-        }
-
-        return canApplyToVariant(member.getVariant());
-    }
-
-    @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm, MarketAPI market) {
         if (Utilities.hasItem(fleet.getCargo(), ITEM)) {
             Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);

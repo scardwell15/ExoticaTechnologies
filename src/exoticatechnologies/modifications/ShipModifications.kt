@@ -7,14 +7,10 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
-import exoticatechnologies.modifications.exotics.ETExotics
-import exoticatechnologies.modifications.exotics.Exotic
-import exoticatechnologies.modifications.exotics.ExoticsGenerator
-import exoticatechnologies.modifications.exotics.ExoticsHandler
+import exoticatechnologies.modifications.exotics.*
 import exoticatechnologies.modifications.upgrades.ETUpgrades
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesGenerator
@@ -91,7 +87,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
         var returnedBandwidth = bandwidth
         for (exotic in ExoticsHandler.EXOTIC_LIST) {
             if (this.hasExotic(exotic)) {
-                returnedBandwidth += exotic.getExtraBandwidth(fm, this)
+                returnedBandwidth += exotic.getExtraBandwidth(fm, this, this.getExoticData(exotic))
             }
         }
         return returnedBandwidth
@@ -101,7 +97,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
         var maxBandwidth = Bandwidth.MAX_BANDWIDTH
         for (exotic in ExoticsHandler.EXOTIC_LIST) {
             if (this.hasExotic(exotic)) {
-                maxBandwidth += exotic.getExtraBandwidthPurchaseable(fm, this)
+                maxBandwidth += exotic.getExtraBandwidthPurchaseable(fm, this, this.getExoticData(exotic))
             }
         }
         return maxBandwidth > getBaseBandwidth(fm)
@@ -142,6 +138,10 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
 
     fun removeExotic(exotic: Exotic) {
         exotics.removeExotic(exotic)
+    }
+
+    fun getExoticData(exotic: Exotic): ExoticData {
+        return exotics.getData(exotic)
     }
 
     //upgrades
@@ -238,7 +238,6 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
 
         mainTooltip.addPara("The ship has %s bandwidth.", 0f, Bandwidth.getColor(bandwidth), bandwidthString)
 
-
         //shitty special case
         val panelHeight = if (noScroller) height - 386 else height
         val customPanelAPI: CustomPanelAPI = Global.getSettings().createCustom(width, panelHeight, null)
@@ -268,7 +267,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
                 }
 
                 val imageText = tooltip.beginImageWithText(exotic.icon, 64f)
-                imageText.addTitle(exotic.name, exotic.color)
+                imageText.addTitle(this.getExoticData(exotic).getNameTranslation().toStringNoFormats(), exotic.color)
                 val title = imageText.prev
                 exotic.modifyToolTip(imageText, title, member, this, expandExotics)
                 tooltip.addImageWithText(3f)

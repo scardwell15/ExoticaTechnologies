@@ -4,12 +4,11 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import org.json.JSONObject;
@@ -42,7 +41,7 @@ public class AlphaSubcore extends HullmodExotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .addToTooltip(tooltip, title);
@@ -58,17 +57,19 @@ public class AlphaSubcore extends HullmodExotic {
 
 
     @Override
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+    public void applyExoticToStats(String id, FleetMemberAPI fm, MutableShipStatsAPI stats, ExoticData data) {
         onInstall(fm);
     }
 
     /**
      * extra bandwidth added directly to ship.
+     *
      * @param fm
-     * @param es
+     * @param mods
+     * @param data
      * @return
      */
-    public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications es) {
+    public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications mods, ExoticData data) {
         return 60f;
     }
 }

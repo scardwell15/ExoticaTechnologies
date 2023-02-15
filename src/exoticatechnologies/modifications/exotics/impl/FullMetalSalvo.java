@@ -10,6 +10,7 @@ import com.fs.starfarer.combat.entities.Missile;
 import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.reflect.FieldWrapperKT;
 import exoticatechnologies.util.reflect.ReflectionUtil;
@@ -52,7 +53,7 @@ public class FullMetalSalvo extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("damageBoost", DAMAGE_BUFF)
@@ -64,7 +65,7 @@ public class FullMetalSalvo extends Exotic {
     }
 
     @Override
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+    public void applyExoticToStats(String id, FleetMemberAPI fm, MutableShipStatsAPI stats, ExoticData data) {
         stats.getBallisticRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_DEBUFF / 100f);
         stats.getEnergyRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_DEBUFF / 100f);
     }
@@ -79,13 +80,13 @@ public class FullMetalSalvo extends Exotic {
     }
 
     @Override
-    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, ExoticData data) {
         SalvoState state = getSalvoState(ship);
         state.advanceAlways(ship);
     }
 
     @Override
-    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, ExoticData data) {
         SalvoState state = getSalvoState(ship);
 
         if (Global.getCombatEngine().isPaused()) {

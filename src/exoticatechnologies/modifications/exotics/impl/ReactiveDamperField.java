@@ -14,6 +14,7 @@ import com.fs.starfarer.api.util.Misc;
 import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -70,7 +71,7 @@ public class ReactiveDamperField extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("damperDuration", DAMPER_DURATION)
@@ -83,18 +84,18 @@ public class ReactiveDamperField extends Exotic {
     }
 
     @Override
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+    public void applyExoticToStats(String id, FleetMemberAPI fm, MutableShipStatsAPI stats, ExoticData data) {
         stats.getArmorDamageTakenMult().modifyPercent(this.getBuffId(), PASSIVE_DAMAGE_TAKEN);
     }
 
     @Override
-    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, ExoticData data) {
         DamperState state = getDamperState(ship);
         state.advanceAlways(ship);
     }
 
     @Override
-    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, ExoticData data) {
         DamperState state = getDamperState(ship);
         state.advance(ship, amount);
     }

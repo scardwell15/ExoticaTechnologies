@@ -1,16 +1,15 @@
 package exoticatechnologies.modifications.exotics.impl;
 
-import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.Getter;
@@ -55,7 +54,7 @@ public class TierIIIDriveSystem extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("cargoToFuelPercent", CARGO_TO_FUEL_PERCENT)
@@ -66,14 +65,14 @@ public class TierIIIDriveSystem extends Exotic {
     }
 
     @Override
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+    public void applyExoticToStats(String id, FleetMemberAPI fm, MutableShipStatsAPI stats, ExoticData data) {
         int addedFuelCap = (int) (fm.getCargoCapacity() * CARGO_TO_FUEL_PERCENT / 100f);
         stats.getCargoMod().modifyMult(this.getBuffId(), 1 - (CARGO_TO_FUEL_PERCENT / 100f));
         stats.getFuelMod().modifyFlat(this.getBuffId(), addedFuelCap);
     }
 
     @Override
-    public void advanceInCampaign(FleetMemberAPI member, ShipModifications mods, Float amount) {
+    public void advanceInCampaign(FleetMemberAPI member, ShipModifications mods, Float amount, ExoticData data) {
         if (member.getFleetData() != null && member.getFleetData().getFleet() != null) {
             checkBuff(member.getFleetData().getFleet());
 

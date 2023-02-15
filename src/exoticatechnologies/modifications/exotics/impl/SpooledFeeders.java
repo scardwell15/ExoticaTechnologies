@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -63,7 +64,7 @@ public class SpooledFeeders extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("firerateBoost", RATE_OF_FIRE_BUFF)
@@ -85,13 +86,13 @@ public class SpooledFeeders extends Exotic {
     }
 
     @Override
-    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, ExoticData data) {
         SpoolState state = getSpoolState(ship);
         state.advanceAlways(ship);
     }
 
     @Override
-    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, ExoticData data) {
         SpoolState state = getSpoolState(ship);
         state.advance(ship, amount);
     }

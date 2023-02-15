@@ -18,6 +18,7 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
     protected boolean ignoreCrate = false;
 
     protected Exotic exotic;
+    protected ExoticData exoticData;
 
     @Override
     public void init(CargoStackAPI stack) {
@@ -32,7 +33,11 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
             for (int i = 0; i < paramsArray.length; i++) {
                 String param = paramsArray[i];
                 param = param.trim();
-                handleParam(i, param);
+                handleParam(i, param, stack);
+            }
+
+            if (paramsArray.length == 1) {
+                this.exoticData = new ExoticData(exotic);
             }
         }
     }
@@ -45,6 +50,11 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
                 exotic = ExoticsHandler.EXOTICS.get("DriveFluxVent");
             }
         }
+
+        if (exoticData == null) {
+            exoticData = new ExoticData(exotic);
+        }
+
         return exotic;
     }
 
@@ -77,18 +87,27 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
         //you know what to do
     }
 
-    private void handleParam(int index, String param) {
+    private void handleParam(int index, String param, CargoStackAPI stack) {
         switch(Param.get(index)) {
             case EXOTIC_ID:
                 exoticId = param;
                 if (ExoticsHandler.EXOTICS.containsKey(exoticId)) {
                     exotic = ExoticsHandler.EXOTICS.get(exoticId);
                 }
-                 break;
+                break;
+            case EXOTIC_TYPE:
+                if (param.equals("true") || param.equals("false")) {
+                    String[] split = stack.getSpecialDataIfSpecial().getData().split(",");
+                    String newData = String.format("%s,NORMAL,%s", split[0], split[1]);
+                    stack.getSpecialDataIfSpecial().setData(newData); //fix saves
+                    this.exoticData = new ExoticData(exotic);
+                } else {
+                    this.exoticData = new ExoticData(exotic, ExoticType.valueOf(param));
+                    break;
+                }
             case IGNORE_CRATE:
                 ignoreCrate = Boolean.parseBoolean(param);
                 break;
-
         }
     }
 
@@ -98,6 +117,7 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
 
     private enum Param {
         EXOTIC_ID,
+        EXOTIC_TYPE,
         IGNORE_CRATE;
 
         private static Param get(int index) {

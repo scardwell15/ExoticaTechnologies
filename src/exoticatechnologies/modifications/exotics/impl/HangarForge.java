@@ -15,6 +15,7 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -68,7 +69,7 @@ public class HangarForge extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("rateDecreaseBuff", RATE_DECREASE_MODIFIER)
@@ -77,12 +78,12 @@ public class HangarForge extends Exotic {
     }
 
     @Override
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+    public void applyExoticToStats(String id, FleetMemberAPI fm, MutableShipStatsAPI stats, ExoticData data) {
         stats.getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).modifyMult(getBuffId(), 1f + RATE_DECREASE_MODIFIER / 100f);
     }
 
     @Override
-    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, ExoticData data) {
         int replacements = getFreeReplacements(ship);
         IntervalUtil replacementInterval = getReplacementInterval(ship);
 
@@ -93,7 +94,7 @@ public class HangarForge extends Exotic {
     }
 
     @Override
-    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, ExoticData data) {
         int replacements = getFreeReplacements(ship);
 
         if (Global.getCombatEngine().isPaused()) {

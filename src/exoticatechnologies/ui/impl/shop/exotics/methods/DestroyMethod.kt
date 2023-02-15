@@ -1,6 +1,5 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
-import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
@@ -25,10 +24,10 @@ open class DestroyMethod : Method {
         if (mods.hasExotic(exotic)) {
             var shipBandwidth: Float = mods.getBandwidthWithExotics(member)
             var extraBandwidth: Float = 0f
-            if (exotic.getExtraBandwidth(member, mods) > 0f) {
-                extraBandwidth = exotic.getExtraBandwidth(member, mods)
-            } else if (exotic.getExtraBandwidthPurchaseable(member, mods) > 0f) {
-                extraBandwidth = exotic.getExtraBandwidthPurchaseable(member, mods)
+            if (exotic.getExtraBandwidth(member, mods, mods.getExoticData(exotic)) > 0f) {
+                extraBandwidth = exotic.getExtraBandwidth(member, mods, mods.getExoticData(exotic))
+            } else if (exotic.getExtraBandwidthPurchaseable(member, mods, mods.getExoticData(exotic)) > 0f) {
+                extraBandwidth = exotic.getExtraBandwidthPurchaseable(member, mods, mods.getExoticData(exotic))
 
             }
 
@@ -60,9 +59,13 @@ open class DestroyMethod : Method {
         hovered: Boolean
     ): Map<String, Float>? {
         if (hovered) {
-            if (exotic.getExtraBandwidth(member, mods) > 0) {
+            if (exotic.getExtraBandwidth(member, mods, mods.getExoticData(exotic)) > 0) {
                 val resourceCosts: MutableMap<String, Float> = mutableMapOf()
-                resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = -exotic.getExtraBandwidth(member, mods)
+                resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = -exotic.getExtraBandwidth(
+                    member,
+                    mods,
+                    mods.getExoticData(exotic)
+                )
                 return resourceCosts
             }
         }

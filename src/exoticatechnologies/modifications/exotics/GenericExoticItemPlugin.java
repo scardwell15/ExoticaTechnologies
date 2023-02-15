@@ -8,7 +8,7 @@ import lombok.extern.log4j.Log4j;
 public class GenericExoticItemPlugin extends ExoticSpecialItemPlugin {
     @Override
     public String getName() {
-        return String.format("%s - %s", super.getName(), getExotic().getName());
+        return String.format("%s - %s", super.getName(), exoticData.getNameTranslation().toStringNoFormats());
     }
 
     @Override

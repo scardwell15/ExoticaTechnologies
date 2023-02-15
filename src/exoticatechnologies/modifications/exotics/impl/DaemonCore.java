@@ -6,19 +6,16 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
-import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
-import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -57,7 +54,7 @@ public class DaemonCore extends HullmodExotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .addToTooltip(tooltip, title);
@@ -73,12 +70,12 @@ public class DaemonCore extends HullmodExotic {
 
 
     @Override
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+    public void applyExoticToStats(String id, FleetMemberAPI fm, MutableShipStatsAPI stats, ExoticData data) {
         onInstall(fm);
     }
 
     @Override
-    public void applyExoticToShip(FleetMemberAPI fm, ShipAPI ship, float bandwidth, String id) {
+    public void applyExoticToShip(String id, FleetMemberAPI fm, ShipAPI ship, ExoticData data) {
         if (!ship.hasListenerOfClass(DaemonCoreDamageTakenListener.class)) {
             ship.addListener(new DaemonCoreDamageTakenListener());
         }
@@ -90,11 +87,13 @@ public class DaemonCore extends HullmodExotic {
 
     /**
      * extra bandwidth added directly to ship.
+     *
      * @param fm
-     * @param es
+     * @param mods
+     * @param data
      * @return
      */
-    public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications es) {
+    public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications mods, ExoticData data) {
         return 60f;
     }
 

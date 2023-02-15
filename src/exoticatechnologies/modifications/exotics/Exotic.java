@@ -102,10 +102,11 @@ public abstract class Exotic extends Modification {
      * extra bandwidth allowed to be installed.
      *
      * @param fm
-     * @param es
+     * @param mods
+     * @param data
      * @return
      */
-    public float getExtraBandwidthPurchaseable(FleetMemberAPI fm, ShipModifications es) {
+    public float getExtraBandwidthPurchaseable(FleetMemberAPI fm, ShipModifications mods, ExoticData data) {
         return 0f;
     }
 
@@ -113,30 +114,31 @@ public abstract class Exotic extends Modification {
      * extra bandwidth added directly to ship.
      *
      * @param fm
-     * @param es
+     * @param mods
+     * @param data
      * @return
      */
-    public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications es) {
+    public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications mods, ExoticData data) {
         return 0f;
     }
 
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+    public void applyExoticToStats(String id, FleetMemberAPI fm, MutableShipStatsAPI stats, ExoticData data) {
 
     }
 
-    public void applyExoticToShip(FleetMemberAPI fm, ShipAPI ship, float bandwidth, String id) {
+    public void applyExoticToShip(String id, FleetMemberAPI fm, ShipAPI ship, ExoticData data) {
 
     }
 
-    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, ExoticData data) {
 
     }
 
-    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, ExoticData data) {
 
     }
 
-    public void advanceInCampaign(FleetMemberAPI member, ShipModifications mods, Float amount) {
+    public void advanceInCampaign(FleetMemberAPI member, ShipModifications mods, Float amount, ExoticData data) {
 
     }
 
@@ -152,5 +154,5 @@ public abstract class Exotic extends Modification {
         return new SpecialItemData(Exotic.ITEM, this.getKey());
     }
 
-    public abstract void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand);
+    public abstract void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand);
 }

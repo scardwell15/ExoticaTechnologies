@@ -13,6 +13,7 @@ import com.fs.starfarer.api.util.Misc;
 import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -67,7 +68,7 @@ public class PhasefieldEngine extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("phaseCostReduction", String.valueOf(1 - Math.abs(PHASE_COST_PERCENT_REDUCTION / 100f)))
@@ -79,7 +80,7 @@ public class PhasefieldEngine extends Exotic {
     }
 
     @Override
-    public void applyExoticToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
+    public void applyExoticToStats(String id, FleetMemberAPI fm, MutableShipStatsAPI stats, ExoticData data) {
         if (fm.getHullSpec().getShieldSpec().getPhaseCost() == 0) {
             stats.getPhaseCloakActivationCostBonus().modifyFlat(getBuffId() + "base", PHASE_COST_IF_ZERO / 100f);
         } else if (fm.getHullSpec().getShieldSpec().getPhaseCost() < 0) {
@@ -89,7 +90,7 @@ public class PhasefieldEngine extends Exotic {
     }
 
     @Override
-    public void applyExoticToShip(FleetMemberAPI fm, ShipAPI ship, float bandwidth, String id) {
+    public void applyExoticToShip(String id, FleetMemberAPI fm, ShipAPI ship, ExoticData data) {
         ship.getMutableStats().getPhaseCloakActivationCostBonus().unmodify("phase_anchor");
     }
 
@@ -126,7 +127,7 @@ public class PhasefieldEngine extends Exotic {
     }
 
     @Override
-    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, ExoticData data) {
         if (ship.getPhaseCloak() == null) {
             return;
         }
@@ -136,7 +137,7 @@ public class PhasefieldEngine extends Exotic {
     }
 
     @Override
-    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, ExoticData data) {
         if (ship.getPhaseCloak() == null) {
             return;
         }

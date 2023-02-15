@@ -12,6 +12,7 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import data.scripts.util.MagicUI;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.RenderUtils;
 import exoticatechnologies.util.StringUtils;
 import exoticatechnologies.util.Utilities;
@@ -63,7 +64,7 @@ public class HangarForgeMissiles extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "longDescription")
                     .format("reloadSize", PERCENT_RELOADED)
@@ -91,7 +92,7 @@ public class HangarForgeMissiles extends Exotic {
     }
 
     @Override
-    public void advanceInCombatAlways(ShipAPI ship, float bandwidth) {
+    public void advanceInCombatAlways(ShipAPI ship, ExoticData data) {
         IntervalUtil reloadInterval = getReloadInterval(ship);
 
         if (reloadInterval != null) {
@@ -101,7 +102,7 @@ public class HangarForgeMissiles extends Exotic {
     }
 
     @Override
-    public void advanceInCombatUnpaused(ShipAPI ship, float amount, float bandwidth) {
+    public void advanceInCombatUnpaused(ShipAPI ship, float amount, ExoticData data) {
         IntervalUtil reloadInterval = getReloadInterval(ship);
 
         if (reloadInterval == null) {

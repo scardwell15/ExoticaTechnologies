@@ -8,6 +8,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 import org.json.JSONObject;
@@ -58,7 +59,7 @@ public class SubsumedGammaCore extends Exotic {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications systems, boolean expand) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, UIComponentAPI title, FleetMemberAPI fm, ShipModifications mods, boolean expand) {
         if (expand) {
             StringUtils.getTranslation(this.getKey(), "description")
                     .addToTooltip(tooltip, title);
@@ -74,10 +75,11 @@ public class SubsumedGammaCore extends Exotic {
      * extra bandwidth added directly to ship.
      *
      * @param fm
-     * @param es
+     * @param mods
+     * @param data
      * @return
      */
-    public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications es) {
+    public float getExtraBandwidth(FleetMemberAPI fm, ShipModifications mods, ExoticData data) {
         return 15f;
     }
 }

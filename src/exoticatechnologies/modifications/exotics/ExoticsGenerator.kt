@@ -28,7 +28,7 @@ object ExoticsGenerator {
         if (rolledChance < exoticChance) {
             val perExoticMult = 1 + smodCount * 0.5f
 
-            //todo: find out why i put a weighted picker in here.
+
             val exoticPicker = getPicker(random, allowedExotics)
             while (!exoticPicker.isEmpty) {
                 val exotic = exoticPicker.pick(random)!!

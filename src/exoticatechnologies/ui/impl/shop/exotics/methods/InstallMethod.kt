@@ -1,6 +1,5 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
-import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
@@ -67,8 +66,12 @@ class InstallMethod : Method {
                 resourceCosts = exotic.getResourceCostMap(member, mods, market)
             }
 
-            if (exotic.getExtraBandwidth(member, mods) > 0) {
-                resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = exotic.getExtraBandwidth(member, mods)
+            if (exotic.getExtraBandwidth(member, mods, mods.getExoticData(exotic)) > 0) {
+                resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = exotic.getExtraBandwidth(
+                    member,
+                    mods,
+                    mods.getExoticData(exotic)
+                )
             }
 
             return resourceCosts

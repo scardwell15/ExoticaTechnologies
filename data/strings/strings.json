@@ -305,6 +305,10 @@
 	"HelDrives": {
 		"description": "An engine upgrade package as often found on Daemon-type ships, utilising seemingly long lost Domain-era plasma injectors to supercharge a ship's drive system. While vastly improving any ship's agility in all regards, the induced stress exceeds the design limits of standard drive units, rendering them more susceptible to damage."
 	},
+	"ExoticTypes": {
+		"NORMAL": "${exoticName}",
+		"CORRUPTED": "Corrupted ${exoticName}"
+	},
 	"ModEffects": {
 		"FighterStatName": "Fighter ${stat}",
 		"StatBenefit": "${stat}: *${percent}*",

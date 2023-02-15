@@ -34,7 +34,7 @@ public class DaemonCore extends HullmodExotic {
     public boolean shouldShow(FleetMemberAPI member, ShipModifications mods, MarketAPI market) {
         return canAfford(member.getFleetData().getFleet(), market)
                 || Utilities.hasExoticChip(member.getFleetData().getFleet().getCargo(), this.getKey())
-                || Utilities.hasExoticChip(Misc.getStorageCargo(market), this.getKey());
+                || (Misc.getStorageCargo(market) != null && Utilities.hasExoticChip(Misc.getStorageCargo(market), this.getKey()));
     }
 
     @Override

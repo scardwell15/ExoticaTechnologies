@@ -28,6 +28,7 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
         if (passedParams == null) {
             passedParams = spec.getParams();
         }
+
         if (!passedParams.isEmpty()) {
             String[] paramsArray = passedParams.split(",");
             for (int i = 0; i < paramsArray.length; i++) {
@@ -37,7 +38,7 @@ public class ExoticSpecialItemPlugin extends BaseSpecialItemPlugin {
             }
 
             if (paramsArray.length == 1) {
-                this.exoticData = new ExoticData(exotic);
+                this.exoticData = new ExoticData(paramsArray[0]);
             }
         }
     }

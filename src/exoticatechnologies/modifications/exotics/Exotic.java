@@ -150,6 +150,10 @@ public abstract class Exotic extends Modification {
         return 0.2f * chanceMult;
     }
 
+    public SpecialItemData getNewSpecialItemData(ExoticType exoticType) {
+        return new SpecialItemData(Exotic.ITEM, String.format("%s,%s", this.getKey(), exoticType.name()));
+    }
+
     public SpecialItemData getNewSpecialItemData() {
         return new SpecialItemData(Exotic.ITEM, this.getKey());
     }

@@ -24,6 +24,10 @@ public class ETExotics {
         return new ArrayList<>(exoticData.keySet());
     }
 
+    public Map<String, ExoticData> getDatas() {
+        return exoticData;
+    }
+
     public ExoticData getData(Exotic exotic) {
         return exoticData.get(exotic.getKey());
     }

@@ -112,10 +112,18 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
     }
 
     //exotics
-    fun getExoticSet(): Set<Exotic> {
+    fun getExoticSet(): Set<ExoticData> {
+        val exoticSet: MutableSet<ExoticData> = HashSet()
+        for (exotic in exotics.datas) {
+            exoticSet.add(exotic.value)
+        }
+        return exoticSet
+    }
+
+    fun getExoticIdSet(): Set<Exotic> {
         val exoticSet: MutableSet<Exotic> = HashSet()
-        for (exotic in exotics.list) {
-            exoticSet.add(Exotic.get(exotic))
+        for (exotic in exotics.datas) {
+            exoticSet.add(exotic.value.exotic)
         }
         return exoticSet
     }
@@ -266,7 +274,10 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
                     )
                 }
 
+                val exoticData = this.getExoticData(exotic)
                 val imageText = tooltip.beginImageWithText(exotic.icon, 64f)
+                exoticData.addExoticOverlayOverPrev(tooltip)
+
                 imageText.addTitle(this.getExoticData(exotic).getNameTranslation().toStringNoFormats(), exotic.color)
                 val title = imageText.prev
                 exotic.modifyToolTip(imageText, title, member, this, expandExotics)

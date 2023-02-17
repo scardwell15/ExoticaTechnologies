@@ -18,6 +18,7 @@ abstract class Modification(val key: String, val settings: JSONObject) {
     var name: String = settings.getString("name")
     var tag: String? = settings.optString("tag")
     open var color: Color = Color.white
+    open var description: String = ""
     protected abstract val icon: String
     val conditions: MutableList<Condition> = mutableListOf()
 

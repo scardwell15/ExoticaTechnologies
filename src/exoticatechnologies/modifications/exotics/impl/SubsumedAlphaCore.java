@@ -26,7 +26,7 @@ public class SubsumedAlphaCore extends Exotic {
 
     @Override
     public String getTextDescription() {
-        return this.getDescription();
+        return this.getLoreDescription();
     }
 
     @Override

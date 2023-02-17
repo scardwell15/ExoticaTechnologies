@@ -19,7 +19,14 @@
       "remnant",
       "derelict",
       "ironshell",
-      "tahlan_legioinfernalis"
+      "tahlan_legioinfernalis",
+      "hegemony",
+      "luddic_church",
+      "luddic_path",
+      "persean_league",
+      "pirates",
+      "sindrian_diktat",
+      "tritachyon"
     ],
 
     # takes the manufacturer of the ship instead, but otherwise acts the same as above.

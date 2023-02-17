@@ -26,7 +26,7 @@ public class SubsumedBetaCore extends Exotic {
 
     @Override
     public String getTextDescription() {
-        return this.getDescription();
+        return this.getLoreDescription();
     }
 
     @Override

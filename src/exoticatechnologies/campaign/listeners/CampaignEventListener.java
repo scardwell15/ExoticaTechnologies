@@ -27,6 +27,7 @@ import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.FleetMemberUtils;
 import exoticatechnologies.util.Utilities;
@@ -264,7 +265,8 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     }
                 }
 
-                for (Exotic exotic : mods.getExoticSet()) {
+                for (ExoticData exoticData : mods.getExoticSet()) {
+                    Exotic exotic = exoticData.getExotic();
                     if (!exotic.canDropFromFleets()) {
                         continue;
                     }

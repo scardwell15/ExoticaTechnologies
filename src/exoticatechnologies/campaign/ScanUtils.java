@@ -14,15 +14,14 @@ import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
+import exoticatechnologies.modifications.exotics.ExoticType;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.ui.java.TabbedCustomUIPanelPlugin;
 import exoticatechnologies.util.StringUtils;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.log4j.Log4j;
 
 import java.awt.*;
@@ -298,14 +297,16 @@ public class ScanUtils {
     }
 
     @RequiredArgsConstructor
+    @AllArgsConstructor
     protected static class ExoticTooltip extends BaseTooltipCreator {
         @Getter
         private final Exotic exotic;
         private final TooltipMakerAPI tooltip;
+        private ExoticType exoticType = ExoticType.NORMAL;
 
         @Override
         public float getTooltipWidth(Object tooltipParam) {
-            return Math.min(tooltip.computeStringWidth(exotic.getDescription()), 300f);
+            return Math.min(tooltip.computeStringWidth(exotic.getLoreDescription()), 300f);
         }
 
         @Override
@@ -419,10 +420,12 @@ public class ScanUtils {
         protected CustomPanelAPI createExoticsPanel(float panelWidth, float panelHeight) {
             TooltipMakerAPI lastImg = null;
             CustomPanelAPI iconPanel = myPanel.createCustomPanel(panelWidth, panelHeight, null);
-            for (Exotic exotic : mods.getExoticSet()) {
+            for (ExoticData exoticData : mods.getExoticSet()) {
+                Exotic exotic = exoticData.getExotic();
+
                 TooltipMakerAPI exoIcon = iconPanel.createUIElement(64, 64, false);
-                exoIcon.addImage(exotic.getIcon(), 64, 0);
-                exoIcon.addTooltipToPrevious(new ExoticTooltip(exotic, myTooltip),
+                exoticData.addExoticIcon(exoIcon);
+                exoIcon.addTooltipToPrevious(new ExoticTooltip(exotic, myTooltip, exoticData.getType()),
                         TooltipMakerAPI.TooltipLocation.BELOW);
 
                 if (lastImg == null) {

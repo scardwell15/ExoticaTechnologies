@@ -50,8 +50,8 @@ public class ExoticsHandler {
                             .invoke(exoticKey, exoticSettings);
 
                     if (exotic.shouldLoad()) {
-                        exotic.setDescription(StringUtils.getString(exoticKey, "description"));
-                        exotic.setTooltip(StringUtils.getString(exoticKey, "tooltip"));
+                        exotic.setLoreDescription(StringUtils.getString(exoticKey, "description"));
+                        exotic.setDescription(StringUtils.getString(exoticKey, "tooltip"));
                     } else {
                         exotic = null;
                     }
@@ -64,8 +64,8 @@ public class ExoticsHandler {
 
                     exotic = new HullmodExotic(exoticKey, exoticSettings, hullmodId, exoticStatDescriptionStringKey, mainColor);
 
-                    exotic.setDescription(StringUtils.getString(exoticKey, "description"));
-                    exotic.setTooltip(StringUtils.getString(exoticKey, "tooltip"));
+                    exotic.setLoreDescription(StringUtils.getString(exoticKey, "description"));
+                    exotic.setDescription(StringUtils.getString(exoticKey, "tooltip"));
                 }
 
                 if (exotic != null) {

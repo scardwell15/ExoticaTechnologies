@@ -1,23 +1,21 @@
-package exoticatechnologies.ui.impl.shop.upgrades.methods;
+package exoticatechnologies.ui.impl.shop.upgrades.methods
 
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exoticatechnologies.modifications.upgrades.Upgrade;
-import exoticatechnologies.modifications.ShipModifications;
-
-import java.util.Map;
+import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.fleet.FleetMemberAPI
+import exoticatechnologies.modifications.ShipModifications
+import exoticatechnologies.modifications.upgrades.Upgrade
 
 /**
  * An UpgradeMethod represents a way for an upgrade to be attained through the upgrade dialog.
  */
-public interface UpgradeMethod {
-    String getKey();
+interface UpgradeMethod {
+    val key: String
 
     /**
      * The option text
      * @return the option text
      */
-    String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market);
+    fun getOptionText(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): String
 
     /**
      * The option tooltip
@@ -27,7 +25,7 @@ public interface UpgradeMethod {
      * @param upgrade
      * @return the option tooltip
      */
-    String getOptionTooltip(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market);
+    fun getOptionTooltip(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): String?
 
     /**
      * Whether this upgrade method can be used.
@@ -36,7 +34,7 @@ public interface UpgradeMethod {
      * @param market market
      * @return whether the upgrade method can be used
      */
-    boolean canUse(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market);
+    fun canUse(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean
 
     /**
      * Whether to show this upgrade method.
@@ -45,7 +43,7 @@ public interface UpgradeMethod {
      * @param market market
      * @return whether the upgrade method can be shown
      */
-    boolean canShow(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market);
+    fun canShow(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean
 
     /**
      * Applies the upgrade to the ship. This should also take the price away from the player.
@@ -55,24 +53,30 @@ public interface UpgradeMethod {
      * @param market market
      * @return string to display briefly
      */
-    String apply(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market);
+    fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): String
 
     /**
      * Get cost of resources.
      */
-    Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered);
+    fun getResourceCostMap(
+        fm: FleetMemberAPI,
+        mods: ShipModifications,
+        upgrade: Upgrade,
+        market: MarketAPI,
+        hovered: Boolean
+    ): Map<String, Float>
 
     /**
      * Whether the upgrade method will increase bandwidth usage. If true, and a selected upgrade's bandwidth usage
      * would exceed a ship's bandwidth, it will be disabled.
      * @return whether it cares
      */
-    boolean usesBandwidth();
+    fun usesBandwidth(): Boolean
 
     /**
      * Whether the upgrade method will increase upgrade level. If true, and a selected upgrade PLUS ONE would exceed
      * an upgrade's max level for that ship, it will be disabled.
      * @return whether it cares
      */
-    boolean usesLevel();
+    fun usesLevel(): Boolean
 }

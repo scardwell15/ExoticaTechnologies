@@ -7,14 +7,13 @@ import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exoticatechnologies.modifications.ModSpecialItemPlugin;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
 
-public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
-
-    @Getter public String upgradeId;
+public class UpgradeSpecialItemPlugin extends ModSpecialItemPlugin {
     @Getter public int upgradeLevel = 0;
     @Getter @Setter protected boolean ignoreCrate = false;
     protected Upgrade upgrade;
@@ -25,40 +24,13 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
     }
 
     @Override
-    public void render(float x, float y, float w, float h, float alphaMult, float glowMult, SpecialItemRendererAPI renderer) {
-        //you know what to do
-        Upgrade upgrade = this.getUpgrade();
-
-        SpriteAPI upgradeSprite = Global.getSettings().getSprite("upgrades", upgrade.getKey());
-
-        float tX = -0.045f;
-        float tY = -0.0f;
-        float tW = upgradeSprite.getWidth() * 0.54f;
-        float tH = upgradeSprite.getHeight() * 0.54f;
-
-        float mult = 1f;
-        upgradeSprite.setAlphaMult(alphaMult * mult);
-        upgradeSprite.setNormalBlend();
-        upgradeSprite.renderRegionAtCenter(x + (1 + tX) * w / 2, y + (1 + tY) * h/2, 0.22f, 0.21f, 0.565f, 0.56f);
+    public ModType getType() {
+        return ModType.UPGRADE;
     }
 
     @Override
-    public void init(CargoStackAPI stack) {
-        super.init(stack);
-
-        String passedParams = stack.getSpecialDataIfSpecial().getData();
-        if (passedParams == null) {
-            passedParams = spec.getParams();
-        }
-
-        if (!passedParams.isEmpty()) {
-            String[] paramsArray = passedParams.split(",");
-            for (int i = 0; i < paramsArray.length; i++) {
-                String param = paramsArray[i];
-                param = param.trim();
-                handleParam(i, param);
-            }
-        }
+    public SpriteAPI getSprite() {
+        return Global.getSettings().getSprite("upgrades", upgrade.getKey());
     }
 
     public CargoStackAPI getStack() {
@@ -67,7 +39,7 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
 
     public final Upgrade getUpgrade() {
         if (upgrade == null) {
-            upgrade = UpgradesHandler.UPGRADES.get(upgradeId);
+            upgrade = UpgradesHandler.UPGRADES.get(modId);
 
             if (upgrade == null) {
                 upgrade = UpgradesHandler.UPGRADES.get("WeldedArmor");
@@ -96,12 +68,13 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
         }
     }
 
-    private void handleParam(int index, String param) {
+    @Override
+    protected void handleParam(int index, String param, CargoStackAPI stack) {
         switch(Param.get(index)) {
             case UPGRADE_ID:
-                upgradeId = param;
-                if (UpgradesHandler.UPGRADES.containsKey(upgradeId)) {
-                    upgrade = UpgradesHandler.UPGRADES.get(upgradeId);
+                modId = param;
+                if (UpgradesHandler.UPGRADES.containsKey(modId)) {
+                    upgrade = UpgradesHandler.UPGRADES.get(modId);
                 }
                 break;
             case UPGRADE_LEVEL:
@@ -111,10 +84,6 @@ public class UpgradeSpecialItemPlugin extends BaseSpecialItemPlugin {
                 ignoreCrate = Boolean.parseBoolean(param);
                 break;
         }
-    }
-
-    public boolean shouldRemoveOnRightClickAction() {
-        return false;
     }
 
     private enum Param {

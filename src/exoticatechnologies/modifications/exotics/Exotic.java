@@ -24,10 +24,7 @@ public abstract class Exotic extends Modification {
     public static final String ITEM = "et_exotic";
     @Getter
     @Setter
-    protected String description;
-    @Getter
-    @Setter
-    protected String tooltip;
+    protected String loreDescription;
 
     public Exotic(String key, JSONObject settings) {
         super(key, settings);
@@ -40,7 +37,7 @@ public abstract class Exotic extends Modification {
     public abstract Color getColor();
 
     public String getTextDescription() {
-        return getDescription() + "\n\n" + getTooltip();
+        return getLoreDescription() + "\n\n" + getDescription();
     }
 
     public String getIcon() {

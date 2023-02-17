@@ -11,7 +11,8 @@ import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
-import exoticatechnologies.ui.impl.shop.upgrades.chips.ChipPanelUIPlugin
+import exoticatechnologies.ui.impl.shop.chips.ChipPanelUIPlugin
+import exoticatechnologies.ui.impl.shop.upgrades.chips.UpgradeChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.util.RenderUtils
@@ -28,7 +29,7 @@ class UpgradePanelUIPlugin(
     private var descriptionPlugin: UpgradeDescriptionUIPlugin? = null
     private var resourcesPlugin: UpgradeResourcesUIPlugin? = null
     private var methodsPlugin: UpgradeMethodsUIPlugin? = null
-    private var chipsPlugin: ChipPanelUIPlugin? = null
+    private var chipsPlugin: UpgradeChipPanelUIPlugin? = null
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -90,7 +91,7 @@ class UpgradePanelUIPlugin(
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
-        chipsPlugin = ChipPanelUIPlugin(mainPanel!!, upgrade, member, market)
+        chipsPlugin = UpgradeChipPanelUIPlugin(mainPanel!!, upgrade, member, market)
         chipsPlugin!!.panelWidth = panelWidth / 2 - 6f
         chipsPlugin!!.panelHeight = panelHeight - 6f
         chipsPlugin!!.layoutPanels().position.inTR(9f, 3f)
@@ -130,7 +131,7 @@ class UpgradePanelUIPlugin(
         }
     }
 
-    private class ChipPanelListener(val mainPlugin: UpgradePanelUIPlugin): ChipPanelUIPlugin.Listener() {
+    private class ChipPanelListener(val mainPlugin: UpgradePanelUIPlugin): ChipPanelUIPlugin.Listener<UpgradeSpecialItemPlugin>() {
         override fun checkedBackButton() {
             mainPlugin.clickedChipPanelBackButton()
         }

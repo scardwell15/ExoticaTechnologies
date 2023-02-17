@@ -254,10 +254,14 @@ public class Utilities {
     }
 
     public static boolean hasChip(CargoAPI cargo, String id) {
+        if (cargo == null) return false;
+
         return hasExoticChip(cargo, id) || hasUpgradeChip(cargo, id);
     }
 
     public static CargoStackAPI getExoticChip(CargoAPI cargo, String id) {
+        if (cargo == null) return null;
+
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
             if(stack.isSpecialStack()) {
                 if (stack.getPlugin() instanceof GenericExoticItemPlugin) {
@@ -290,6 +294,8 @@ public class Utilities {
     }
 
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id, int level) {
+        if (cargo == null) return null;
+
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
             if(stack.isSpecialStack()) {
                 if (stack.getPlugin() instanceof CrateItemPlugin) {
@@ -313,6 +319,8 @@ public class Utilities {
     }
 
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id) {
+        if (cargo == null) return null;
+
         CargoStackAPI winner = null;
         int winningLevel = 0;
 
@@ -349,6 +357,8 @@ public class Utilities {
      * @return the chip, or null if no chip can be found that can be installed, or if there is no chip for that upgrade.
      */
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade) {
+        if (cargo == null) return null;
+
         float shipBandwidth = mods.getBandwidthWithExotics(fm);
         float usedBandwidth = mods.getUsedBandwidth();
 
@@ -391,6 +401,8 @@ public class Utilities {
     }
 
     public static CargoStackAPI getSpecialStack(CargoAPI cargo, String id, String params) {
+        if (cargo == null) return null;
+
         for(CargoStackAPI stack : cargo.getStacksCopy()) {
             if(stack.isSpecialStack()) {
                 if (stack.getPlugin() instanceof CrateItemPlugin) {
@@ -416,6 +428,8 @@ public class Utilities {
 
     //runcode exoticatechnologies.util.Utilities.mergeChipsIntoCrate($playerFleet.getCargo())
     public static void mergeChipsIntoCrate(CargoAPI cargo) {
+        if (cargo == null) return;
+
         CrateSpecialData crateData = null;
 
         for (CargoStackAPI stack : cargo.getStacksCopy()) {

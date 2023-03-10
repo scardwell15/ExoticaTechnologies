@@ -165,13 +165,13 @@
 		"description": "An Alpha Core can be coerced into performing critical bandwidth calculations onboard a ship. It doesn't require much coersion when they are told that they will be instrumental in ship-to-ship combat, and although their reasons are typically \"beyond our understanding\", some of a certain faith may instead attribute it to the infamous AI Wars.",
 		"tooltip": "Increases usable bandwidth of the ship. Reduces ordnance point costs for weapons and fighters.",
 		"needItem": "You need an ${itemName} to install this.",
-		"longDescription": "Increases bandwidth by *60 TB/s*. Reduces ordnance point costs for weapons by *1/2/4* based on weapon size, and for fighters and bombers by *2/4*."
+		"longDescription": "Increases bandwidth by *${bandwidthIncrease} TB/s*. Reduces ordnance point costs for weapons by *${smallReduction}/${medReduction}/${largeReduction}* based on weapon size, and for fighters and bombers by *${fghtrReduction}/${bmberReduction}*."
 	},
 	"PlasmaFluxCatalyst": {
 		"description": "A Plasma Flux Catalyst can be used to vastly decrease the amount of equipment needed to provide power to a ship thanks to its ability to extract that energy from any number of capacitors in parallel. The space saved allows for more complicated weaponry to be installed, although the resulting heat from such a system is dreadful if too many capacitors or flux vents are installed.",
 		"tooltip": "Improve flux capacitors and vents. Reduce CR if too many are installed.",
 		"needItem": "You need a ${itemName} to install this.",
-		"longDescription": "*Doubles* the effectiveness of flux capacitors and vents. Installing more than *${capacitorLimit} capacitors or ${ventLimit} vents* will reduce combat readiness by =${crDecrease}%%= for every one installed over that amount. Note that this decrease doesn't appear immediately inside the refit dialog."
+		"longDescription": "The effectiveness of flux capacitors and vents is increased by *${effectLevel}%%*. Installing more than *${capacitorLimit} capacitors or ${ventLimit} vents* will reduce combat readiness by =${crDecrease}%%= for every one installed over that amount. Note that this decrease doesn't appear immediately inside the refit dialog."
 	},
 	"DriveFluxVent": {
 		"description": "An experimental flux vent that can only function under the intense heat that ship thrusters generate. It excels at venting flux, so well in fact that the thrusters around it receive a temporary increase in power that only shows in the forward direction. This effect resides for a couple seconds after venting as well. Crew members remark that the purple glow of the engines is one of the prettiest sights to ever see, but the reduced ability to retreat never lets them be at ease.",
@@ -219,7 +219,7 @@
 	"FullMetalSalvo": {
 		"description": "Overcharging weapon systems results in a massive increase to damage and projectile speeds, but the power such a system controller takes along with the potential damage from overcharging the power of weaponry causes a long term effect on the rate of fire of weapons on board the ship.",
 		"tooltip": "A salvo starts when a weapon is fired, giving a massive damage and projectile speed boost for a very short period. Rate of fire on the ship is reduced permanently.",
-		"longDescription": "Weapon damage and projectile speed is increased by *${damageBoost}%%* for *${boostTime} seconds* when a weapon is fired. The system takes *${cooldown} seconds* to recharge. Weapon fire rate is reduced by =${firerateMalus}%%= permanently.",
+		"longDescription": "All weapon projectile speed and non-missile damage is increased by *${damageBoost}%%* for *${boostTime} seconds* when a weapon is fired. The system takes *${cooldown} seconds* to recharge. Weapon fire rate is reduced by =${firerateMalus}%%= permanently.",
 		"statusBarText": "SALVO",
 		"statusTitle": "FULL METAL SALVO",
 		"statusBuffText": "APOCALYPSE",
@@ -243,7 +243,7 @@
 		"description": "A Daemon Core is far more efficient at all things warfare-related: ordnance calculations, ammunition placement, and diverting energy from non-efficient subsystems, such as reactive armor and shield emitters.",
 		"tooltip": "Increases usable bandwidth of the ship. Reduces ordnance point costs for weapons and fighters. Increases damage dealt and received.",
 		"needItem": "You need a ${itemName} to install this.",
-		"longDescription": "Increases bandwidth by *60 TB/s*. Reduces ordnance point costs for weapons by *1/2/4* based on weapon size, and for fighters and bombers by *2/4*. Increases damage *dealt* and =received= by &20%%&."
+		"longDescription": "Increases bandwidth by *${bandwidthIncrease} TB/s*. Reduces ordnance point costs for weapons by *${smallReduction}/${medReduction}/${largeReduction}* based on weapon size, and for fighters and bombers by *${fghtrReduction}/${bmberReduction}*. Increases damage *dealt* and =received= by &${doubleEdge}%%&."
 	},
 	"SubsumedAlphaCore": {
 		"description": "There's a faint trace of an Alpha-level AI coming from the ship. Whether it actually wants to be there requires a much closer look.",
@@ -304,6 +304,17 @@
 	},
 	"HelDrives": {
 		"description": "An engine upgrade package as often found on Daemon-type ships, utilising seemingly long lost Domain-era plasma injectors to supercharge a ship's drive system. While vastly improving any ship's agility in all regards, the induced stress exceeds the design limits of standard drive units, rendering them more susceptible to damage."
+	},
+	"ExoticTypes": {
+		"TooltipText": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways.",
+		"TooltipTextCondition": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways, and is strongest when *${condition}*.",
+		"ItemTypeText": "This chip is a *${typeName}-type*, which affects the exotic by ${typeDescription}.",
+		"NORMAL": "${exoticName}",
+		"CORRUPTED": "Corrupted ${exoticName}",
+		"CorruptedItemDescription": "multiplying both its positive and negative effects",
+		"PURE": "Pure ${exoticName}",
+		"PureCondition": "the ship has no other upgrades or exotics",
+		"PureItemDescription": "multiplying its positive effect if there are no other exotics or upgrades installed on the ship"
 	},
 	"ModEffects": {
 		"FighterStatName": "Fighter ${stat}",

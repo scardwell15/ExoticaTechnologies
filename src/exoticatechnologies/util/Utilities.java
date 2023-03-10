@@ -266,7 +266,7 @@ public class Utilities {
             if(stack.isSpecialStack()) {
                 if (stack.getPlugin() instanceof GenericExoticItemPlugin) {
                     GenericExoticItemPlugin exoticPlugin = (GenericExoticItemPlugin) stack.getPlugin();
-                    if (exoticPlugin.getExoticId().equals(id)) {
+                    if (exoticPlugin.getModId().equals(id)) {
                         return stack;
                     }
                 } else if (stack.getPlugin() instanceof CrateItemPlugin) {
@@ -308,7 +308,7 @@ public class Utilities {
 
                 if (stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
                     UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
-                    if (id.equals(upgradeItem.getUpgradeId()) && upgradeItem.getUpgradeLevel() == level) {
+                    if (id.equals(upgradeItem.getModId()) && upgradeItem.getUpgradeLevel() == level) {
                         return stack;
                     }
                 }
@@ -336,7 +336,7 @@ public class Utilities {
 
                 if (stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
                     UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
-                    if (id.equals(upgradeItem.getUpgradeId()) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
+                    if (id.equals(upgradeItem.getModId()) && (winner == null || upgradeItem.getUpgradeLevel() > winningLevel)) {
                         winningLevel = upgradeItem.getUpgradeLevel();
                         winner = stack;
                     }
@@ -379,7 +379,7 @@ public class Utilities {
                 if(stack.getPlugin() instanceof UpgradeSpecialItemPlugin) {
                     UpgradeSpecialItemPlugin upgradeItem = (UpgradeSpecialItemPlugin) stack.getPlugin();
 
-                    if (id.equals(upgradeItem.getUpgradeId())) {
+                    if (id.equals(upgradeItem.getModId())) {
                         int level = upgradeItem.getUpgradeLevel();
                         if (level > mods.getUpgrade(upgrade)) {
                             float upgradeBandwidth = (level - mods.getUpgrade(upgrade)) * upgrade.getBandwidthUsage();
@@ -460,8 +460,8 @@ public class Utilities {
                 String specialId = stack.getSpecialDataIfSpecial().getId();
                 if (specialId.equals("et_upgrade") || specialId.equals("et_exotic")) {
                     SpecialItemPlugin plugin = stack.getPlugin();
-                    if ((plugin instanceof UpgradeSpecialItemPlugin && !((UpgradeSpecialItemPlugin) plugin).isIgnoreCrate())
-                        || (plugin instanceof ExoticSpecialItemPlugin && !((ExoticSpecialItemPlugin) plugin).isIgnoreCrate()))
+                    if ((plugin instanceof UpgradeSpecialItemPlugin && !((UpgradeSpecialItemPlugin) plugin).getIgnoreCrate())
+                        || (plugin instanceof ExoticSpecialItemPlugin && !((ExoticSpecialItemPlugin) plugin).getIgnoreCrate()))
                     {
                         crateData.getCargo().addFromStack(stack);
                         cargo.removeStack(stack);

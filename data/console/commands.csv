@@ -6,3 +6,5 @@ et_reload,exoticatechnologies.commands.et_reload,"dialog,campaign,market",et_rel
 et_listmods,exoticatechnologies.commands.et_listmods,"dialog,campaign,market",et_listmods (no arguments),"Lists all modifications."
 et_addexotic,exoticatechnologies.commands.et_addexotic,"dialog,campaign,market",et_addexotic <exoticId>,"Adds an exotic chip to your fleet's inventory."
 et_addupgrade,exoticatechnologies.commands.et_addupgrade,"dialog,campaign,market",et_addupgrade <upgradeId> <level>,"Adds an upgrade chip to your fleet's inventory."
+et_spawnnotabledebris,exoticatechnologies.commands.et_spawnnotabledebris,"dialog,campaign,market",et_spawnnotabledebris,"Spawns a debris field with a notable ship in it."
+et_spawnnotablederelict,exoticatechnologies.commands.et_spawnnotablederelict,"dialog,campaign,market",et_spawnnotablederelict,"Spawns a notable derrelict."

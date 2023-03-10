@@ -79,6 +79,10 @@
 			"GuidanceComputers": "graphics/icons/upgrades/guidancecomputers.png",
 			"AntimatterBoosters": "graphics/icons/upgrades/antimatterboosters.png",
 			"HelDrives": "graphics/icons/upgrades/heldrives.png"
+		},
+		"overlays": {
+			"Corrupted": "graphics/icons/overlays/corrupted.png",
+			"Pure": "graphics/icons/overlays/pure.png"
 		}
 	}
 }

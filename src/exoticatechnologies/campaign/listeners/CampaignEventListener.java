@@ -11,10 +11,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
-import com.fs.starfarer.api.impl.campaign.ids.Entities;
-import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
-import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireAll;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import com.fs.starfarer.api.util.IntervalUtil;
@@ -27,6 +24,7 @@ import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.util.FleetMemberUtils;
 import exoticatechnologies.util.Utilities;
@@ -127,9 +125,8 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
             //just in case?
             fm.updateStats();
 
-
             long seed = shipData.fleetMemberId.hashCode();
-            ShipModFactory.getRandom().setSeed(seed);
+            ShipModFactory.random.setSeed(seed);
 
             //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
             //it will never find one.
@@ -167,7 +164,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     }
 
                     long seed = shipData.fleetMemberId.hashCode();
-                    ShipModFactory.getRandom().setSeed(seed);
+                    ShipModFactory.random.setSeed(seed);
 
                     ShipModifications mods = ShipModFactory.generateRandom(fm);
                     //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
@@ -237,13 +234,13 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
         fms.addAll(otherResult.getDisabled());
         fms.addAll(otherResult.getDestroyed());
 
-        Pair<Map<String, Map<Integer, Integer>>, Map<String, Integer>> potentialDrops = getDrops(fms);
+        Pair<Map<String, Map<Integer, Integer>>, Map<ExoticData, Integer>> potentialDrops = getDrops(fms);
         result.getBattle().getPrimary(result.getBattle().getNonPlayerSide()).getMemoryWithoutUpdate().set("$exotica_drops", potentialDrops, 0);
     }
 
-    private static Pair<Map<String, Map<Integer, Integer>>, Map<String, Integer>> getDrops(List<FleetMemberAPI> fms) {
+    private static Pair<Map<String, Map<Integer, Integer>>, Map<ExoticData, Integer>> getDrops(List<FleetMemberAPI> fms) {
         Map<String, Map<Integer, Integer>> upgradesMap = new HashMap<>();
-        Map<String, Integer> exotics = new HashMap<>();
+        Map<ExoticData, Integer> exotics = new HashMap<>();
 
         for (FleetMemberAPI fm : fms) {
             ShipModifications mods = ShipModLoader.get(fm);
@@ -264,15 +261,16 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                     }
                 }
 
-                for (Exotic exotic : mods.getExoticSet()) {
+                for (ExoticData exoticData : mods.getExoticSet()) {
+                    Exotic exotic = exoticData.getExotic();
                     if (!exotic.canDropFromFleets()) {
                         continue;
                     }
 
                     if (!exotics.containsKey(exotic.getKey())) {
-                        exotics.put(exotic.getKey(), 1);
+                        exotics.put(exoticData, 1);
                     } else {
-                        exotics.put(exotic.getKey(), exotics.get(exotic.getKey()) + 1);
+                        exotics.put(exoticData, exotics.get(exotic.getKey()) + 1);
                     }
                 }
             }
@@ -456,7 +454,7 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
 
     public static void applyExtraSystemsToFleet(CampaignFleetAPI fleet) {
         int hash = fleet.getId().hashCode();
-        ShipModFactory.getRandom().setSeed(hash);
+        ShipModFactory.random.setSeed(hash);
 
         for (FleetMemberAPI fm : fleet.getFleetData().getMembersListCopy()) {
             if (fm.isFighterWing()) continue;

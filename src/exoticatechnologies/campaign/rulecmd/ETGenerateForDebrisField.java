@@ -60,6 +60,8 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
                     for (int i = 0; i < data.ships.size(); i++) {
                         ShipRecoverySpecial.PerShipData shipData = data.ships.get(i);
 
+                        if (ShipModLoader.getForSpecialData(shipData) != null) continue;
+
                         if (shipData.getVariant() == null) continue;
 
                         FleetMemberAPI fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
@@ -74,7 +76,7 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
                         //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                         //it will never find one.
 
-                        ShipModFactory.getRandom().setSeed(shipData.fleetMemberId.hashCode());
+                        ShipModFactory.random.setSeed(shipData.fleetMemberId.hashCode());
                         ShipModifications mods = ShipModFactory.generateRandom(fm);
                         ShipModLoader.set(fm, mods);
 

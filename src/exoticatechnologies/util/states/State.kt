@@ -5,16 +5,21 @@ import com.fs.starfarer.api.util.IntervalUtil
 
 abstract class State {
     private var inited = false;
-    val interval = IntervalUtil(getDuration(), getDuration())
+    var interval = IntervalUtil(1f, 1f)
 
-    protected open fun init(ship: ShipAPI) {
+    private fun initialize(ship: ShipAPI) {
+        interval = IntervalUtil(getDuration(), getDuration())
+        initShip(ship)
+    }
+
+    protected open fun initShip(ship: ShipAPI) {
 
     }
 
     fun advance(ship: ShipAPI, amount: Float) {
         if (!inited) {
             inited = true
-            init(ship)
+            initialize(ship)
         }
 
         if (getDuration() > 0) {

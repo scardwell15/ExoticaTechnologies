@@ -14,6 +14,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.modifications.exotics.Exotic;
+import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
@@ -35,14 +36,16 @@ public class SalvageListener implements ShowLootListener {
 
             if (fleet.getMemoryWithoutUpdate().contains("$exotica_drops")) {
 
-                //yeah
-                Pair<Map<String, Map<Integer, Integer>>, Map<String, Integer>> potentialDrops =
-                        (Pair<Map<String, Map<Integer, Integer>>, Map<String, Integer>>) fleet.getMemoryWithoutUpdate().get("$exotica_drops");
+
+                Pair<Map<String, Map<Integer, Integer>>, Map<ExoticData, Integer>> potentialDrops =
+                        (Pair<Map<String, Map<Integer, Integer>>, Map<ExoticData, Integer>>) fleet.getMemoryWithoutUpdate().get("$exotica_drops");
 
                 fleet.getMemoryWithoutUpdate().unset("$exotica_drops");
 
                 Map<String, Map<Integer, Integer>> potentialUpgrades = potentialDrops.one;
-                Map<String, Integer> potentialExotics = potentialDrops.two;
+                Map<ExoticData, Integer> potentialExotics = potentialDrops.two;
+
+
                 Random random = Misc.getRandom(ETModPlugin.getSectorSeedString().hashCode(), 100);
 
                 for (Map.Entry<String, Map<Integer, Integer>> potUpg : potentialUpgrades.entrySet()) {
@@ -61,14 +64,14 @@ public class SalvageListener implements ShowLootListener {
                     }
                 }
 
-                for (Map.Entry<String, Integer> potExotic : potentialExotics.entrySet()) {
-                    Exotic exotic = ExoticsHandler.EXOTICS.get(potExotic.getKey());
+                for (Map.Entry<ExoticData, Integer> potExotic : potentialExotics.entrySet()) {
+                    Exotic exotic = potExotic.getKey().getExotic();
                     int quantity = potExotic.getValue();
 
                     for (int i = 0; i < quantity; i++) {
                         if (exotic.getSalvageChance(1.5f) > 0 && random.nextFloat() <= exotic.getSalvageChance(1.5f)) {
                             //generate exotic and add to loot
-                            loot.addSpecial(exotic.getNewSpecialItemData(), 1);
+                            loot.addSpecial(exotic.getNewSpecialItemData(potExotic.getKey().getType()), 1);
                         }
                     }
                 }

@@ -26,7 +26,7 @@ class ExoticaEveryFramePlugin:
 
                     for (exotic in ExoticsHandler.EXOTIC_LIST) {
                         if (!mods.hasExotic(exotic)) continue
-                        exotic.advanceInCombatAlways(ship, amount)
+                        exotic.advanceInCombatAlways(ship, member, mods, mods.getExoticData(exotic)!!)
                     }
                 }
             }

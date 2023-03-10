@@ -22,5 +22,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="projectlombok.lombok" level="application" />
+    <orderEntry type="library" name="ExiledSpace" level="application" />
   </component>
 </module>

@@ -1,10 +1,8 @@
 package exoticatechnologies.hullmods;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exoticatechnologies.combat.ExoticaEveryFramePlugin;
 import exoticatechnologies.modifications.ShipModFactory;
 import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
@@ -21,6 +19,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Log4j
 public class ExoticaTechHM extends BaseHullMod {
@@ -92,7 +91,7 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (mods.hasExotic(exotic)) {
-                exotic.advanceInCampaign(fm, mods, amount);
+                exotic.advanceInCampaign(fm, mods, amount, Objects.requireNonNull(mods.getExoticData(exotic)));
             }
         }
     }
@@ -105,7 +104,6 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = ShipModLoader.get(member);
         if (mods == null) return;
 
-        float bandwidth = mods.getBandwidthWithExotics(member);
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);
             if (level <= 0) continue;
@@ -116,7 +114,7 @@ public class ExoticaTechHM extends BaseHullMod {
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
 
-            exotic.advanceInCombatUnpaused(ship, amount, bandwidth);
+            exotic.advanceInCombatUnpaused(ship, amount, member, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
     }
 
@@ -148,19 +146,17 @@ public class ExoticaTechHM extends BaseHullMod {
             return;
         }
 
-        float bandwidth = mods.getBandwidthWithExotics(fm);
-
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
 
-            exotic.applyExoticToStats(fm, stats, bandwidth, id);
+            exotic.applyExoticToStats(id, stats, fm, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);
             if (level <= 0) continue;
 
-            upgrade.applyUpgradeToStats(fm, stats, mods);
+            upgrade.applyUpgradeToStats(stats, fm, mods);
         }
     }
 
@@ -172,11 +168,9 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = ShipModLoader.get(member);
         if (mods == null) return;
 
-        float bandwidth = mods.getBandwidthWithExotics(member);
-
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
-            exotic.applyExoticToShip(member, ship, bandwidth, id);
+            exotic.applyExoticToShip(id, member, ship, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {

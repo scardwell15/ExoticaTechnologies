@@ -1,11 +1,37 @@
-Daemon exotic:
-- Reactive Damper
-- when taking damage to armor, pop a 1s damper field
-- dampens the initial triggering damage
-- only works on damage over 100
-- cooldown tbd
-- passive downside is increased armor damage taken
+bug - screen scaling for exotic type overlay
+bug - npc fleets not adhering to exotic limit
+bug - daemon core should not be installed on automated ships
+bug - exotic chips of different type are stacking
 
+replace hangar forge - Phased Fighter Tether - phase wings back to ship at low health
 
-changelog:
-- fixed some stats not applying completely (i.e. 100x less than they should be) (again)
+exotic - Hivemind Neurolink - quarter engagement range to a minimum 1k, buff fighter stats
+
+exotic - Hyperspec LPC - decreasing fighter count to buff remaining one
+- always gives these ""flat"" stats
+-- +25% armour
+-- +20% speed
+- increases the below stats, scaling on number of fighters "lost" from the wing, and number of bays removed
+-- health
+-- damage (?)
+-- flux cap (or just shield damage taken?)
+
+exotic - Penance Engine - luddic counterpart to alpha core integration. armor regen and 75 flat hard flux dissipation while near enemy ship. +weapon repair rate
+- always gives weapon repair rate
+- disables shield
+- while close to an enemy ship
+-- armor regen per second
+-- 75 flat hard flux dissipation
+-- if too much damage is taken in a short amount of time, the ship has a massive EMP burst that disables most systems on the ship.
+
+upgrade - Velocity Injectors - +fighter speed, -fighter health
+upgrade - Overclocked Fabricators - +replacement rate regen, -replacement time
+upgrade - Interception Matrix - +point defense capability, -shield stats
+upgrade - Flux-Induction Drive - +zero flux speed, -top speed
+
+drop more exotics from IBB and HVB fleets
+melt chips into parts that can be used to upgrade bandwidth
+scrapping boss ships for unique one of a kind exotics
+* ziggurat - mote storm around ship
+
+consider: System cooldown for weapon range?

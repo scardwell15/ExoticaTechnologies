@@ -11,7 +11,9 @@ import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
-import exoticatechnologies.ui.impl.shop.upgrades.chips.ChipPanelUIPlugin
+import exoticatechnologies.ui.impl.shop.chips.ChipPanelUIPlugin
+import exoticatechnologies.ui.impl.shop.exotics.chips.ExoticChipPanelUIPlugin
+import exoticatechnologies.ui.impl.shop.upgrades.chips.UpgradeChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.util.RenderUtils
@@ -28,7 +30,8 @@ class UpgradePanelUIPlugin(
     private var descriptionPlugin: UpgradeDescriptionUIPlugin? = null
     private var resourcesPlugin: UpgradeResourcesUIPlugin? = null
     private var methodsPlugin: UpgradeMethodsUIPlugin? = null
-    private var chipsPlugin: ChipPanelUIPlugin? = null
+    private var chipsPlugin: UpgradeChipPanelUIPlugin? = null
+    private var chipsTooltip: TooltipMakerAPI? = null
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -48,7 +51,7 @@ class UpgradePanelUIPlugin(
         methodsPlugin!!.panelWidth = panelWidth / 2f - 6f
         methodsPlugin!!.panelHeight = panelHeight / 10f * 3f - 6f
         methodsPlugin!!.layoutPanels().position.inBR(3f, 13f)
-        methodsPlugin!!.addListener(MethodListener(this))
+        methodsPlugin!!.addListener(MethodListener())
 
         parentPanel.addComponent(panel).inTR(0f, 0f)
 
@@ -57,7 +60,6 @@ class UpgradePanelUIPlugin(
 
     fun checkedMethod(method: UpgradeMethod): Boolean {
         if (method is ChipMethod) {
-            //do something else.
             showChipsPanel()
             return true
         } else {
@@ -90,25 +92,38 @@ class UpgradePanelUIPlugin(
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
-        chipsPlugin = ChipPanelUIPlugin(mainPanel!!, upgrade, member, market)
-        chipsPlugin!!.panelWidth = panelWidth / 2 - 6f
-        chipsPlugin!!.panelHeight = panelHeight - 6f
-        chipsPlugin!!.layoutPanels().position.inTR(9f, 3f)
+        val pW = panelWidth / 2 - 6f
+        val pH = panelHeight - 6f
+        chipsTooltip = mainPanel!!.createUIElement(pW, pH, false)
+        val innerPanel = mainPanel!!.createCustomPanel(pW, pH, null)
 
-        chipsPlugin!!.addListener(ChipPanelListener(this))
+        chipsPlugin = UpgradeChipPanelUIPlugin(innerPanel, upgrade, member, market)
+        chipsPlugin!!.panelWidth = pW
+        chipsPlugin!!.panelHeight = pH
+        chipsPlugin!!.layoutPanels().position.inTR(0f, 0f)
+
+        chipsPlugin!!.addListener(ChipPanelListener())
+
+        chipsTooltip!!.addCustom(innerPanel, 0f).position.inTL(0f, 0f)
+        mainPanel!!.addUIElement(chipsTooltip).inTR(9f, 3f)
+    }
+
+    fun killChipsPanel() {
+        chipsPlugin!!.destroyTooltip()
+        chipsPlugin = null
+        mainPanel!!.removeComponent(chipsTooltip)
+        chipsTooltip = null
     }
 
     fun clickedChipPanelBackButton() {
-        chipsPlugin!!.destroyTooltip()
-        chipsPlugin = null
+        killChipsPanel()
 
         resourcesPlugin!!.redisplayResourceCosts(null)
         methodsPlugin!!.createTooltip()
     }
 
     fun clickedChipStack(stack: CargoStackAPI) {
-        chipsPlugin!!.destroyTooltip()
-        chipsPlugin = null
+        killChipsPanel()
 
         val method = ChipMethod()
         method.upgradeChipStack = stack
@@ -116,35 +131,35 @@ class UpgradePanelUIPlugin(
         doUpgradeWithMethod(upgrade, method)
     }
 
-    private class MethodListener(val mainPlugin: UpgradePanelUIPlugin): UpgradeMethodsUIPlugin.Listener() {
+    private inner class MethodListener: UpgradeMethodsUIPlugin.Listener() {
         override fun checked(method: UpgradeMethod): Boolean {
-            return mainPlugin.checkedMethod(method)
+            return this@UpgradePanelUIPlugin.checkedMethod(method)
         }
 
         override fun highlighted(method: UpgradeMethod): Boolean {
-            return mainPlugin.highlightedMethod(method)
+            return this@UpgradePanelUIPlugin.highlightedMethod(method)
         }
 
         override fun unhighlighted(method: UpgradeMethod): Boolean {
-            return mainPlugin.highlightedMethod(null)
+            return this@UpgradePanelUIPlugin.highlightedMethod(null)
         }
     }
 
-    private class ChipPanelListener(val mainPlugin: UpgradePanelUIPlugin): ChipPanelUIPlugin.Listener() {
+    private inner class ChipPanelListener(): ChipPanelUIPlugin.Listener<UpgradeSpecialItemPlugin>() {
         override fun checkedBackButton() {
-            mainPlugin.clickedChipPanelBackButton()
+            this@UpgradePanelUIPlugin.clickedChipPanelBackButton()
         }
 
         override fun checked(stack: CargoStackAPI, plugin: UpgradeSpecialItemPlugin) {
-            mainPlugin.clickedChipStack(stack)
+            this@UpgradePanelUIPlugin.clickedChipStack(stack)
         }
     }
 
-    private class UpgradedUIListener(val mainPlugin: UpgradePanelUIPlugin, val tooltip: TooltipMakerAPI) : TimedUIPlugin.Listener {
+    private inner class UpgradedUIListener(val tooltip: TooltipMakerAPI) : TimedUIPlugin.Listener {
         override fun end() {
-            mainPlugin.mainPanel!!.removeComponent(tooltip)
-            mainPlugin.resourcesPlugin!!.redisplayResourceCosts(null)
-            mainPlugin.methodsPlugin!!.createTooltip()
+            this@UpgradePanelUIPlugin.mainPanel!!.removeComponent(tooltip)
+            this@UpgradePanelUIPlugin.resourcesPlugin!!.redisplayResourceCosts(null)
+            this@UpgradePanelUIPlugin.methodsPlugin!!.createTooltip()
         }
 
         override fun render(pos: PositionAPI, alphaMult: Float, currLife: Float, endLife: Float) {

@@ -63,8 +63,12 @@ class RecoverMethod : DestroyMethod() {
                         .toStringNoFormats(), -1f)
             }
 
-            if (exotic.getExtraBandwidth(member, mods) > 0) {
-                resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = -exotic.getExtraBandwidth(member, mods)
+            if (exotic.getExtraBandwidth(member, mods, mods.getExoticData(exotic)) > 0) {
+                resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = -exotic.getExtraBandwidth(
+                    member,
+                    mods,
+                    mods.getExoticData(exotic)
+                )
             }
 
             return resourceCosts

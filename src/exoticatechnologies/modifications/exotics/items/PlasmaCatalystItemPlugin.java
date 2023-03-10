@@ -4,7 +4,7 @@ import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 
 public class PlasmaCatalystItemPlugin extends ExoticSpecialItemPlugin {
     @Override
-    public String getExoticId() {
+    public String getModId() {
         return "PlasmaCatalyst";
     }
 }

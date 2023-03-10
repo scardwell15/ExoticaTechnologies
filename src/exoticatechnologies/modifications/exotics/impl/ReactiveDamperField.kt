@@ -211,7 +211,7 @@ class ReactiveDamperField(key: String, settings: JSONObject) : Exotic(key, setti
     ) :
         DamageTakenModifier {
         override fun modifyDamageTaken(
-            param: Any,
+            param: Any?,
             target: CombatEntityAPI,
             damage: DamageAPI,
             point: Vector2f,

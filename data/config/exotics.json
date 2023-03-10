@@ -55,13 +55,16 @@
   },
   "DaemonCore": {
     "name": "Daemon Core",
+    "tag": "aiCore",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.DaemonCore",
     "conditions": [
-      {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."}
+      {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."},
+      {"id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew."}
     ]
   },
   "AlphaSubcore": {
     "name": "Alpha Subcore",
+    "tag": "aiCore",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore"
   },
   "SubsumedAlphaCore": {

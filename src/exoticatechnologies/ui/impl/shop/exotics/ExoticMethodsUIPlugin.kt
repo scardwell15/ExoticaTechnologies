@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.cargo.CrateItemPlugin
+import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
@@ -217,21 +218,22 @@ class ExoticMethodsUIPlugin(
     }
 
     companion object {
-        val useTheMethodThatMakesHartleyverseStronger = false
+        @JvmStatic
+        fun isUnderExoticLimit(member: FleetMemberAPI, mods: ShipModifications): Boolean {
+            return getMaxExotics(member) > mods.getExoticSet().size
+        }
+
+        @JvmStatic
         fun getMaxExotics(member: FleetMemberAPI): Int {
-            if (useTheMethodThatMakesHartleyverseStronger) {
+            if (FactionConfigLoader.useTheMethodThatMakesHartleyverseStronger) {
                 return member.stats.dynamic.getStat(Stats.MAX_PERMANENT_HULLMODS_MOD).modifiedInt
             } else {
                 var limit = 2
-                if (Global.getSector().playerStats.hasSkill("best_of_the_best")) {
+                if (member.fleetCommander != null && member.fleetCommander.stats.hasSkill("best_of_the_best")) {
                     limit++
                 }
                 return limit
             }
-        }
-
-        fun isUnderExoticLimit(member: FleetMemberAPI, mods: ShipModifications): Boolean {
-            return getMaxExotics(member) > mods.getExoticSet().size
         }
 
         fun getExoticChips(cargo: CargoAPI, member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): List<CargoStackAPI> {
@@ -244,7 +246,7 @@ class ExoticMethodsUIPlugin(
                 }
                 .filter { it.plugin is ExoticSpecialItemPlugin }
                 .map { it to it.plugin as ExoticSpecialItemPlugin }
-                .filter { (_, plugin) -> plugin.exoticId == exotic.key }
+                .filter { (_, plugin) -> plugin.modId == exotic.key }
                 .map { (stack, _) -> stack }
 
             return stacks

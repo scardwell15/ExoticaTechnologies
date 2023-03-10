@@ -8,6 +8,7 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.exotics.Exotic
+import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
 import exoticatechnologies.ui.impl.shop.exotics.ExoticMethodsUIPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
@@ -16,14 +17,9 @@ class ChipMethod : Method {
     var chipStack: CargoStackAPI? = null
 
     override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String {
-        val stack = Utilities.getExoticChip(member.fleetData.fleet.cargo, exotic.key)
-        if (stack != null) {
-            Utilities.takeItem(stack)
-        } else {
-            exotic.removeItemsFromFleet(member.fleetData.fleet, member, market)
-        }
-
-        mods.putExotic(exotic)
+        val plugin = chipStack!!.plugin as ExoticSpecialItemPlugin
+        val exoticData = plugin.exoticData!!
+        mods.putExotic(exoticData)
 
         ShipModLoader.set(member, mods)
         ExoticaTechHM.addToFleetMember(member)
@@ -36,11 +32,11 @@ class ChipMethod : Method {
         return !mods.hasExotic(exotic)
                 && exotic.canApply(member, mods)
                 && ExoticMethodsUIPlugin.isUnderExoticLimit(member, mods)
-                && (exotic.canAfford(member.fleetData.fleet, market) || Utilities.hasExoticChip(member.fleetData.fleet.cargo, exotic.key))
+                && (Utilities.hasExoticChip(member.fleetData.fleet.cargo, exotic.key))
     }
 
     override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean {
-        return true
+        return canUse(member, mods, exotic, market)
     }
 
     override fun getButtonText(exotic: Exotic): String {
@@ -65,7 +61,10 @@ class ChipMethod : Method {
                 resourceCosts = mutableMapOf()
                 resourceCosts[Utilities.formatSpecialItem(exotic.newSpecialItemData)] = 1f
             } else {
-                resourceCosts = exotic.getResourceCostMap(member, mods, market)
+                resourceCosts = mutableMapOf("&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                    .format("name", exotic.name)
+                    .toStringNoFormats()
+                        to 1f)
             }
 
             if (exotic.getExtraBandwidth(member, mods, mods.getExoticData(exotic)) > 0) {

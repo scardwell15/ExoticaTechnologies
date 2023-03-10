@@ -9,7 +9,9 @@ import exoticatechnologies.modifications.ModSpecialItemPlugin
 import exoticatechnologies.modifications.Modification
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
+import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.getMods
+import java.awt.Color
 
 abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
     var parentPanel: CustomPanelAPI,
@@ -19,15 +21,19 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var mainTooltip: TooltipMakerAPI? = null
+    private var innerPanel: CustomPanelAPI? = null
+    private var innerTooltip: TooltipMakerAPI? = null
     private var listPlugin: ChipListUIPlugin? = null
     private val listeners: MutableList<Listener<T>> = mutableListOf()
 
     fun layoutPanels(): CustomPanelAPI {
         val panel: CustomPanelAPI = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         mainPanel = panel
-        val tooltip: TooltipMakerAPI = panel.createUIElement(panelWidth, panelHeight, false)
-        mainTooltip = tooltip
-        val listPanel: CustomPanelAPI = panel.createCustomPanel(panelWidth, panelHeight, null)
+        mainTooltip = mainPanel!!.createUIElement(panelWidth, panelHeight, false)
+        innerPanel = mainPanel!!.createCustomPanel(panelWidth, panelHeight, null)
+        innerTooltip = innerPanel!!.createUIElement(panelWidth, panelHeight, false)
+        val listPanel: CustomPanelAPI = innerPanel!!.createCustomPanel(panelWidth, panelHeight, null)
+
 
         val mods = member.getMods()
         val upgradeChips: List<CargoStackAPI> = getChipSearcher().getChips(member.fleetData.fleet.cargo, member, mods, mod)
@@ -41,7 +47,7 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
             this.clickedChipButton(it)
         }
 
-        val backTooltip: TooltipMakerAPI = listPanel.createUIElement(panelWidth, 22f, false)
+        val backTooltip: TooltipMakerAPI = innerPanel!!.createUIElement(panelWidth, 22f, false)
         val backButton: ButtonAPI = backTooltip.addButton(
             "Cancel", "backButton",
             Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.C2_MENU, 72f, 22f, 3f
@@ -50,12 +56,13 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
         backButton.position.inBMid(3f)
         buttons[backButton] = BackButtonHandler(this)
 
-        listPanel.addUIElement(backTooltip).inBMid(0f)
-        tooltip.addCustom(listPanel, 0f)
-        panel.addUIElement(tooltip).inTL(0f, 0f)
-        parentPanel.addComponent(panel).inTR(0f, 0f)
+        innerPanel!!.addUIElement(backTooltip).inBMid(0f)
+        innerPanel!!.addUIElement(innerTooltip).inTL(0f, 0f)
+        mainTooltip!!.addCustom(innerPanel, 0f)
+        mainPanel!!.addUIElement(mainTooltip).inTL(0f, 0f)
+        parentPanel.addComponent(mainPanel!!)
 
-        return panel
+        return mainPanel!!
     }
 
     abstract fun getChipSearcher(): ChipSearcher<T>
@@ -65,8 +72,12 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
         mainTooltip?.let {
             buttons.clear()
             listPlugin!!.clearItems()
-            mainPanel?.removeComponent(it)
         }
+
+        innerPanel?.removeComponent(innerPanel)
+        mainPanel?.removeComponent(mainTooltip)
+        parentPanel.removeComponent(mainPanel)
+
         mainTooltip = null
     }
 

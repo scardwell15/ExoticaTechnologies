@@ -1,8 +1,11 @@
 package exoticatechnologies.modifications.upgrades;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exoticatechnologies.ETModSettings;
 import lombok.extern.log4j.Log4j;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -106,5 +109,17 @@ public class ETUpgrades {
         return "ETUpgrades{" +
                 "upgrades=" + upgrades +
                 '}';
+    }
+
+    public JSONObject toJson(FleetMemberAPI member) {
+        return new JSONObject(getMap());
+    }
+
+    public void parseJson(JSONObject obj) throws JSONException {
+        for (Iterator it = obj.keys(); it.hasNext(); ) {
+            String key = it.next().toString();
+
+            putUpgrade(key, obj.getInt(key));
+        }
     }
 }

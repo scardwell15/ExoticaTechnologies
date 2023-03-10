@@ -19,7 +19,7 @@ abstract class DefaultUpgradeMethod : UpgradeMethod {
     override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean {
         return upgrade.canApply(member, mods) && usesLevel() && mods.getUpgrade(upgrade) + 1 <= upgrade.getMaxLevel(
             member
-        ) && usesBandwidth() && mods.getUsedBandwidth() + upgrade.getBandwidthUsage() <= mods.getBandwidthWithExotics(
+        ) && usesBandwidth() && mods.getUsedBandwidth() + upgrade.bandwidthUsage <= mods.getBandwidthWithExotics(
             member
         )
     }

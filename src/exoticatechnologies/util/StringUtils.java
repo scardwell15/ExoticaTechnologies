@@ -94,6 +94,7 @@ public class StringUtils {
         adaptiveHighlightCharacterMap.put('&', Misc.getEnergyMountColor());
         adaptiveHighlightCharacterMap.put('^', Misc.getPositiveHighlightColor());
         adaptiveHighlightCharacterMap.put('`', superNegativeColor);
+        adaptiveHighlightCharacterMap.put('@', null);
 
         regularHighlightCharacterPattern = "[*]";
         regularHighlightPattern = Pattern.compile("[*]([^*]*)[*]");
@@ -124,6 +125,7 @@ public class StringUtils {
             highlights.add(inside.replace("%%", "%"));
             colors.add(adaptiveHighlightCharacterMap.get(matcher.group().charAt(0)));
         }
+
         return new Pair<>(highlights.toArray(new String[0]), colors.toArray(new Color[0]));
     }
 
@@ -187,7 +189,8 @@ public class StringUtils {
         protected final String key;
         protected final List<String> formats = new ArrayList<>();
         protected List<String> values = new ArrayList<>();
-        protected List<Color> colors = new ArrayList<>();
+        protected Map<Integer, Color> colors = new HashMap<>();
+        protected Color customColor = null;
 
         public Translation format(String flag, Object value) {
             formats.add(flag);
@@ -199,7 +202,7 @@ public class StringUtils {
         public Translation format(String flag, Object value, Color color) {
             formats.add(flag);
             values.add(StringUtils.formatValue(value));
-            colors.add(color);
+            colors.put(values.size() - 1, color);
 
             return this;
         }
@@ -207,6 +210,13 @@ public class StringUtils {
         public Translation format(String flag, Conditional value) {
             formats.add(flag);
             values.add(StringUtils.formatValue(value.get()));
+
+            return this;
+        }
+
+        public Translation formatFloat(String flag, Number value) {
+            formats.add(flag);
+            values.add(Misc.getRoundedValue(value.floatValue()));
 
             return this;
         }
@@ -308,7 +318,7 @@ public class StringUtils {
         }
 
         public String toStringNoFormats() {
-            return this.toString().replaceAll("[=*&]", "");
+            return this.toString().replaceAll(adaptiveHighlightCharacterPattern, "");
         }
 
         public LabelAPI addToTooltip(TooltipMakerAPI tooltip) {
@@ -321,7 +331,7 @@ public class StringUtils {
 
         public LabelAPI addToTooltip(TooltipMakerAPI tooltip, float pad) {
             if (!colors.isEmpty()) {
-                return this.addToTooltip(tooltip, colors.toArray(new Color[0]));
+                return this.addToTooltip(tooltip, getColorArray());
             } else {
                 return StringUtils.addToTooltip(tooltip, this.toString(), pad);
             }
@@ -340,19 +350,32 @@ public class StringUtils {
 
         public Translation setAdaptiveHighlights() {
             Pair<String[], Color[]> valuesToColors = getAdaptiveHighlights(getString(scope, key));
-            colors = Arrays.asList(valuesToColors.two);
+
+            for (int i = 0; i < valuesToColors.two.length; i++) {
+                if (!colors.containsKey(i)) {
+                    colors.put(i, valuesToColors.two[i]);
+                }
+            }
+
             return this;
         }
 
         public void setLabelText(LabelAPI label) {
+            setAdaptiveHighlights();
+
             label.setText(this.toStringNoFormats());
             label.setHighlight(values.toArray(new String[0]));
-            label.setHighlightColors(colors.toArray(new Color[0]));
+            label.setHighlightColors(getColorArray());
+        }
+
+        public Color[] getColorArray() {
+            setAdaptiveHighlights();
+            return new ArrayList<>(colors.values()).toArray(new Color[0]);
         }
 
         public void addToTextPanel(TextPanelAPI textPanel) {
             if (!colors.isEmpty()) {
-                this.addToTextPanel(textPanel, colors.toArray(new Color[0]));
+                this.addToTextPanel(textPanel, getColorArray());
             } else {
                 StringUtils.addToTextPanel(textPanel, this.toString());
             }

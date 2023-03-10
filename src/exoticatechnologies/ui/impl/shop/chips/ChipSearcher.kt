@@ -23,14 +23,13 @@ open class ChipSearcher<T : ModSpecialItemPlugin> {
             .filter { it.plugin is ModSpecialItemPlugin }
             .map { it to it.plugin as ModSpecialItemPlugin }
             .filter { (_, plugin) -> plugin.modId == mod.key }
-            .filter { (stack, plugin) -> filterChip(member, mods, stack, plugin) }
+            .filter { (stack, plugin) -> filterModChip(member, mods, stack, plugin) }
             .map { (stack, _) -> stack }
 
         return stacks
     }
-
-
-    private fun filterChip(member: FleetMemberAPI, mods: ShipModifications, stack: CargoStackAPI, plugin: ModSpecialItemPlugin): Boolean {
+    
+    private fun filterModChip(member: FleetMemberAPI, mods: ShipModifications, stack: CargoStackAPI, plugin: ModSpecialItemPlugin): Boolean {
         try {
             return filterChip(member, mods, stack, plugin as T)
         } catch (e: ClassCastException) {

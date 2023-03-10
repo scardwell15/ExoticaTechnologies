@@ -13,18 +13,40 @@ import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.modifications.exotics.*
 import exoticatechnologies.modifications.upgrades.ETUpgrades
 import exoticatechnologies.modifications.upgrades.Upgrade
-import exoticatechnologies.modifications.upgrades.UpgradesGenerator
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
+import exoticatechnologies.ui.UIUtils
 import exoticatechnologies.util.StringUtils
 import org.apache.log4j.Logger
+import org.json.JSONException
+import org.json.JSONObject
+import org.lazywizard.lazylib.ext.json.optFloat
 import java.awt.Color
 
-class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, var exotics: ETExotics) {
+class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exotics: ETExotics) {
     constructor() : this(-1f, ETUpgrades(), ETExotics())
+
+    @Throws(JSONException::class)
+    constructor(obj: JSONObject) : this() {
+        bandwidth = obj.optFloat(BANDWIDTH_KEY, -1f)
+
+        if (obj.has(UPGRADES_KEY)) {
+            val upgObj = obj.getJSONObject(UPGRADES_KEY)
+            upgrades.parseJson(upgObj)
+        }
+
+        if (obj.has(EXOTICS_KEY)) {
+            val exoObj = obj.get(EXOTICS_KEY)
+            exotics.parseJson(exoObj)
+        }
+    }
 
     companion object {
         @JvmStatic
         private val log = Logger.getLogger(Companion::class.java)
+
+        val UPGRADES_KEY = "upgrades"
+        val EXOTICS_KEY = "exotics"
+        val BANDWIDTH_KEY = "baseBandwidth"
     }
 
     fun shouldApplyHullmod(): Boolean {
@@ -32,32 +54,11 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
                 || exotics.hasAnyExotic())
     }
 
-    /**
-     * for a fleet member
-     * @param fm
-     * @param faction
-     */
-    fun generate(fm: FleetMemberAPI, faction: String?) {
-        if (bandwidth == -1f) {
-            bandwidth = ShipModFactory.generateBandwidth(fm, faction)
-        }
-        if (fm.fleetData != null && fm.fleetData.fleet.isPlayerFleet) {
-            return
-        }
-        exotics = ExoticsGenerator.generate(fm, faction, this)
-        upgrades = UpgradesGenerator.generate(fm, faction!!, this)
-    }
-
     fun getValue(): Float {
         return bandwidth + exotics.list.size + upgrades.totalLevels
     }
 
     //bandwidth
-
-    fun setBandwidth(bandwidth: Float) {
-        this.bandwidth = bandwidth
-    }
-
     /**
      * Use this only if bandwidth has already been generated. The Exotica dialog WILL generate bandwidth.
      * @return
@@ -87,7 +88,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
         var returnedBandwidth = bandwidth
         for (exotic in ExoticsHandler.EXOTIC_LIST) {
             if (this.hasExotic(exotic)) {
-                returnedBandwidth += exotic.getExtraBandwidth(fm, this, this.getExoticData(exotic))
+                returnedBandwidth += exotic.getExtraBandwidth(fm, this, this.getExoticData(exotic)!!)
             }
         }
         return returnedBandwidth
@@ -97,7 +98,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
         var maxBandwidth = Bandwidth.MAX_BANDWIDTH
         for (exotic in ExoticsHandler.EXOTIC_LIST) {
             if (this.hasExotic(exotic)) {
-                maxBandwidth += exotic.getExtraBandwidthPurchaseable(fm, this, this.getExoticData(exotic))
+                maxBandwidth += exotic.getExtraBandwidthPurchaseable(fm, this, this.getExoticData(exotic)!!)
             }
         }
         return maxBandwidth > getBaseBandwidth(fm)
@@ -106,7 +107,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
     fun getUsedBandwidth(): Float {
         var usedBandwidth = 0f
         for (upgrade in UpgradesHandler.UPGRADES_LIST) {
-            usedBandwidth += upgrade.getBandwidthUsage() * this.getUpgrade(upgrade)
+            usedBandwidth += upgrade.bandwidthUsage * this.getUpgrade(upgrade)
         }
         return usedBandwidth
     }
@@ -114,7 +115,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
     //exotics
     fun getExoticSet(): Set<ExoticData> {
         val exoticSet: MutableSet<ExoticData> = HashSet()
-        for (exotic in exotics.datas) {
+        for (exotic in exotics.exoticData) {
             exoticSet.add(exotic.value)
         }
         return exoticSet
@@ -122,7 +123,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
 
     fun getExoticIdSet(): Set<Exotic> {
         val exoticSet: MutableSet<Exotic> = HashSet()
-        for (exotic in exotics.datas) {
+        for (exotic in exotics.exoticData) {
             exoticSet.add(exotic.value.exotic)
         }
         return exoticSet
@@ -140,15 +141,15 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
         return exotics.hasAnyExotic()
     }
 
-    fun putExotic(exotic: Exotic) {
-        exotics.putExotic(exotic)
+    fun putExotic(exoticData: ExoticData) {
+        exotics.putExotic(exoticData)
     }
 
     fun removeExotic(exotic: Exotic) {
         exotics.removeExotic(exotic)
     }
 
-    fun getExoticData(exotic: Exotic): ExoticData {
+    fun getExoticData(exotic: Exotic): ExoticData? {
         return exotics.getData(exotic)
     }
 
@@ -191,7 +192,7 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
     }
 
     fun hasBandwidthForUpgrade(member: FleetMemberAPI, upgrade: Upgrade, level: Int): Boolean {
-        val upgradeBandwidth = (level - this.getUpgrade(upgrade)) * upgrade.getBandwidthUsage()
+        val upgradeBandwidth = (level - this.getUpgrade(upgrade)) * upgrade.bandwidthUsage
         return getUsedBandwidth() + upgradeBandwidth <= getBandwidthWithExotics(member)
     }
 
@@ -261,12 +262,14 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
             scrollTooltip.addCustom(innerPanel, 0f)
         }
 
+        var justAddedExoticHeader = false
         var addedExoticSection = false
         try {
             for (exotic in ExoticsHandler.EXOTIC_LIST) {
                 if (!this.hasExotic(exotic.key)) continue
                 if (!addedExoticSection) {
                     addedExoticSection = true
+                    justAddedExoticHeader = true
                     tooltip.addSectionHeading(
                         StringUtils.getString("FleetScanner", "ExoticHeader"),
                         Alignment.MID,
@@ -274,14 +277,30 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
                     )
                 }
 
-                val exoticData = this.getExoticData(exotic)
-                val imageText = tooltip.beginImageWithText(exotic.icon, 64f)
-                exoticData.addExoticOverlayOverPrev(tooltip)
+                val exoticData = this.getExoticData(exotic)!!
 
-                imageText.addTitle(this.getExoticData(exotic).getNameTranslation().toStringNoFormats(), exotic.color)
-                val title = imageText.prev
-                exotic.modifyToolTip(imageText, title, member, this, expandExotics)
-                tooltip.addImageWithText(3f)
+                val innerPanel = Global.getSettings().createCustom(width - 4f, 64f, null)
+
+                val iconTooltip = innerPanel.createUIElement(64f, 64f, false)
+                exoticData.addExoticIcon(iconTooltip)
+                innerPanel.addUIElement(iconTooltip)
+
+                val textTooltip = innerPanel.createUIElement(width - 68f, 64f, false)
+                textTooltip.addTitle(exoticData.getNameTranslation().toStringNoFormats(), exotic.color)
+                val title = textTooltip.prev
+                exotic.modifyToolTip(textTooltip, title, member, this, exoticData, expandExotics)
+                innerPanel.addUIElement(textTooltip).rightOfMid(iconTooltip, 4f)
+
+                UIUtils.autoResize(textTooltip)
+
+                innerPanel.position.setSize(width - 4f, textTooltip.position.height.coerceAtLeast(64f))
+
+                tooltip.addCustom(innerPanel, 4f)
+
+                if (justAddedExoticHeader && expandExotics) {
+                    innerPanel.position.setYAlignOffset(12f)
+                    justAddedExoticHeader = false
+                }
 
                 tooltip.setParaFontDefault()
                 tooltip.setParaFontColor(tooltipColor)
@@ -289,6 +308,10 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
         } catch (th: Throwable) {
             log.info("Caught exotic description exception", th)
             tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
+        }
+
+        if (addedExoticSection && expandExotics) {
+            tooltip.addSpacer(12f)
         }
 
         var addedUpgradeSection = false
@@ -317,7 +340,30 @@ class ShipModifications(private var bandwidth: Float, var upgrades: ETUpgrades, 
         mainTooltip.setForceProcessInput(true)
     }
 
-    fun populateTooltip(member: FleetMemberAPI, mainTooltip: TooltipMakerAPI, width: Float, height: Float = 350f, expandUpgrades: Boolean, expandExotics: Boolean, noScroller: Boolean = false) {
+    fun populateTooltip(
+        member: FleetMemberAPI,
+        mainTooltip: TooltipMakerAPI,
+        width: Float,
+        height: Float = 350f,
+        expandUpgrades: Boolean,
+        expandExotics: Boolean,
+        noScroller: Boolean = false
+    ) {
         populateTooltip(member, member.stats, mainTooltip, width, height, expandUpgrades, expandExotics, noScroller)
+    }
+
+    fun toJson(member: FleetMemberAPI): JSONObject {
+        val obj = JSONObject()
+        obj.put(BANDWIDTH_KEY, getBaseBandwidth(member).toDouble())
+
+        if (hasUpgrades()) {
+            obj.put(UPGRADES_KEY, upgrades.toJson(member))
+        }
+
+        if (hasExotics()) {
+            obj.put(EXOTICS_KEY, exotics.toJson(member))
+        }
+
+        return obj
     }
 }

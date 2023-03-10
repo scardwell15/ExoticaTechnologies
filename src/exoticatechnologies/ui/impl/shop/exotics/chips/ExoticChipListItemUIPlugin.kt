@@ -3,17 +3,11 @@ package exoticatechnologies.ui.impl.shop.exotics.chips
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
-import exoticatechnologies.modifications.bandwidth.BandwidthUtil
-import exoticatechnologies.modifications.exotics.Exotic
+import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
-import exoticatechnologies.modifications.upgrades.Upgrade
-import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipListItemUIPlugin
-import exoticatechnologies.ui.impl.shop.exotics.ExoticPanelUIPlugin
-import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
-import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.getMods
+import org.magiclib.kotlin.setAlpha
 
 class ExoticChipListItemUIPlugin(
     item: CargoStackAPI,
@@ -21,23 +15,32 @@ class ExoticChipListItemUIPlugin(
     listPanel: ListUIPanelPlugin<CargoStackAPI>
 ) : ChipListItemUIPlugin(item, member, listPanel) {
 
-    override fun showChip(rowPanel: CustomPanelAPI) {
-        val mods = member.getMods()
-        val plugin = getPlugin()
-        val exotic = plugin.exoticData.exotic
-        val type = plugin.exoticData.type
+    private var itemImage: TooltipMakerAPI? = null
 
-        val itemImage = rowPanel.createUIElement(iconSize, iconSize, false)
-        itemImage.addImage(plugin.spec.iconName, iconSize, 0f)
+    override fun showChip(rowPanel: CustomPanelAPI) {
+        val plugin = getPlugin()
+        val exotic = plugin.exoticData!!.exotic
+        val type = plugin.exoticData!!.type
+
+        itemImage = rowPanel.createUIElement(iconSize, iconSize, false)
+        itemImage!!.addImage(plugin.spec.iconName, iconSize, 0f)
         rowPanel.addUIElement(itemImage).inLMid(0f)
 
         val itemInfo = rowPanel.createUIElement(panelWidth - iconSize, panelHeight, false)
-        itemInfo.addPara(exotic.name, plugin.exoticData.getColor(), 0f).position.inTL(3f, 3f)
-        itemInfo.addPara(type.getName(), type.colorOverlay, 0f).position.inTL(3f, 3f)
+        itemInfo.addPara(exotic.name, plugin.exoticData!!.getColor(), 0f).position.inTL(3f, 3f)
+        itemInfo.addPara(type.name, type.colorOverlay.setAlpha(255), 0f)
 
         rowPanel.addUIElement(itemInfo).rightOfMid(itemImage, 3f)
     }
 
+    override fun render(alphaMult: Float) {
+        itemImage?.let {
+            val plugin = getPlugin()
+            val pos = it.position
+
+            plugin.render(pos.x, pos.y, 64f, 64f, 1f, 1f)
+        }
+    }
 
     private fun getPlugin(): ExoticSpecialItemPlugin {
         return item.plugin as ExoticSpecialItemPlugin

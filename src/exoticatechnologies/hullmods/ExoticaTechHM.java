@@ -19,6 +19,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Log4j
 public class ExoticaTechHM extends BaseHullMod {
@@ -90,7 +91,7 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (mods.hasExotic(exotic)) {
-                exotic.advanceInCampaign(fm, mods, amount, mods.getExoticData(exotic));
+                exotic.advanceInCampaign(fm, mods, amount, Objects.requireNonNull(mods.getExoticData(exotic)));
             }
         }
     }
@@ -113,7 +114,7 @@ public class ExoticaTechHM extends BaseHullMod {
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
 
-            exotic.advanceInCombatUnpaused(ship, amount, mods.getExoticData(exotic));
+            exotic.advanceInCombatUnpaused(ship, amount, member, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
     }
 
@@ -148,14 +149,14 @@ public class ExoticaTechHM extends BaseHullMod {
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
 
-            exotic.applyExoticToStats(id, fm, stats, mods.getExoticData(exotic));
+            exotic.applyExoticToStats(id, stats, fm, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);
             if (level <= 0) continue;
 
-            upgrade.applyUpgradeToStats(fm, stats, mods);
+            upgrade.applyUpgradeToStats(stats, fm, mods);
         }
     }
 
@@ -169,7 +170,7 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
-            exotic.applyExoticToShip(id, member, ship, mods.getExoticData(exotic));
+            exotic.applyExoticToShip(id, member, ship, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {

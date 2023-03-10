@@ -1,6 +1,5 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
-import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
@@ -8,6 +7,7 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.exotics.Exotic
+import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.ui.impl.shop.exotics.ExoticMethodsUIPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
@@ -21,7 +21,7 @@ class InstallMethod : Method {
             exotic.removeItemsFromFleet(member.fleetData.fleet, member, market)
         }
 
-        mods.putExotic(exotic)
+        mods.putExotic(ExoticData(exotic.key))
 
         ShipModLoader.set(member, mods)
         ExoticaTechHM.addToFleetMember(member)
@@ -34,11 +34,11 @@ class InstallMethod : Method {
         return !mods.hasExotic(exotic)
                 && exotic.canApply(member, mods)
                 && ExoticMethodsUIPlugin.isUnderExoticLimit(member, mods)
-                && (exotic.canAfford(member.fleetData.fleet, market) || Utilities.hasExoticChip(member.fleetData.fleet.cargo, exotic.key))
+                && (exotic.canAfford(member.fleetData.fleet, market))
     }
 
     override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean {
-        return true
+        return !ChipMethod().canUse(member, mods, exotic, market)
     }
 
     override fun getButtonText(exotic: Exotic): String {
@@ -57,14 +57,7 @@ class InstallMethod : Method {
         hovered: Boolean
     ): Map<String, Float>? {
         if (hovered) {
-            val resourceCosts: MutableMap<String, Float>
-            val stacks: List<CargoStackAPI> = ExoticMethodsUIPlugin.getExoticChips(member.fleetData.fleet.cargo, member, mods, exotic)
-            if (stacks.isNotEmpty()) {
-                resourceCosts = mutableMapOf()
-                resourceCosts[Utilities.formatSpecialItem(exotic.newSpecialItemData)] = 1f
-            } else {
-                resourceCosts = exotic.getResourceCostMap(member, mods, market)
-            }
+            val resourceCosts: MutableMap<String, Float> = exotic.getResourceCostMap(member, mods, market)
 
             if (exotic.getExtraBandwidth(member, mods, mods.getExoticData(exotic)) > 0) {
                 resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = exotic.getExtraBandwidth(

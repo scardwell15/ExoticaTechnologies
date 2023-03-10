@@ -113,7 +113,7 @@ class RecoverMethod : UpgradeMethod {
             return creditCost.toInt()
         }
 
-        fun getCreditCost(fm: FleetMemberAPI?, mods: ShipModifications, upgrade: Upgrade): Int {
+        fun getCreditCost(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade): Int {
             val resourceCreditCost =
                 getCreditCostForResources(upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade))).toFloat()
             return (resourceCreditCost * 0.166).toInt()

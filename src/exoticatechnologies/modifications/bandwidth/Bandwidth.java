@@ -61,7 +61,7 @@ public enum Bandwidth {
     }
 
     public static Bandwidth generate(float mult) {
-        return getPicker(mult).pick(ShipModFactory.getRandom());
+        return getPicker(mult).pick(ShipModFactory.random);
     }
 
     public static WeightedRandomPicker<Bandwidth> getPicker(float mult) {

@@ -15,7 +15,7 @@ class UpgradeChipSearcher: ChipSearcher<UpgradeSpecialItemPlugin>() {
         stack: CargoStackAPI,
         plugin: UpgradeSpecialItemPlugin
     ): Boolean {
-        val upgrade = plugin.upgrade
+        val upgrade = plugin.upgrade!!
         return plugin.upgradeLevel > mods.getUpgrade(upgrade)
                 && plugin.upgradeLevel <= upgrade.getMaxLevel(member)
                 && mods.hasBandwidthForUpgrade(member, upgrade, plugin.upgradeLevel)

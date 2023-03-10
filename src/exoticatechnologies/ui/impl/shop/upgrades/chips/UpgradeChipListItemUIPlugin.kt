@@ -48,6 +48,6 @@ class UpgradeChipListItemUIPlugin(
     }
 
     fun getUpgrade(): Upgrade {
-        return (item.plugin as UpgradeSpecialItemPlugin).upgrade
+        return (item.plugin as UpgradeSpecialItemPlugin).upgrade!!
     }
 }

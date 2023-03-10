@@ -19,8 +19,10 @@ unset $UpgradePageIndex",,,
 # Scanning,,,,,,
 ,,,,,,
 # Derelict,,,,,,
-ETDerelictShipDialog,PopulateSalvageOptions2,"$customType == wreck
-ETHasUpgrades score:9999998","Highlight ""Exotica technologies""","Upon closer inspection, the derelict appears to have signs of Exotica technologies.","11:ETScanDerelict:Scan the derelict for Exotica technologies.",
+ETDerelictShipGenerate,PopulateSalvageOptions1,"$customType == wreck
+!$entity.etGeneratedForDerelict","ETGenerateForDerelict",,,
+ETDerelictShipDialog,ET_CreateScanOptionForDerelict,"!$sotf_WSwispmother
+ETHasUpgrades","Highlight ""Exotica technologies""","Upon closer inspection, the derelict appears to have signs of Exotica technologies.","11:ETScanDerelict:Scan the derelict for Exotica technologies.",
 ETScanDerelict,DialogOptionSelected,"$option==ETScanDerelict","ETScanDerelict",,,
 "#END Derelict",,,,,,
 ,,,,,,

@@ -28,7 +28,6 @@ open class DestroyMethod : Method {
                 extraBandwidth = exotic.getExtraBandwidth(member, mods, mods.getExoticData(exotic))
             } else if (exotic.getExtraBandwidthPurchaseable(member, mods, mods.getExoticData(exotic)) > 0f) {
                 extraBandwidth = exotic.getExtraBandwidthPurchaseable(member, mods, mods.getExoticData(exotic))
-
             }
 
             if (extraBandwidth > 0) {

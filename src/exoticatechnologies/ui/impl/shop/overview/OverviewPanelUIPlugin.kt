@@ -74,8 +74,8 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
         buttons[expandExoticsButton] = ExpandExoticsButtonHandler()
 
         val upgradeRecoverPrice = mods.upgrades.map.keys
-            .map { UpgradesHandler.UPGRADES[it] }
-            .sumOf { RecoverMethod.getCreditCost(member, mods, it) }
+            .mapNotNull { UpgradesHandler.UPGRADES[it] }
+            .sumOf { RecoverMethod.getCreditCost(member!!, mods, it) }
             .toFloat()
 
         val upgradeRecoverPriceText = StringUtils.getTranslation("OverviewDialog", "ClearUpgrades")
@@ -131,9 +131,9 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
             this@OverviewPanelUIPlugin.apply {
                 val mods = member!!.getMods()
                 mods.upgrades.map.keys
-                    .map { UpgradesHandler.UPGRADES[it] }
+                    .mapNotNull { UpgradesHandler.UPGRADES[it] }
                     .forEach {
-                        RecoverMethod().apply(member, mods, it, market)
+                        RecoverMethod().apply(member!!, mods, it, market!!)
                     }
                 showPanel(mainPanel!!)
             }

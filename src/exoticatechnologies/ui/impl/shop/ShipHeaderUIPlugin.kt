@@ -215,7 +215,7 @@ class ShipHeaderUIPlugin(
         member.fleetData.fleet.cargo.credits.subtract(upgradePrice)
 
         val newBandwidth = min(mods.getBaseBandwidth() + increase, Bandwidth.MAX_BANDWIDTH)
-        mods.setBandwidth(newBandwidth)
+        mods.bandwidth = newBandwidth
         ShipModLoader.set(member, mods)
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 0.75f)

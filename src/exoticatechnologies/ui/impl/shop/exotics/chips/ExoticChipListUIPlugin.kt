@@ -26,8 +26,4 @@ class ExoticChipListUIPlugin(
         rowPlugin.layoutPanel(tooltip)
         return rowPlugin
     }
-
-    override fun createListHeader(tooltip: TooltipMakerAPI) {
-        tooltip.addTitle(listHeader).position.inTMid(0f)
-    }
 }

@@ -10,7 +10,6 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
-import exoticatechnologies.ui.impl.shop.chips.ChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.chips.UpgradeChipSearcher
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
@@ -57,7 +56,7 @@ class ChipMethod : DefaultUpgradeMethod() {
         val creditCost = getCreditCost(fm, mods, upgrade, upgradeChipStack)
         fleet.cargo.credits.subtract(creditCost.toFloat())
         Utilities.takeItem(upgradeChipStack)
-        mods.putUpgrade(upgrade, stackPlugin.getUpgradeLevel())
+        mods.putUpgrade(upgrade, stackPlugin.upgradeLevel)
         ShipModLoader.set(fm, mods)
         ExoticaTechHM.addToFleetMember(fm)
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
@@ -97,7 +96,7 @@ class ChipMethod : DefaultUpgradeMethod() {
          * @param upgrade the upgrade
          * @return the stack
          */
-        fun getDesiredChip(fm: FleetMemberAPI, mods: ShipModifications?, upgrade: Upgrade?): CargoStackAPI {
+        fun getDesiredChip(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade): CargoStackAPI? {
             return Utilities.getUpgradeChip(fm.fleetData.fleet.cargo, fm, mods, upgrade)
         }
 
@@ -107,7 +106,7 @@ class ChipMethod : DefaultUpgradeMethod() {
          * @param resourceCosts
          * @return The sum.
          */
-        fun getCreditCostForResources(resourceCosts: Map<String?, Int>): Int {
+        fun getCreditCostForResources(resourceCosts: Map<String, Int>): Int {
             var creditCost = 0f
             for ((key, value) in resourceCosts) {
                 creditCost += Utilities.getItemPrice(key) * value
@@ -115,12 +114,12 @@ class ChipMethod : DefaultUpgradeMethod() {
             return creditCost.toInt()
         }
 
-        fun getCreditCost(fm: FleetMemberAPI?, mods: ShipModifications?, upgrade: Upgrade, stack: CargoStackAPI?): Int {
+        fun getCreditCost(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, stack: CargoStackAPI?): Int {
             if (stack != null) {
                 val plugin = stack.plugin as UpgradeSpecialItemPlugin
                 val resourceCreditCost =
                     getCreditCostForResources(
-                        upgrade.getResourceCosts(fm, plugin.getUpgradeLevel())
+                        upgrade.getResourceCosts(fm, plugin.upgradeLevel)
                     ).toFloat()
                 return (resourceCreditCost * 0.33).toInt()
             }

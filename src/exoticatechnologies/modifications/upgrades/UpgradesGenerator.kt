@@ -12,17 +12,23 @@ import java.util.*
 @Log4j
 object UpgradesGenerator {
     @JvmStatic
-    fun generate(member: FleetMemberAPI, faction: String, mods: ShipModifications): ETUpgrades {
-        val config = FactionConfigLoader.getFactionConfig(faction)
+    fun generate(member: FleetMemberAPI, mods: ShipModifications, context: ShipModFactory.GenerationContext): ETUpgrades {
+        val config = context.factionConfig!!
         val allowedUpgrades = config.allowedUpgrades
         var upgradeChance = config.upgradeChance.toFloat()
+
+        if (member.fleetData != null && member.fleetData.fleet != null) {
+            if (member.fleetData.fleet.memoryWithoutUpdate.contains("\$exotica_upgradeMult")) {
+                upgradeChance *= member.fleetData.fleet.memoryWithoutUpdate.getFloat("\$exotica_upgradeMult")
+            }
+        }
 
         val upgrades = mods.upgrades
 
         val smodCount = Utilities.getSModCount(member)
         upgradeChance *= (1 + smodCount).toFloat()
 
-        val random = ShipModFactory.getRandom()
+        val random = ShipModFactory.random
         if (random.nextFloat() < upgradeChance) {
 
             var usableBandwidth = mods.getBandwidthWithExotics(member)
@@ -35,7 +41,7 @@ object UpgradesGenerator {
 
                     if (upgrade!!.getMaxLevel(member) <= upgrades.getUpgrade(upgrade)
                         || !upgrade.canApply(member, mods)
-                        || usableBandwidth - upgrade.getBandwidthUsage() < 0f) {
+                        || usableBandwidth - upgrade.bandwidthUsage < 0f) {
                         upgradePicker.remove(upgrade)
                         upgrade = null
                     } else if (upgrades.getUpgrade(upgrade) == 0
@@ -47,10 +53,10 @@ object UpgradesGenerator {
                 }
 
                 if (upgrade != null) {
-                    if (random.nextFloat() < upgrade.getSpawnChance() * (1 + 0.2f * smodCount) * allowedUpgrades[upgrade]!!) {
+                    if (random.nextFloat() < (upgrade.spawnChance * (1 + 0.2f * smodCount) * allowedUpgrades[upgrade]!! * context.upgradeChanceMult)) {
                         upgrades.addUpgrades(upgrade, 1)
                     }
-                    usableBandwidth -= upgrade.getBandwidthUsage()
+                    usableBandwidth -= upgrade.bandwidthUsage
                 }
             }
         }
@@ -60,7 +66,7 @@ object UpgradesGenerator {
     private fun getPicker(random: Random, allowedUpgrades: Map<Upgrade, Float>): WeightedRandomPicker<Upgrade> {
         val upgradePicker = WeightedRandomPicker<Upgrade>(random)
         allowedUpgrades.forEach { (upgrade, factionChance) ->
-            upgradePicker.add(upgrade, upgrade.getSpawnChance() * factionChance)
+            upgradePicker.add(upgrade, upgrade.spawnChance * factionChance)
         }
         return upgradePicker
     }

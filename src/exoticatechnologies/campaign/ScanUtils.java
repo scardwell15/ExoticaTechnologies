@@ -13,14 +13,13 @@ import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.bandwidth.Bandwidth;
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
-import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.exotics.ExoticData;
-import exoticatechnologies.modifications.exotics.ExoticType;
-import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
+import exoticatechnologies.ui.UIUtils;
 import exoticatechnologies.ui.java.TabbedCustomUIPanelPlugin;
 import exoticatechnologies.util.StringUtils;
+import kotlin.Pair;
 import lombok.*;
 import lombok.extern.log4j.Log4j;
 
@@ -159,29 +158,24 @@ public class ScanUtils {
                     Alignment.MID, 2f);
             textPanel.addTooltip();
 
-            float lastY = 0;
-            int augs = 0;
-            for (int i = 0; i < ExoticsHandler.EXOTIC_LIST.size(); i++) {
-                Exotic exotic = ExoticsHandler.EXOTIC_LIST.get(i);
+            TooltipMakerAPI tooltip = textPanel.beginTooltip();
+            UIComponentAPI lastImg = null;
+            for (ExoticData exoticData : mods.getExoticSet()) {
+                Pair<UIComponentAPI, UIComponentAPI> pair = exoticData.addExoticIcon(tooltip);
 
-                if (!mods.hasExotic(exotic)) continue;
+                if (lastImg != null) {
+                    pair.component1().getPosition().rightOfMid(lastImg, 3f);
 
-                TooltipMakerAPI tooltip = textPanel.beginTooltip();
-
-                int x = 4 + ((augs % 6) * 74);
-                tooltip.addImage(exotic.getIcon(), 64f, lastY);
-                tooltip.getPrev().getPosition().setXAlignOffset(x);
-                if (augs % 6 == 0) {
-                    lastY = -74;
-                } else if (augs % 6 == 5) {
-                    lastY = 0;
+                    if (pair.component2() != null) {
+                        pair.component2().getPosition().rightOfMid(lastImg, 3f);
+                    }
                 }
-                tooltip.addTooltipToPrevious(new ExoticTooltip(exotic, tooltip), TooltipMakerAPI.TooltipLocation.BELOW);
-                textPanel.addTooltip();
 
-                augs++;
+                tooltip.addTooltipToPrevious(new ExoticTooltip(exoticData, tooltip), TooltipMakerAPI.TooltipLocation.BELOW);
+                lastImg = pair.component1();
             }
-            textPanel.addPara("");
+            UIUtils.INSTANCE.autoResize(tooltip);
+            textPanel.addTooltip();
         }
     }
 
@@ -297,22 +291,20 @@ public class ScanUtils {
     }
 
     @RequiredArgsConstructor
-    @AllArgsConstructor
     protected static class ExoticTooltip extends BaseTooltipCreator {
         @Getter
-        private final Exotic exotic;
+        private final ExoticData exoticData;
         private final TooltipMakerAPI tooltip;
-        private ExoticType exoticType = ExoticType.NORMAL;
 
         @Override
         public float getTooltipWidth(Object tooltipParam) {
-            return Math.min(tooltip.computeStringWidth(exotic.getLoreDescription()), 300f);
+            return Math.min(tooltip.computeStringWidth(exoticData.getExotic().getTextDescription()), 300f);
         }
 
         @Override
         public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-            tooltip.addPara(exotic.getName(), exotic.getColor(), 0f);
-            tooltip.addPara(exotic.getTextDescription(), 0f);
+            tooltip.addPara(exoticData.getNameTranslation().toStringNoFormats(), exoticData.getColor(), 0f);
+            tooltip.addPara(exoticData.getExotic().getDescription(), 0f);
         }
     }
 
@@ -421,11 +413,9 @@ public class ScanUtils {
             TooltipMakerAPI lastImg = null;
             CustomPanelAPI iconPanel = myPanel.createCustomPanel(panelWidth, panelHeight, null);
             for (ExoticData exoticData : mods.getExoticSet()) {
-                Exotic exotic = exoticData.getExotic();
-
                 TooltipMakerAPI exoIcon = iconPanel.createUIElement(64, 64, false);
                 exoticData.addExoticIcon(exoIcon);
-                exoIcon.addTooltipToPrevious(new ExoticTooltip(exotic, myTooltip, exoticData.getType()),
+                exoIcon.addTooltipToPrevious(new ExoticTooltip(exoticData, myTooltip),
                         TooltipMakerAPI.TooltipLocation.BELOW);
 
                 if (lastImg == null) {

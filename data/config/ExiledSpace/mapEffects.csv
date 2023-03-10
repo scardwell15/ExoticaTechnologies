@@ -1,0 +1,4 @@
+id,name,cost,weight,order,description,icon,effectPlugin
+#unique ID,,cost to spawn should corelate with average goodnes of mod can be negative if its bad,spawn weight,order of applying effets,description,path to icon,path to script
+et_exoticsEffect,Exotic Testing Ground,200,0.1,4,Fleets have a large chance to generate exotics.,graphics/icons/markets/hydroponics.png,exoticatechnologies.integration.exiledspace.Exotica_ExoticsMapEffect
+et_upgradesEffect,High Quality Ships,60,0.3,4,Fleets have a much higher bandwidth and more upgrades.,graphics/icons/markets/light_industrial.png,exoticatechnologies.integration.exiledspace.Exotica_UpgradesMapEffect

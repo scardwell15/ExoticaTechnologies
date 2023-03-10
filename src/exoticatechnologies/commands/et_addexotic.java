@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exoticatechnologies.modifications.exotics.Exotic;
-import exoticatechnologies.modifications.exotics.ExoticType;
+import exoticatechnologies.modifications.exotics.types.ExoticType;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.util.Utilities;
 import org.lazywizard.console.BaseCommand;
@@ -26,10 +26,10 @@ public class et_addexotic implements BaseCommand {
                 String exoticKey = args[0];
                 Exotic exotic = ExoticsHandler.EXOTICS.get(exoticKey);
 
-                ExoticType exoticType = ExoticType.NORMAL;
+                ExoticType exoticType = ExoticType.Companion.getNORMAL();
                 if (args.length > 1) {
                     String exoticTypeString = args[1];
-                    exoticType = ExoticType.valueOf(exoticTypeString);
+                    exoticType = ExoticType.Companion.valueOf(exoticTypeString);
                 }
 
                 CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();

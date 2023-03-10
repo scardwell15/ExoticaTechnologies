@@ -81,7 +81,8 @@
 			"HelDrives": "graphics/icons/upgrades/heldrives.png"
 		},
 		"overlays": {
-			"Corrupted": "graphics/icons/overlays/corrupted.png"
+			"Corrupted": "graphics/icons/overlays/corrupted.png",
+			"Pure": "graphics/icons/overlays/pure.png"
 		}
 	}
 }

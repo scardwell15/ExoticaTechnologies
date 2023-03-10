@@ -4,7 +4,7 @@ import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 
 public class EqualizerCoreItemPlugin extends ExoticSpecialItemPlugin {
     @Override
-    public String getExoticId() {
+    public String getModId() {
         return "EqualizerCore";
     }
 }

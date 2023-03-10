@@ -58,6 +58,10 @@
       "TracerRecoilCalculator",
       "InterferenceShielding",
       "GuidanceComputers"
-    ]
+    ],
+    "rngExoticTypeWhitelist": {
+      "CORRUPTED": 1,
+      "PURE": 1
+    }
   }
 }

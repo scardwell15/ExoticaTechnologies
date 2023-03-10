@@ -29,6 +29,7 @@ class ExoticPanelUIPlugin(
     private var methodsPlugin: ExoticMethodsUIPlugin? = null
     private var resourcesPlugin: ExoticResourcesUIPlugin? = null
     private var chipsPlugin: ExoticChipPanelUIPlugin? = null
+    private var chipsTooltip: TooltipMakerAPI? = null
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -60,6 +61,7 @@ class ExoticPanelUIPlugin(
     private fun getMethods(): List<Method> {
         return mutableListOf(
             InstallMethod(),
+            ChipMethod(),
             RecoverMethod(),
             DestroyMethod()
         )
@@ -85,11 +87,11 @@ class ExoticPanelUIPlugin(
         val mods = member.getMods()
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
-
         method.apply(member, mods, exotic, market)
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
 
+        descriptionPlugin!!.resetDescription()
         resourcesPlugin!!.redisplayResourceCosts(method)
         methodsPlugin!!.showTooltip()
     }
@@ -98,17 +100,27 @@ class ExoticPanelUIPlugin(
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
-        chipsPlugin = ExoticChipPanelUIPlugin(mainPanel!!, exotic, member, market)
-        chipsPlugin!!.panelWidth = panelWidth / 2 - 6f
-        chipsPlugin!!.panelHeight = panelHeight - 6f
-        chipsPlugin!!.layoutPanels().position.inTR(9f, 3f)
+        val pW = panelWidth / 2 - 6f
+        val pH = panelHeight - 6f
+        chipsTooltip = mainPanel!!.createUIElement(pW, pH, false)
+        val innerPanel = mainPanel!!.createCustomPanel(pW, pH, null)
+
+        chipsPlugin = ExoticChipPanelUIPlugin(innerPanel, exotic, member, market)
+        chipsPlugin!!.panelWidth = pW
+        chipsPlugin!!.panelHeight = pH
+        chipsPlugin!!.layoutPanels().position.inTR(0f, 0f)
 
         chipsPlugin!!.addListener(ChipPanelListener())
+
+        chipsTooltip!!.addCustom(innerPanel, 0f).position.inTL(0f, 0f)
+        mainPanel!!.addUIElement(chipsTooltip).inTR(9f, 3f)
     }
 
     fun clickedChipPanelBackButton() {
         chipsPlugin!!.destroyTooltip()
         chipsPlugin = null
+        mainPanel!!.removeComponent(chipsTooltip)
+        chipsTooltip = null
 
         resourcesPlugin!!.redisplayResourceCosts(null)
         methodsPlugin!!.showTooltip()
@@ -117,6 +129,8 @@ class ExoticPanelUIPlugin(
     fun clickedChipStack(stack: CargoStackAPI) {
         chipsPlugin!!.destroyTooltip()
         chipsPlugin = null
+        mainPanel!!.removeComponent(chipsTooltip)
+        chipsTooltip = null
 
         val method = ChipMethod()
         method.chipStack = stack

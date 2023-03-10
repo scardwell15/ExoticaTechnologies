@@ -33,7 +33,7 @@ public class et_addexotic implements BaseCommand {
                 }
 
                 CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
-                CargoStackAPI stack = Utilities.getExoticChip(fleet.getCargo(), exotic.getKey());
+                CargoStackAPI stack = Utilities.getExoticChip(fleet.getCargo(), exotic.getKey(), exoticType.getNameKey());
                 if (stack != null) {
                     stack.add(1);
                 } else {

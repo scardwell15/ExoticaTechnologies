@@ -282,6 +282,29 @@ public class Utilities {
         return null;
     }
 
+    public static CargoStackAPI getExoticChip(CargoAPI cargo, String id, String type) {
+        if (cargo == null) return null;
+
+        for(CargoStackAPI stack : cargo.getStacksCopy()) {
+            if(stack.isSpecialStack()) {
+                if (stack.getPlugin() instanceof GenericExoticItemPlugin) {
+                    GenericExoticItemPlugin exoticPlugin = (GenericExoticItemPlugin) stack.getPlugin();
+                    if (exoticPlugin.getModId().equals(id) && exoticPlugin.getExoticData() != null && exoticPlugin.getExoticData().getType().getNameKey().equals(type)) {
+                        return stack;
+                    }
+                } else if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    CargoStackAPI crateStack = getExoticChip(plugin.getCargo(), id, type);
+                    if (crateStack != null) {
+                        return crateStack;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static boolean hasExoticChip(CargoAPI cargo, String id) {
         return getExoticChip(cargo, id) != null;
     }

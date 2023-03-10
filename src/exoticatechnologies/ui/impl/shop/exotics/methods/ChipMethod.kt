@@ -25,6 +25,8 @@ class ChipMethod : Method {
         ExoticaTechHM.addToFleetMember(member)
         exotic.onInstall(member)
 
+        Utilities.takeItem(chipStack)
+
         return StringUtils.getString("ExoticsDialog", "ExoticInstalled")
     }
 

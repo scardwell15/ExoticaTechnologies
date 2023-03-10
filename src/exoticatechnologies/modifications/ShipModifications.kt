@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
@@ -248,7 +249,7 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         mainTooltip.addPara("The ship has %s bandwidth.", 0f, Bandwidth.getColor(bandwidth), bandwidthString)
 
         //shitty special case
-        val panelHeight = if (noScroller) height - 386 else height
+        val panelHeight = height
         val customPanelAPI: CustomPanelAPI = Global.getSettings().createCustom(width, panelHeight, null)
         val scrollTooltip = customPanelAPI.createUIElement(width, height, !noScroller)
 
@@ -262,19 +263,19 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
             scrollTooltip.addCustom(innerPanel, 0f)
         }
 
-        var justAddedExoticHeader = false
+        var lastThing: UIComponentAPI? = null
         var addedExoticSection = false
         try {
             for (exotic in ExoticsHandler.EXOTIC_LIST) {
                 if (!this.hasExotic(exotic.key)) continue
                 if (!addedExoticSection) {
                     addedExoticSection = true
-                    justAddedExoticHeader = true
                     tooltip.addSectionHeading(
                         StringUtils.getString("FleetScanner", "ExoticHeader"),
                         Alignment.MID,
                         6f
                     )
+                    lastThing = tooltip.prev
                 }
 
                 val exoticData = this.getExoticData(exotic)!!
@@ -295,12 +296,8 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
 
                 innerPanel.position.setSize(width - 4f, textTooltip.position.height.coerceAtLeast(64f))
 
-                tooltip.addCustom(innerPanel, 4f)
-
-                if (justAddedExoticHeader && expandExotics) {
-                    innerPanel.position.setYAlignOffset(12f)
-                    justAddedExoticHeader = false
-                }
+                tooltip.addCustom(innerPanel, 4f).position.belowLeft(lastThing, 4f)
+                lastThing = innerPanel
 
                 tooltip.setParaFontDefault()
                 tooltip.setParaFontColor(tooltipColor)

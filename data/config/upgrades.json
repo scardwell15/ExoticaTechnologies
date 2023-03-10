@@ -239,8 +239,8 @@
     "color": [230, 75, 75],
     "bandwidthPerLevel": 5,
     "stats": [
-      {"id": "hull", "scalingEffect": 25, "appliesToFighters": true},
-      {"id": "maxSpeed", "scalingEffect": -16, "appliesToFighters": true},
+      {"id": "hull", "scalingEffect": 40, "appliesToFighters": true},
+      {"id": "maxSpeed", "scalingEffect": 25, "appliesToFighters": true},
       {"id": "fighterWingRange", "scalingEffect": -33}
     ],
     "conditions": [

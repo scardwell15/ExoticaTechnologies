@@ -4,10 +4,10 @@
   "bandwidthMult": 1.0,
   "allowedExotics": {
     "PlasmaFluxCatalyst": 0.16,
-    "HangarForgeMissiles": 0.5,
+    "HackedMissileForge": 0.5,
     "SpooledFeeders": 0.6,
     "FullMetalSalvo": 0.6,
-    "HangarForge": 0.33,
+    "PhasedFighterTether": 0.33,
     "AlphaSubcore": 0.1,
     "EqualizerCore": 0.6
   },

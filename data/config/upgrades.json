@@ -255,6 +255,7 @@
   },
   "GuidanceComputers": {
     "name": "Guidance Computers",
+    "tag": "guidancecomputers",
     "color": [120, 220, 110],
     "bandwidthPerLevel": 7.5,
     "stats": [
@@ -273,6 +274,7 @@
   },
   "AntimatterBoosters": {
     "name": "Antimatter Boosters",
+    "tag": "guidancecomputers",
     "color": [220, 120, 180],
     "bandwidthPerLevel": 5,
     "spawnChance": 3.0,

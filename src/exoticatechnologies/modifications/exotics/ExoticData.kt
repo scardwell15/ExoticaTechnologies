@@ -14,7 +14,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.awt.Color
 
-class ExoticData(val key: String, val type: ExoticType = ExoticType.NORMAL) {
+class ExoticData(var key: String, val type: ExoticType = ExoticType.NORMAL) {
     constructor(key:String) : this(key, ExoticType.NORMAL)
     constructor(exotic:Exotic, type: ExoticType) : this(exotic.key, type)
     constructor(exotic:Exotic) : this(exotic, ExoticType.NORMAL)

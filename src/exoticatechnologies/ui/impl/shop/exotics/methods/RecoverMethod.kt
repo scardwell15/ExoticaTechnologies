@@ -7,18 +7,22 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.exotics.Exotic
+import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
 class RecoverMethod : DestroyMethod() {
     override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String {
         val fleet: CampaignFleetAPI = member.fleetData.fleet
+        
+        val exoticData = mods.getExoticData(exotic)
+        val exoticType = exoticData?.type ?: ExoticType.NORMAL
 
-        val stack = Utilities.getExoticChip(fleet.cargo, exotic.key)
+        val stack = Utilities.getExoticChip(fleet.cargo, exotic.key, exoticType.nameKey)
         if (stack != null) {
             stack.add(1f)
         } else {
-            fleet.cargo.addSpecial(exotic.newSpecialItemData, 1f)
+            fleet.cargo.addSpecial(exotic.getNewSpecialItemData(exoticType), 1f)
         }
 
         Global.getSector().playerStats.storyPoints--

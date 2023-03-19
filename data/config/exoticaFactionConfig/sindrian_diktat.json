@@ -4,10 +4,10 @@
   "bandwidthMult": 1.1,
   "allowedExotics": {
     "PlasmaFluxCatalyst": 0.5,
-    "HangarForgeMissiles": 0.4,
+    "HackedMissileForge": 0.4,
     "SpooledFeeders": 0.2,
     "FullMetalSalvo": 0.5,
-    "HangarForge": 0.3,
+    "PhasedFighterTether": 0.3,
     "EqualizerCore": 0.4,
     "TierIIIDriveSystem": 0.4
   },
@@ -25,9 +25,9 @@
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},
-    "HangarForgeMissiles": {"credit": 1.0, "rep": 1.0},
+    "HackedMissileForge": {"credit": 1.0, "rep": 1.0},
     "SpooledFeeders":  {"credit": 1.0, "rep": 1.0},
-    "HangarForge": {"credit": 1.0, "rep": 1.0},
+    "PhasedFighterTether": {"credit": 1.0, "rep": 1.0},
     "AlphaSubcore": {"credit": 1.0, "rep": 1.0},
     "EqualizerCore": {"credit": 1.0, "rep": 1.0}
   }

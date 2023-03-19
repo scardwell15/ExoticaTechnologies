@@ -11,6 +11,8 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.IntervalUtil
+import data.scripts.util.MagicAnim
+import data.scripts.util.MagicRender
 import data.scripts.util.MagicUI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
@@ -20,9 +22,10 @@ import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
+import org.lwjgl.util.vector.Vector2f
 import java.awt.Color
 
-class HangarForge(key: String, settings: JSONObject) : Exotic(key, settings) {
+class PhasedFighterTether(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color.GREEN
     override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
         return Utilities.hasItem(fleet.cargo, ITEM)
@@ -37,11 +40,6 @@ class HangarForge(key: String, settings: JSONObject) : Exotic(key, settings) {
         return false
     }
 
-    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
-        Utilities.takeItemQuantity(fleet.cargo, ITEM, 1f)
-        return true
-    }
-
     override fun modifyToolTip(
         tooltip: TooltipMakerAPI,
         title: UIComponentAPI,
@@ -52,23 +50,16 @@ class HangarForge(key: String, settings: JSONObject) : Exotic(key, settings) {
     ) {
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
-                .format("rateDecreaseBuff", RATE_DECREASE_MODIFIER)
                 .addToTooltip(tooltip, title)
         }
     }
 
-    override fun applyExoticToStats(
-        id: String,
-        stats: MutableShipStatsAPI,
-        fm: FleetMemberAPI,
+    override fun advanceInCombatAlways(
+        ship: ShipAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
-        data: ExoticData
+        exoticData: ExoticData
     ) {
-        stats.dynamic.getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT)
-            .modifyMult(buffId, 1f + RATE_DECREASE_MODIFIER / 100f)
-    }
-
-    override fun advanceInCombatAlways(ship: ShipAPI, member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) {
         val replacements = getFreeReplacements(ship)
         val replacementInterval = getReplacementInterval(ship)
         if (replacementInterval != null) {
@@ -95,31 +86,39 @@ class HangarForge(key: String, settings: JSONObject) : Exotic(key, settings) {
         if (Global.getCombatEngine().isPaused) {
             return
         }
+
         if (replacements < calculateMaxReplacements(ship)) {
             advanceReplacementInterval(ship, amount)
         }
+
         if (replacements > 0) {
             for (bay in ship.launchBaysCopy) {
-                if (getDeadFighters(bay) > 0 && bay.fastReplacements == 0) {
-                    bay.fastReplacements = 1
-                    bay.makeCurrentIntervalFast()
-                    addFreeReplacements(ship, -1)
-                    replacements--
-                    if (replacements == 0) break
+                for (wing in ship.allWings) {
+                    for (fighter in wing.wingMembers) {
+                        if (fighter.hitpoints <= fighter.maxHitpoints * 0.33f) {
+                            wing.orderReturn(fighter)
+
+                            MagicRender.battlespace(
+                                fighter.spriteAPI,
+                                fighter.location, fighter.velocity,
+                                Vector2f(fighter.spriteAPI.width, fighter.spriteAPI.height),
+                                Vector2f(-fighter.spriteAPI.width * 0.25f, -fighter.spriteAPI.height * 0.25f),
+                                fighter.facing + 90,
+                                fighter.angularVelocity,
+                                Color(200, 100, 255),
+                                false,
+                                0.1f,
+                                1.5f,
+                                0.2f
+                            )
+
+                            bay.land(fighter)
+
+                            setFreeReplacements(ship, --replacements)
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    fun maintainStatus(ship: ShipAPI, id: String?, translation: String?) {
-        if (Global.getCombatEngine().playerShip != null && Global.getCombatEngine().playerShip == ship) {
-            Global.getCombatEngine().maintainStatusForPlayerShip(
-                id,
-                "graphics/icons/hullsys/reserve_deployment.png",
-                name,
-                translation,
-                false
-            )
         }
     }
 
@@ -128,21 +127,9 @@ class HangarForge(key: String, settings: JSONObject) : Exotic(key, settings) {
     }
 
     companion object {
-        private const val ITEM = "et_hangarforge"
         private const val REPLACEMENT_COUNT_ID = "et_fighterReplacements"
         private const val REPLACEMENT_INTERVAL_ID = "et_fighterReplacementInterval"
         private const val RATE_DECREASE_MODIFIER = 25f
-        fun getDeadFighters(bay: FighterLaunchBayAPI): Int {
-            var dead = 0
-            if (bay.wing != null && bay.wing.wingMembers != null) {
-                for (ship in bay.wing.wingMembers) {
-                    if (!ship.isAlive) {
-                        dead++
-                    }
-                }
-            }
-            return dead
-        }
 
         fun advanceReplacementInterval(ship: ShipAPI, amount: Float) {
             val replacementInterval = getReplacementInterval(ship)

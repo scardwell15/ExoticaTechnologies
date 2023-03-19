@@ -41,6 +41,10 @@ class ETExotics {
     }
 
     fun putExotic(exoticData: ExoticData) {
+        updateMap[exoticData.key]?.let {
+            exoticData.key = it
+        }
+
         this.exoticData[exoticData.key] = exoticData
     }
 
@@ -126,5 +130,10 @@ class ETExotics {
         for (i in 0 until obj.length()) {
             putExotic(obj.getString(i))
         }
+    }
+
+    companion object {
+        val updateMap = mutableMapOf("HangarForge" to "PhasedFighterTether",
+            "HangarForgeMissiles" to "HackedMissileForge")
     }
 }

@@ -1,20 +1,14 @@
-bug - screen scaling for exotic type overlay
-bug - npc fleets not adhering to exotic limit
-bug - daemon core should not be installed on automated ships
-bug - exotic chips of different type are stacking
-
 replace hangar forge - Phased Fighter Tether - phase wings back to ship at low health
 
 exotic - Hivemind Neurolink - quarter engagement range to a minimum 1k, buff fighter stats
 
 exotic - Hyperspec LPC - decreasing fighter count to buff remaining one
 - always gives these ""flat"" stats
--- +25% armour
+-- +25% armour/flux cap
 -- +20% speed
 - increases the below stats, scaling on number of fighters "lost" from the wing, and number of bays removed
 -- health
 -- damage (?)
--- flux cap (or just shield damage taken?)
 
 exotic - Penance Engine - luddic counterpart to alpha core integration. armor regen and 75 flat hard flux dissipation while near enemy ship. +weapon repair rate
 - always gives weapon repair rate

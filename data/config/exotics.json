@@ -21,16 +21,16 @@
     "name": "Equalizer Core",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.EqualizerCore"
   },
-  "HangarForge": {
-    "name": "Hangar Forge",
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.HangarForge",
+  "PhasedFighterTether": {
+    "name": "Phased Fighter Tether",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasedFighterTether",
     "conditions": [
       {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have a launch bay."}
     ]
   },
-  "HangarForgeMissiles": {
+  "HackedMissileForge": {
     "name": "Hacked Missile Forge",
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.HangarForgeMissiles"
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.HackedMissileForge"
   },
   "PhasefieldEngine": {
     "name": "Phasefield Engine",
@@ -66,6 +66,11 @@
     "name": "Alpha Subcore",
     "tag": "aiCore",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore"
+  },
+  "PenanceEngine": {
+    "name": "Penance Engine",
+    "tag": "aiCore",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.PenanceEngine"
   },
   "SubsumedAlphaCore": {
     "name": "Subsumed Alpha Core",

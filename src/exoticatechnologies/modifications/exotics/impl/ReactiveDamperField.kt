@@ -49,10 +49,10 @@ class ReactiveDamperField(key: String, settings: JSONObject) : Exotic(key, setti
     ) {
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
-                .format("damperDuration", DAMPER_DURATION * getPositiveMult(member, mods, exoticData))
+                .formatFloat("damperDuration", DAMPER_DURATION * getPositiveMult(member, mods, exoticData))
                 .format("damperReduction", DAMPER_REDUCTION)
                 .format("triggeringDamage", TRIGGERING_DAMAGE)
-                .format("damperCooldown", DAMPER_COOLDOWN * getNegativeMult(member, mods, exoticData))
+                .formatFloat("damperCooldown", DAMPER_COOLDOWN * getNegativeMult(member, mods, exoticData))
                 .format("armorDamageTaken", PASSIVE_DAMAGE_TAKEN)
                 .addToTooltip(tooltip, title)
         }
@@ -99,7 +99,7 @@ class ReactiveDamperField(key: String, settings: JSONObject) : Exotic(key, setti
     }
 
     private val statusBarText: String
-        private get() = StringUtils.getString(key, "statusBarText")
+        get() = StringUtils.getString(key, "statusBarText")
 
     private abstract inner class DamperState(
         val member: FleetMemberAPI,

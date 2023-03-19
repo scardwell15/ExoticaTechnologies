@@ -20,7 +20,7 @@ import org.json.JSONObject
 import java.awt.Color
 import kotlin.math.ceil
 
-class HangarForgeMissiles(key: String, settings: JSONObject) : Exotic(key, settings) {
+class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(0xFF8902)
     override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
         return (Utilities.hasItem(fleet.cargo, ITEM)
@@ -44,7 +44,7 @@ class HangarForgeMissiles(key: String, settings: JSONObject) : Exotic(key, setti
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
                 .format("reloadSize", PERCENT_RELOADED / getNegativeMult(member, mods, exoticData))
-                .format("reloadTime", SECONDS_PER_RELOAD / getPositiveMult(member, mods, exoticData))
+                .formatFloat("reloadTime", SECONDS_PER_RELOAD / getPositiveMult(member, mods, exoticData))
                 .addToTooltip(tooltip, title)
         }
     }

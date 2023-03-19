@@ -96,12 +96,6 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
     }
 
     private inner class ReadyState(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) : VentState(member, mods, exoticData) {
-        override fun initShip(ship: ShipAPI) {
-            ship.mutableStats.acceleration.unmodify(buffId)
-            ship.mutableStats.deceleration.unmodify(buffId)
-            ship.mutableStats.maxSpeed.unmodify(buffId)
-        }
-
         override fun advanceShip(ship: ShipAPI, amount: Float) {
             if (ship.fluxTracker.isVenting) {
                 if (ship.currFlux > ship.maxFlux * FLUX_LEVEL_REQUIRED / 100f) {
@@ -170,6 +164,10 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
         }
 
         override fun intervalExpired(ship: ShipAPI): Boolean {
+            ship.mutableStats.acceleration.unmodify(buffId)
+            ship.mutableStats.deceleration.unmodify(buffId)
+            ship.mutableStats.maxSpeed.unmodify(buffId)
+
             setNextState(ship)
             return true
         }
@@ -185,6 +183,7 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
         private const val FORWARD_SPEED_INCREASE = 50
         private const val FLUX_LEVEL_REQUIRED = 40f
         private const val SPEED_BUFF_TIME = 4f
+
         private const val STATE_KEY = "et_drivefluxvent_state"
         private val READY_STATE_COLOR = Color(170, 140, 220)
     }

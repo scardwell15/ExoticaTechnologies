@@ -18,7 +18,7 @@ object ExoticsGenerator {
         val config = context.factionConfig!!
         val allowedExotics: Map<Exotic, Float> = config.allowedExotics
         var exoticChance = config.exoticChance.toFloat()
-        var exoticTypeChance = config.exoticTypeChance.toFloat()
+        var exoticTypeChance = config.exoticTypeChance
 
         if (member.fleetData != null && member.fleetData.fleet != null) {
             if (member.fleetData.fleet.memoryWithoutUpdate.contains("\$exotica_exoticMult")) {

@@ -5,11 +5,11 @@
   "allowedExotics": {
     "PlasmaFluxCatalyst": 0.5,
     "DriveFluxVent": 0.3,
-    "HangarForgeMissiles": 0.5,
+    "HackedMissileForge": 0.5,
     "SpooledFeeders": 0.5,
     "FullMetalSalvo": 0.5,
     "PhaseFieldEngine": 0.16,
-    "HangarForge": 0.4,
+    "PhasedFighterTether": 0.4,
     "AlphaSubcore": 0.75
   },
   "allowedUpgrades": {

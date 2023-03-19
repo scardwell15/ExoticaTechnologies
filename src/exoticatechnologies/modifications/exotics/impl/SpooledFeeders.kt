@@ -42,10 +42,10 @@ class SpooledFeeders(key: String, settings: JSONObject) : Exotic(key, settings) 
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
                 .format("firerateBoost", RATE_OF_FIRE_BUFF)
-                .format("boostTime", BUFF_DURATION * getPositiveMult(member, mods, exoticData))
+                .formatFloat("boostTime", BUFF_DURATION * getPositiveMult(member, mods, exoticData))
                 .format("firerateMalus", abs(RATE_OF_FIRE_DEBUFF))
-                .format("malusTime", DEBUFF_DURATION * getNegativeMult(member, mods, exoticData))
-                .format("cooldownTime", COOLDOWN)
+                .formatFloat("malusTime", DEBUFF_DURATION * getNegativeMult(member, mods, exoticData))
+                .formatFloat("cooldownTime", COOLDOWN)
                 .addToTooltip(tooltip, title)
         }
     }

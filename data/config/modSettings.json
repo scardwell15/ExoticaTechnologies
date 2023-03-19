@@ -1,6 +1,6 @@
 {
   "exoticatechnologies": {
-    "exotic_HangarForgeMissiles_weaponBlacklist": [
+    "exotic_HackedMissileForge_weaponBlacklist": [
       #"atropos_single"
     ],
     "industryBandwidthBonuses": {
@@ -41,8 +41,8 @@
       "PlasmaFluxCatalyst",
       "EqualizerCore",
       "DriveFluxVent",
-      "HangarForge",
-      "HangarForgeMissiles",
+      "PhasedFighterTether",
+      "HackedMissileForge",
       "PhasefieldEngine",
       "SpooledFeeders",
       "FullMetalSalvo"

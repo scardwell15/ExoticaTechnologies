@@ -45,8 +45,8 @@ class PhasefieldEngine(key: String, settings: JSONObject) : Exotic(key, settings
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
                 .format("phaseCostReduction", getPhaseCostReduction(member, mods, exoticData))
-                .format("phaseResetTime", PHASE_RESET_INTERVAL * getNegativeMult(member, mods, exoticData))
-                .format("noDamageTime", INVULNERABLE_INTERVAL)
+                .formatFloat("phaseResetTime", PHASE_RESET_INTERVAL * getNegativeMult(member, mods, exoticData))
+                .formatFloat("noDamageTime", INVULNERABLE_INTERVAL)
                 .format("zeroFluxCost", Misc.getRounded(PHASE_COST_IF_ZERO))
                 .addToTooltip(tooltip, title)
         }
@@ -133,7 +133,7 @@ class PhasefieldEngine(key: String, settings: JSONObject) : Exotic(key, settings
     }
 
     // damage listener
-    private inner class ET_PhasefieldEngineListener(private val ship: ShipAPI) : DamageTakenModifier {
+    private inner class PhasefieldEngineListener(private val ship: ShipAPI) : DamageTakenModifier {
         override fun modifyDamageTaken(
             param: Any?,
             target: CombatEntityAPI,
@@ -200,8 +200,8 @@ class PhasefieldEngine(key: String, settings: JSONObject) : Exotic(key, settings
 
     private inner class PhasedState(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) : FieldState(member, mods, exoticData) {
         override fun initShip(ship: ShipAPI) {
-            if (ship.hasListenerOfClass(ET_PhasefieldEngineListener::class.java)) {
-                ship.removeListenerOfClass(ET_PhasefieldEngineListener::class.java)
+            if (ship.hasListenerOfClass(PhasefieldEngineListener::class.java)) {
+                ship.removeListenerOfClass(PhasefieldEngineListener::class.java)
             }
             addToTimesPhased(ship)
             ship.mutableStats.phaseCloakActivationCostBonus.modifyMult(
@@ -240,8 +240,8 @@ class PhasefieldEngine(key: String, settings: JSONObject) : Exotic(key, settings
 
     private inner class BuffedState(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) : FieldState(member, mods, exoticData) {
         override fun initShip(ship: ShipAPI) {
-            if (!ship.hasListenerOfClass(ET_PhasefieldEngineListener::class.java)) {
-                val listener = ET_PhasefieldEngineListener(ship)
+            if (!ship.hasListenerOfClass(PhasefieldEngineListener::class.java)) {
+                val listener = PhasefieldEngineListener(ship)
                 ship.addListener(listener)
             }
         }
@@ -278,8 +278,8 @@ class PhasefieldEngine(key: String, settings: JSONObject) : Exotic(key, settings
 
         override fun initShip(ship: ShipAPI) {
             endTime = Global.getCombatEngine().getTotalElapsedTime(false) + ship.phaseCloak.cooldown
-            if (ship.hasListenerOfClass(ET_PhasefieldEngineListener::class.java)) {
-                ship.removeListenerOfClass(ET_PhasefieldEngineListener::class.java)
+            if (ship.hasListenerOfClass(PhasefieldEngineListener::class.java)) {
+                ship.removeListenerOfClass(PhasefieldEngineListener::class.java)
             }
         }
 

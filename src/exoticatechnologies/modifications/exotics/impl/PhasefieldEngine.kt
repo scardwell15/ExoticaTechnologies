@@ -71,7 +71,7 @@ class PhasefieldEngine(key: String, settings: JSONObject) : Exotic(key, settings
         return 1f - abs(PHASE_COST_PERCENT_REDUCTION / 100f * getPositiveMult(member, mods, exoticData)).coerceAtMost(0.9f)
     }
 
-    override fun applyExoticToShip(
+    override fun applyToShip(
         id: String,
         member: FleetMemberAPI,
         ship: ShipAPI,

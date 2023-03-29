@@ -8,6 +8,7 @@
     "HackedMissileForge": 0.6,
     "SpooledFeeders": 0.5,
     "FullMetalSalvo": 0.5,
+    "HyperspecLPC": 0.5,
     "SubsumedAlphaCore": 5.0,
     "SubsumedBetaCore": 5.0,
     "SubsumedGammaCore": 5.0
@@ -18,6 +19,8 @@
     "OverchargedShields": 1.0,
     "InfernalEngines": 1.0,
     "WeldedArmor": 1.0,
-    "AssaultWings": 1.0
+    "AssaultWings": 1.0,
+    "VelocityInjectors": 1.0,
+    "FluxInductionDrive": 1.0
   }
 }

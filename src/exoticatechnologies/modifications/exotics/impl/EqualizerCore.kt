@@ -84,7 +84,7 @@ class EqualizerCore(key: String, settings: JSONObject) : Exotic(key, settings) {
             for (weapon in ship.allWeapons) {
                 if (weapon.type == WeaponAPI.WeaponType.MISSILE) continue
                 if (weapon.spec.maxRange > getUpperRangeLimit(member, mods, exoticData)) {
-                    val buff = RANGE_DECREASE_DAMAGE_INCREASE * (weapon.spec.maxRange - RANGE_LIMIT_TOP) / 100 * getPositiveMult(member, mods, exoticData)
+                    val buff = (RANGE_DECREASE_DAMAGE_INCREASE / 100f * getPositiveMult(member, mods, exoticData)) * (weapon.spec.maxRange - getUpperRangeLimit(member, mods, exoticData)).coerceAtLeast(0f)
                     weapon.damage.modifier.modifyPercent(buffId, buff)
                 }
             }

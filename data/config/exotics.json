@@ -28,6 +28,13 @@
       {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have a launch bay."}
     ]
   },
+  "HyperspecLPC": {
+    "name": "Hyperspec LPC",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.HyperspecLPC",
+    "conditions": [
+      {"id": "launchBays", "operator": ">", "expected": 1, "cannotApplyReason": "The ship must have more than one launch bay."}
+    ]
+  },
   "HackedMissileForge": {
     "name": "Hacked Missile Forge",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HackedMissileForge"

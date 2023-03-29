@@ -154,6 +154,7 @@
 		"tooltip": "Increases weapon firerate substantially when a weapon fires. Rate of fire slows for a time after.",
 		"longDescription": "Weapon fire rate is increased by *${firerateBoost}%%* for *${boostTime} seconds* when a weapon is fired. After this time, weapon fire rate is reduced by =${firerateMalus}%%= for *${malusTime} seconds*. This can occur once every *${cooldownTime} seconds*. If ship is under player control, a non-missile weapon has to be fired manually for effect to take place. If ship is under AI control, any non-PD weapon triggers the effect.",
 		"needItem": "You need a ${itemName} to install this.",
+		"systemText": "SPOOLED FEEDERS",
 		"statusBarText": "SPOOL",
 		"statusTitle": "SPOOLED FEEDERS",
 		"statusBuffText": "GIVE THEM HELL",
@@ -188,20 +189,25 @@
 		"needItem": "You need an ${itemName} to install this.",
 		"longDescription": "Reduces recoil by *${recoilReduction}%%*. Increases weapon turn rate by *${weaponTurnBonus}%%*. Autofire leading is nearly perfected. Weapons with at most *${lowRangeThreshold} base range* have it increased by *${rangeBonus}*. Weapons with at least *${highRangeThreshold} base range* have it reduced by =${rangeMalus}= and damage increased by *${rangeDecreaseDamageIncrease}%%* per 100 units over."
 	},
+	"HyperspecLPC": {
+		"description": "A cutting-edge LPC conversion device that consolidates all resources into a single wing LPC. The singular wing is greatly enhanced in speed, armor, and damage as a result, but takes significantly longer to create and repair.",
+		"tooltip": "Reduces the number of bays to 1. Buffs the remaining wing significantly based on how many bays were removed. Increases the replacement time for the fighter wing.",
+		"longDescription": "Reduces the number of bays to 1. Fighter non-missile damage is increased by *${fighterDamageIncrease}%%*, speed is increased by *${fighterSpeedIncrease}%%*, armor is increased by *${fighterArmorIncrease}%%*, and flux is increased by *${fighterFluxIncrease}%%*. Replacement time is increased by =${replacementTimeIncrease}%%=."
+	},
 	"PhasedFighterTether": {
-		"description": "Tri-Tachyon markets the technological marvel as a multidimensional link that rips open a hole between the fighter and its launch bay. The fighter is then violently sucked through the vortex, saving the fighter from destruction. The only caveat is that the device can only work so fast, and is unable to pull the fighter if the hull is destroyed outright.",
-		"tooltip": "Fighters at low health are instantly pulled back to the ship's hangar bays.",
+		"description": "Tri-Tachyon markets the technological marvel as a multidimensional web that rips open a hole between the fighter and its launch bay. The fighter is then violently sucked through the vortex, saving the hull from complete destruction. The only caveat is that the device can only work so fast, and is unable to keep the fighter in working condition if it is destroyed outright.",
+		"tooltip": "Fighters at low health are instantly pulled back to the ship's hangar bays. Damaged parts are pulled back as well and are used to repair fighters, increasing replacement rate.",
 		"needItem": "You need a ${itemName} to install this.",
-		"longDescription": "*Half* of the total number of fighters can be *teleported back to the ship* if they are at low health. This effect recharges every minute.",
+		"longDescription": "*Half* of the total number of fighters can be *teleported back to the ship* if they are at low health. This effect recharges every minute. Fighter refit time is reduced by *${fighterRefitTimeDecrease}%%*.",
 		"statusBarText": "TETHER",
 	},
 	"HackedMissileForge": {
-		"description": "Corrupting a hangar microforge to fabricate the most delicate components of missiles is possible, given a few engineers skilled with Domain technology. Their services don't come cheap, however, and the forge itself takes up a lot of space.",
-		"tooltip": "Reloads some of all non-reloading missile's ammunition capacity periodically. Reduces non-reloading missile capacity.",
+		"description": "Corrupting a hangar microforge to fabricate the most delicate components of missiles is possible, given a few engineers skilled with Domain technology. Their services don't come cheap, however, and the missiles the forge produces won't be as high quality.",
+		"tooltip": "Reloads all non-reloading missile's ammunition capacity periodically. Reduces missile damage.",
 		"needCredits": "You need ${credits} to install this.",
 		"needItem": "You need a ${itemName} to install this.",
 		"statusBarText": "M.FORGE",
-		"longDescription": "Reduces non-reloading missile capacity to =${reloadSize}%%=, or to a minimum of one burst. Reloads all of any non-reloading missile's ammunition capacity every *${reloadTime} seconds*. This only affects missiles with more than 1 ammo.",
+		"longDescription": "Reduces missile damage by =${damageDecrease}%%=. Reloads all of any non-reloading missile's ammunition capacity every *${reloadTime} seconds*. This only affects missiles with more than 1 ammo.",
 		"statusReloaded": "Reloaded weapons!"
 	},
 	"PhasefieldEngine": {
@@ -219,6 +225,7 @@
 		"description": "Overcharging weapon systems results in a massive increase to damage and projectile speeds, but the power such a system controller takes along with the potential damage from overcharging the power of weaponry causes a long term effect on the rate of fire of weapons on board the ship.",
 		"tooltip": "A salvo starts when a weapon is fired, giving a massive damage and projectile speed boost for a very short period. Rate of fire on the ship is reduced permanently.",
 		"longDescription": "All weapon projectile speed and non-missile damage is increased by *${damageBoost}%%* for *${boostTime} seconds* when a weapon is fired. The system takes *${cooldown} seconds* to recharge. Weapon fire rate is reduced by =${firerateMalus}%%= permanently.",
+		"systemText": "FULL METAL SALVO",
 		"statusBarText": "SALVO",
 		"statusTitle": "FULL METAL SALVO",
 		"statusBuffText": "APOCALYPSE",
@@ -233,7 +240,7 @@
 	"PenanceEngine": {
 		"description": "A rare artefact, granting its crew divine might if they are willing to sacrifice everything in the name of Ludd. Its powers shine true when among those who stand against it, granting a boon of strength and endurance to smite all that stand in its way.",
 		"tooltip": "Increases weapon repair rate and disables shields. Grants armor repair and increased speed in lateral directions while near enemy ships. Large amounts of damage will cause a massive EMP burst on the ship.",
-		"longDescription": "Increases weapon repair rate by *${weaponRepairRate}%%*, and =disables shields and phase systems=. When within 1200 units of an enemy ship, *armor repairs itself at a rate of ${armorRegenPerSec}%% per second per enemy ship* (up to *${armorRegenMax}%%*) and *${sideSpeedBoost} higher speed* when moving laterally (strafing). If =${damageThreshold} armor/hull damage= is taken within a short window, the ship will release a massive EMP burst onto itself, damaging most weapons and engines.",
+		"longDescription": "Increases weapon repair rate by *${weaponRepairRate}%%*, and =disables shields and phase systems=. When within 1200 units of an enemy ship, *armor repairs itself at a rate of ${armorRegenPerSec}%% per second per enemy ship* (up to *${armorRegenMax}%%*, max *${armorRegenPerSecondMax} per second*) and *${sideSpeedBoost} higher speed* when moving laterally (strafing). If =${damageThreshold} armor/hull damage= is taken within a short window, the ship will release a massive EMP burst onto itself, damaging most weapons and engines.",
 		"statusBarText": "LUDD",
 	},
 	"ReactiveDamperField": {
@@ -286,10 +293,16 @@
 		"description": "Loading weapons with a special kind of tracer round allows this subsystem to make trajectory adjustments to reduce recoil and inaccuracy at the cost of weapon turn rate. The durability of the weapon is increased as a side effect."
 	},
 	"AdvancedFluxCoils": {
-		"description": "Improve flux capacity, vent speed, and decrease the flux cost of weapons."
+		"description": "Improve flux capacity, vent speed, and decrease the flux cost of weapons. The size of the new cabling required for the flux coils reduces the stability of the hull."
 	},
 	"DerelictWeaponAssistant": {
 		"description": "Reduces recoil and inaccuracy, and increases projectile speed and ballistic weapon firerate."
+	},
+	"IronShell": {
+		"description": "Improvements and modifications are made to the armor to increase the space between individual plates of armor. This type of spaced armor is more effective versus high explosive damage, but doesn't fare as well against other kind of weaponry."
+	},
+	"HelDrives": {
+		"description": "An engine upgrade package as often found on Daemon-type ships, utilising seemingly long lost Domain-era plasma injectors to supercharge a ship's drive system. While vastly improving any ship's agility in all regards, the induced stress exceeds the design limits of standard drive units, rendering them more susceptible to damage."
 	},
 	"AuxiliarySensors": {
 		"description": "Increases sensor strength, but also increases sensor profile and minimum required crew to service the arrays."
@@ -297,17 +310,23 @@
 	"InterferenceShielding": {
 		"description": "Decreases sensor profile significantly, but increases supply consumption."
 	},
-	"IronShell": {
-		"description": "Improvements and modifications are made to the armor to increase the space between individual plates of armor. This type of spaced armor is more effective versus high explosive damage, but doesn't fare as well against other kind of weaponry."
-	},
 	"AssaultWings": {
 		"description": "Fighters are given additional armoring and flux capacity, but the equipment puts an extra strain on how far away they can be from a carrier."
 	},
 	"GuidanceComputers": {
 		"description": "Advanced guidance computers replace some of the payload of a missile, increasing its tracking ability and health but reducing damage dealt."
 	},
-	"HelDrives": {
-		"description": "An engine upgrade package as often found on Daemon-type ships, utilising seemingly long lost Domain-era plasma injectors to supercharge a ship's drive system. While vastly improving any ship's agility in all regards, the induced stress exceeds the design limits of standard drive units, rendering them more susceptible to damage."
+	"OverclockedFabricators": {
+		"description": "Increase replacement rate regeneration and decrease the rate at which it degrades, while also increasing fighter refit time. This makes fighter refit time more consistent, but slower at its fastest value."
+	},
+	"VelocityInjectors": {
+		"description": "Fighters are refitted to have additional fuel injectors. These fuel injectors, when amassed, start to wear down the flux conduits on the ship, and the increased speed starts to take a toll on the hull."
+	},
+	"InterceptionMatrix": {
+		"description": "Point defense weapons can be made to serve a much more active role in defending the ship by diverting power from the shields. This greatly increases their effectiveness, but only if a captain wants to trust their active defense systems more than their passive defense system."
+	},
+	"FluxInductionDrive": {
+		"description": "This device can increase the efficiency of a drive by a significant margin, although it is extremely susceptible to interference from fields generated by flux conduits."
 	},
 	"ExoticTypes": {
 		"TooltipText": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways.",
@@ -347,6 +366,7 @@
 		"turnRate": "Turn rate",
 		"burnLevel": "Burn level",
 		"engineHealth": "Engine durability",
+		"explosionRadius": "Explosion radius",
 		"shieldFluxDam": "Shield efficiency",
 		"shieldArc": "Shield arc",
 		"shieldUpkeep": "Shield upkeep",
@@ -376,6 +396,11 @@
 		"missileTurnRate": "Missile turn rate",
 		"missileTurnAcceleration": "Missile turn acceleration",
 		"fighterWingRange": "Fighter engagement range",
+		"fighterRefitTime": "Fighter refit time",
+		"replacementRateRegen": "Replacement rate regen",
+		"replacementRateDegen": "Replacement rate degen",
+		"zeroFluxSpeed": "Zero flux speed",
+		"pointDefenseDamage": "Point defense damage",
 		"crewSalary": "Crew salary increased to =${salaryIncrease} credits= for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=.",
 		"crewSalaryShop": "Salary increased to =${salaryIncrease} credits= (=${perLevel}=/lvl) for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=.",
 		"crewSalaryShopIronShell": "Salary increased to =${salaryIncrease} credits= (=${perLevel}=/lvl) for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=. This is refundable under Hegemony tax regulation."

@@ -7,6 +7,7 @@
     "HackedMissileForge": 0.2,
     "SpooledFeeders": 0.3,
     "PhasedFighterTether": 0.7,
+    "HyperspecLPC": 0.7,
     "EqualizerCore": 0.4,
     "PhasefieldEngine": 0.7,
     "AlphaSubcore": 0.2
@@ -14,8 +15,11 @@
   "allowedUpgrades": {
     "OverchargedShields": 1.25,
     "InfernalEngines": 0.8,
+    "FluxInductionDrive": 1,
     "TracerRecoilCalculator": 0.4,
     "AssaultWings": 1.5,
+    "VelocityInjectors": 1.5,
+    "OverclockedFabricators": 0.25,
     "HyperactiveCapacitors": 1.5,
     "GuidanceComputers": 0.75
   },

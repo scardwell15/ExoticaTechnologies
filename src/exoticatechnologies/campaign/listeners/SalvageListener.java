@@ -56,7 +56,7 @@ public class SalvageListener implements ShowLootListener {
                         int quantity = upgLvlQty.getValue();
 
                         for (int i = 0; i < quantity; i++) {
-                            if (upgrade.getSpawnChance() > 0 && random.nextFloat() <= upgrade.getSpawnChance() * 1.5f) {
+                            if (upgrade.getSalvageChance() > 0 && random.nextFloat() <= upgrade.getSalvageChance()) {
                                 //generate upgrade and add to loot
                                 loot.addSpecial(upgrade.getNewSpecialItemData(level), 1);
                             }

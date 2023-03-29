@@ -93,7 +93,7 @@ class PlasmaFluxCatalyst(key: String, settings: JSONObject) : Exotic(key, settin
         }
     }
 
-    override fun applyExoticToShip(
+    override fun applyToShip(
         id: String,
         member: FleetMemberAPI,
         ship: ShipAPI,

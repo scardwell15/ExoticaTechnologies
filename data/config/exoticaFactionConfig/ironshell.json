@@ -8,14 +8,19 @@
     "SpooledFeeders": 0.6,
     "FullMetalSalvo": 0.3,
     "PhasedFighterTether": 0.4,
-    "EqualizerCore": 0.5
+    "EqualizerCore": 0.5,
+    "HyperspecLPC": 0.4
   },
   "allowedUpgrades": {
     "OverchargedShields": 0.5,
     "InfernalEngines": 0.66,
+    "FluxInductionDrive": 0.66,
     "TracerRecoilCalculator": 0.6,
+    "InterceptionMatrix": 0.3,
     "WeldedArmor": 0.5,
     "AssaultWings": 1.0,
+    "OverclockedFabricators": 0.5,
+    "VelocityInjectors": 0.4,
     "HyperactiveCapacitors": 0.8,
     "ForcedOvertime": 0.5,
     "IronShell": 2.0,

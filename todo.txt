@@ -1,31 +1,30 @@
-replace hangar forge - Phased Fighter Tether - phase wings back to ship at low health
-
-exotic - Hivemind Neurolink - quarter engagement range to a minimum 1k, buff fighter stats
-
-exotic - Hyperspec LPC - decreasing fighter count to buff remaining one
-- always gives these ""flat"" stats
--- +25% armour/flux cap
--- +20% speed
-- increases the below stats, scaling on number of fighters "lost" from the wing, and number of bays removed
--- health
--- damage (?)
-
-exotic - Penance Engine - luddic counterpart to alpha core integration. armor regen and 75 flat hard flux dissipation while near enemy ship. +weapon repair rate
-- always gives weapon repair rate
-- disables shield
-- while close to an enemy ship
--- armor regen per second
--- 75 flat hard flux dissipation
--- if too much damage is taken in a short amount of time, the ship has a massive EMP burst that disables most systems on the ship.
-
-upgrade - Velocity Injectors - +fighter speed, -fighter health
-upgrade - Overclocked Fabricators - +replacement rate regen, -replacement time
-upgrade - Interception Matrix - +point defense capability, -shield stats
-upgrade - Flux-Induction Drive - +zero flux speed, -top speed
-
 drop more exotics from IBB and HVB fleets
 melt chips into parts that can be used to upgrade bandwidth
 scrapping boss ships for unique one of a kind exotics
 * ziggurat - mote storm around ship
 
 consider: System cooldown for weapon range?
+consider: Magazine reload for fire rate
+
+
+done:
+
+exotics:
+- added TWO exotics, one exclusive to the path
+- tier 3b drive now stacks
+- missile forge now reduces damage but enables you to spam missiles faster
+- added combat activators for salvo and feeder exotics
+- hangar forge -> phased fighter tether
+- daemon core now correctly applies bandwidth from types, and does not drop as salvage. you must use archdaemon cores to install this now.
+- alpha subcore has salvage chance reduced by 75%. you will probably have to use alpha cores to install this now.
+- exotics generate more commonly on larger ship sizes
+- exotics generate less on civilian ships
+upgrades:
+- added FOUR upgrades
+- buffed assault wings, forced overtime, infernal engines, welded armor, commissioned crews
+- nerfed advanced flux coils and derelict weapons assistant by giving them drawbacks that don't really hurt either faction's ships much
+- nerfed hel engines by increasing bandwidth slightly (this will probably result in some existing ships going over their bandwidth cap. good for you!)
+- rebalanced overcharged shields by shifting more into promoting active shield play by increasing unfold rate further, and both flux/s and flux/dam stats are increased
+- fixed a bunch of upgrade drawbacks not starting at level 3
+- reduced salvage chance of faction-specific upgrades to 10% (from 450%) (if you change this you have weak bones)
+- upgrades generate more commonly on larger ship sizes

@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.exotics
 
+import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.util.WeightedRandomPicker
 import exoticatechnologies.config.FactionConfig
@@ -17,7 +18,8 @@ object ExoticsGenerator {
     fun generate(member: FleetMemberAPI, mods: ShipModifications, context: ShipModFactory.GenerationContext): ETExotics {
         val config = context.factionConfig!!
         val allowedExotics: Map<Exotic, Float> = config.allowedExotics
-        var exoticChance = config.exoticChance.toFloat()
+
+        var exoticChance = config.exoticChance.toFloat() * getExoticChance(member)
         var exoticTypeChance = config.exoticTypeChance
 
         if (member.fleetData != null && member.fleetData.fleet != null) {
@@ -40,7 +42,7 @@ object ExoticsGenerator {
             val perExoticMult = 1 + smodCount * 0.5f
 
             val exoticPicker = getExoticPicker(random, allowedExotics)
-            while (!exoticPicker.isEmpty && exotics.exoticData.size <= config.getMaxExotics(member)) {
+            while (!exoticPicker.isEmpty && exotics.exoticData.size < config.getMaxExotics(member)) {
                 val exotic = exoticPicker.pick(random)!!
                 if (exotic.canApply(member, mods)) {
                     val roll = random.nextFloat()
@@ -64,6 +66,18 @@ object ExoticsGenerator {
             }
         }
         return exotics
+    }
+
+    private fun getExoticChance(member: FleetMemberAPI): Float {
+        val sizeFactor: Float = when (member.hullSpec.hullSize) {
+            ShipAPI.HullSize.CAPITAL_SHIP -> 1.5f
+            ShipAPI.HullSize.CRUISER -> 1.25f
+            ShipAPI.HullSize.DESTROYER -> 1.1f
+            else -> 1.0f
+        }
+
+        val typeFactor: Float = if (member.isCivilian) 0.5f else 1f
+        return sizeFactor * typeFactor
     }
 
     private fun getExoticPicker(random: Random, allowedExotics: Map<Exotic, Float>): WeightedRandomPicker<Exotic> {

@@ -4,7 +4,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.fleet.MutableFleetStatsAPI
+import com.fs.starfarer.api.impl.campaign.ids.Stats
+import com.fs.starfarer.api.impl.hullmods.DriveFieldStabilizer
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.modifications.ShipModifications
@@ -57,40 +58,8 @@ class TierIIIDriveSystem(key: String, settings: JSONObject) : Exotic(key, settin
         val addedFuelCap = (member.cargoCapacity * getCargoToFuelPercent(member, mods, exoticData) / 100f).toInt()
         stats.cargoMod.modifyMult(buffId, 1 - getCargoToFuelPercent(member, mods, exoticData) / 100f)
         stats.fuelMod.modifyFlat(buffId, addedFuelCap.toFloat())
-    }
 
-    override fun advanceInCampaign(member: FleetMemberAPI, mods: ShipModifications, amount: Float, exoticData: ExoticData) {
-        if (member.fleetData != null && member.fleetData.fleet != null) {
-            checkBuff(member.fleetData.fleet, member, mods, exoticData)
-        }
-    }
-
-    override fun onDestroy(member: FleetMemberAPI) {
-        if (member.fleetData != null && member.fleetData.fleet != null) {
-            removeBuff(member.fleetData.fleet.stats)
-        }
-    }
-
-    private fun checkBuff(
-        fleet: CampaignFleetAPI,
-        member: FleetMemberAPI,
-        mods: ShipModifications,
-        exoticData: ExoticData
-    ) {
-        val fleetStats = fleet.stats
-        if (fleet.cargo.freeFuelSpace < fleet.cargo.maxFuel * (1 - CARGO_TO_FUEL_PERCENT / 100f / getPositiveMult(member, mods, exoticData))) {
-            if (fleetStats.fleetwideMaxBurnMod.getFlatBonus(buffId) == null) {
-                fleetStats.fleetwideMaxBurnMod.modifyFlat(buffId, BURN_BONUS, name)
-            }
-        } else {
-            removeBuff(fleetStats)
-        }
-    }
-
-    private fun removeBuff(fleetStats: MutableFleetStatsAPI) {
-        if (fleetStats.fleetwideMaxBurnMod.getFlatBonus(buffId) != null) {
-            fleetStats.fleetwideMaxBurnMod.unmodify(buffId)
-        }
+        stats.dynamic.getMod(Stats.FLEET_BURN_BONUS).modifyFlat(buffId, BURN_BONUS, name)
     }
 
     companion object {

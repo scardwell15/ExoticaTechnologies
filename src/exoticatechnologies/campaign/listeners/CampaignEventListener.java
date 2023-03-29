@@ -267,10 +267,10 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                         continue;
                     }
 
-                    if (!exotics.containsKey(exotic.getKey())) {
+                    if (!exotics.containsKey(exoticData)) {
                         exotics.put(exoticData, 1);
                     } else {
-                        exotics.put(exoticData, exotics.get(exotic.getKey()) + 1);
+                        exotics.put(exoticData, exotics.get(exoticData) + 1);
                     }
                 }
             }

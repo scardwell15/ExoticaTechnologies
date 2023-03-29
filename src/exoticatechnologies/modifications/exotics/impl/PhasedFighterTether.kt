@@ -50,8 +50,23 @@ class PhasedFighterTether(key: String, settings: JSONObject) : Exotic(key, setti
     ) {
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
+                .format("fighterRefitTimeDecrease", getRefitTimeDecrease(member, mods, exoticData))
                 .addToTooltip(tooltip, title)
         }
+    }
+
+    fun getRefitTimeDecrease(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
+        return (REFIT_TIME_DECREASE * getPositiveMult(member, mods, exoticData)).coerceAtMost(75f)
+    }
+
+    override fun applyExoticToStats(
+        id: String,
+        stats: MutableShipStatsAPI,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        exoticData: ExoticData
+    ) {
+        stats.fighterRefitTimeMult.modifyMult(buffId,  1 - getRefitTimeDecrease(member, mods, exoticData) / 100f)
     }
 
     override fun advanceInCombatAlways(
@@ -122,14 +137,10 @@ class PhasedFighterTether(key: String, settings: JSONObject) : Exotic(key, setti
         }
     }
 
-    override fun canUseExoticType(type: ExoticType): Boolean {
-        return false
-    }
-
     companion object {
         private const val REPLACEMENT_COUNT_ID = "et_fighterReplacements"
         private const val REPLACEMENT_INTERVAL_ID = "et_fighterReplacementInterval"
-        private const val RATE_DECREASE_MODIFIER = 25f
+        private const val REFIT_TIME_DECREASE = 25f
 
         fun advanceReplacementInterval(ship: ShipAPI, amount: Float) {
             val replacementInterval = getReplacementInterval(ship)

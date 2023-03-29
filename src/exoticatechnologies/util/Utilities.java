@@ -121,6 +121,8 @@ public class Utilities {
 
 
     public static float getItemQuantity(CargoAPI cargo, String id) {
+        if (cargo == null) return 0f;
+
         CommoditySpecAPI commodity = Global.getSettings().getCommoditySpec(id);
         if (commodity != null) {
             return cargo.getCommodityQuantity(id);

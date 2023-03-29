@@ -10,15 +10,20 @@
     "FullMetalSalvo": 0.5,
     "PhaseFieldEngine": 0.16,
     "PhasedFighterTether": 0.4,
+    "HyperspecLPC": 0.5,
     "AlphaSubcore": 0.75
   },
   "allowedUpgrades": {
     "AdvancedFluxCoils": 1.8,
     "OverchargedShields": 1,
     "InfernalEngines": 1,
+    "FluxInductionDrive": 1,
     "TracerRecoilCalculator": 1,
     "WeldedArmor": 0.5,
     "AssaultWings": 1.3,
-    "GuidanceComputers": 1
+    "VelocityInjectors": 1,
+    "OverclockedFabricators": 1.0,
+    "GuidanceComputers": 1,
+    "InterceptionMatrix": 0.2,
   }
 }

@@ -1,8 +1,8 @@
 package exoticatechnologies.modifications.upgrades
 
+import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.util.WeightedRandomPicker
-import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.util.Utilities
@@ -15,7 +15,7 @@ object UpgradesGenerator {
     fun generate(member: FleetMemberAPI, mods: ShipModifications, context: ShipModFactory.GenerationContext): ETUpgrades {
         val config = context.factionConfig!!
         val allowedUpgrades = config.allowedUpgrades
-        var upgradeChance = config.upgradeChance.toFloat()
+        var upgradeChance = config.upgradeChance.toFloat() * getUpgradeChance(member)
 
         if (member.fleetData != null && member.fleetData.fleet != null) {
             if (member.fleetData.fleet.memoryWithoutUpdate.contains("\$exotica_upgradeMult")) {
@@ -61,6 +61,17 @@ object UpgradesGenerator {
             }
         }
         return upgrades
+    }
+
+    private fun getUpgradeChance(member: FleetMemberAPI): Float {
+        val sizeFactor: Float = when (member.hullSpec.hullSize) {
+            ShipAPI.HullSize.CAPITAL_SHIP -> 1.33f
+            ShipAPI.HullSize.CRUISER -> 1.22f
+            ShipAPI.HullSize.DESTROYER -> 1.11f
+            else -> 1.0f
+        }
+
+        return sizeFactor
     }
 
     private fun getPicker(random: Random, allowedUpgrades: Map<Upgrade, Float>): WeightedRandomPicker<Upgrade> {

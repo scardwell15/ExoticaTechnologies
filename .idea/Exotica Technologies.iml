@@ -7,21 +7,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="starfarer.api" level="application" />
+    <orderEntry type="library" name="Kotlin-Runtime" level="application" />
+    <orderEntry type="library" name="ExerelinCore" level="application" />
+    <orderEntry type="library" name="ExiledSpace" level="application" />
+    <orderEntry type="library" name="IndEvo" level="application" />
+    <orderEntry type="library" name="LazyLib" level="application" />
     <orderEntry type="library" name="lw_Console" level="application" />
     <orderEntry type="library" name="MagicLib" level="application" />
-    <orderEntry type="library" name="ExerelinCore" level="application" />
-    <orderEntry type="library" name="LazyLib" level="application" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../LazyLib/jars/lib/Kotlin-Runtime.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="projectlombok.lombok" level="application" />
-    <orderEntry type="library" name="ExiledSpace" level="application" />
+    <orderEntry type="library" name="starfarer.api" level="application" />
+    <orderEntry type="library" name="CombatActivators" level="project" />
   </component>
 </module>

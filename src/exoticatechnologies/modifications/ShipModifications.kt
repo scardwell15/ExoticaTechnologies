@@ -296,7 +296,7 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
 
                 innerPanel.position.setSize(width - 4f, textTooltip.position.height.coerceAtLeast(64f))
 
-                tooltip.addCustom(innerPanel, 4f).position.belowLeft(lastThing, 4f)
+                tooltip.addCustom(innerPanel, 4f).position.belowLeft(lastThing, 8f)
                 lastThing = innerPanel
 
                 tooltip.setParaFontDefault()

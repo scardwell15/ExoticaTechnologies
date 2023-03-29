@@ -8,7 +8,7 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
 
-class ExoticaEveryFramePlugin:
+class ExoticaEveryFramePlugin :
     BaseEveryFrameCombatPlugin() {
 
     override fun advance(amount: Float, events: List<InputEventAPI>) {

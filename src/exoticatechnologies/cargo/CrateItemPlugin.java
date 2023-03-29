@@ -158,7 +158,7 @@ public class CrateItemPlugin extends BaseSpecialItemPlugin {
                             if (exoStack.getPlugin() instanceof ExoticSpecialItemPlugin) {
                                 //find similar stacks
                                 ExoticSpecialItemPlugin exoPlugin = (ExoticSpecialItemPlugin) exoStack.getPlugin();
-                                if (newPlugin.getExotic().equals(exoPlugin.getExotic())) {
+                                if (newPlugin.getExoticData().getExotic().equals(exoPlugin.getExoticData().getExotic())) {
                                     stackIterator.remove();
                                     quantity += exoStack.getSize();
                                 }
@@ -170,7 +170,7 @@ public class CrateItemPlugin extends BaseSpecialItemPlugin {
 
                     Pair<StringUtils.Translation, Color> disp = new Pair<>();
                     disp.one = StringUtils.getTranslation("CrateText", "ExoticText")
-                            .format("exoticItemName", newPlugin.getExotic().getName(), EXOTIC_COLOR)
+                            .format("exoticItemName", newPlugin.getExoticData().getExotic().getName(), EXOTIC_COLOR)
                             .format("quantity", quantity, TEXT_COLOR);
                     disp.two = EXOTIC_COLOR;
 

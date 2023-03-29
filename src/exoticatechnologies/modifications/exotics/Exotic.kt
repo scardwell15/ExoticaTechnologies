@@ -99,13 +99,17 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         mods: ShipModifications,
         exoticData: ExoticData
     ) {}
-    open fun applyExoticToShip(
+    open fun applyToShip(
         id: String,
         member: FleetMemberAPI,
         ship: ShipAPI,
         mods: ShipModifications,
         exoticData: ExoticData
     ) {}
+
+    open fun applyToFighters(member: FleetMemberAPI, ship: ShipAPI, fighter: ShipAPI, mods: ShipModifications) {
+    }
+
     open fun advanceInCombatUnpaused(
         ship: ShipAPI,
         amount: Float,
@@ -119,7 +123,7 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         return true
     }
 
-    fun getSalvageChance(chanceMult: Float): Float {
+    open fun getSalvageChance(chanceMult: Float): Float {
         return 0.2f * chanceMult
     }
 

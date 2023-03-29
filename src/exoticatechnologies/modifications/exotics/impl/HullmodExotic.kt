@@ -41,7 +41,7 @@ open class HullmodExotic(
         onInstall(member)
     }
 
-    override fun applyExoticToShip(
+    override fun applyToShip(
         id: String,
         member: FleetMemberAPI,
         ship: ShipAPI,

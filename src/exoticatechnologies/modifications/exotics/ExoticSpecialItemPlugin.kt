@@ -8,6 +8,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ModSpecialItemPlugin
+import exoticatechnologies.modifications.exotics.impl.HackedMissileForge
 import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.util.StringUtils
 import kotlin.Int
@@ -15,21 +16,17 @@ import kotlin.String
 
 open class ExoticSpecialItemPlugin : ModSpecialItemPlugin() {
     var exotic: Exotic? = null
-        get() {
-            if (field == null) {
-                if (exoticData != null) {
-                    field = exoticData!!.exotic
-                } else {
-                    field = ExoticsHandler.EXOTICS[modId]!!
-                }
-            }
-            return field
-        }
 
     var exoticData: ExoticData? = null
         get() {
             if (field == null) {
-                field = ExoticData(exotic!!)
+                if (exotic != null) {
+                    field = ExoticData(exotic!!)
+                    exotic = null
+                } else if (stack != null) {
+                    stack.cargo.removeStack(stack)
+                    field = ExoticData(ExoticsHandler.EXOTIC_LIST[0].key)
+                }
             }
             return field
         }
@@ -61,8 +58,10 @@ open class ExoticSpecialItemPlugin : ModSpecialItemPlugin() {
         when (Param[index]) {
             Param.EXOTIC_ID -> {
                 modId = param
-                if (ExoticsHandler.EXOTICS.containsKey(modId)) {
-                    exotic = ExoticsHandler.EXOTICS[modId]
+                exoticData = ExoticData(modId!!)
+                if (exoticData!!.key != modId) {
+                    modId = exoticData!!.key
+                    stack.specialDataIfSpecial.data.replace(param, modId!!)
                 }
             }
 
@@ -75,9 +74,10 @@ open class ExoticSpecialItemPlugin : ModSpecialItemPlugin() {
                     val newData = String.format("%s,NORMAL,%s", split[0], split[1])
                     stack.specialDataIfSpecial.data = newData //fix saves
                     ignoreCrate = param.toBoolean()
-                    exoticData = ExoticData(exotic!!)
+
+                    exoticData!!.type = ExoticType.NORMAL
                 } else {
-                    exoticData = ExoticData(exotic!!, ExoticType.valueOf(param))
+                    exoticData!!.type = ExoticType.valueOf(param)
                 }
             }
 

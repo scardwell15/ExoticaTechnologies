@@ -14,16 +14,35 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.awt.Color
 
-class ExoticData(var key: String, val type: ExoticType = ExoticType.NORMAL) {
+class ExoticData(key: String, var type: ExoticType = ExoticType.NORMAL) {
+    var key = checkUpdateExotic(key)
+        get() {
+            if (checkUpdateExotic(field) != field) {
+                field = checkUpdateExotic(field)
+            }
+            return field
+        }
+        set(value) {
+            if (checkUpdateExotic(value) != value) {
+                field = checkUpdateExotic(value)
+            } else {
+                field = value
+            }
+        }
+
     constructor(key:String) : this(key, ExoticType.NORMAL)
     constructor(exotic:Exotic, type: ExoticType) : this(exotic.key, type)
     constructor(exotic:Exotic) : this(exotic, ExoticType.NORMAL)
-
     @Throws(JSONException::class)
     constructor(obj: JSONObject) : this(obj.getString("key"), ExoticType.valueOf(obj.getString("type")))
 
     val exotic: Exotic
-        get () = ExoticsHandler.EXOTICS[key]!!
+        get () {
+            if (checkUpdateExotic(key) != key) {
+                key = checkUpdateExotic(key)
+            }
+            return ExoticsHandler.EXOTICS[key]!!
+        }
 
     fun getNameTranslation(): Translation {
         return StringUtils.getTranslation("ExoticTypes", type.nameKey)
@@ -63,6 +82,33 @@ class ExoticData(var key: String, val type: ExoticType = ExoticType.NORMAL) {
         obj.put("key", exotic.key)
         obj.put("type", type.nameKey)
         return obj
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ExoticData
+
+        if (type != other.type) return false
+        if (key != other.key) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + key.hashCode()
+        return result
+    }
+
+    companion object {
+        val updateMap = mutableMapOf("HangarForge" to "PhasedFighterTether",
+            "HangarForgeMissiles" to "HackedMissileForge")
+
+        fun checkUpdateExotic(exoticKey: String): String {
+            return updateMap[exoticKey] ?: exoticKey
+        }
     }
 }
 

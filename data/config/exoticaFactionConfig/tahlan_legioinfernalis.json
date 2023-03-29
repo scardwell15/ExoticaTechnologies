@@ -9,6 +9,7 @@
     "FullMetalSalvo": 0.5,
     "ReactiveDamperField": 0.9,
     "PhasedFighterTether": 0.25,
+    "HyperspecLPC": 0.3,
     "EqualizerCore": 0.4,
     "DaemonCore": 0.9
   },
@@ -17,6 +18,7 @@
     "TracerRecoilCalculator": 1.2,
     "WeldedArmor": 0.66,
     "AssaultWings": 0.75,
+    "VelocityInjectors": 0.66,
     "HyperactiveCapacitors": 1,
     "GuidanceComputers": 1,
     "HelDrives": 1.66

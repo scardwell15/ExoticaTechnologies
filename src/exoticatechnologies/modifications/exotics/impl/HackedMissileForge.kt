@@ -18,7 +18,6 @@ import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
 import java.awt.Color
-import kotlin.math.ceil
 
 class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(0xFF8902)
@@ -43,10 +42,15 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
     ) {
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
-                .format("reloadSize", PERCENT_RELOADED / getNegativeMult(member, mods, exoticData))
-                .formatFloat("reloadTime", SECONDS_PER_RELOAD / getPositiveMult(member, mods, exoticData))
+                .format("damageDecrease", DAMAGE_DECREASE * getNegativeMult(member, mods, exoticData))
+                .formatFloat("reloadTime", getReloadTime(member, mods, exoticData))
                 .addToTooltip(tooltip, title)
         }
+    }
+
+    private fun getReloadTime(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
+        //return SECONDS_PER_RELOAD / (1f + ((getPositiveMult(member, mods, exoticData) - 1f) * 0.75f))
+        return SECONDS_PER_RELOAD / getPositiveMult(member, mods, exoticData)
     }
 
     private fun getReloadId(ship: ShipAPI): String {
@@ -66,7 +70,7 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
         mods: ShipModifications,
         exoticData: ExoticData
     ): IntervalUtil {
-        val time = SECONDS_PER_RELOAD / getPositiveMult(member, mods, exoticData)
+        val time = getReloadTime(member, mods, exoticData)
         val interval = IntervalUtil(time, time)
         Global.getCombatEngine().customData[getReloadId(ship)] = interval
         return interval
@@ -97,25 +101,6 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
         var reloadInterval = getReloadInterval(ship)
         if (reloadInterval == null) {
             reloadInterval = createReloadInterval(ship, member, mods, exoticData)
-
-            //reduce ammo for weapons
-            for (weapon in ship.allWeapons) {
-                if (blacklistedWeapons.contains(weapon.id)) {
-                    continue
-                }
-                if (shouldAffectWeapon(weapon)) {
-                    val wepMaxAmmo = weapon.maxAmmo
-                    var newMaxAmmo = ceil((wepMaxAmmo * PERCENT_RELOADED / 100f / getNegativeMult(member, mods, exoticData)).toDouble()).toInt()
-                    if (weapon.spec.burstSize > 0) {
-                        newMaxAmmo = newMaxAmmo.coerceAtLeast(weapon.spec.burstSize)
-                    }
-                    weapon.maxAmmo = newMaxAmmo
-                    weapon.ammoTracker.maxAmmo = newMaxAmmo
-                    val newAmmo = newMaxAmmo.coerceAtMost(weapon.ammoTracker.ammo)
-                    weapon.ammo = newAmmo
-                    weapon.ammoTracker.ammo = newAmmo
-                }
-            }
         }
         if (Global.getCombatEngine().isPaused) {
             return
@@ -129,8 +114,7 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
                     val ammo = weapon.ammoTracker.ammo
                     val maxAmmo = weapon.ammoTracker.maxAmmo
                     if (ammo < maxAmmo) {
-                        val ammoToReload = ammo + Math.ceil((maxAmmo * PERCENT_RELOADED / 100f / getNegativeMult(member, mods, exoticData)).toDouble()).toInt()
-                        weapon.ammoTracker.ammo = Math.min(maxAmmo, ammoToReload)
+                        weapon.ammoTracker.ammo = maxAmmo
                         addedAmmo = true
                     }
                 }
@@ -159,8 +143,8 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
     companion object {
         private const val ITEM = "et_hangarforge"
         private const val COST_CREDITS = 150000f
-        private const val SECONDS_PER_RELOAD = 60
-        private const val PERCENT_RELOADED = 50f
+        private const val SECONDS_PER_RELOAD = 60f
+        private const val DAMAGE_DECREASE = 25f
         private val blacklistedWeapons: Set<String> = HashSet()
     }
 }

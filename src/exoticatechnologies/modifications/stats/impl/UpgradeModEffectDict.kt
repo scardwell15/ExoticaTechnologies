@@ -7,6 +7,9 @@ import exoticatechnologies.modifications.stats.impl.cr.CRToDeployEffect
 import exoticatechnologies.modifications.stats.impl.cr.PeakPerformanceTimeEffect
 import exoticatechnologies.modifications.stats.impl.engines.*
 import exoticatechnologies.modifications.stats.impl.fighters.FighterRangeEffect
+import exoticatechnologies.modifications.stats.impl.fighters.FighterRefitTimeEffect
+import exoticatechnologies.modifications.stats.impl.fighters.ReplacementRateDegenEffect
+import exoticatechnologies.modifications.stats.impl.fighters.ReplacementRateRegenEffect
 import exoticatechnologies.modifications.stats.impl.flux.FluxCapacityEffect
 import exoticatechnologies.modifications.stats.impl.flux.VentSpeedEffect
 import exoticatechnologies.modifications.stats.impl.health.*
@@ -39,8 +42,12 @@ abstract class UpgradeModEffectDict {
                         EngineHealthEffect(),
                         MaxSpeedEffect(),
                         TurnRateEffect(),
+                        ZeroFluxSpeedEffect(),
                         //fighters
                         FighterRangeEffect(),
+                        FighterRefitTimeEffect(),
+                        ReplacementRateRegenEffect(),
+                        ReplacementRateDegenEffect(),
                         //flux
                         FluxCapacityEffect(),
                         VentSpeedEffect(),
@@ -53,6 +60,7 @@ abstract class UpgradeModEffectDict {
                         FragDamageTakenEffect(),
                         KineticDamageTakenEffect(),
                         EnergyDamageTakenEffect(),
+                        ExplosionRadiusEffect(),
                         //logistics
                         CrewSalaryEffect(),
                         FuelUseEffect(),
@@ -82,7 +90,8 @@ abstract class UpgradeModEffectDict {
                         MissileTurnAccelEffect(),
                         MissileDamageEffect(),
                         MissileSpeedEffect(),
-                        MissileRangeEffect()
+                        MissileRangeEffect(),
+                        PointDefenseDamageEffect()
                     )
                         .forEach {
                             mutableDict!![it.key] = it

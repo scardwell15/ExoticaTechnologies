@@ -2,6 +2,7 @@ package exoticatechnologies.modifications.upgrades;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import data.scripts.util.MagicSettings;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin;
 import exoticatechnologies.ui.impl.shop.upgrades.UpgradeShopUIPlugin;
@@ -16,25 +17,37 @@ import java.util.*;
 
 @Log4j
 public class UpgradesHandler {
-    private static final int UPGRADE_OPTION_ORDER = 1;
     public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
-
     public static final Set<UpgradeMethod> UPGRADE_METHODS = new LinkedHashSet<>();
-
 
     public static void addUpgradeMethod(UpgradeMethod method) {
         UPGRADE_METHODS.add(method);
     }
 
     public static void initialize() {
+        UPGRADES.clear();
         UPGRADE_METHODS.clear();
         UPGRADE_METHODS.add(new CreditsMethod());
         UPGRADE_METHODS.add(new ResourcesMethod());
         UPGRADE_METHODS.add(new ChipMethod());
         UPGRADE_METHODS.add(new RecoverMethod());
 
+
         UpgradesHandler.populateUpgrades();
+
+        UPGRADES_LIST.clear();
+        List<String> orderedKeys = MagicSettings.getList("exoticatechnologies", "upgradeOrder");
+        for (int i = 0; i < orderedKeys.size(); i++) {
+            String key = orderedKeys.get(i);
+            UPGRADES_LIST.add(UPGRADES.get(key));
+        }
+
+        for (Upgrade upgrade : UPGRADES.values()) {
+            if (!orderedKeys.contains(upgrade.getKey())) {
+                UPGRADES_LIST.add(upgrade);
+            }
+        }
 
         ShopManager.addMenu(new UpgradeShopUIPlugin());
     }
@@ -90,18 +103,5 @@ public class UpgradesHandler {
         if (UPGRADES.containsKey(upgrade.getKey())) return;
 
         UPGRADES.put(upgrade.getKey(), upgrade);
-        UPGRADES_LIST.add(upgrade);
-    }
-
-    public static List<Upgrade> getAllowedUpgrades(FleetMemberAPI member) {
-        List<Upgrade> upgrades = new ArrayList<>();
-
-        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if (upgrade.canApply(member, null)) {
-                upgrades.add(upgrade);
-            }
-        }
-
-        return upgrades;
     }
 }

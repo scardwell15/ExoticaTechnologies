@@ -6,7 +6,8 @@
     "HackedMissileForge": 0.3,
     "SpooledFeeders": 0.45,
     "FullMetalSalvo": 0.1,
-    "PhasedFighterTether": 0.45
+    "PhasedFighterTether": 0.45,
+    "HyperspecLPC": 0.3
   },
   "allowedUpgrades": {
     "InfernalEngines": 1,
@@ -14,6 +15,8 @@
     "WeldedArmor": 1,
     "PinataConfig": 0.4,
     "AssaultWings": 1.5,
+    "VelocityInjectors": 0.3,
+    "OverclockedFabricators": 0.7,
     "HyperactiveCapacitors": 0.4,
     "ForcedOvertime": 1.5,
     "GuidanceComputers": 1

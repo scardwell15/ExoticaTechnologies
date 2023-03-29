@@ -1,4 +1,12 @@
 {
+  "activators": {
+    "keys": [
+        "C",
+        "H",
+        "J",
+        "N"
+    ]
+  },
   "exoticatechnologies": {
     "exotic_HackedMissileForge_weaponBlacklist": [
       #"atropos_single"
@@ -29,6 +37,30 @@
       "tritachyon"
     ],
 
+    "upgradeOrder": [
+        "WeldedArmor",
+        "PinataConfig",
+        "IronShell",
+        "InfernalEngines",
+        "FluxInductionDrive",
+        "HelDrives",
+        "HyperactiveCapacitors",
+        "AdvancedFluxCoils",
+        "OverchargedShields",
+        "TracerRecoilCalculator",
+        "DerelictWeaponAssistant",
+        "InterceptionMatrix",
+        "GuidanceComputers",
+        "AntimatterBoosters",
+        "ForcedOvertime",
+        "AuxiliarySensors",
+        "InterferenceShielding",
+        "CommissionedCrews",
+        "AssaultWings",
+        "VelocityInjectors",
+        "OverclockedFabricators"
+    ],
+
     # takes the manufacturer of the ship instead, but otherwise acts the same as above.
     # note that these stack!
     "manufacturerBandwidthMult": {
@@ -45,7 +77,8 @@
       "HackedMissileForge",
       "PhasefieldEngine",
       "SpooledFeeders",
-      "FullMetalSalvo"
+      "FullMetalSalvo",
+      "HyperspecLPC"
     ],
     "rngUpgradeWhitelist": [
       "WeldedArmor",
@@ -57,7 +90,11 @@
       "OverchargedShields",
       "TracerRecoilCalculator",
       "InterferenceShielding",
-      "GuidanceComputers"
+      "GuidanceComputers",
+      "FluxInductionDrive",
+      "InterceptionMatrix",
+      "VelocityInjectors",
+      "OverclockedFabricators"
     ],
     "rngExoticTypeWhitelist": {
       "CORRUPTED": 1,

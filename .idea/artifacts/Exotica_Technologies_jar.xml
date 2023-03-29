@@ -1,8 +1,8 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="ExoticaTechnologies:jar">
+  <artifact type="jar" build-on-make="true" name="Exotica Technologies:jar">
     <output-path>$PROJECT_DIR$/jars</output-path>
     <root id="archive" name="Exotica-Technologies.jar">
-      <element id="module-output" name="ExoticaTechnologies" />
+      <element id="module-output" name="Exotica Technologies" />
     </root>
   </artifact>
 </component>

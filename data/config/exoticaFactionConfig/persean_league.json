@@ -8,16 +8,21 @@
     "SpooledFeeders": 0.4,
     "FullMetalSalvo": 0.6,
     "PhasedFighterTether": 0.5,
+    "HyperspecLPC": 0.5,
     "EqualizerCore": 0.15,
     "PhasefieldEngine": 0.2
   },
   "allowedUpgrades": {
     "OverchargedShields": 0.7,
-    "InfernalEngines": 1,
+    "InterceptionMatrix": 0.5,
+    "InfernalEngines": 0.7,
+    "FluxInductionDrive": 1,
     "TracerRecoilCalculator": 1,
     "WeldedArmor": 0.75,
     "PinataConfig": 0.2,
     "AssaultWings": 1.5,
+    "OverclockedFabricators": 1,
+    "VelocityInjectors": 0.6,
     "HyperactiveCapacitors": 1,
     "ForcedOvertime": 0.2,
     "GuidanceComputers": 0.5

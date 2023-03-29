@@ -16,6 +16,11 @@ import java.awt.Color
 
 class AlphaSubcore(key: String, settingsObj: JSONObject) :
     HullmodExotic(key, settingsObj, "et_alphasubcore", "AlphaSubcore", Color.cyan) {
+
+    override fun getSalvageChance(chanceMult: Float): Float {
+        return 0.05f * chanceMult
+    }
+
     override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
         return Utilities.hasItem(fleet.cargo, ITEM)
                 || Utilities.hasItem(Misc.getStorageCargo(market), ITEM)

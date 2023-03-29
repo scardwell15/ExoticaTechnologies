@@ -22,6 +22,11 @@ import java.awt.Color
 
 class DaemonCore(key: String, settingsObj: JSONObject) :
     HullmodExotic(key, settingsObj, "et_daemoncore", "DaemonCore", Color(150, 20, 20)) {
+
+    override fun getSalvageChance(chanceMult: Float): Float {
+        return 0f
+    }
+
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
         return (canAfford(member.fleetData.fleet, market)
                 || Utilities.hasExoticChip(
@@ -87,7 +92,7 @@ class DaemonCore(key: String, settingsObj: JSONObject) :
         onInstall(member)
     }
 
-    override fun applyExoticToShip(
+    override fun applyToShip(
         id: String,
         member: FleetMemberAPI,
         ship: ShipAPI,
@@ -111,7 +116,7 @@ class DaemonCore(key: String, settingsObj: JSONObject) :
      * @return
      */
     override fun getExtraBandwidth(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData?): Float {
-        return 60f
+        return 60f * (exoticData?.type?.getPositiveMult(member, mods) ?: 1f)
     }
 
     inner class DaemonCoreDamageTakenListener(val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData) : DamageTakenModifier {

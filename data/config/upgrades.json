@@ -7,9 +7,8 @@
     "stats": [
       {"id": "hull", "scalingEffect": 30},
       {"id": "armor", "scalingEffect": 30},
-      {"id": "empDamageTaken", "scalingEffect": 16, "startingLevel": 3},
-      {"id": "engineHealth", "scalingEffect": -16, "startingLevel": 3},
-      {"id": "weaponHealth", "scalingEffect": -16, "startingLevel": 3}
+      {"id": "engineHealth", "scalingEffect": -20, "startingLevel": 3},
+      {"id": "weaponHealth", "scalingEffect": -20, "startingLevel": 3}
     ],
     "resourceRatios": {
       "volatiles": 1.0,
@@ -26,7 +25,8 @@
     "stats": [
       {"id": "hull", "scalingEffect": 50},
       {"id": "empDamageTaken", "scalingEffect": -50},
-      {"id": "armor", "scalingEffect": -20}
+      {"id": "explosionRadius", "scalingEffect": 100},
+      {"id": "armor", "scalingEffect": -20, "startingLevel": 3}
     ],
     "resourceRatios": {
       "volatiles": 1.0,
@@ -34,27 +34,26 @@
       "heavy_machinery": 1.0
     }
   },
-  "CommissionedCrews": {
-    "name": "Commissioned Crews",
-    "color": [230, 200, 25],
+  "IronShell": {
+    "name": "Iron Shell",
+    "color": [ 252,173,60 ],
     "bandwidthPerLevel": 5,
-    "spawnChance": 0,
+    "spawnChance": 3.0,
+    "salvageChance": 0.1,
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
     "stats": [
-      {"id": "crewSalary", "scalingEffect": 25, "flat": true},
-      {"id": "suppliesPerMonth", "scalingEffect": -30},
-      {"id": "repairRateAfterBattle", "scalingEffect": 20},
-      {"id": "fuelUse", "scalingEffect": -20},
-      {"id": "suppliesToRecover", "scalingEffect": 20, "startingLevel": 3}
-    ],
-    "conditions": [
-      {"id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew."}
+      { "id": "armorDamageTaken", "scalingEffect": -10 },
+      { "id": "heDamageTaken", "scalingEffect": -20 },
+      { "id": "kineticDamageTaken", "scalingEffect": 20, "startingLevel": 3 },
+      { "id": "energyDamageTaken", "scalingEffect": 20, "startingLevel": 3 },
+      { "id": "fragDamageTaken", "scalingEffect": 20, "startingLevel": 3 }
     ],
     "resourceRatios": {
-      "supplies": 3.0,
-      "volatiles": 1.0,
+      "heavy_machinery": 1.0,
+      "volatiles": 1.5,
       "metals": 2.0,
-      "rare_metals": 1.5,
-      "heavy_machinery": 1.0
+      "rare_metals": 4.0
     }
   },
   "InfernalEngines": {
@@ -63,7 +62,7 @@
     "bandwidthPerLevel": 10,
     "tag": "infengines",
     "stats": [
-      {"id": "maxSpeed", "scalingEffect": 15},
+      {"id": "maxSpeed", "scalingEffect": 20},
       {"id": "acceleration", "scalingEffect": 30},
       {"id": "turnRate", "scalingEffect": 30},
       {"id": "burnLevel", "scalingEffect": 1, "flat": true},
@@ -78,25 +77,46 @@
       "heavy_machinery": 1.5
     }
   },
-  "ForcedOvertime": {
-    "name": "Forced Overtime",
-    "color": [124, 124, 124],
-    "bandwidthPerLevel": 5,
-    "spawnChance": 0.6,
+  "FluxInductionDrive": {
+    "name": "Flux-Induction Drive",
+    "color": [150, 140, 240],
+    "bandwidthPerLevel": 10,
+    "tag": "infengines",
     "stats": [
-      {"id": "crRecoveryRate", "scalingEffect": 30},
-      {"id": "peakPerformanceTime", "scalingEffect": 30},
-      {"id": "crLossRate", "scalingEffect": -24},
-      {"id": "crToDeploy", "scalingEffect": 15, "startingLevel": 3},
-      {"id": "minCrew", "scalingEffect": 30, "startingLevel": 3}
-    ],
-    "conditions": [
-      {"id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew."}
+      {"id": "zeroFluxSpeed", "scalingEffect": 80},
+      {"id": "acceleration", "scalingEffect": 30},
+      {"id": "maxSpeed", "scalingEffect": -20}
     ],
     "resourceRatios": {
-      "supplies": 3.0,
-      "organics": 2.0,
-      "heavy_machinery": 1.5
+      "volatiles": 2.0,
+      "rare_metals": 1.0,
+      "heavy_machinery": 1.0
+    }
+  },
+  "HelDrives": {
+    "name": "Hel Drives",
+    "color": [ 255,100,60 ],
+    "bandwidthPerLevel": 10,
+    "tag": "infengines",
+    "spawnChance": 3.0,
+    "salvageChance": 0.1,
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
+    "stats": [
+      { "id": "maxSpeed", "scalingEffect": 15 },
+      { "id": "acceleration", "scalingEffect": 30 },
+      { "id": "turnRate", "scalingEffect": 30 },
+      { "id": "burnLevel", "scalingEffect": 1, "flat": true },
+      { "id": "engineHealth", "scalingEffect": -16, "startingLevel": 3 }
+    ],
+    "conditions": [
+      { "id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened." }
+    ],
+    "resourceRatios": {
+      "metals": 4.0,
+      "volatiles": 4.0,
+      "rare_metals": 4.0,
+      "heavy_machinery": 4.0
     }
   },
   "HyperactiveCapacitors": {
@@ -118,15 +138,39 @@
       "heavy_machinery": 1.0
     }
   },
+  "AdvancedFluxCoils": {
+    "name": "Advanced Flux Coils",
+    "bandwidthPerLevel": 20,
+    "spawnChance": 3.0,
+    "salvageChance": 0.1,
+    "color": [ 105, 74, 227 ],
+    "tag": "hypecap",
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
+    "stats": [
+      { "id": "fluxCapacity", "scalingEffect": 25 },
+      { "id": "ventSpeed", "scalingEffect": 25 },
+      { "id": "weaponFluxCost", "scalingEffect": -10 },
+      { "id": "hull", "scalingEffect": -10, "startingLevel": 3 }
+    ],
+    "resourceRatios": {
+      "supplies": 2.0,
+      "volatiles": 4.0,
+      "organics": 1.0,
+      "metals": 2.0,
+      "rare_metals": 4.0,
+      "heavy_machinery": 4.0
+    }
+  },
   "OverchargedShields": {
     "name": "Overcharged Shields",
     "color": [56, 187, 166],
     "bandwidthPerLevel": 10,
     "stats": [
-      {"id": "shieldFluxDam", "scalingEffect": -20},
-      {"id": "shieldArc", "scalingEffect": 40},
-      {"id": "shieldUnfoldRate", "scalingEffect": 40},
-      {"id": "shieldUpkeep", "scalingEffect": 32, "startingLevel": 3},
+      {"id": "shieldFluxDam", "scalingEffect": -35},
+      {"id": "shieldArc", "scalingEffect": 50},
+      {"id": "shieldUnfoldRate", "scalingEffect": 75},
+      {"id": "shieldUpkeep", "scalingEffect": 50, "startingLevel": 3},
       {"id": "shieldTurnRate", "scalingEffect": -16, "startingLevel": 3}
     ],
     "conditions": [
@@ -158,48 +202,110 @@
       "heavy_machinery": 2.0
     }
   },
-  "AdvancedFluxCoils": {
-    "name": "Advanced Flux Coils",
-    "bandwidthPerLevel": 20,
-    "spawnChance": 3.0,
-    "color": [105, 74, 227],
-    "tag": "hypecap",
-    "showInStoreIfNotInstalled": false,
-    "chipFirstInstall": true,
-    "stats": [
-      {"id": "fluxCapacity", "scalingEffect": 25},
-      {"id": "ventSpeed", "scalingEffect": 25},
-      {"id": "weaponFluxCost", "scalingEffect": -10}
-    ],
-    "resourceRatios": {
-      "supplies": 1.5,
-      "volatiles": 2.0,
-      "organics": 1.0,
-      "metals": 1.0,
-      "rare_metals": 4.0,
-      "heavy_machinery": 2.0
-    }
-  },
   "DerelictWeaponAssistant": {
     "name": "Derelict Weapon Assistant",
-    "color": [170, 200, 75],
+    "color": [ 170, 200, 75 ],
     "bandwidthPerLevel": 10,
     "spawnChance": 3.0,
+    "salvageChance": 0.1,
     "tag": "trc",
     "showInStoreIfNotInstalled": false,
     "chipFirstInstall": true,
     "stats": [
-      {"id": "recoilPerShot", "scalingEffect": -30},
-      {"id": "maxRecoil", "scalingEffect": -30},
-      {"id": "projectileSpeed", "scalingEffect": 20},
-      {"id": "ballisticFireRate", "scalingEffect": 10}
+      { "id": "recoilPerShot", "scalingEffect": -30 },
+      { "id": "maxRecoil", "scalingEffect": -30 },
+      { "id": "projectileSpeed", "scalingEffect": 20 },
+      { "id": "ballisticFireRate", "scalingEffect": 10 },
+      { "id": "shieldFluxDam", "scalingEffect": 15, "startingLevel": 3 }
     ],
     "resourceRatios": {
       "hand_weapons": 3.0,
-      "supplies": 1.0,
-      "volatiles": 1.5,
-      "rare_metals": 2.0,
-      "heavy_machinery": 2.0
+      "supplies": 2.0,
+      "volatiles": 3.0,
+      "rare_metals": 3.0,
+      "heavy_machinery": 3.0
+    }
+  },
+  "InterceptionMatrix": {
+    "name": "Interception Matrix",
+    "color": [ 240, 120, 210 ],
+    "bandwidthPerLevel": 2.5,
+    "stats": [
+      { "id": "pointDefenseDamage", "scalingEffect": 50 },
+      { "id": "shieldArc", "scalingEffect": -20, "startingLevel": 3 },
+      { "id": "shieldTurnRate", "scalingEffect": -20, "startingLevel": 3 },
+      { "id": "shieldUnfoldRate", "scalingEffect": -20, "startingLevel": 3 }
+    ],
+    "conditions": [
+      { "id": "hasShield", "operator": "==", "expected": true, "cannotApplyReason": "The ship must have a shield." }
+    ],
+    "resourceRatios": {
+      "hand_weapons": 0.5,
+      "metals": 2.0,
+      "rare_metals": 1.0
+    }
+  },
+  "GuidanceComputers": {
+    "name": "Guidance Computers",
+    "tag": "guidancecomputers",
+    "color": [ 120, 220, 110 ],
+    "bandwidthPerLevel": 7.5,
+    "stats": [
+      { "id": "missileSpeed", "scalingEffect": 25 },
+      { "id": "missileHealth", "scalingEffect": 20 },
+      { "id": "missileTurnRate", "scalingEffect": 33 },
+      { "id": "missileTurnAcceleration", "scalingEffect": 33, "hidden": true },
+      { "id": "missileDamage", "scalingEffect": -20, "startingLevel": 3 }
+    ],
+    "resourceRatios": {
+      "rare_metals": 0.5,
+      "volatiles": 2.0,
+      "heavy_machinery": 3.0,
+      "hand_weapons": 0.5
+    }
+  },
+  "AntimatterBoosters": {
+    "name": "Antimatter Boosters",
+    "tag": "guidancecomputers",
+    "color": [ 220, 120, 180 ],
+    "bandwidthPerLevel": 5,
+    "spawnChance": 3.0,
+    "salvageChance": 0.1,
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
+    "stats": [
+      { "id": "missileSpeed", "scalingEffect": 25 },
+      { "id": "missileHealth", "scalingEffect": 30 },
+      { "id": "missileRange", "scalingEffect": 20 },
+      { "id": "missileTurnRate", "scalingEffect": -33, "startingLevel": 3 },
+      { "id": "missileTurnAcceleration", "scalingEffect": -33, "hidden": true, "startingLevel": 3 },
+    ],
+    "resourceRatios": {
+      "rare_metals": 0.5,
+      "volatiles": 4.0,
+      "heavy_machinery": 3.0,
+      "hand_weapons": 0.5
+    }
+  },
+  "ForcedOvertime": {
+    "name": "Forced Overtime",
+    "color": [ 124, 124, 124 ],
+    "bandwidthPerLevel": 5,
+    "spawnChance": 0.6,
+    "stats": [
+      { "id": "crRecoveryRate", "scalingEffect": 30 },
+      { "id": "peakPerformanceTime", "scalingEffect": 30 },
+      { "id": "crLossRate", "scalingEffect": -24 },
+      { "id": "crToDeploy", "scalingEffect": 15, "startingLevel": 3 },
+      { "id": "minCrew", "scalingEffect": 25, "startingLevel": 3 }
+    ],
+    "conditions": [
+      { "id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew." }
+    ],
+    "resourceRatios": {
+      "supplies": 3.0,
+      "organics": 2.0,
+      "heavy_machinery": 1.5
     }
   },
   "AuxiliarySensors": {
@@ -234,14 +340,39 @@
       "supplies": 2.5
     }
   },
+  "CommissionedCrews": {
+    "name": "Commissioned Crews",
+    "color": [ 230, 200, 25 ],
+    "bandwidthPerLevel": 5,
+    "spawnChance": 0,
+    "stats": [
+      { "id": "crewSalary", "scalingEffect": 15, "flat": true },
+      { "id": "suppliesPerMonth", "scalingEffect": -30 },
+      { "id": "repairRateAfterBattle", "scalingEffect": 20 },
+      { "id": "fuelUse", "scalingEffect": -20 },
+      { "id": "suppliesToRecover", "scalingEffect": 20, "startingLevel": 3 }
+    ],
+    "conditions": [
+      { "id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew." }
+    ],
+    "resourceRatios": {
+      "supplies": 3.0,
+      "volatiles": 1.0,
+      "metals": 2.0,
+      "rare_metals": 1.5,
+      "heavy_machinery": 1.0
+    }
+  },
   "AssaultWings": {
     "name": "Assault Wings",
     "color": [230, 75, 75],
-    "bandwidthPerLevel": 5,
+    "bandwidthPerLevel": 7.5,
     "stats": [
-      {"id": "hull", "scalingEffect": 40, "appliesToFighters": true},
+      {"id": "hull", "scalingEffect": 25, "appliesToFighters": true},
+      {"id": "armor", "scalingEffect": 25, "appliesToFighters": true},
+      {"id": "fluxCapacity", "scalingEffect": 25, "appliesToFighters": true},
       {"id": "maxSpeed", "scalingEffect": 25, "appliesToFighters": true},
-      {"id": "fighterWingRange", "scalingEffect": -33}
+      {"id": "fighterWingRange", "scalingEffect": -33, "startingLevel": 3}
     ],
     "conditions": [
       {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay."}
@@ -253,91 +384,43 @@
       "supplies": 0.5
     }
   },
-  "GuidanceComputers": {
-    "name": "Guidance Computers",
-    "tag": "guidancecomputers",
-    "color": [120, 220, 110],
+  "VelocityInjectors": {
+    "name": "Velocity Injectors",
+    "color": [ 75, 180, 230 ],
     "bandwidthPerLevel": 7.5,
     "stats": [
-      {"id": "missileSpeed", "scalingEffect": 25},
-      {"id": "missileHealth", "scalingEffect": 20},
-      {"id": "missileTurnRate", "scalingEffect": 33},
-      {"id": "missileTurnAcceleration", "scalingEffect": 33, "hidden": true},
-      {"id": "missileDamage", "scalingEffect": -20}
-    ],
-    "resourceRatios": {
-      "rare_metals": 0.5,
-      "volatiles": 2.0,
-      "heavy_machinery": 3.0,
-      "hand_weapons": 0.5
-    }
-  },
-  "AntimatterBoosters": {
-    "name": "Antimatter Boosters",
-    "tag": "guidancecomputers",
-    "color": [220, 120, 180],
-    "bandwidthPerLevel": 5,
-    "spawnChance": 3.0,
-    "showInStoreIfNotInstalled": false,
-    "chipFirstInstall": true,
-    "stats": [
-      { "id": "missileSpeed", "scalingEffect": 25 },
-      { "id": "missileHealth", "scalingEffect": 30 },
-      { "id": "missileRange", "scalingEffect": 20 },
-      { "id": "missileTurnRate", "scalingEffect": -33 },
-      { "id": "missileTurnAcceleration", "scalingEffect": -33, "hidden": true },
-    ],
-    "resourceRatios": {
-      "rare_metals": 0.5,
-      "volatiles": 4.0,
-      "heavy_machinery": 3.0,
-      "hand_weapons": 0.5
-    }
-  },
-  "IronShell": {
-    "name": "Iron Shell",
-    "color": [252,173,60],
-    "bandwidthPerLevel": 5,
-    "spawnChance": 3.0,
-    "showInStoreIfNotInstalled": false,
-    "chipFirstInstall": true,
-    "stats": [
-      {"id": "armorDamageTaken", "scalingEffect": -10},
-      {"id": "heDamageTaken", "scalingEffect": -20},
-      {"id": "kineticDamageTaken", "scalingEffect": 20, "startingLevel": 3},
-      {"id": "energyDamageTaken", "scalingEffect": 20, "startingLevel": 3},
-      {"id": "fragDamageTaken", "scalingEffect": 20, "startingLevel": 3}
-    ],
-    "resourceRatios": {
-      "heavy_machinery": 1.0,
-      "volatiles": 1.5,
-      "metals": 2.0,
-      "rare_metals": 4.0
-    }
-  },
-  "HelDrives": {
-    "name": "Hel Drives",
-    "color": [255,100,60],
-    "bandwidthPerLevel": 7.5,
-    "tag": "infengines",
-    "spawnChance": 3.0,
-    "showInStoreIfNotInstalled": false,
-    "chipFirstInstall": true,
-    "stats": [
-      {"id": "maxSpeed", "scalingEffect": 15},
-      {"id": "acceleration", "scalingEffect": 30},
-      {"id": "turnRate", "scalingEffect": 30},
-      {"id": "burnLevel", "scalingEffect": 1, "flat": true},
-      {"id": "engineHealth", "scalingEffect": -16, "startingLevel": 3}
+      { "id": "maxSpeed", "scalingEffect": 50, "appliesToFighters": true },
+      { "id": "acceleration", "scalingEffect": 50, "appliesToFighters": true },
+      { "id": "deceleration", "scalingEffect": 50, "appliesToFighters": true, "hidden": true },
+      { "id": "turnRate", "scalingEffect": 50, "appliesToFighters": true },
+      { "id": "fluxCapacity", "scalingEffect": -10, "appliesToFighters": true, "startingLevel": 3 },
+      { "id": "hull", "scalingEffect": -20, "appliesToFighters": true, "startingLevel": 3 }
     ],
     "conditions": [
-      {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."}
+      { "id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay." }
     ],
     "resourceRatios": {
-      "metals": 4.0,
       "volatiles": 3.0,
-      "rare_metals": 2.0,
-      "heavy_machinery": 1.0
+      "heavy_machinery": 1.0,
+      "supplies": 0.5
+    }
+  },
+  "OverclockedFabricators": {
+    "name": "Overclocked Fabricators",
+    "color": [ 200, 255, 210 ],
+    "bandwidthPerLevel": 5,
+    "stats": [
+      { "id": "replacementRateRegen", "scalingEffect": 40},
+      { "id": "replacementRateDegen", "scalingEffect": -20},
+      { "id": "fighterRefitTime", "scalingEffect": 20, "startingLevel": 3 }
+    ],
+    "conditions": [
+      { "id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay." }
+    ],
+    "resourceRatios": {
+      "heavy_machinery": 3.0,
+      "metals": 2.0,
+      "supplies": 2.0
     }
   }
 }

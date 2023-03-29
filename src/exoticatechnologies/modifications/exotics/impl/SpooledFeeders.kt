@@ -1,22 +1,22 @@
 package exoticatechnologies.modifications.exotics.impl
 
+import activators.ActivatorManager
+import activators.CombatActivator
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipAPI
-import com.fs.starfarer.api.combat.WeaponAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
-import data.scripts.util.MagicUI
+import com.fs.starfarer.api.util.Misc
+import exoticatechnologies.combat.ExoticaCombatUtils
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
-import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
-import exoticatechnologies.util.states.StateWithNext
 import org.json.JSONObject
-import org.lwjgl.input.Mouse
 import java.awt.Color
 import kotlin.math.abs
 
@@ -50,199 +50,109 @@ class SpooledFeeders(key: String, settings: JSONObject) : Exotic(key, settings) 
         }
     }
 
-    private fun shouldSpoolAI(weapon: WeaponAPI): Boolean {
-        return if (weapon.slot.weaponType == WeaponAPI.WeaponType.MISSILE) false
-        else weapon.hasAIHint(WeaponAPI.AIHints.PD) || weapon.hasAIHint(WeaponAPI.AIHints.PD_ONLY)
-    }
-
-    private fun canSpool(ship: ShipAPI): Boolean {
-        return ship.shipAI != null || Mouse.isButtonDown(0)
-    }
-
-    override fun advanceInCombatAlways(ship: ShipAPI, member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) {
-        val state = getSpoolState(ship, member, mods, exoticData)
-        state.advanceAlways(ship)
-    }
-
-    override fun advanceInCombatUnpaused(
-        ship: ShipAPI,
-        amount: Float,
+    override fun applyToShip(
+        id: String,
         member: FleetMemberAPI,
+        ship: ShipAPI,
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        val state = getSpoolState(ship, member, mods, exoticData)
-        state.advance(ship, amount)
+        ActivatorManager.addActivator(ship, SpooledActivator(member, mods, exoticData))
     }
 
-    private fun getSpoolState(ship: ShipAPI, member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): SpoolState {
-        var state = ship.customData[STATE_KEY] as SpoolState?
-        if (state == null) {
-            state = ReadyState(member, mods, exoticData)
-            ship.setCustomData(STATE_KEY, state)
-        }
-        return state
-    }
-
-    private val statusBarText: String
-        get() = StringUtils.getString(key, "statusBarText")
-
-    private abstract inner class SpoolState(
-        val member: FleetMemberAPI,
-        val mods: ShipModifications,
-        val exoticData: ExoticData
-    ) : StateWithNext(STATE_KEY) {
-        abstract fun advanceAlways(ship: ShipAPI?)
-    }
-
-    private inner class ReadyState(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) : SpoolState(member, mods, exoticData) {
-        override fun advanceShip(ship: ShipAPI, amount: Float) {
-            if (canSpool(ship)) {
-                for (weapon in ship.allWeapons) {
-                    if (weapon.isFiring && (ship.shipAI == null || shouldSpoolAI(weapon))) {
-                        setNextState(ship)
-                        break
-                    }
-                }
-            }
+    inner class SpooledActivator(val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData) :
+        CombatActivator() {
+        override fun getDisplayText(): String {
+            return Global.getSettings().getString(this@SpooledFeeders.key, "systemText")
         }
 
-        override fun advanceAlways(ship: ShipAPI?) {
-            MagicUI.drawInterfaceStatusBar(
-                ship,
-                1f,
-                RenderUtils.getAliveUIColor(),
-                RenderUtils.getAliveUIColor(),
-                0f,
-                statusBarText,
-                -1
-            )
-        }
-
-        override fun getDuration(): Float {
-            return 0f
-        }
-
-        override fun getNextState(): StateWithNext {
-            return BuffedState(member, mods, exoticData)
-        }
-    }
-
-    private inner class BuffedState(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) : SpoolState(member, mods, exoticData) {
-        override fun initShip(ship: ShipAPI) {
-            ship.addAfterimage(Color(255, 0, 0, 150), 0f, 0f, 0f, 0f, 0f, 0.1f, 4.6f, 0.25f, true, true, true)
-            ship.mutableStats.ballisticRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_BUFF / 100f)
-            ship.mutableStats.energyRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_BUFF / 100f)
-            for (buffWeapon in ship.allWeapons) {
-                if (buffWeapon.cooldownRemaining > buffWeapon.cooldown / 2f) {
-                    buffWeapon.setRemainingCooldownTo(buffWeapon.cooldown / 2f)
-                }
-            }
-        }
-
-        override fun advanceShip(ship: ShipAPI, amount: Float) {}
-        override fun advanceAlways(ship: ShipAPI?) {
-            MagicUI.drawInterfaceStatusBar(
-                ship,
-                1f - getProgressRatio(),
-                RenderUtils.getAliveUIColor(),
-                RenderUtils.getAliveUIColor(),
-                0f,
-                statusBarText,
-                -1
-            )
-        }
-
-        override fun getDuration(): Float {
+        override fun getActiveDuration(): Float {
             return BUFF_DURATION * getPositiveMult(member, mods, exoticData)
         }
 
-        override fun intervalExpired(ship: ShipAPI): Boolean {
-            setNextState(ship)
-            return true
-        }
-
-        override fun getNextState(): StateWithNext {
-            return DebuffState(member, mods, exoticData)
-        }
-    }
-
-    private inner class DebuffState(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) : SpoolState(member, mods, exoticData) {
-        override fun initShip(ship: ShipAPI) {
-            ship.mutableStats.ballisticRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_DEBUFF / 100f)
-            ship.mutableStats.energyRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_DEBUFF / 100f)
-        }
-
-        override fun advanceShip(ship: ShipAPI, amount: Float) {}
-        override fun advanceAlways(ship: ShipAPI?) {
-            val ratio = getProgressRatio()
-            val fill = interval.elapsed / (interval.intervalDuration + COOLDOWN)
-            val progressBarColor =
-                RenderUtils.mergeColors(RenderUtils.getDeadUIColor(), RenderUtils.getEnemyUIColor(), ratio)
-            MagicUI.drawInterfaceStatusBar(
-                ship,
-                fill,
-                progressBarColor,
-                RenderUtils.getAliveUIColor(),
-                0f,
-                statusBarText,
-                -1
-            )
-        }
-
-        override fun intervalExpired(ship: ShipAPI): Boolean {
-            setNextState(ship)
-            ship.mutableStats.ballisticRoFMult.unmodifyMult(buffId)
-            ship.mutableStats.energyRoFMult.unmodifyMult(buffId)
-            return true
-        }
-
-        override fun getDuration(): Float {
+        override fun getOutDuration(): Float {
             return DEBUFF_DURATION * getNegativeMult(member, mods, exoticData)
         }
 
-        override fun getNextState(): StateWithNext {
-            return CooldownState(member, mods, exoticData)
-        }
-    }
-
-    private inner class CooldownState(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) : SpoolState(member, mods, exoticData) {
-        override fun initShip(ship: ShipAPI) {
-            ship.mutableStats.ballisticRoFMult.unmodifyMult(buffId)
-            ship.mutableStats.energyRoFMult.unmodifyMult(buffId)
-        }
-
-        override fun advanceShip(ship: ShipAPI, amount: Float) {}
-        override fun advanceAlways(ship: ShipAPI?) {
-            val ratio = getProgressRatio()
-            val fill = (interval.elapsed + DEBUFF_DURATION * getNegativeMult(member, mods, exoticData)) / (interval.intervalDuration + DEBUFF_DURATION * getNegativeMult(member, mods, exoticData))
-
-            val progressBarColor =
-                RenderUtils.mergeColors(RenderUtils.getEnemyUIColor(), RenderUtils.getAliveUIColor(), ratio)
-            MagicUI.drawInterfaceStatusBar(
-                ship,
-                fill,
-                progressBarColor,
-                RenderUtils.getAliveUIColor(),
-                0f,
-                statusBarText,
-                -1
-            )
-        }
-
-        override fun intervalExpired(ship: ShipAPI): Boolean {
-            setNextState(ship)
-            ship.mutableStats.ballisticRoFMult.unmodifyMult(buffId)
-            ship.mutableStats.energyRoFMult.unmodifyMult(buffId)
-            return true
-        }
-
-        override fun getDuration(): Float {
+        override fun getCooldownDuration(): Float {
             return COOLDOWN.toFloat()
         }
 
-        override fun getNextState(): StateWithNext {
-            return ReadyState(member, mods, exoticData)
+        override fun onStateSwitched(ship: ShipAPI, state: State) {
+            if (state == State.ACTIVE) {
+                ship.mutableStats.ballisticRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_BUFF / 100f)
+                ship.mutableStats.energyRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_BUFF / 100f)
+                for (buffWeapon in ship.allWeapons) {
+                    if (buffWeapon.cooldownRemaining > buffWeapon.cooldown / 2f) {
+                        buffWeapon.setRemainingCooldownTo(buffWeapon.cooldown / 2f)
+                    }
+                }
+
+                ship.addAfterimage(
+                    Color(255, 0, 0, 150),
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    6f,
+                    0f,
+                    this.activeDuration,
+                    0.25f,
+                    true,
+                    false,
+                    true
+                )
+            }
+
+            if (state == State.OUT) {
+                ship.mutableStats.ballisticRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_DEBUFF / 100f)
+                ship.mutableStats.energyRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_DEBUFF / 100f)
+
+                ship.addAfterimage(
+                    Color(0, 0, 255, 150),
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    3f,
+                    0.25f,
+                    this.outDuration,
+                    0.1f,
+                    true,
+                    false,
+                    true
+                )
+            }
+
+            if (state == State.COOLDOWN) {
+                ship.mutableStats.ballisticRoFMult.unmodifyMult(buffId)
+                ship.mutableStats.energyRoFMult.unmodifyMult(buffId)
+            }
+        }
+
+        override fun shouldActivateAI(ship: ShipAPI): Boolean {
+            val target = ship.shipTarget
+            if (target != null) {
+                var score = 0f
+                score += (target.currFlux / target.maxFlux) * 10f
+
+                if (target.fluxTracker.isOverloadedOrVenting) {
+                    score += 8f
+                }
+
+                var dist = Misc.getDistance(ship.location, target.location)
+                if (dist > ExoticaCombatUtils.getMaxWeaponRange(ship, false)) {
+                    return false
+                }
+
+                var avgRange = ExoticaCombatUtils.getAverageWeaponRange(ship, false)
+                score += (avgRange / dist).coerceAtMost(8f)
+
+                if (score > 10f) {
+                    return true
+                }
+            }
+            return false
         }
     }
 
@@ -253,6 +163,5 @@ class SpooledFeeders(key: String, settings: JSONObject) : Exotic(key, settings) 
         private const val COOLDOWN = 12
         private const val BUFF_DURATION = 5
         private const val DEBUFF_DURATION = 4
-        private const val STATE_KEY = "et_spool_state"
     }
 }

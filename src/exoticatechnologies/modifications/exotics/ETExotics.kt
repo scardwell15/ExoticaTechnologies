@@ -9,7 +9,12 @@ import org.json.JSONObject
 @Log4j
 class ETExotics {
     var exotics: List<String>? = null
-    val exoticData: MutableMap<String, ExoticData> = HashMap()
+    var exoticData: MutableMap<String, ExoticData> = HashMap()
+        get() {
+            if (field == null)
+                field = HashMap()
+            return field
+        }
 
     constructor() {
         fixExoticsList()
@@ -41,10 +46,6 @@ class ETExotics {
     }
 
     fun putExotic(exoticData: ExoticData) {
-        updateMap[exoticData.key]?.let {
-            exoticData.key = it
-        }
-
         this.exoticData[exoticData.key] = exoticData
     }
 
@@ -61,6 +62,7 @@ class ETExotics {
     }
 
     fun hasAnyExotic(): Boolean {
+        fixExoticsList()
         return exoticData.isNotEmpty()
     }
 
@@ -98,7 +100,7 @@ class ETExotics {
 
     override fun toString(): String {
         return "ETExotics{" +
-                "exotics=" + exotics +
+                "exoticData=" + exoticData +
                 '}'
     }
 
@@ -130,10 +132,5 @@ class ETExotics {
         for (i in 0 until obj.length()) {
             putExotic(obj.getString(i))
         }
-    }
-
-    companion object {
-        val updateMap = mutableMapOf("HangarForge" to "PhasedFighterTether",
-            "HangarForgeMissiles" to "HackedMissileForge")
     }
 }

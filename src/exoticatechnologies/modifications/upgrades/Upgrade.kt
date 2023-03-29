@@ -25,6 +25,7 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
     val upgradeEffects: MutableList<UpgradeModEffect> = ArrayList()
     var bandwidthUsage: Float
     var spawnChance: Float
+    var salvageChance: Float
     var showInStoreIfNotInstalled: Boolean
     var chipFirstInstall: Boolean
     var chipOnlyInstall: Boolean
@@ -35,6 +36,7 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
         bandwidthUsage = settings.getDouble("bandwidthPerLevel").toFloat()
         upgradeEffects.addAll(getStatsFromJSONArray(settings.getJSONArray("stats")))
         spawnChance = settings.optDouble("spawnChance", 1.0).toFloat()
+        salvageChance = settings.optDouble("salvageChance", spawnChance.toDouble()).toFloat()
         showInStoreIfNotInstalled = settings.optBoolean("showInStoreIfNotInstalled", true)
         chipFirstInstall = settings.optBoolean("chipFirstInstall")
         chipOnlyInstall = settings.optBoolean("chipOnlyInstall")
@@ -103,7 +105,7 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
         }
     }
 
-    fun applyUpgradeToShip(member: FleetMemberAPI?, ship: ShipAPI?, mods: ShipModifications?) {
+    fun applyToShip(member: FleetMemberAPI?, ship: ShipAPI?, mods: ShipModifications?) {
         for (effect in upgradeEffects) {
             if (!effect.appliesToFighters) {
                 effect.applyToShip(ship!!, member!!, mods!!, this)
@@ -111,7 +113,7 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
         }
     }
 
-    fun applyUpgradeToFighters(member: FleetMemberAPI?, ship: ShipAPI?, fighter: ShipAPI?, mods: ShipModifications?) {
+    fun applyToFighters(member: FleetMemberAPI?, ship: ShipAPI?, fighter: ShipAPI?, mods: ShipModifications?) {
         for (effect in upgradeEffects) {
             if (effect.appliesToFighters) {
                 effect.applyToFighter(ship!!, fighter!!, member!!, mods!!, this)

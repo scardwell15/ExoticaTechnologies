@@ -170,12 +170,12 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
-            exotic.applyExoticToShip(id, member, ship, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
+            exotic.applyToShip(id, member, ship, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if (!mods.hasUpgrade(upgrade)) continue;
-            upgrade.applyUpgradeToShip(member, ship, mods);
+            upgrade.applyToShip(member, ship, mods);
         }
     }
 
@@ -187,9 +187,13 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = ShipModLoader.get(member);
         if (mods == null) return;
 
+        for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
+            if (!mods.hasExotic(exotic)) continue;
+            exotic.applyToFighters(member, ship, fighter, mods);
+        }
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if (!mods.hasUpgrade(upgrade)) continue;
-            upgrade.applyUpgradeToFighters(member, ship, fighter, mods);
+            upgrade.applyToFighters(member, ship, fighter, mods);
         }
     }
 

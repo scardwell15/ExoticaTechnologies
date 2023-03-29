@@ -9,7 +9,8 @@
     "FullMetalSalvo": 0.6,
     "PhasedFighterTether": 0.33,
     "AlphaSubcore": 0.1,
-    "EqualizerCore": 0.6
+    "EqualizerCore": 0.6,
+    "HyperspecLPC": 0.33
   },
   "allowedUpgrades": {
     "OverchargedShields": 0.5,

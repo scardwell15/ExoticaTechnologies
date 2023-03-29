@@ -21,15 +21,15 @@ class GenericExoticItemPlugin : ExoticSpecialItemPlugin() {
         renderer: SpecialItemRendererAPI
     ) {
         val exoticSprite = Global.getSettings().getSprite("exotics", exoticData!!.key)
-        val tX = -0.0f
-        val tY = -0.03f
-        val tW = 1.1f
-        val tH = 1.1f
+        val tX = 0.4f
+        val tY = 0.37f
+        val tW = 0.70f
+        val tH = 0.70f
         val mult = 1f
         exoticSprite.alphaMult = alphaMult * mult
         exoticSprite.setNormalBlend()
         exoticSprite.setSize(tW * exoticSprite.width, tH * exoticSprite.height)
-        exoticSprite.renderRegionAtCenter(x + (1 + tX) * w / 2, y + (1 + tY) * h / 2, 0.21f, 0.21f, 0.58f, 0.58f)
+        exoticSprite.renderAtCenter(x + (1 + tX) * (w * tW) / 2, y + (1 + tY) * (h * tH) / 2)
 
         exoticData!!.type.sprite?.let {
             val overlay = Global.getSettings().getSprite(it)
@@ -37,7 +37,7 @@ class GenericExoticItemPlugin : ExoticSpecialItemPlugin() {
             overlay.setNormalBlend()
             overlay.setSize(tW * exoticSprite.width, tH * exoticSprite.height)
             overlay.color = exoticData!!.type.colorOverlay.setAlpha(255)
-            overlay.renderRegionAtCenter(x + (1 + tX) * w / 2, y + (1 + tY) * h / 2, 0.21f, 0.21f, 0.58f, 0.58f)
+            overlay.renderAtCenter(x + (1 + tX) * (w * tW) / 2, y + (1 + tY) * (h * tH) / 2)
         }
 
         val cx = x + w / 2f

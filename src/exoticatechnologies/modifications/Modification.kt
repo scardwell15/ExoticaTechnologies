@@ -7,6 +7,7 @@ import exoticatechnologies.modifications.conditions.Condition
 import exoticatechnologies.modifications.conditions.ConditionDict
 import org.apache.log4j.Logger
 import org.json.JSONObject
+import org.lazywizard.lazylib.ext.json.optFloat
 import java.awt.Color
 
 abstract class Modification(val key: String, val settings: JSONObject) {
@@ -19,6 +20,7 @@ abstract class Modification(val key: String, val settings: JSONObject) {
     var tag: String? = settings.optString("tag")
     open var color: Color = Color.white
     open var description: String = ""
+    open var valueMult: Float = settings.optFloat("valueMult", 1.0f)
     protected abstract val icon: String
     val conditions: MutableList<Condition> = mutableListOf()
 

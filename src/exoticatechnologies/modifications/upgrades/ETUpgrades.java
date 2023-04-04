@@ -25,10 +25,6 @@ public class ETUpgrades {
         return upgrades;
     }
 
-    public float getHullSizeFactor(ShipAPI.HullSize hullSize) {
-        return ETModSettings.getHullSizeFactors().get(hullSize);
-    }
-
     public int getUpgrade(Upgrade upgrade) {
         return this.getUpgrade(upgrade.getKey());
     }

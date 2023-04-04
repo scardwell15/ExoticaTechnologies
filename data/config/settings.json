@@ -25,13 +25,6 @@
 
 	"upgradeCostDividingRatio": 1.0, # dividing ratio to final upgrade cost
 
-	#below settings determine max upgrades for upgrades that do not have a max defined.
-	"frigateMaxUpgrades": 10,
-	"destroyerMaxUpgrades": 10,
-	"cruiserMaxUpgrades": 10,
-	"capitalMaxUpgrades": 10,
-	#the amount each upgrade contributes will scale to these values (so frigate at max level gets same buff as capital at max)
-
 	# do not touch.
 	"ruleCommandPackages":[
 		"exoticatechnologies.campaign.rulecmd"
@@ -88,7 +81,8 @@
 		},
 		"overlays": {
 			"Corrupted": "graphics/icons/overlays/corrupted.png",
-			"Pure": "graphics/icons/overlays/pure.png"
+			"Pure": "graphics/icons/overlays/pure.png",
+			"Guerilla": "graphics/icons/overlays/guerilla.png",
 		}
 	}
 }

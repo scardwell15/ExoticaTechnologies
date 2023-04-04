@@ -9,6 +9,8 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.Misc
+import exoticatechnologies.ETModSettings
+import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.modifications.exotics.*
@@ -154,6 +156,14 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         return exotics.getData(exotic)
     }
 
+    fun getMaxExotics(member: FleetMemberAPI): Int {
+        if (member.fleetData != null && member.fleetData.fleet != null) {
+            val factionConfig = FactionConfigLoader.getFactionConfig(member.fleetData.fleet.faction.id)
+            return factionConfig.getMaxExotics(member)
+        }
+        return ETModSettings.MAX_EXOTICS
+    }
+
     //upgrades
 
     fun getUpgradeMap(): Map<Upgrade, Int> {
@@ -197,12 +207,8 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         return getUsedBandwidth() + upgradeBandwidth <= getBandwidthWithExotics(member)
     }
 
-    fun getHullSizeFactor(hullSize: HullSize): Float {
-        return upgrades.getHullSizeFactor(hullSize)
-    }
-
     fun isMaxLevel(member: FleetMemberAPI, upgrade: Upgrade): Boolean {
-        return this.getUpgrade(upgrade) >= upgrade.getMaxLevel(member.hullSpec.hullSize)
+        return this.getUpgrade(upgrade) >= upgrade.maxLevel
     }
 
     fun getTags(): List<String> {

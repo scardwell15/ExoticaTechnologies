@@ -1,6 +1,7 @@
 package exoticatechnologies.config
 
 import data.scripts.util.MagicSettings
+import exoticatechnologies.ETModSettings
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.modifications.exotics.ExoticsHandler
@@ -60,7 +61,7 @@ class FactionConfigLoader {
     private var defaultFactionExoticTypes: MutableMap<ExoticType, Float> = mutableMapOf()
     private var defaultFactionUpgrades: MutableMap<Upgrade, Float> = mutableMapOf()
     private var defaultFactionExoticTypeChance = 0.05f
-    private var defaultMaxExotics = 3
+    private var defaultMaxExotics = ETModSettings.MAX_EXOTICS
 
     private fun loadFactionConfigs() {
         factionMap.clear()

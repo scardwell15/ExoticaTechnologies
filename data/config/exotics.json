@@ -7,7 +7,8 @@
   "FullMetalSalvo": {
     "name": "Full Metal Salvo",
     "tag": "weaponFeeders",
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.FullMetalSalvo"
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.FullMetalSalvo",
+    "valueMult": 1.5
   },
   "PlasmaFluxCatalyst": {
       "name": "Plasma Flux Catalyst",
@@ -26,14 +27,16 @@
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasedFighterTether",
     "conditions": [
       {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have a launch bay."}
-    ]
+    ],
+    "valueMult": 1.5
   },
   "HyperspecLPC": {
     "name": "Hyperspec LPC",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HyperspecLPC",
     "conditions": [
       {"id": "launchBays", "operator": ">", "expected": 1, "cannotApplyReason": "The ship must have more than one launch bay."}
-    ]
+    ],
+    "valueMult": 0.75
   },
   "HackedMissileForge": {
     "name": "Hacked Missile Forge",
@@ -44,14 +47,16 @@
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasefieldEngine",
     "conditions": [
       {"id": "hasPhase", "operator": "==", "expected": true, "cannotApplyReason": "The ship must be a phase ship, or have a phase ship system."}
-    ]
+    ],
+    "valueMult": 2.0
   },
   "TierIIIDriveSystem": {
     "name": "Tier IIIb Drive System",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.TierIIIDriveSystem",
     "conditions": [
       {"id": "cargoSpace", "operator": ">=", "expected": 400, "cannotApplyReason": "The ship must have at least 400 cargo capacity."}
-    ]
+    ],
+    "valueMult": 0.75
   },
   "ReactiveDamperField": {
     "name": "Reactive Damper Field",
@@ -67,17 +72,20 @@
     "conditions": [
       {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."},
       {"id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew."}
-    ]
+    ],
+    "valueMult": 3.0
   },
   "AlphaSubcore": {
     "name": "Alpha Subcore",
     "tag": "aiCore",
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore"
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore",
+    "valueMult": 3.0
   },
   "PenanceEngine": {
     "name": "Penance Engine",
     "tag": "aiCore",
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.PenanceEngine"
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.PenanceEngine",
+    "valueMult": 1.25
   },
   "SubsumedAlphaCore": {
     "name": "Subsumed Alpha Core",

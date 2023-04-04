@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.listeners.ShowLootListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
@@ -56,7 +57,9 @@ public class SalvageListener implements ShowLootListener {
                         int quantity = upgLvlQty.getValue();
 
                         for (int i = 0; i < quantity; i++) {
-                            if (upgrade.getSalvageChance() > 0 && random.nextFloat() <= upgrade.getSalvageChance()) {
+                            float adjustedLevelRatio = Math.max((upgrade.getMaxLevel() - Math.max(level - 3f, 0)) / upgrade.getMaxLevel(), 0.2f);
+                            float adjustedSalvageChance = upgrade.getSalvageChance() * adjustedLevelRatio;
+                            if (adjustedSalvageChance > 0 && random.nextFloat() <= adjustedSalvageChance) {
                                 //generate upgrade and add to loot
                                 loot.addSpecial(upgrade.getNewSpecialItemData(level), 1);
                             }
@@ -69,7 +72,7 @@ public class SalvageListener implements ShowLootListener {
                     int quantity = potExotic.getValue();
 
                     for (int i = 0; i < quantity; i++) {
-                        if (exotic.getSalvageChance(1.5f) > 0 && random.nextFloat() <= exotic.getSalvageChance(1.5f)) {
+                        if (exotic.getSalvageChance(1.25f) > 0 && random.nextFloat() <= exotic.getSalvageChance(1.25f)) {
                             //generate exotic and add to loot
                             loot.addSpecial(exotic.getNewSpecialItemData(potExotic.getKey().getType()), 1);
                         }

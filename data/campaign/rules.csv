@@ -6,10 +6,11 @@ ETMainDialog,PopulateOptions,"$hasMarket
 $menuState == main
 $tradeMode == OPEN
 RepairAvailable","SetShortcut ETMainMenu ""U"" true",,"25:ETMainMenu:Visit the local Exotica Technologies branch.",
-ETMainMenu,DialogOptionSelected,"$option==ETMainMenu","$menuState = ETMainMenu
-ETPrototypeUI","The Exotica engineering team welcomes you!","16:ETOpenPrototypeUI:View the prototype UI.
+ETMainMenu,DialogOptionSelected,"$option==ETMainMenu","$menuState = ETMainMenu","The Exotica engineering team welcomes you!","16:ETOpenPrototypeUI:Install modifications onto your ships.
+32:ETOpenMarketUI:View the market inventory of Exotica chips.
 90:ETDialogBack:Back",
 ETOpenPrototypeUI,DialogOptionSelected,"$option==ETOpenPrototypeUI","ETPrototypeUI",,,
+ETOpenMarketUI,DialogOptionSelected,"$option==ETOpenMarketUI","ETMarketUI",,,
 ETDialogBack,DialogOptionSelected,"$option==ETDialogBack","ShowDefaultVisual
 $menuState = main 0
 FireAll PopulateOptions

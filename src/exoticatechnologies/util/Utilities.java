@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exoticatechnologies.cargo.CrateItemPlugin;
 import exoticatechnologies.cargo.CrateSpecialData;
+import exoticatechnologies.modifications.ModSpecialItemPlugin;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
@@ -451,7 +452,6 @@ public class Utilities {
         return null;
     }
 
-    //runcode exoticatechnologies.util.Utilities.mergeChipsIntoCrate($playerFleet.getCargo())
     public static void mergeChipsIntoCrate(CargoAPI cargo) {
         if (cargo == null) return;
 
@@ -460,7 +460,7 @@ public class Utilities {
         for (CargoStackAPI stack : cargo.getStacksCopy()) {
             if (stack.isSpecialStack()) {
                 SpecialItemData data = stack.getSpecialDataIfSpecial();
-                if (data instanceof CrateSpecialData) {
+                if (data.getId().equals("et_crate")) {
                     if (crateData == null) {
                         crateData = (CrateSpecialData) data;
                     } else {
@@ -484,9 +484,8 @@ public class Utilities {
             if (stack.isSpecialStack()) {
                 String specialId = stack.getSpecialDataIfSpecial().getId();
                 if (specialId.equals("et_upgrade") || specialId.equals("et_exotic")) {
-                    SpecialItemPlugin plugin = stack.getPlugin();
-                    if ((plugin instanceof UpgradeSpecialItemPlugin && !((UpgradeSpecialItemPlugin) plugin).getIgnoreCrate())
-                        || (plugin instanceof ExoticSpecialItemPlugin && !((ExoticSpecialItemPlugin) plugin).getIgnoreCrate()))
+                    ModSpecialItemPlugin plugin = (ModSpecialItemPlugin) stack.getPlugin();
+                    if (!plugin.getIgnoreCrate())
                     {
                         crateData.getCargo().addFromStack(stack);
                         cargo.removeStack(stack);

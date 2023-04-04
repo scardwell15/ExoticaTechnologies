@@ -1,19 +1,16 @@
 package exoticatechnologies.modifications.exotics.impl
 
-import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.combat.WeaponAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
-import com.fs.starfarer.api.util.IntervalUtil
-import data.scripts.util.MagicUI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
-import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
@@ -53,85 +50,33 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
         return SECONDS_PER_RELOAD / getPositiveMult(member, mods, exoticData)
     }
 
-    private fun getReloadId(ship: ShipAPI): String {
-        return String.format("%s%s_reload", buffId, ship.id)
-    }
 
-    private fun getReloadInterval(ship: ShipAPI): IntervalUtil? {
-        val `val` = Global.getCombatEngine().customData[getReloadId(ship)]
-        return if (`val` != null) {
-            `val` as IntervalUtil?
-        } else null
-    }
-
-    private fun createReloadInterval(
-        ship: ShipAPI,
-        member: FleetMemberAPI,
-        mods: ShipModifications,
-        exoticData: ExoticData
-    ): IntervalUtil {
-        val time = getReloadTime(member, mods, exoticData)
-        val interval = IntervalUtil(time, time)
-        Global.getCombatEngine().customData[getReloadId(ship)] = interval
-        return interval
-    }
-
-    override fun advanceInCombatAlways(ship: ShipAPI, member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) {
-        val reloadInterval = getReloadInterval(ship)
-        if (reloadInterval != null) {
-            MagicUI.drawInterfaceStatusBar(
-                ship,
-                reloadInterval.elapsed / reloadInterval.intervalDuration,
-                RenderUtils.getAliveUIColor(),
-                RenderUtils.getAliveUIColor(),
-                0f,
-                StringUtils.getString(key, "statusBarText"),
-                -1
-            )
-        }
-    }
-
-    override fun advanceInCombatUnpaused(
-        ship: ShipAPI,
-        amount: Float,
+    override fun applyExoticToStats(
+        id: String,
+        stats: MutableShipStatsAPI,
         member: FleetMemberAPI,
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        var reloadInterval = getReloadInterval(ship)
-        if (reloadInterval == null) {
-            reloadInterval = createReloadInterval(ship, member, mods, exoticData)
-        }
-        if (Global.getCombatEngine().isPaused) {
-            return
-        }
+        stats.missileWeaponDamageMult.modifyPercent(
+            buffId,
+            -DAMAGE_DECREASE * getNegativeMult(member, mods, exoticData)
+        )
+    }
 
-        reloadInterval.advance(amount)
-        if (reloadInterval.intervalElapsed()) {
-            var addedAmmo = false
-            for (weapon in ship.allWeapons) {
-                if (shouldAffectWeapon(weapon)) {
-                    val ammo = weapon.ammoTracker.ammo
-                    val maxAmmo = weapon.ammoTracker.maxAmmo
-                    if (ammo < maxAmmo) {
-                        weapon.ammoTracker.ammo = maxAmmo
-                        addedAmmo = true
-                    }
-                }
-            }
-
-            if (addedAmmo) {
-                Global.getCombatEngine().addFloatingText(
-                    ship.location,
-                    StringUtils.getString(key, "statusReloaded"),
-                    8f,
-                    Color.WHITE,
-                    ship,
-                    2f,
-                    2f
-                )
-            } else {
-                reloadInterval.setInterval(10f, 10f)
+    override fun applyToShip(
+        id: String,
+        member: FleetMemberAPI,
+        ship: ShipAPI,
+        mods: ShipModifications,
+        exoticData: ExoticData
+    ) {
+        for (weapon in ship.allWeapons) {
+            if (shouldAffectWeapon(weapon)) {
+                val maxAmmo = weapon.ammoTracker.maxAmmo
+                weapon.ammoTracker.reloadSize = maxAmmo.toFloat()
+                weapon.ammoTracker.ammoPerSecond = 60f / getReloadTime(member, mods, exoticData)
+                weapon.ammoTracker.resetAmmo()
             }
         }
     }

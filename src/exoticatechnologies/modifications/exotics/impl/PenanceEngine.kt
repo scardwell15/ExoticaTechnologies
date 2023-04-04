@@ -76,9 +76,11 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        println("PenanceEngine: ${ship.hullSpec.hullId}")
+        if (ship.hullSpec.hullId == KADUR_CALIPH_SHIELD_GEN_ID) {
+            ship.hitpoints = 0f
+        }
+
         if (ship.hullSpec.hullId != KADUR_CALIPH_SHIELD_PART_ID) {
-            println("PenanceEngine: Removed shield")
             ship.setShield(ShieldAPI.ShieldType.NONE, 0f, 0f, 0f)
         }
     }
@@ -118,6 +120,10 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
         exoticData: ExoticData
     ) {
         if (ship.fluxTracker.isOverloaded) return
+
+        if (ship.hullSpec.hullId == KADUR_CALIPH_SHIELD_GEN_ID) {
+            ship.hitpoints = 0f
+        }
 
         if (ship.hullSpec.hullId == KADUR_CALIPH_SHIELD_PART_ID) {
             ship.shield?.arc = 0f
@@ -192,6 +198,7 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
                 }
             }
         } else {
+            ship.mutableStats.maxSpeed.unmodify(buffId)
             ship.mutableStats.acceleration.unmodify(buffId)
             ship.mutableStats.deceleration.unmodify(buffId)
             ship.engineController.fadeToOtherColor(buffId, Color(255, 120, 170), null, 0f, 0.75f)
@@ -269,6 +276,7 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
         private const val ARMOR_REGEN_MAX = 10f
         private const val ARMOR_REGEN_PER_SECOND_MAX = 300f
 
+        private const val KADUR_CALIPH_SHIELD_GEN_ID = "vayra_caliph_shieldgenerator"
         private const val KADUR_CALIPH_SHIELD_PART_ID = "vayra_caliph_shieldpart"
     }
 }

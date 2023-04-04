@@ -28,13 +28,13 @@ class ExoticTypeTooltip(
     }
 
     override fun getTooltipWidth(tooltipParam: Any): Float {
-        type.getNameTranslation(member, mods)?.let {
-            return@let tooltip.computeStringWidth(it.toStringNoFormats()).coerceAtMost(300f)
+        type.getDescriptionTranslation(member, mods)?.let {
+            return tooltip.computeStringWidth(it.toStringNoFormats()).coerceAtMost(300f)
         }
         return 300f
     }
 
     override fun createTooltip(tooltip: TooltipMakerAPI, expanded: Boolean, tooltipParam: Any) {
-        type.getNameTranslation(member, mods)?.addToTooltip(tooltip)
+        type.getDescriptionTranslation(member, mods)?.addToTooltip(tooltip)
     }
 }

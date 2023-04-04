@@ -36,7 +36,8 @@ class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) 
     ) {
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
-                .format("damageBoost", DAMAGE_BUFF)
+                .format("projSpeedBoost", DAMAGE_BUFF)
+                .format("damageBoost", DAMAGE_BUFF * 0.33f)
                 .formatFloat("boostTime", BUFF_DURATION * getPositiveMult(member, mods, exoticData))
                 .formatFloat("cooldown", COOLDOWN * getNegativeMult(member, mods, exoticData))
                 .format("firerateMalus", abs(RATE_OF_FIRE_DEBUFF))
@@ -82,7 +83,7 @@ class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) 
                         throw RuntimeException(ex)
                     }
                 } else {
-                    proj.damage.modifier.modifyMult(buffId, 1 + DAMAGE_BUFF / 100f)
+                    proj.damage.modifier.modifyMult(buffId, 1 + DAMAGE_BUFF / 100f * 0.33f)
                     proj.velocity.scale(1 + DAMAGE_BUFF / 100f)
                 }
             }
@@ -96,31 +97,31 @@ class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) 
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        val activator = SalvoActivator(member, mods, exoticData)
+        val activator = SalvoActivator(ship, member, mods, exoticData)
         ActivatorManager.addActivator(ship, activator)
     }
 
-    inner class SalvoActivator(val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData) :
-        CombatActivator() {
+    inner class SalvoActivator(ship: ShipAPI, val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData) :
+        CombatActivator(ship) {
         override fun getDisplayText(): String {
-            return Global.getSettings().getString(this@FullMetalSalvo.key, "systemText")
+            return Global.getSettings().getString(exoticData.key, "systemText")
         }
 
-        override fun getActiveDuration(): Float {
+        override fun getBaseActiveDuration(): Float {
             return BUFF_DURATION * getPositiveMult(member, mods, exoticData)
         }
 
-        override fun getCooldownDuration(): Float {
+        override fun getBaseCooldownDuration(): Float {
             return COOLDOWN.toFloat()
         }
 
-        override fun advance(ship: ShipAPI, state: State, amount: Float) {
+        override fun advance(amount: Float) {
             if (state == State.ACTIVE) {
                 gigaProjectiles(ship)
             }
         }
 
-        override fun onStateSwitched(ship: ShipAPI, state: State) {
+        override fun onStateSwitched(oldState: State) {
             if (state == State.ACTIVE) {
                 ship.addAfterimage(
                     Color(255, 125, 0, 150),
@@ -139,7 +140,7 @@ class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) 
             }
         }
 
-        override fun shouldActivateAI(ship: ShipAPI): Boolean {
+        override fun shouldActivateAI(amount: Float): Boolean {
             val target = ship.shipTarget
             if (target != null) {
                 var score = 0f

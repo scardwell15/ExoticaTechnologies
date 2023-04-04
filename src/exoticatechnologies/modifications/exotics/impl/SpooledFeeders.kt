@@ -57,28 +57,28 @@ class SpooledFeeders(key: String, settings: JSONObject) : Exotic(key, settings) 
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        ActivatorManager.addActivator(ship, SpooledActivator(member, mods, exoticData))
+        ActivatorManager.addActivator(ship, SpooledActivator(ship, member, mods, exoticData))
     }
 
-    inner class SpooledActivator(val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData) :
-        CombatActivator() {
+    inner class SpooledActivator(ship: ShipAPI, val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData) :
+        CombatActivator(ship) {
         override fun getDisplayText(): String {
             return Global.getSettings().getString(this@SpooledFeeders.key, "systemText")
         }
 
-        override fun getActiveDuration(): Float {
+        override fun getBaseActiveDuration(): Float {
             return BUFF_DURATION * getPositiveMult(member, mods, exoticData)
         }
 
-        override fun getOutDuration(): Float {
+        override fun getBaseOutDuration(): Float {
             return DEBUFF_DURATION * getNegativeMult(member, mods, exoticData)
         }
 
-        override fun getCooldownDuration(): Float {
+        override fun getBaseCooldownDuration(): Float {
             return COOLDOWN.toFloat()
         }
 
-        override fun onStateSwitched(ship: ShipAPI, state: State) {
+        override fun onStateSwitched(oldState: State) {
             if (state == State.ACTIVE) {
                 ship.mutableStats.ballisticRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_BUFF / 100f)
                 ship.mutableStats.energyRoFMult.modifyMult(buffId, 1 + RATE_OF_FIRE_BUFF / 100f)
@@ -130,7 +130,7 @@ class SpooledFeeders(key: String, settings: JSONObject) : Exotic(key, settings) 
             }
         }
 
-        override fun shouldActivateAI(ship: ShipAPI): Boolean {
+        override fun shouldActivateAI(amount: Float): Boolean {
             val target = ship.shipTarget
             if (target != null) {
                 var score = 0f
@@ -160,7 +160,7 @@ class SpooledFeeders(key: String, settings: JSONObject) : Exotic(key, settings) 
         private const val ITEM = "et_ammospool"
         private const val RATE_OF_FIRE_BUFF = 100f
         private const val RATE_OF_FIRE_DEBUFF = -33f
-        private const val COOLDOWN = 12
+        private const val COOLDOWN = 8
         private const val BUFF_DURATION = 5
         private const val DEBUFF_DURATION = 4
     }

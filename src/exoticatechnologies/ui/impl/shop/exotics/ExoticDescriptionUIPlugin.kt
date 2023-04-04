@@ -4,6 +4,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.modifications.exotics.types.ExoticType
@@ -22,8 +23,10 @@ class ExoticDescriptionUIPlugin(
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
 
+    private var displayedExoticData: ExoticData? = null
+
     companion object {
-        private var displayDescription: Boolean = true
+        var displayDescription: Boolean = true
     }
 
     fun layoutPanels(): CustomPanelAPI {
@@ -41,6 +44,18 @@ class ExoticDescriptionUIPlugin(
         val mods = member.getMods()
         val exoticData = mods.getExoticData(exotic) ?: ExoticData(exotic)
 
+        resetDescription(mods, exoticData)
+    }
+
+    fun resetDescription(mods: ShipModifications = member.getMods(), exoticData: ExoticData) {
+        if (!displayDescription) {
+            if (exoticData == displayedExoticData) {
+                return
+            }
+
+            displayedExoticData = exoticData
+        }
+
         if (descriptionTooltip != null) {
             mainPanel!!.removeComponent(descriptionTooltip)
         }
@@ -52,7 +67,14 @@ class ExoticDescriptionUIPlugin(
         tooltip.addPara(exotic.name, exotic.color, 0f)
         if (exoticData.type != ExoticType.NORMAL) {
             tooltip.setParaFontVictor14()
-            tooltip.addPara(exoticData.type.name, exoticData.type.colorOverlay.setAlpha(255), 0f)
+
+            var typeText = exoticData.type.name
+            if (!mods.hasExotic(exotic) || mods.getExoticData(exotic)!!.type != exoticData.type) {
+                typeText = StringUtils.getTranslation("ExoticTypes", "NotInstalledText")
+                    .format("typeName", typeText)
+                    .toStringNoFormats()
+            }
+            tooltip.addPara(typeText, exoticData.type.colorOverlay.setAlpha(255), 0f)
             ExoticTypeTooltip.addToPrev(tooltip, member, mods, exoticData.type)
         }
 

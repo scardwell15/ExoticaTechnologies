@@ -2,6 +2,7 @@ package exoticatechnologies.modifications.exotics
 
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription
 import com.fs.starfarer.api.util.WeightedRandomPicker
 import exoticatechnologies.config.FactionConfig
 import exoticatechnologies.modifications.ShipModFactory
@@ -76,11 +77,10 @@ object ExoticsGenerator {
             else -> 1.0f
         }
 
-        val typeFactor: Float = if (member.isCivilian) 0.5f else 1f
-        return sizeFactor * typeFactor
+        return sizeFactor
     }
 
-    private fun getExoticPicker(random: Random, allowedExotics: Map<Exotic, Float>): WeightedRandomPicker<Exotic> {
+    fun getExoticPicker(random: Random, allowedExotics: Map<Exotic, Float>): WeightedRandomPicker<Exotic> {
         val exoticPicker = WeightedRandomPicker<Exotic>(random)
         allowedExotics.forEach { (exotic, factionChance) ->
             exoticPicker.add(exotic, factionChance)
@@ -88,7 +88,7 @@ object ExoticsGenerator {
         return exoticPicker
     }
 
-    private fun getTypePicker(
+    fun getTypePicker(
         random: Random,
         context: ShipModFactory.GenerationContext,
         exotic: Exotic,
@@ -106,6 +106,26 @@ object ExoticsGenerator {
             typePicker.add(ExoticType.NORMAL)
         }
         
+        return typePicker
+    }
+
+    fun getTypePicker(
+        random: Random,
+        exotic: Exotic,
+        allowedExoticTypes: Map<ExoticType, Float>
+    ): WeightedRandomPicker<ExoticType> {
+        val typePicker = WeightedRandomPicker<ExoticType>(random)
+
+        allowedExoticTypes.forEach { (exoticType, factionChance) ->
+            if (exotic.canUseExoticType(exoticType)) {
+                typePicker.add(exoticType, factionChance)
+            }
+        }
+
+        if (typePicker.isEmpty) {
+            typePicker.add(ExoticType.NORMAL)
+        }
+
         return typePicker
     }
 }

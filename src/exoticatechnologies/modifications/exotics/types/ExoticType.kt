@@ -4,6 +4,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.types.impl.CorruptedType
+import exoticatechnologies.modifications.exotics.types.impl.GuerillaType
 import exoticatechnologies.modifications.exotics.types.impl.PureType
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.StringUtils.Translation
@@ -36,7 +37,7 @@ abstract class ExoticType(val nameKey: String, val colorOverlay: Color = Color(2
         return null
     }
 
-    open fun getNameTranslation(member: FleetMemberAPI, mods: ShipModifications): Translation? {
+    open fun getDescriptionTranslation(member: FleetMemberAPI, mods: ShipModifications): Translation? {
         return null
     }
 
@@ -49,7 +50,7 @@ abstract class ExoticType(val nameKey: String, val colorOverlay: Color = Color(2
     }
 
     companion object {
-        val NORMAL = NormalType()
+        val NORMAL: ExoticType = NormalType()
 
         val types: MutableMap<String, ExoticType> = mutableMapOf()
 
@@ -57,6 +58,7 @@ abstract class ExoticType(val nameKey: String, val colorOverlay: Color = Color(2
             putType(NORMAL)
             putType(CorruptedType())
             putType(PureType())
+            putType(GuerillaType())
         }
 
         fun valueOf(key: String): ExoticType {

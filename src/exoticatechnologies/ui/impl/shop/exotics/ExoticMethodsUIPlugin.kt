@@ -220,20 +220,7 @@ class ExoticMethodsUIPlugin(
     companion object {
         @JvmStatic
         fun isUnderExoticLimit(member: FleetMemberAPI, mods: ShipModifications): Boolean {
-            return getMaxExotics(member) > mods.getExoticSet().size
-        }
-
-        @JvmStatic
-        fun getMaxExotics(member: FleetMemberAPI): Int {
-            if (FactionConfigLoader.useTheMethodThatMakesHartleyverseStronger) {
-                return member.stats.dynamic.getStat(Stats.MAX_PERMANENT_HULLMODS_MOD).modifiedInt
-            } else {
-                var limit = 2
-                if (member.fleetCommander != null && member.fleetCommander.stats.hasSkill("best_of_the_best")) {
-                    limit++
-                }
-                return limit
-            }
+            return mods.getMaxExotics(member) > mods.getExoticSet().size
         }
 
         fun getExoticChips(cargo: CargoAPI, member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): List<CargoStackAPI> {

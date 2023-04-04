@@ -39,7 +39,7 @@ object UpgradesGenerator {
                 while (upgrade == null && !upgradePicker.isEmpty) {
                     upgrade = upgradePicker.pick()
 
-                    if (upgrade!!.getMaxLevel(member) <= upgrades.getUpgrade(upgrade)
+                    if (upgrade!!.maxLevel <= upgrades.getUpgrade(upgrade)
                         || !upgrade.canApply(member, mods)
                         || usableBandwidth - upgrade.bandwidthUsage < 0f) {
                         upgradePicker.remove(upgrade)
@@ -74,7 +74,7 @@ object UpgradesGenerator {
         return sizeFactor
     }
 
-    private fun getPicker(random: Random, allowedUpgrades: Map<Upgrade, Float>): WeightedRandomPicker<Upgrade> {
+    fun getPicker(random: Random, allowedUpgrades: Map<Upgrade, Float>): WeightedRandomPicker<Upgrade> {
         val upgradePicker = WeightedRandomPicker<Upgrade>(random)
         allowedUpgrades.forEach { (upgrade, factionChance) ->
             upgradePicker.add(upgrade, upgrade.spawnChance * factionChance)
@@ -84,7 +84,7 @@ object UpgradesGenerator {
 
     private fun hasLeveledUpgrades(upgradePicker: WeightedRandomPicker<Upgrade>, member: FleetMemberAPI, upgrades: ETUpgrades): Boolean {
         return upgradePicker.items.any {
-            upgrades.getUpgrade(it) > 0 && it.getMaxLevel(member) > upgrades.getUpgrade(it)
+            upgrades.getUpgrade(it) > 0 && it.maxLevel > upgrades.getUpgrade(it)
         }
     }
 }

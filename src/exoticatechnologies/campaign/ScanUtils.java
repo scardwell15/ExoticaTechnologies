@@ -326,7 +326,7 @@ public class ScanUtils {
             StringUtils.getTranslation("FleetScanner", "UpgradeNameWithLevelAndMax")
                     .format("upgradeName", upgrade.getName(), upgrade.getColor())
                     .format("level", mods.getUpgrade(upgrade))
-                    .format("max", upgrade.getMaxLevel(hullSize))
+                    .format("max", upgrade.getMaxLevel())
                     .addToTooltip(tooltip);
             tooltip.addPara(upgrade.getDescription(), 0f);
         }

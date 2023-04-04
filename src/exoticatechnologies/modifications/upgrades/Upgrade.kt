@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.SpecialItemData
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
-import com.fs.starfarer.api.combat.ShipAPI.HullSize
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.ETModSettings
@@ -80,22 +79,8 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
 
     public override val icon: String
         get() = "graphics/icons/upgrades/" + key.lowercase(Locale.getDefault()) + ".png"
-    private val maxLevel: Int
-        private get() = -1
 
-    fun getMaxLevel(hullSize: HullSize?): Int {
-        return if (maxLevel != -1) maxLevel else ETModSettings.getHullSizeToMaxLevel()[hullSize]!!
-    }
-
-    /**
-     * note: overrides should be done to the HullSize method
-     *
-     * @param fm
-     * @return
-     */
-    fun getMaxLevel(fm: FleetMemberAPI): Int {
-        return getMaxLevel(fm.hullSpec.hullSize)
-    }
+    var maxLevel: Int = 10
 
     fun applyUpgradeToStats(stats: MutableShipStatsAPI?, fm: FleetMemberAPI?, mods: ShipModifications?) {
         for (effect in upgradeEffects) {
@@ -163,7 +148,7 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
             val levelList: MutableList<UpgradeModEffect> = levelToEffectMap.getOrPut(startingLevel){ mutableListOf() }
             levelList.add(effect)
         }
-        for (startingLevel in 0 until getMaxLevel(member)) {
+        for (startingLevel in 0 until maxLevel) {
             if (levelToEffectMap.containsKey(startingLevel)) {
                 val levelList: List<UpgradeModEffect> = levelToEffectMap[startingLevel]!!
                 if (startingLevel > 1) {
@@ -183,7 +168,6 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
     }
 
     fun getResourceCosts(shipSelected: FleetMemberAPI, level: Int): Map<String, Int> {
-        val max = getMaxLevel(shipSelected.hullSpec.hullSize)
         var hullBaseValue = shipSelected.hullSpec.baseValue
         hullBaseValue = if (hullBaseValue > 450000) {
             225000f
@@ -191,7 +175,7 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
             (hullBaseValue - 1.0 / 900000.0 * hullBaseValue.toDouble().pow(2.0)).toFloat()
         }
         hullBaseValue *= 0.01f
-        val upgradeCostRatioByLevel = 0.25f + 0.75f * (level.toFloat() / max.toFloat())
+        val upgradeCostRatioByLevel = 0.25f + 0.75f * (level.toFloat() / maxLevel.toFloat())
         val upgradeCostByHull = hullBaseValue * upgradeCostRatioByLevel
         val resourceCosts: MutableMap<String, Int> = HashMap()
         for ((itemKey, ratio) in resourceRatios) {
@@ -200,6 +184,37 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
             resourceCosts[itemKey] = finalCost
         }
         return resourceCosts
+    }
+
+    fun getResourceCosts(level: Int): Map<String, Int> {
+        val hullBaseValue = 30000f * 0.01f
+        val upgradeCostRatioByLevel = 0.25f + 0.75f * (level.toFloat() / maxLevel.toFloat())
+        val upgradeCostByHull = hullBaseValue * upgradeCostRatioByLevel
+        val resourceCosts: MutableMap<String, Int> = HashMap()
+        for ((itemKey, ratio) in resourceRatios) {
+            val commodityCost = Utilities.getItemPrice(itemKey).roundToInt()
+            val finalCost = (ratio * upgradeCostByHull / commodityCost).roundToInt()
+            resourceCosts[itemKey] = finalCost
+        }
+        return resourceCosts
+    }
+
+    fun getCreditCostForResources(level: Int): Int {
+        return getCreditCostForResources(getResourceCosts(level))
+    }
+
+    /**
+     * Sums up the floats in the map.
+     *
+     * @param resourceCosts
+     * @return The sum.
+     */
+    fun getCreditCostForResources(resourceCosts: Map<String, Int>): Int {
+        var creditCost = 0f
+        for ((key, value) in resourceCosts) {
+            creditCost += Utilities.getItemPrice(key) * value
+        }
+        return creditCost.toInt()
     }
 
     override fun toString(): String {

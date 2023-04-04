@@ -58,6 +58,22 @@ class ExoticPanelUIPlugin(
         return panel
     }
 
+    private var setChipDescription = false
+    override fun advancePanel(amount: Float) {
+        chipsPlugin?.let {
+            if (it.highlightedItem != null) {
+                setChipDescription = true
+                ExoticDescriptionUIPlugin.displayDescription = false
+                descriptionPlugin!!.resetDescription(member.getMods(), it.highlightedItem!!.exoticData!!)
+            }
+        }
+
+        if (setChipDescription && chipsPlugin == null) {
+            descriptionPlugin!!.resetDescription()
+            setChipDescription = false
+        }
+    }
+
     private fun getMethods(): List<Method> {
         return mutableListOf(
             InstallMethod(),

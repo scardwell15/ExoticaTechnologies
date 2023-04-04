@@ -10,7 +10,6 @@ import exoticatechnologies.modifications.ShipModLoader.Companion.set
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.Utilities
 import lombok.Getter
 
 class CreditsMethod : DefaultUpgradeMethod() {
@@ -18,9 +17,9 @@ class CreditsMethod : DefaultUpgradeMethod() {
     override var key = "credits"
     override fun getOptionText(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): String {
         val level = es.getUpgrade(upgrade)
-        val resourceCreditCost = getCreditCostForResources(upgrade.getResourceCosts(fm, level)).toFloat()
+        val resourceCreditCost = upgrade.getCreditCostForResources(upgrade.getResourceCosts(fm, level)).toFloat()
         val convenienceFee =
-            getConvenienceCreditCost(resourceCreditCost, level, upgrade.getMaxLevel(fm.hullSpec.hullSize), market)
+            getConvenienceCreditCost(resourceCreditCost, level, upgrade.maxLevel, market)
         val creditCost = getFinalCreditCost(fm, upgrade, level, market)
         val creditCostFormatted = Misc.getFormat().format(creditCost.toLong())
         val convenienceFeeFormatted = Misc.getFormat().format(convenienceFee.toLong())
@@ -78,20 +77,6 @@ class CreditsMethod : DefaultUpgradeMethod() {
 
     companion object {
         /**
-         * Sums up the floats in the map.
-         *
-         * @param resourceCosts
-         * @return The sum.
-         */
-        private fun getCreditCostForResources(resourceCosts: Map<String, Int>): Int {
-            var creditCost = 0f
-            for ((key, value) in resourceCosts) {
-                creditCost += Utilities.getItemPrice(key) * value
-            }
-            return creditCost.toInt()
-        }
-
-        /**
          * A formula that uses the market's relations with the player to determine a "convenience cost" for an upgrade.
          *
          * @param market      the market
@@ -118,9 +103,9 @@ class CreditsMethod : DefaultUpgradeMethod() {
          * @return the cost
          */
         fun getFinalCreditCost(fm: FleetMemberAPI, upgrade: Upgrade, level: Int, market: MarketAPI): Int {
-            val creditCost = getCreditCostForResources(upgrade.getResourceCosts(fm, level)).toFloat()
+            val creditCost = upgrade.getCreditCostForResources(upgrade.getResourceCosts(fm, level)).toFloat()
             val convenienceFee =
-                getConvenienceCreditCost(creditCost, level, upgrade.getMaxLevel(fm.hullSpec.hullSize), market)
+                getConvenienceCreditCost(creditCost, level, upgrade.maxLevel, market)
             return (creditCost + convenienceFee).toInt()
         }
     }

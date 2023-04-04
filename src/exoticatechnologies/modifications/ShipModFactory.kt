@@ -70,9 +70,12 @@ object ShipModFactory {
         var member: FleetMemberAPI,
         var mods: ShipModifications,
         var factionId: String?,
-        var factionConfig: FactionConfig? = factionId?.let { return@let FactionConfigLoader.getFactionConfig(factionId) },
         var exoticChanceMult: Float = 1f,
-        var upgradeChanceMult: Float = 1f)
+        var upgradeChanceMult: Float = 1f) {
+
+        val factionConfig: FactionConfig?
+            get() = factionId?.let { return@let FactionConfigLoader.getFactionConfig(factionId!!) }
+    }
 
     @JvmStatic
     fun generateRandom(member: FleetMemberAPI, faction: String?): ShipModifications {

@@ -17,7 +17,7 @@ class UpgradeChipSearcher: ChipSearcher<UpgradeSpecialItemPlugin>() {
     ): Boolean {
         val upgrade = plugin.upgrade!!
         return plugin.upgradeLevel > mods.getUpgrade(upgrade)
-                && plugin.upgradeLevel <= upgrade.getMaxLevel(member)
+                && plugin.upgradeLevel <= upgrade.maxLevel
                 && mods.hasBandwidthForUpgrade(member, upgrade, plugin.upgradeLevel)
                 && ChipMethod.getCreditCost(member, mods, upgrade, stack) <= Global.getSector().playerFleet.cargo.credits.get()
     }

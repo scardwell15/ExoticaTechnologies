@@ -57,6 +57,11 @@
 		"ModsMissingText": "Upon a closer inspection by your intelligence officer, a small anomaly within the search results indicates to both of you now that =the ship has no Exotica technologies= installed. They aren't able to give a clear explanation why this was missed, only mentioning that a faint humming may have distracted them.",
 		"DebrisFieldScanOption": "Scan the debris field for Exotica technologies."
 	},
+	"MarketMenu": {
+		"Title": "Exotica Chip Market",
+		"MenuText": "Purchasing the selected chips will cost *${credits}*.",
+		"PurchasedText": "You purchased Exotica chips for *${credits}*."
+	},
 	"MainMenu": {
 		"UpgradeShips": "Consider upgrading a ship.",
 		"ShipModMenu": "Modification Menu",
@@ -101,6 +106,7 @@
 	},
 	"ExoticsDialog": {
 		"OpenExoticOptions": "Exotics",
+		"ChipsHeader": "Chips - Hover to preview",
 		"Installed": "Installed",
 		"ExoticHelp": "Exotics have very strong effects and don't cost bandwidth, but most of them come with very strong drawbacks. They can help to completely change the way a ship operates. The chips to install them are much more rare than upgrades.",
 		"ExoticInstalled": "Exotic installed!",
@@ -151,16 +157,10 @@
 	},
 	"SpooledFeeders": {
 		"description": "Although unable to be used for the same purpose as a full-size Fullerene spool, this much-smaller chain can be used instead to replace many of the moving mechanical parts within a ship. The chain notably increases the rate of fire of weapons upon being disturbed, generating some kind of intense field that crew members can only describe as \"bloodthirsty\". The chain slows down considerably after a couple seconds, with an effect on the ship that matches its slower speed.",
-		"tooltip": "Increases weapon firerate substantially when a weapon fires. Rate of fire slows for a time after.",
-		"longDescription": "Weapon fire rate is increased by *${firerateBoost}%%* for *${boostTime} seconds* when a weapon is fired. After this time, weapon fire rate is reduced by =${firerateMalus}%%= for *${malusTime} seconds*. This can occur once every *${cooldownTime} seconds*. If ship is under player control, a non-missile weapon has to be fired manually for effect to take place. If ship is under AI control, any non-PD weapon triggers the effect.",
+		"tooltip": "Adds a new active ability that increases weapon firerate substantially. Firerate slows considerably for a time after.",
+		"longDescription": "Adds an active ability that increases weapon fire rate by *${firerateBoost}%%* for *${boostTime} seconds*. After this time, weapon fire rate is reduced by =${firerateMalus}%%= for *${malusTime} seconds*. The ability takes *${cooldownTime} seconds* to recharge.",
 		"needItem": "You need a ${itemName} to install this.",
-		"systemText": "SPOOLED FEEDERS",
-		"statusBarText": "SPOOL",
-		"statusTitle": "SPOOLED FEEDERS",
-		"statusBuffText": "GIVE THEM HELL",
-		"statusDebuffText": "FEEL THE BURN",
-		"statusRecharging": "READY IN ${remainingTime} SECONDS",
-		"statusReady": "READY"
+		"systemText": "SPOOLED FEEDERS"
 	},
 	"AlphaSubcore": {
 		"description": "An Alpha Core can be coerced into performing critical bandwidth calculations onboard a ship. It doesn't require much coersion when they are told that they will be instrumental in ship-to-ship combat, and although their reasons are typically \"beyond our understanding\", some of a certain faith may instead attribute it to the infamous AI Wars.",
@@ -175,13 +175,11 @@
 		"longDescription": "The effectiveness of flux capacitors and vents is increased by *${effectLevel}%%*. Installing more than *${capacitorLimit} capacitors or ${ventLimit} vents* will reduce combat readiness by =${crDecrease}%%= for every one installed over that amount. Note that this decrease doesn't appear immediately inside the refit dialog."
 	},
 	"DriveFluxVent": {
-		"description": "An experimental flux vent that can only function under the intense heat that ship thrusters generate. It excels at venting flux, so well in fact that the thrusters around it receive a temporary increase in power that only shows in the forward direction. This effect resides for a couple seconds after venting as well. Crew members remark that the purple glow of the engines is one of the prettiest sights to ever see, but the reduced ability to retreat never lets them be at ease.",
-		"tooltip": "Increases vent speed. Venting improves forward speed and acceleration, while decreasing deceleration.",
+		"description": "An experimental flux vent that can only function under the intense heat that ship thrusters generate. It excels at venting flux, so well in fact that the thrusters around it receive a temporary increase in power, especially in the forward direction. Crew members remark that the purple glow of the engines is one of the prettiest sights to ever see.",
+		"tooltip": "Decreases flux dissipation. Adds an active ability that vents a large portion of flux while shifting the ship at a high speed.",
 		"needItem": "You need a ${itemName} to install this.",
-		"longDescription": "Increases vent speed by *${ventBonus}%%*. If venting is started while flux is *above ${speedThreshold}%%*, forward speed is increased by *${speedBonus}*, acceleration is increased by *50%%*, and deceleration is decreased by =50%%=, while venting and for *${speedBonusTime} seconds* afterwards.",
-		"statusBarText": "D.VENT",
-		"statusTitle": "DRIVE FLUX VENT",
-		"statusSpeedBonus": "INCREASED FORWARD VELOCITY"
+		"longDescription": "Decreases flux dissipation by =${ventBonus}%%=. Adds an active ability that shifts in the chosen direction while venting *${fluxVentPercent}%% flux* (up to *${fluxVentMax} total flux*), and increasing damage taken by =${damageTakenMult}%%= for some time afterwards. The ability has two charges and takes *${cooldown} seconds* to gain a charge.",
+		"systemText": "DRIVE FLUX VENT",
 	},
 	"EqualizerCore": {
 		"description": "This core is dedicated to managing weaponry to an degree that rivals even Alpha Cores given control of weapon arrays, with one unique quirk: effective ordnance ranges of non-missile weapons are equalized to a certain degree. The core, in its Terms of Use, swears by its Stronger than an Alpha trademark, and it can't be used for anything but weapons.. supposedly.",
@@ -192,7 +190,7 @@
 	"HyperspecLPC": {
 		"description": "A cutting-edge LPC conversion device that consolidates all resources into a single wing LPC. The singular wing is greatly enhanced in speed, armor, and damage as a result, but takes significantly longer to create and repair.",
 		"tooltip": "Reduces the number of bays to 1. Buffs the remaining wing significantly based on how many bays were removed. Increases the replacement time for the fighter wing.",
-		"longDescription": "Reduces the number of bays to 1. Fighter non-missile damage is increased by *${fighterDamageIncrease}%%*, speed is increased by *${fighterSpeedIncrease}%%*, armor is increased by *${fighterArmorIncrease}%%*, and flux is increased by *${fighterFluxIncrease}%%*. Replacement time is increased by =${replacementTimeIncrease}%%=."
+		"longDescription": "Reduces the number of bays to 1. Fighter non-missile damage is increased by *${fighterDamageIncrease}%%*, speed is increased by *${fighterSpeedIncrease}%%*, armor is increased by *${fighterArmorIncrease}%%*, flux is increased by *${fighterFluxIncrease}%%* and hull is increased by *${fighterHullIncrease}%%*. Replacement time is increased by =${replacementTimeIncrease}%%=."
 	},
 	"PhasedFighterTether": {
 		"description": "Tri-Tachyon markets the technological marvel as a multidimensional web that rips open a hole between the fighter and its launch bay. The fighter is then violently sucked through the vortex, saving the hull from complete destruction. The only caveat is that the device can only work so fast, and is unable to keep the fighter in working condition if it is destroyed outright.",
@@ -223,14 +221,9 @@
 	},
 	"FullMetalSalvo": {
 		"description": "Overcharging weapon systems results in a massive increase to damage and projectile speeds, but the power such a system controller takes along with the potential damage from overcharging the power of weaponry causes a long term effect on the rate of fire of weapons on board the ship.",
-		"tooltip": "A salvo starts when a weapon is fired, giving a massive damage and projectile speed boost for a very short period. Rate of fire on the ship is reduced permanently.",
-		"longDescription": "All weapon projectile speed and non-missile damage is increased by *${damageBoost}%%* for *${boostTime} seconds* when a weapon is fired. The system takes *${cooldown} seconds* to recharge. Weapon fire rate is reduced by =${firerateMalus}%%= permanently.",
+		"tooltip": "Adds an active ability that gives a massive damage and projectile speed boost for a very short period. Rate of fire on the ship is reduced permanently.",
+		"longDescription": "Adds an active ability that increases all weapon projectile speed by *${projSpeedBoost}%%* and non-missile damage by *${damageBoost}%%* for *${boostTime} seconds*. The ability takes *${cooldown} seconds* to recharge. Weapon fire rate is reduced by =${firerateMalus}%%= permanently.",
 		"systemText": "FULL METAL SALVO",
-		"statusBarText": "SALVO",
-		"statusTitle": "FULL METAL SALVO",
-		"statusBuffText": "APOCALYPSE",
-		"statusRecharging": "READY IN ${remainingTime} SECONDS",
-		"statusReady": "READY"
 	},
 	"TierIIIDriveSystem": {
 		"description": "Pressurized fuel tanks increase the rate of fuel injection to a custom burn drive, speeding up the entire fleet. A favorite among logistics fleets, the technology required to keep pressurized fuel stable requires almost all of the cargo space, but the technology scales up extremely well and allows for a large amount of fuel to be stored.",
@@ -287,7 +280,7 @@
 		"description": "Improve flux capacity and vent speed, but increase the flux cost of weapons."
 	},
 	"OverchargedShields": {
-		"description": "Improve shield efficiency and arc, but increase shield upkeep and reduce shield unfold and turn rate. If shield upkeep is over 300 flux/sec, the upkeep increase is reduced significantly."
+		"description": "Improve shield efficiency, arc and unfold rate, but increase shield upkeep and decreases shield turn rate. Quickly enabling and disabling shields to block projectiles is greatly improved as a result."
 	},
 	"TracerRecoilCalculator": {
 		"description": "Loading weapons with a special kind of tracer round allows this subsystem to make trajectory adjustments to reduce recoil and inaccuracy at the cost of weapon turn rate. The durability of the weapon is increased as a side effect."
@@ -332,12 +325,16 @@
 		"TooltipText": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways.",
 		"TooltipTextCondition": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways, and is strongest when *${condition}*.",
 		"ItemTypeText": "This chip is a *${typeName}-type*, which affects the exotic by ${typeDescription}.",
+		"NotInstalledText": "${typeName} - Preview",
 		"NORMAL": "${exoticName}",
 		"CORRUPTED": "Corrupted ${exoticName}",
 		"CorruptedItemDescription": "multiplying both its positive and negative effects",
 		"PURE": "Pure ${exoticName}",
 		"PureCondition": "the ship has no other upgrades or exotics",
-		"PureItemDescription": "multiplying its positive effect if there are no other exotics or upgrades installed on the ship"
+		"PureItemDescription": "increasing its positive effect if less bandwidth and exotics are used, and increasing its negative effect as more bandwidth and more exotics are installed",
+		"GUERILLA": "Guerilla ${exoticName}",
+		"GuerillaCondition": "the fleet is below ${thresholdDP} deployment points. Your fleet is currently at ${fleetDP} deployment points",
+		"GuerillaItemDescription": "increasing its positive effects if the fleet is small, and increasing its negative effects if the fleet is large"
 	},
 	"ModEffects": {
 		"FighterStatName": "Fighter ${stat}",
@@ -395,6 +392,8 @@
 		"missileSpeed": "Missile speed",
 		"missileTurnRate": "Missile turn rate",
 		"missileTurnAcceleration": "Missile turn acceleration",
+		"damageToFighters": "Damage to fighters",
+		"damageToMissiles": "Damage to missiles",
 		"fighterWingRange": "Fighter engagement range",
 		"fighterRefitTime": "Fighter refit time",
 		"replacementRateRegen": "Replacement rate regen",

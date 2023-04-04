@@ -24,6 +24,9 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
     private var innerPanel: CustomPanelAPI? = null
     private var innerTooltip: TooltipMakerAPI? = null
     private var listPlugin: ChipListUIPlugin? = null
+
+    var highlightedItem: T? = null
+
     private val listeners: MutableList<Listener<T>> = mutableListOf()
 
     fun layoutPanels(): CustomPanelAPI {
@@ -63,6 +66,13 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
         parentPanel.addComponent(mainPanel!!)
 
         return mainPanel!!
+    }
+
+    override fun advancePanel(amount: Float) {
+        this.highlightedItem = null
+        listPlugin?.hoveredPlugin?.let {
+            this.highlightedItem = it.item.plugin as T?
+        }
     }
 
     abstract fun getChipSearcher(): ChipSearcher<T>

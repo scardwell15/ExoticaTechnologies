@@ -32,7 +32,8 @@
       "volatiles": 1.0,
       "metals": 6.0,
       "heavy_machinery": 1.0
-    }
+    },
+    "valueMult": 0.5
   },
   "IronShell": {
     "name": "Iron Shell",
@@ -54,7 +55,8 @@
       "volatiles": 1.5,
       "metals": 2.0,
       "rare_metals": 4.0
-    }
+    },
+    "valueMult": 2.0
   },
   "InfernalEngines": {
     "name": "Infernal Engines",
@@ -117,7 +119,8 @@
       "volatiles": 4.0,
       "rare_metals": 4.0,
       "heavy_machinery": 4.0
-    }
+    },
+    "valueMult": 3.0
   },
   "HyperactiveCapacitors": {
     "name": "Hyperactive Capacitors",
@@ -160,17 +163,18 @@
       "metals": 2.0,
       "rare_metals": 4.0,
       "heavy_machinery": 4.0
-    }
+    },
+    "valueMult": 3.0
   },
   "OverchargedShields": {
     "name": "Overcharged Shields",
-    "color": [56, 187, 166],
-    "bandwidthPerLevel": 10,
+    "color": [60, 200, 170],
+    "bandwidthPerLevel": 15,
     "stats": [
-      {"id": "shieldFluxDam", "scalingEffect": -35},
+      {"id": "shieldFluxDam", "scalingEffect": -25},
       {"id": "shieldArc", "scalingEffect": 50},
       {"id": "shieldUnfoldRate", "scalingEffect": 75},
-      {"id": "shieldUpkeep", "scalingEffect": 50, "startingLevel": 3},
+      {"id": "shieldUpkeep", "scalingEffect": 200, "startingLevel": 3},
       {"id": "shieldTurnRate", "scalingEffect": -16, "startingLevel": 3}
     ],
     "conditions": [
@@ -182,7 +186,8 @@
       "metals": 1.0,
       "rare_metals": 3.0,
       "heavy_machinery": 2.0
-    }
+    },
+    "valueMult": 0.75
   },
   "TracerRecoilCalculator": {
     "name": "Tracer Recoil Calculator",
@@ -224,14 +229,16 @@
       "volatiles": 3.0,
       "rare_metals": 3.0,
       "heavy_machinery": 3.0
-    }
+    },
+    "valueMult": 3.0
   },
   "InterceptionMatrix": {
     "name": "Interception Matrix",
     "color": [ 240, 120, 210 ],
     "bandwidthPerLevel": 2.5,
     "stats": [
-      { "id": "pointDefenseDamage", "scalingEffect": 50 },
+      { "id": "damageToMissiles", "scalingEffect": 50 },
+      { "id": "damageToFighters", "scalingEffect": 50 },
       { "id": "shieldArc", "scalingEffect": -20, "startingLevel": 3 },
       { "id": "shieldTurnRate", "scalingEffect": -20, "startingLevel": 3 },
       { "id": "shieldUnfoldRate", "scalingEffect": -20, "startingLevel": 3 }
@@ -262,7 +269,8 @@
       "volatiles": 2.0,
       "heavy_machinery": 3.0,
       "hand_weapons": 0.5
-    }
+    },
+    "valueMult": 1.25
   },
   "AntimatterBoosters": {
     "name": "Antimatter Boosters",
@@ -285,7 +293,8 @@
       "volatiles": 4.0,
       "heavy_machinery": 3.0,
       "hand_weapons": 0.5
-    }
+    },
+    "valueMult": 2.0
   },
   "ForcedOvertime": {
     "name": "Forced Overtime",

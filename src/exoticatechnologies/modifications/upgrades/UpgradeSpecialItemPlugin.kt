@@ -3,12 +3,19 @@ package exoticatechnologies.modifications.upgrades
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI
+import com.fs.starfarer.api.campaign.SpecialItemPlugin
 import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
+import data.scripts.util.MagicUI
 import exoticatechnologies.modifications.ModSpecialItemPlugin
+import exoticatechnologies.util.RenderUtils
+import exoticatechnologies.util.RomanNumeral
 import lombok.Getter
 import lombok.Setter
+import org.lazywizard.lazylib.ui.LazyFont
+import org.lwjgl.util.vector.Vector2f
+import java.awt.Color
 
 class UpgradeSpecialItemPlugin : ModSpecialItemPlugin() {
     var upgradeLevel = 0
@@ -49,6 +56,22 @@ class UpgradeSpecialItemPlugin : ModSpecialItemPlugin() {
         }
 
         tooltip.addPara(upgrade!!.description, Misc.getTextColor(), opad)
+    }
+
+    override fun render(
+        x: Float,
+        y: Float,
+        w: Float,
+        h: Float,
+        alphaMult: Float,
+        glowMult: Float,
+        renderer: SpecialItemPlugin.SpecialItemRendererAPI
+    ) {
+        super.render(x, y, w, h, alphaMult, glowMult, renderer)
+
+        val tX = 0.57f
+        val tY = 0.7f
+        RenderUtils.addText(RomanNumeral.toRoman(upgradeLevel), Color(255, 255, 255), Vector2f(x + (1 * tX) * w, y + (1 * tY) * h), LazyFont.TextAlignment.RIGHT)
     }
 
     override fun handleParam(index: Int, param: String, stack: CargoStackAPI) {

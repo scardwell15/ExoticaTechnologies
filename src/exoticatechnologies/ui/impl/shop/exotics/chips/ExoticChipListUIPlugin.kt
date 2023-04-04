@@ -13,7 +13,7 @@ class ExoticChipListUIPlugin(
     parentPanel: CustomPanelAPI,
     member: FleetMemberAPI
 ) : ChipListUIPlugin(parentPanel, member) {
-    override val listHeader = StringUtils.getTranslation("UpgradesDialog", "UpgradeChipsHeader").toString()
+    override val listHeader = StringUtils.getTranslation("ExoticsDialog", "ChipsHeader").toString()
     override var bgColor: Color = Color(255, 70, 255, 0)
 
     override fun createPanelForItem(

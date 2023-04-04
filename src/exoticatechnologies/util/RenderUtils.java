@@ -1,18 +1,30 @@
 package exoticatechnologies.util;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.graphics.SpriteAPI;
-import data.scripts.util.MagicRender;
-import org.lazywizard.lazylib.opengl.ColorUtils;
+import data.scripts.util.MagicUI;
+import org.lazywizard.lazylib.ui.FontException;
+import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
 
 public class RenderUtils {
+    public static LazyFont.DrawableString CAMPAIGN_ITEM_FONT;
+    private static final float UIscaling = Global.getSettings().getScreenScaleMult();
+
+    static {
+        try {
+            LazyFont fontdraw = LazyFont.loadFont("graphics/fonts/insignia16.fnt");
+            CAMPAIGN_ITEM_FONT = fontdraw.createText();
+        } catch (FontException ex) {
+        }
+    }
+
+
     public static int getWidth() {
         return (int) (Display.getWidth() * Display.getPixelScaleFactor());
     }
@@ -20,6 +32,7 @@ public class RenderUtils {
     public static int getHeight() {
         return (int) (Display.getHeight() * Display.getPixelScaleFactor());
     }
+
     public static void pushUIRenderingStack() {
         final int width = getWidth(),
                 height = getHeight();
@@ -79,5 +92,55 @@ public class RenderUtils {
         float b = fromColor.getBlue() * (1 - ratio) + toColor.getBlue() * ratio;
         float a = fromColor.getAlpha() * (1 - ratio) + toColor.getAlpha() * ratio;
         return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+    }
+
+    /**
+     * GL11 to start, when you want render text of Lazyfont.
+     */
+    public static void openGL11ForText() {
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glPushMatrix();
+        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+        GL11.glOrtho(0.0, Display.getWidth(), 0.0, Display.getHeight(), -1.0, 1.0);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    /**
+     * GL11 to close, when you want render text of Lazyfont.
+     */
+    public static void closeGL11ForText() {
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
+        GL11.glPopAttrib();
+    }
+
+    public static void addText(String text, Color textColor, Vector2f screenPos) {
+        addText(text, textColor, screenPos, LazyFont.TextAlignment.LEFT);
+    }
+
+    public static void addText(String text, Color textColor, Vector2f screenPos, LazyFont.TextAlignment alignment) {
+        Color borderCol = textColor == null ? MagicUI.GREENCOLOR : textColor;
+        float alpha = borderCol.getAlpha() / 255f;
+
+        Color shadowcolor = new Color(Color.BLACK.getRed() / 255f, Color.BLACK.getGreen() / 255f, Color.BLACK.getBlue() / 255f, alpha);
+        Color color = new Color(borderCol.getRed() / 255f, borderCol.getGreen() / 255f, borderCol.getBlue() / 255f, alpha);
+
+        final Vector2f shadowLoc = new Vector2f(screenPos.getX() + 1f, screenPos.getY() - 1f);
+        if (UIscaling != 1) {
+            screenPos.scale(UIscaling);
+            shadowLoc.scale(UIscaling);
+            CAMPAIGN_ITEM_FONT.setFontSize(14 * UIscaling);
+        }
+
+        CAMPAIGN_ITEM_FONT.setAlignment(alignment);
+        CAMPAIGN_ITEM_FONT.setText(text);
+        CAMPAIGN_ITEM_FONT.setColor(shadowcolor);
+        CAMPAIGN_ITEM_FONT.draw(shadowLoc);
+        CAMPAIGN_ITEM_FONT.setColor(color);
+        CAMPAIGN_ITEM_FONT.draw(screenPos);
     }
 }

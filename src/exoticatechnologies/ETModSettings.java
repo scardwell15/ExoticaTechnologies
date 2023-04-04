@@ -2,6 +2,7 @@ package exoticatechnologies;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
+import data.scripts.util.MagicSettings;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,28 +14,14 @@ import java.util.Map;
 public class ETModSettings {
     public static final String RANDOM_BANDWIDTH = "useRandomBandwidth";
     public static final String STARTING_BANDWIDTH = "baseBandwidth";
-    public static String MAX_BANDWIDTH = "maxBandwidth";
-
     public static final String SHIPS_KEEP_UPGRADES_ON_DEATH = "shipsKeepUpgradesOnDeath";
-    public static String UPGRADE_ALWAYS_SUCCEED = "upgradeAlwaysSucceed";
-    public static String UPGRADE_FAILURE_CHANCE = "upgradeFailureMinFactor";
-    public static String HULL_COST_BASE_FACTOR = "hullCostBaseFactor";
-    public static String HULL_COST_DIMINISHING_MAXIMUM = "hullCostDiminishingMaximum";
-    public static String UPGRADE_COST_MIN_FACTOR = "upgradeCostMinFactor";
-    public static String UPGRADE_COST_MAX_FACTOR = "upgradeCostMaxFactor";
-    public static String UPGRADE_COST_DIVIDING_RATIO = "upgradeCostDividingRatio";
+    public static final String MARKET_EXOTIC_SCALE = "marketExoticScale";
+    public static final String MARKET_UPGRADE_SCALE = "marketUpgradeScale";
 
-    public static String MAX_UPGRADES_FRIGATE = "frigateMaxUpgrades";
-    public static String MAX_UPGRADES_DESTROYER = "destroyerMaxUpgrades";
-    public static String MAX_UPGRADES_CRUISER = "cruiserMaxUpgrades";
-    public static String MAX_UPGRADES_CAPITAL = "capitalMaxUpgrades";
 
-    public static String SCALING_CURVES = "scalingCurves";
+    public static int MAX_EXOTICS = 2;
 
     private static JSONObject modSettings = null;
-
-    private static final Map<ShipAPI.HullSize, Integer> HULLSIZE_TO_MAXLEVEL = new HashMap<>();
-    private static final Map<ShipAPI.HullSize, Float> HULLSIZE_FACTOR = new HashMap<>();
 
     public static Object get(String key) {
         try {
@@ -80,54 +67,13 @@ public class ETModSettings {
         return modSettings;
     }
 
-    public static Map<ShipAPI.HullSize, Integer> getHullSizeToMaxLevel() {
-        if (HULLSIZE_TO_MAXLEVEL.isEmpty()) {
-            loadModSettings();
-        }
-
-        return HULLSIZE_TO_MAXLEVEL;
-    }
-
-    public static Map<ShipAPI.HullSize, Float> getHullSizeFactors() {
-        if (HULLSIZE_FACTOR.isEmpty()) {
-            loadModSettings();
-        }
-
-        return HULLSIZE_FACTOR;
-    }
-
     public static void loadModSettings() {
         try {
             modSettings = Global.getSettings().loadJSON("data/config/settings.json", "exoticatechnologies");
+            modSettings.put(MARKET_EXOTIC_SCALE, MagicSettings.getFloat("exoticatechnologies", MARKET_EXOTIC_SCALE));
+            modSettings.put(MARKET_UPGRADE_SCALE, MagicSettings.getFloat("exoticatechnologies", MARKET_UPGRADE_SCALE));
         } catch (JSONException | IOException ex) {
             throw new RuntimeException(ex);
-        }
-
-        //fill the helper maps
-        int frigateMaxUpgrades = getInt("frigateMaxUpgrades");
-        int destroyerMaxUpgrades = getInt("destroyerMaxUpgrades");
-        int cruiserMaxUpgrades = getInt("cruiserMaxUpgrades");
-        int capitalMaxUpgrades = getInt("capitalMaxUpgrades");
-
-        HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.FIGHTER, frigateMaxUpgrades);
-        HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.DEFAULT, frigateMaxUpgrades);
-        HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.FRIGATE, frigateMaxUpgrades);
-        HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.DESTROYER, destroyerMaxUpgrades);
-        HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.CRUISER, cruiserMaxUpgrades);
-        HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.CAPITAL_SHIP, capitalMaxUpgrades);
-        calculateHullSizeFactors();
-    }
-
-    public static void calculateHullSizeFactors() {
-        float lowestMax = Integer.MAX_VALUE;
-        for(ShipAPI.HullSize hullSize : HULLSIZE_TO_MAXLEVEL.keySet()) {
-            if(HULLSIZE_TO_MAXLEVEL.get(hullSize) < lowestMax) {
-                lowestMax = HULLSIZE_TO_MAXLEVEL.get(hullSize);
-            }
-        }
-
-        for(ShipAPI.HullSize hullSize : HULLSIZE_TO_MAXLEVEL.keySet()) {
-            HULLSIZE_FACTOR.put(hullSize, lowestMax / HULLSIZE_TO_MAXLEVEL.get(hullSize));
         }
     }
 }

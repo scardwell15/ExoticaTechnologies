@@ -1,12 +1,4 @@
 {
-  "activators": {
-    "keys": [
-        "C",
-        "H",
-        "J",
-        "N"
-    ]
-  },
   "exoticatechnologies": {
     "exotic_HackedMissileForge_weaponBlacklist": [
       #"atropos_single"
@@ -61,6 +53,9 @@
         "OverclockedFabricators"
     ],
 
+    "marketExoticScale": 1.0,
+    "marketUpgradeScale": 1.0,
+
     # takes the manufacturer of the ship instead, but otherwise acts the same as above.
     # note that these stack!
     "manufacturerBandwidthMult": {
@@ -98,7 +93,8 @@
     ],
     "rngExoticTypeWhitelist": {
       "CORRUPTED": 1,
-      "PURE": 1
+      "PURE": 1,
+      "GUERILLA": 1
     }
   }
 }

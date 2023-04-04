@@ -12,6 +12,18 @@ import java.awt.Color
 abstract class ChipListUIPlugin(parentPanel: CustomPanelAPI,
                        var member: FleetMemberAPI): ListUIPanelPlugin<CargoStackAPI>(parentPanel) {
     override var bgColor: Color = Color(255, 70, 255, 0)
+    var hoveredPlugin: ChipListItemUIPlugin? = null
+
+    override fun advancePanel(amount: Float) {
+        hoveredPlugin = null
+        panelPluginMap.values
+            .filterIsInstance(ChipListItemUIPlugin::class.java)
+            .forEach {
+                if (it.wasHovered) {
+                    hoveredPlugin = it
+                }
+            }
+    }
 
     override fun createListHeader(tooltip: TooltipMakerAPI) {
         tooltip.addTitle(listHeader).position.inTMid(0f)

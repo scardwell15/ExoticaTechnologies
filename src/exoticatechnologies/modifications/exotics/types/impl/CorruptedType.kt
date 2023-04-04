@@ -7,7 +7,7 @@ import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
 
-class CorruptedType : ExoticType("CORRUPTED", colorOverlay = Color(255, 0, 0, 125), sprite = "graphics/icons/overlays/corrupted.png") {
+class CorruptedType : ExoticType("CORRUPTED", colorOverlay = Color(255, 0, 0, 160), sprite = "graphics/icons/overlays/corrupted.png") {
     override fun getPositiveMult(member: FleetMemberAPI, mods: ShipModifications): Float {
         return 1.5f
     }
@@ -16,7 +16,7 @@ class CorruptedType : ExoticType("CORRUPTED", colorOverlay = Color(255, 0, 0, 12
         return 1.5f
     }
 
-    override fun getNameTranslation(member: FleetMemberAPI, mods: ShipModifications): StringUtils.Translation? {
+    override fun getDescriptionTranslation(member: FleetMemberAPI, mods: ShipModifications): StringUtils.Translation? {
         return StringUtils.getTranslation("ExoticTypes", "TooltipText")
             .formatFloat("positiveMult", getPositiveMult(member, mods))
             .formatFloat("negativeMult", getNegativeMult(member, mods))

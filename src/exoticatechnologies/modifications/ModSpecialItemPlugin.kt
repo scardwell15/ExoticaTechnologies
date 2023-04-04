@@ -83,14 +83,28 @@ abstract class ModSpecialItemPlugin : BaseSpecialItemPlugin() {
         this.renderer = renderer
 
         val upgradeSprite = sprite
-        val tX = -0.045f
-        val tY = -0.0f
-        val tW = upgradeSprite.width * 0.54f
-        val tH = upgradeSprite.height * 0.54f
+        val tX = 0.43f
+        val tY = 0.38f
+        val tW = 0.70f
+        val tH = 0.70f
         val mult = 1f
         upgradeSprite.alphaMult = alphaMult * mult
         upgradeSprite.setNormalBlend()
-        upgradeSprite.renderRegionAtCenter(x + (1 + tX) * w / 2, y + (1 + tY) * h / 2, 0.22f, 0.21f, 0.565f, 0.56f)
+        upgradeSprite.setSize(tW * upgradeSprite.width, tH * upgradeSprite.height)
+        upgradeSprite.renderAtCenter(x + (1 + tX) * (w * tW) / 2, y + (1 + tY) * (h * tH) / 2)
+
+        val cx = x + w / 2f
+        val cy = y + h / 2f
+        val blX = cx - 24f
+        val blY = cy - 17f
+        val tlX = cx - 14f
+        val tlY = cy + 26f
+        val trX = cx + 28f
+        val trY = cy + 25f
+        val brX = cx + 20f
+        val brY = cy - 18f
+
+        renderer.renderScanlinesWithCorners(blX, blY, tlX, tlY, trX, trY, brX, brY, alphaMult * 0.75f, false)
     }
 
     fun render(

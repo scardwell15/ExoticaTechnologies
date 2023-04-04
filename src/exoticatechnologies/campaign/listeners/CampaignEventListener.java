@@ -18,6 +18,7 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import exoticatechnologies.ETModSettings;
+import exoticatechnologies.campaign.market.MarketManager;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.PersistentDataProvider;
 import exoticatechnologies.modifications.ShipModFactory;
@@ -340,6 +341,8 @@ public class CampaignEventListener extends BaseCampaignEventListener implements 
                 }
             }
         }
+
+        MarketManager.INSTANCE.clearData();
     }
 
     private static boolean shouldRemoveStackFromSubmarket(CargoStackAPI stack) {

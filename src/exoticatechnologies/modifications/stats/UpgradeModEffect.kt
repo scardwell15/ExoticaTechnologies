@@ -45,7 +45,7 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
     fun getRatio(member: FleetMemberAPI, mods: ShipModifications, mod: Upgrade): Float {
         if (mods.getUpgrade(mod) >= startingLevel) {
             val effectiveLevel: Float = (mods.getUpgrade(mod) - (startingLevel - 1)).toFloat()
-            val effectiveMax: Float = (mod.getMaxLevel(member) - (startingLevel - 1)).toFloat()
+            val effectiveMax: Float = (mod.maxLevel - (startingLevel - 1)).toFloat()
             return effectiveLevel / effectiveMax
         }
         return 0f
@@ -72,7 +72,7 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
     }
 
     open fun getPerLevelEffect(member: FleetMemberAPI, mods: ShipModifications, mod: Upgrade): Float {
-        val effect = scalingEffect / mod.getMaxLevel(member)
+        val effect = scalingEffect / mod.maxLevel
         if (handleAsMult()) {
             return effect / 100
         } else {

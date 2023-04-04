@@ -9,16 +9,21 @@ consider: Magazine reload for fire rate
 
 done:
 
+general:
+- attempted improvement to crate code to fix instances of it not pulling chips into itself
+- improved chip rendering code and icons
 exotics:
 - added TWO exotics, one exclusive to the path
 - tier 3b drive now stacks
-- missile forge now reduces damage but enables you to spam missiles faster
-- added combat activators for salvo and feeder exotics
+- missile forge now reduces damage but enables you to spam missiles, and reloads weapons individually
+- added combat activators for salvo, feeder, and drive flux vent exotics
 - hangar forge -> phased fighter tether
 - daemon core now correctly applies bandwidth from types, and does not drop as salvage. you must use archdaemon cores to install this now.
 - alpha subcore has salvage chance reduced by 75%. you will probably have to use alpha cores to install this now.
 - exotics generate more commonly on larger ship sizes
 - exotics generate less on civilian ships
+- pure type now scales on base bandwidth used and exotics used
+- improved type overlay icons to be more visible
 upgrades:
 - added FOUR upgrades
 - buffed assault wings, forced overtime, infernal engines, welded armor, commissioned crews
@@ -27,4 +32,6 @@ upgrades:
 - rebalanced overcharged shields by shifting more into promoting active shield play by increasing unfold rate further, and both flux/s and flux/dam stats are increased
 - fixed a bunch of upgrade drawbacks not starting at level 3
 - reduced salvage chance of faction-specific upgrades to 10% (from 450%) (if you change this you have weak bones)
+- reduced salvage change of high-level upgrades by up to 75%
 - upgrades generate more commonly on larger ship sizes
+- added upgrade level to icon

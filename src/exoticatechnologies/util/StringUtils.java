@@ -190,13 +190,20 @@ public class StringUtils {
         protected final List<String> formats = new ArrayList<>();
         protected List<String> values = new ArrayList<>();
         protected Map<Integer, Color> colors = new HashMap<>();
-        protected Color customColor = null;
 
         public Translation format(String flag, Object value) {
             formats.add(flag);
             values.add(StringUtils.formatValue(value));
 
             return this;
+        }
+
+        public Translation formatWithColorIfModified(String flag, Object value, Object base, Color modifiedColor) {
+            if (value.equals(base) || (value instanceof Number && (((Number) value).floatValue()) == (((Number) base).floatValue()))) {
+                return format(flag, value);
+            } else {
+                return format(flag, value, modifiedColor);
+            }
         }
 
         public Translation format(String flag, Object value, Color color) {

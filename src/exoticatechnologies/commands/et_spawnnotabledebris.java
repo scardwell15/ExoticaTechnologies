@@ -50,7 +50,7 @@ public class et_spawnnotabledebris implements BaseCommand {
 
             ShipModifications mods = ShipModFactory.generateRandom(member, Factions.HEGEMONY);
             ShipModFactory.GenerationContext generationContext =
-                    new ShipModFactory.GenerationContext(member, mods, Factions.HEGEMONY, FactionConfigLoader.getFactionConfig(Factions.HEGEMONY), 100f, 100f);
+                    new ShipModFactory.GenerationContext(member, mods, Factions.HEGEMONY, 100f, 100f);
 
             ExoticsGenerator.generate(member, mods, generationContext);
             UpgradesGenerator.generate(member, mods, generationContext);

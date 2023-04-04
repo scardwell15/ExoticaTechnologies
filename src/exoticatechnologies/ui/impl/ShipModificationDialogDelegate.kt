@@ -58,13 +58,13 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
     }
 
     override fun customDialogConfirm() {
-        ShowDefaultVisual().execute(null, dialog, Misc.tokenize(""), dialog.plugin.memoryMap)
+        /*ShowDefaultVisual().execute(null, dialog, Misc.tokenize(""), dialog.plugin.memoryMap)
         dialog.plugin.memoryMap[MemKeys.LOCAL]!!["\$option", "ETDialogBack"] = 0f
-        FireAll.fire(null, dialog, dialog.plugin.memoryMap, "DialogOptionSelected")
+        FireAll.fire(null, dialog, dialog.plugin.memoryMap, "DialogOptionSelected")*/
     }
 
     override fun customDialogCancel() {
-        customDialogConfirm()
+        //customDialogConfirm()
     }
 
     override fun getCustomPanelPlugin(): CustomUIPanelPlugin {

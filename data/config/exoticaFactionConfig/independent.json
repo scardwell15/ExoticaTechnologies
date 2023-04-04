@@ -1,0 +1,8 @@
+{
+  "addToRngUpgrades": true,
+  "addToRngExotics": true,
+  "addToRngExoticTypes": true,
+  "allowedExotics": {
+    "TierIIIDriveSystem": 1.5
+  }
+}

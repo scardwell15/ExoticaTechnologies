@@ -10,6 +10,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.thoughtworks.xstream.XStream;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
+import exoticatechnologies.campaign.market.MarketManager;
 import exoticatechnologies.config.FactionConfigLoader;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
@@ -57,6 +58,7 @@ public class ETModPlugin extends BaseModPlugin {
         ShopManager.addMenu(new OverviewPanelUIPlugin());
         UpgradesHandler.initialize();
         ExoticsHandler.initialize();
+        MarketManager.INSTANCE.initialize();
 
         if (Global.getSettings().getModManager().isModEnabled("IndEvo")) {
             IndEvoUtil.loadIntegration();

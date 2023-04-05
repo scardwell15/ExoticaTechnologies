@@ -301,7 +301,11 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                 }
             } else if (state == State.OUT) {
                 val speed = ship.velocity.length()
-                stats.maxSpeed.modifyFlat(buffId, speed.coerceAtMost(200f) - amount * 3600f)
+                if (speed <= 0.1f) {
+                    ship.velocity.set(VectorUtils.getDirectionalVector(ship.location, ship.velocity))
+                }
+
+                stats.maxSpeed.modifyFlat(buffId, (speed.coerceAtMost(200f) - amount * 3600f).coerceAtLeast(0f))
 
                 if (speed > ship.mutableStats.maxSpeed.modifiedValue) {
                     ship.velocity.normalise()

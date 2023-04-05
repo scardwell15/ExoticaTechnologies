@@ -165,7 +165,7 @@ class EqualizerCore(key: String, settings: JSONObject) : Exotic(key, settings) {
                 if (it.type == WeaponAPI.WeaponType.MISSILE) return null
                 if (it.spec.maxRange > getUpperRangeLimit(member, mods, exoticData)) {
                     val buff = (RANGE_DECREASE_DAMAGE_INCREASE / 100f * getPositiveMult(member, mods, exoticData)) * (it.spec.maxRange - getUpperRangeLimit(member, mods, exoticData)).coerceAtLeast(0f)
-                    damage.modifier.modifyMult(buffId, buff)
+                    damage.modifier.modifyPercent(buffId, buff)
                 }
 
                 return buffId

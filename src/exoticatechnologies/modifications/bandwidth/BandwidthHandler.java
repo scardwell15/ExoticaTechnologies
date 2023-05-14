@@ -4,9 +4,9 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import data.scripts.util.MagicSettings;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.modifications.ShipModifications;
+import org.magiclib.util.MagicSettings;
 
 import java.util.Map;
 
@@ -25,7 +25,7 @@ public class BandwidthHandler {
         Map<String, Float> marketBonuses = MagicSettings.getFloatMap("exoticatechnologies", "industryBandwidthBonuses");
 
         float bandwidthMult = 1;
-        for(Industry industry : currMarket.getIndustries()) {
+        for (Industry industry : currMarket.getIndustries()) {
             if (marketBonuses.containsKey(industry.getId())) {
                 bandwidthMult += marketBonuses.get(industry.getId());
             }
@@ -36,7 +36,7 @@ public class BandwidthHandler {
     public static float getBandwidthUpgradePrice(FleetMemberAPI selectedShip, float shipBandwidth, float upgradeBandwidthMult) {
         float deployCost = selectedShip.getBaseDeployCost();
         float shipBaseValue = selectedShip.getBaseValue();
-        if(shipBaseValue > 450000) {
+        if (shipBaseValue > 450000) {
             shipBaseValue = 225000;
         } else {
             shipBaseValue = (float) (shipBaseValue - (1d / 900000d) * Math.pow(shipBaseValue, 2));

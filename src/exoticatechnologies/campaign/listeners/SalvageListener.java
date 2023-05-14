@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.listeners.ShowLootListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
@@ -16,12 +15,14 @@ import com.fs.starfarer.api.util.Pair;
 import exoticatechnologies.ETModPlugin;
 import exoticatechnologies.modifications.exotics.Exotic;
 import exoticatechnologies.modifications.exotics.ExoticData;
-import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import lombok.extern.log4j.Log4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 @Log4j
 public class SalvageListener implements ShowLootListener {
@@ -72,7 +73,7 @@ public class SalvageListener implements ShowLootListener {
                     int quantity = potExotic.getValue();
 
                     for (int i = 0; i < quantity; i++) {
-                        if (exotic.getSalvageChance(1.25f) > 0 && random.nextFloat() <= exotic.getSalvageChance(1.25f)) {
+                        if (exotic.getSalvageChance(0.75f) > 0 && random.nextFloat() <= exotic.getSalvageChance(0.75f)) {
                             //generate exotic and add to loot
                             loot.addSpecial(exotic.getNewSpecialItemData(potExotic.getKey().getType()), 1);
                         }
@@ -148,7 +149,7 @@ public class SalvageListener implements ShowLootListener {
                 value = Math.round(data.value * 0.1f);
             }
 
-            if(value != -1) {
+            if (value != -1) {
                 SalvageEntityGenDataSpec.DropData dropValue = new SalvageEntityGenDataSpec.DropData();
                 dropValue.group = "et_exotic";
                 dropValue.valueMult = data.valueMult;
@@ -177,7 +178,7 @@ public class SalvageListener implements ShowLootListener {
                 chances = Math.round(data.chances * 0.5f);
             }
 
-            if(chances != -1) {
+            if (chances != -1) {
                 SalvageEntityGenDataSpec.DropData dropRandom = new SalvageEntityGenDataSpec.DropData();
                 dropRandom.group = "et_exotic";
                 dropRandom.maxChances = data.maxChances;

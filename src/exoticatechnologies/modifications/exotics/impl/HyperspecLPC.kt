@@ -1,20 +1,17 @@
 package exoticatechnologies.modifications.exotics.impl
 
-import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.IntervalUtil
-import data.scripts.util.MagicRender
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.util.StringUtils
 import org.json.JSONObject
 import org.lwjgl.util.vector.Vector2f
-import org.magiclib.kotlin.setAlpha
 import java.awt.Color
 
 class HyperspecLPC(key: String, settings: JSONObject) : Exotic(key, settings) {
@@ -117,28 +114,28 @@ class HyperspecLPC(key: String, settings: JSONObject) : Exotic(key, settings) {
     }
 
     fun getDamageBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (FIGHTER_DAMAGE_PER_BAY + getBaysRemoved(member)).coerceAtMost(FIGHTER_DAMAGE_MAX)
+        return (FIGHTER_DAMAGE_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_DAMAGE_MAX)
     }
 
     fun getSpeedBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (FIGHTER_SPEED_PER_BAY + getBaysRemoved(member)).coerceAtMost(FIGHTER_SPEED_MAX)
+        return (FIGHTER_SPEED_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_SPEED_MAX)
     }
 
 
     fun getArmorBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (FIGHTER_ARMOR_PER_BAY + getBaysRemoved(member)).coerceAtMost(FIGHTER_ARMOR_MAX)
+        return (FIGHTER_ARMOR_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_ARMOR_MAX)
     }
 
     fun getFluxBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (FIGHTER_FLUX_PER_BAY + getBaysRemoved(member)).coerceAtMost(FIGHTER_FLUX_MAX)
+        return (FIGHTER_FLUX_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_FLUX_MAX)
     }
 
     fun getReplacementTimeMalus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (REPLACEMENT_TIME_PER_BAY + getBaysRemoved(member)).coerceAtMost(REPLACEMENT_TIME_MAX)
+        return (REPLACEMENT_TIME_PER_BAY * getBaysRemoved(member)).coerceAtMost(REPLACEMENT_TIME_MAX)
     }
 
     fun getHullBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (FIGHTER_HULL_PER_BAY + getBaysRemoved(member)).coerceAtMost(FIGHTER_HULL_MAX)
+        return (FIGHTER_HULL_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_HULL_MAX)
     }
 
     companion object {

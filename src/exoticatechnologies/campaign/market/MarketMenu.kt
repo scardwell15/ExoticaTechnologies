@@ -34,16 +34,16 @@ class MarketCargoListener(val dialog: InteractionDialogAPI, val marketData: Mark
         get() = marketData.faction
 
     override fun pickedCargo(cargo: CargoAPI) {
+        val bounty: Float = computeCreditValue(cargo)
+        if (Global.getSector().playerFleet.cargo.credits.get() < bounty) return
+
         marketData.cargo.removeAll(cargo)
         Global.getSector().playerFleet.cargo.addAll(cargo)
-
-        val bounty: Float = computeCreditValue(cargo)
         Global.getSector().playerFleet.cargo.credits.subtract(bounty)
 
         StringUtils.getTranslation("MarketMenu", "PurchasedText")
             .format("credits", Misc.getWithDGS(bounty) + Strings.C)
             .addToTextPanel(dialog.textPanel)
-
     }
 
     override fun cancelledCargoSelection() {
@@ -57,19 +57,29 @@ class MarketCargoListener(val dialog: InteractionDialogAPI, val marketData: Mark
         pickedUpFromSource: Boolean,
         combined: CargoAPI
     ) {
-        val bounty: Float = computeCreditValue(combined)
-
-        val opad = 10f
-
         panel.setParaFontOrbitron()
         panel.addPara(Misc.ucFirst(faction.displayName), faction.baseUIColor, 1f)
         panel.setParaFontDefault()
 
         panel.addImage(faction.logo, 310 * 1f, 3f)
 
-        StringUtils.getTranslation("MarketMenu", "MenuText")
-            .format("credits", Misc.getWithDGS(bounty) + Strings.C)
-            .addToTooltip(panel, opad)
+        val playerCredits = Global.getSector().playerFleet.cargo.credits.get()
+        StringUtils.getTranslation("MarketMenu", "CreditsText")
+            .format("credits", Misc.getWithDGS(playerCredits) + Strings.C)
+            .addToTooltip(panel)
+
+        val purchasePrice: Float = computeCreditValue(combined)
+        val canAfford = playerCredits >= purchasePrice
+
+        if (canAfford) {
+            StringUtils.getTranslation("MarketMenu", "MenuText")
+                .format("credits", Misc.getWithDGS(purchasePrice) + Strings.C)
+                .addToTooltip(panel)
+        } else {
+            StringUtils.getTranslation("MarketMenu", "MenuTextCannotAfford")
+                .format("credits", Misc.getWithDGS(purchasePrice) + Strings.C)
+                .addToTooltip(panel)
+        }
     }
 
     protected fun computeCreditValue(cargo: CargoAPI): Float {

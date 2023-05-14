@@ -1,15 +1,13 @@
 package exoticatechnologies.modifications.upgrades;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import data.scripts.util.MagicSettings;
 import exoticatechnologies.ui.impl.shop.ShopManager;
-import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin;
 import exoticatechnologies.ui.impl.shop.upgrades.UpgradeShopUIPlugin;
 import exoticatechnologies.ui.impl.shop.upgrades.methods.*;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.magiclib.util.MagicSettings;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;

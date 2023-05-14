@@ -2,7 +2,6 @@ package exoticatechnologies.modifications
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Factions
-import data.scripts.util.MagicSettings
 import exoticatechnologies.ETModSettings
 import exoticatechnologies.config.FactionConfig
 import exoticatechnologies.config.FactionConfigLoader
@@ -11,6 +10,7 @@ import exoticatechnologies.modifications.exotics.ExoticsGenerator
 import exoticatechnologies.modifications.upgrades.UpgradesGenerator
 import exoticatechnologies.util.Utilities
 import org.apache.log4j.Logger
+import org.magiclib.util.MagicSettings
 import java.util.*
 
 object ShipModFactory {

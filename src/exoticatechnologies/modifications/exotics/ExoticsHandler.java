@@ -1,7 +1,6 @@
 package exoticatechnologies.modifications.exotics;
 
 import com.fs.starfarer.api.Global;
-import data.scripts.util.MagicSettings;
 import exoticatechnologies.modifications.exotics.impl.HullmodExotic;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin;
@@ -11,12 +10,13 @@ import lombok.extern.log4j.Log4j;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.magiclib.util.MagicSettings;
 
 import java.awt.*;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Log4j
 public class ExoticsHandler {
@@ -34,10 +34,10 @@ public class ExoticsHandler {
             JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/exotics.json", "exoticatechnologies");
 
             Iterator augIterator = settings.keys();
-            while(augIterator.hasNext()) {
+            while (augIterator.hasNext()) {
                 String exoticKey = (String) augIterator.next();
 
-                if(EXOTICS.containsKey(exoticKey)) return;
+                if (EXOTICS.containsKey(exoticKey)) return;
 
                 JSONObject exoticSettings = settings.getJSONObject(exoticKey);
                 Exotic exotic = null;
@@ -90,7 +90,7 @@ public class ExoticsHandler {
     public static List<String> getWhitelistForFaction(String faction) {
         List<String> factionAllowedExotics = MagicSettings.getList("exoticatechnologies", "rngExoticWhitelist");
         try {
-            if(MagicSettings.modSettings.getJSONObject("exoticatechnologies").has(faction + "_ExoticWhitelist")) {
+            if (MagicSettings.modSettings.getJSONObject("exoticatechnologies").has(faction + "_ExoticWhitelist")) {
                 factionAllowedExotics = MagicSettings.getList("exoticatechnologies", faction + "_ExoticWhitelist");
             }
         } catch (JSONException ex) {

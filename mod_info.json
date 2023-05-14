@@ -3,9 +3,9 @@
     "name": "Exotica Technologies",
     "author": "President Matt Damon",
     "utility": "false",
-    "version": { "major":"1", "minor": "5", "patch": "1" },
+    "version": { "major":"1", "minor": "5", "patch": "3" },
     "description": "Use and fight against a vast array of technologies installed on ships.",
-    "gameVersion": "0.95.1a-RC6",
+    "gameVersion": "0.96a",
     "jars":["jars/Exotica-Technologies.jar"],
     "modPlugin":"exoticatechnologies.ETModPlugin",
     "dependencies": [

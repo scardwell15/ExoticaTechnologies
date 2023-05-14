@@ -7,12 +7,9 @@ import com.fs.starfarer.api.campaign.SpecialItemPlugin
 import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
-import data.scripts.util.MagicUI
 import exoticatechnologies.modifications.ModSpecialItemPlugin
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.RomanNumeral
-import lombok.Getter
-import lombok.Setter
 import org.lazywizard.lazylib.ui.LazyFont
 import org.lwjgl.util.vector.Vector2f
 import java.awt.Color

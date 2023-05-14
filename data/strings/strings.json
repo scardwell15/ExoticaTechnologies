@@ -59,7 +59,9 @@
 	},
 	"MarketMenu": {
 		"Title": "Exotica Chip Market",
+		"CreditsText": "You have *${credits}*.",
 		"MenuText": "Purchasing the selected chips will cost *${credits}*.",
+		"MenuTextCannotAfford": "Purchasing the selected chips will cost *${credits}*, which you cannot afford.",
 		"PurchasedText": "You purchased Exotica chips for *${credits}*."
 	},
 	"MainMenu": {

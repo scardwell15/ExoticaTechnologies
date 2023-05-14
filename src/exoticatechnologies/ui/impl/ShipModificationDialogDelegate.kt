@@ -2,6 +2,7 @@ package exoticatechnologies.ui.impl
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CustomDialogDelegate
+import com.fs.starfarer.api.campaign.CustomDialogDelegate.CustomDialogCallback
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
@@ -24,7 +25,7 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
     var members: MutableList<FleetMemberAPI> = mutableListOf()
     var plugin: CustomUIPanelPlugin = BaseUIPanelPlugin()
 
-    override fun createCustomDialog(panel: CustomPanelAPI) {
+    override fun createCustomDialog(panel: CustomPanelAPI, callback: CustomDialogCallback) {
         members = Global.getSector().playerFleet.membersWithFightersCopy
             .filterNot { it.isFighterWing }
             .toMutableList()

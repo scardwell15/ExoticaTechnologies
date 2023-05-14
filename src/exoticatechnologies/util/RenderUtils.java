@@ -1,7 +1,7 @@
 package exoticatechnologies.util;
 
 import com.fs.starfarer.api.Global;
-import data.scripts.util.MagicUI;
+import org.magiclib.util.MagicUI;
 import org.lazywizard.lazylib.ui.FontException;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.Display;

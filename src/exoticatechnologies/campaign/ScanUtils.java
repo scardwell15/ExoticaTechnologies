@@ -213,7 +213,7 @@ public class ScanUtils {
         }
 
         @Override
-        public void createCustomDialog(CustomPanelAPI panel) {
+        public void createCustomDialog(CustomPanelAPI panel, CustomDialogCallback callback) {
             TooltipMakerAPI tt = panel.createUIElement(panelWidth, panelHeight - 16, true);
             String headerStr = StringUtils.getTranslation("FleetScanner", "NotableShipsHeader").toString();
             tt.addSectionHeading(headerStr, Alignment.MID, 0);

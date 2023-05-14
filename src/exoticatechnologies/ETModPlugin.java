@@ -7,7 +7,6 @@ import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.thoughtworks.xstream.XStream;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
 import exoticatechnologies.campaign.market.MarketManager;
@@ -18,20 +17,12 @@ import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.stats.impl.logistics.CrewSalaryEffect;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
-import exoticatechnologies.modifications.upgrades.impl.CommissionedCrews;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.ui.impl.shop.overview.OverviewPanelUIPlugin;
 import exoticatechnologies.util.FleetMemberUtils;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.console.Console;
 import org.lazywizard.lazylib.MathUtils;
-
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.ProtectionDomain;
 
 @Log4j
 public class ETModPlugin extends BaseModPlugin {
@@ -102,12 +93,6 @@ public class ETModPlugin extends BaseModPlugin {
         }
     }
 
-    @Override
-    public void configureXStream(XStream x) {
-        x.alias("salaryListener", CommissionedCrews.CommissionedSalaryListener.class);
-        x.alias("salaryListener", CrewSalaryEffect.SalaryListener.class);
-    }
-
     public static void removeHullmodsFromAutoFitGoalVariants() {
         try {
             for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
@@ -144,7 +129,8 @@ public class ETModPlugin extends BaseModPlugin {
                         if (token.getCargo() != null) {
                             removeAllCargo(token.getCargo());
                         }
-                    } finally {}
+                    } finally {
+                    }
                 }
             }
         } catch (Exception e) {

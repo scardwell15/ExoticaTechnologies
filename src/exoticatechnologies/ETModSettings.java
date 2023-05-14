@@ -1,15 +1,12 @@
 package exoticatechnologies;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.ShipAPI;
-import data.scripts.util.MagicSettings;
+import org.magiclib.util.MagicSettings;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ETModSettings {
     public static final String RANDOM_BANDWIDTH = "useRandomBandwidth";

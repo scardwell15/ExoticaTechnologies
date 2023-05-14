@@ -44,5 +44,8 @@ open class BaseUIPanelPlugin: CustomUIPanelPlugin {
     fun isHovered(events: List<InputEventAPI>) : Boolean {
         return events.any { pos.containsEvent(it) }
     }
+
+    override fun buttonPressed(buttonId: Any?) {
+    }
 }
 

@@ -1,12 +1,12 @@
 package exoticatechnologies.config
 
-import data.scripts.util.MagicSettings
 import exoticatechnologies.ETModSettings
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
+import org.magiclib.util.MagicSettings
 
 class FactionConfigLoader {
     companion object {

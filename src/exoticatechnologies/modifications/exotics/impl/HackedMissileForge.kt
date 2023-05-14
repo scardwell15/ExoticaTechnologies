@@ -75,7 +75,7 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
             if (shouldAffectWeapon(weapon)) {
                 val maxAmmo = weapon.ammoTracker.maxAmmo
                 weapon.ammoTracker.reloadSize = maxAmmo.toFloat()
-                weapon.ammoTracker.ammoPerSecond = 60f / getReloadTime(member, mods, exoticData)
+                weapon.ammoTracker.ammoPerSecond = weapon.ammoTracker.reloadSize / getReloadTime(member, mods, exoticData)
                 weapon.ammoTracker.resetAmmo()
             }
         }

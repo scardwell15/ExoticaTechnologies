@@ -11,7 +11,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.IntervalUtil
 import com.fs.starfarer.api.util.Misc
-import data.scripts.util.MagicUI
+import org.magiclib.util.MagicUI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
@@ -265,7 +265,13 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
         val baseArmor = member.hullSpec.armorRating
         val modifiedArmor = baseArmor + member.stats.armorBonus.computeEffective(member.hullSpec.armorRating)
 
-        return (modifiedHull * 0.125f).coerceAtMost(modifiedArmor * 1.75f) / getNegativeMult(member, mods, exoticData)
+        var thresh = modifiedHull * 0.125f
+        if (thresh < modifiedArmor * 1.75f)
+        {
+            thresh = modifiedArmor * 1.75f
+        }
+
+        return (thresh / getNegativeMult(member, mods, exoticData)).coerceAtLeast(100f)
     }
 
     companion object {

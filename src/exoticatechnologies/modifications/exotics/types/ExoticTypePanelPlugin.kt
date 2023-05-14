@@ -68,4 +68,7 @@ class ExoticTypePanelPlugin(val type: ExoticType) : CustomUIPanelPlugin {
 
     override fun processInput(events: MutableList<InputEventAPI>?) {
     }
+
+    override fun buttonPressed(buttonId: Any?) {
+    }
 }

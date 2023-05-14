@@ -180,4 +180,9 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
     @Override
     public void processInput(List<InputEventAPI> events) {
     }
+
+    @Override
+    public void buttonPressed(Object buttonId) {
+
+    }
 }

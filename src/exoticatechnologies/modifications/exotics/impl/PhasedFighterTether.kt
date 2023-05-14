@@ -3,26 +3,22 @@ package exoticatechnologies.modifications.exotics.impl
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
-import com.fs.starfarer.api.combat.FighterLaunchBayAPI
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.impl.campaign.ids.Stats
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.IntervalUtil
-import data.scripts.util.MagicAnim
-import data.scripts.util.MagicRender
-import data.scripts.util.MagicUI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
-import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
 import org.lwjgl.util.vector.Vector2f
+import org.magiclib.util.MagicRender
+import org.magiclib.util.MagicUI
 import java.awt.Color
 
 class PhasedFighterTether(key: String, settings: JSONObject) : Exotic(key, settings) {
@@ -110,7 +106,7 @@ class PhasedFighterTether(key: String, settings: JSONObject) : Exotic(key, setti
             for (bay in ship.launchBaysCopy) {
                 for (wing in ship.allWings) {
                     for (fighter in wing.wingMembers) {
-                        if (fighter.hitpoints <= fighter.maxHitpoints * 0.33f) {
+                        if (fighter.wing != null && fighter.hitpoints <= fighter.maxHitpoints * 0.33f) {
                             wing.orderReturn(fighter)
 
                             MagicRender.battlespace(

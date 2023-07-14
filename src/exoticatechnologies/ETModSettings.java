@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ETModSettings {
     public static final String RANDOM_BANDWIDTH = "useRandomBandwidth";
@@ -14,11 +16,12 @@ public class ETModSettings {
     public static final String SHIPS_KEEP_UPGRADES_ON_DEATH = "shipsKeepUpgradesOnDeath";
     public static final String MARKET_EXOTIC_SCALE = "marketExoticScale";
     public static final String MARKET_UPGRADE_SCALE = "marketUpgradeScale";
-
+    public static final String INDUSTRY_PRODUCTION_BANDWIDTH_MULT = "industryBandwidthGenerationMultipliers";
 
     public static int MAX_EXOTICS = 2;
 
     private static JSONObject modSettings = null;
+    private static Map<String, Float> productionBandwidthMults = new HashMap<String, Float>();
 
     public static Object get(String key) {
         try {
@@ -64,11 +67,17 @@ public class ETModSettings {
         return modSettings;
     }
 
+    public static Map<String, Float> getProductionBandwidthMults() {
+        return productionBandwidthMults;
+    }
+
     public static void loadModSettings() {
         try {
             modSettings = Global.getSettings().loadJSON("data/config/settings.json", "exoticatechnologies");
             modSettings.put(MARKET_EXOTIC_SCALE, MagicSettings.getFloat("exoticatechnologies", MARKET_EXOTIC_SCALE));
             modSettings.put(MARKET_UPGRADE_SCALE, MagicSettings.getFloat("exoticatechnologies", MARKET_UPGRADE_SCALE));
+
+            productionBandwidthMults = MagicSettings.getFloatMap("industryBandwidthGenerationMultipliers", INDUSTRY_PRODUCTION_BANDWIDTH_MULT);
         } catch (JSONException | IOException ex) {
             throw new RuntimeException(ex);
         }

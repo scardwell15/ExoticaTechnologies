@@ -1,11 +1,10 @@
 {
-  "exoticChance": 0.15,
-  "upgradeChance": 0.66,
+  "exoticChance": 0.4,
+  "upgradeChance": 0.75,
   "bandwidthMult": 1.2,
   "allowedExotics": {
-    "PlasmaFluxCatalyst": 0.16,
     "HackedMissileForge": 0.5,
-    "SpooledFeeders": 0.6,
+    "SpooledFeeders": 0.7,
     "FullMetalSalvo": 0.3,
     "PhasedFighterTether": 0.4,
     "EqualizerCore": 0.5,

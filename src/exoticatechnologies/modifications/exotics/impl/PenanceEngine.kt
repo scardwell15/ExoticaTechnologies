@@ -141,7 +141,7 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
                     ship,
                     DamageType.OTHER,
                     0f,
-                    200f,  // emp
+                    1000f,  // emp
                     10000f,  // max range
                     null,
                     20f,  // thickness

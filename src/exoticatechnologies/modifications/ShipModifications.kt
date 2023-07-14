@@ -2,7 +2,6 @@ package exoticatechnologies.modifications
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
-import com.fs.starfarer.api.combat.ShipAPI.HullSize
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.CustomPanelAPI
@@ -218,14 +217,14 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         return tags
     }
 
-    fun getModsThatConflict(tag: String): List<Modification> {
-        if (tag.isEmpty()) {
+    fun getModsThatConflict(tags: List<String>): List<Modification> {
+        if (tags.isEmpty()) {
             return mutableListOf()
         }
 
         val mods: MutableList<Modification> = mutableListOf()
-        mods.addAll(exotics.getConflicts(tag))
-        mods.addAll(upgrades.getConflicts(tag))
+        mods.addAll(exotics.getConflicts(tags))
+        mods.addAll(upgrades.getConflicts(tags))
         return mods
     }
 
@@ -360,11 +359,11 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         obj.put(BANDWIDTH_KEY, getBaseBandwidth(member).toDouble())
 
         if (hasUpgrades()) {
-            obj.put(UPGRADES_KEY, upgrades.toJson(member))
+            obj.put(UPGRADES_KEY, upgrades.toJson())
         }
 
         if (hasExotics()) {
-            obj.put(EXOTICS_KEY, exotics.toJson(member))
+            obj.put(EXOTICS_KEY, exotics.toJson())
         }
 
         return obj

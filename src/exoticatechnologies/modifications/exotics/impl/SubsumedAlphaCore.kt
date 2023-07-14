@@ -15,6 +15,7 @@ import java.awt.Color
 
 class SubsumedAlphaCore(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color.cyan
+
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
         return false
     }
@@ -32,6 +33,10 @@ class SubsumedAlphaCore(key: String, settings: JSONObject) : Exotic(key, setting
         return if (member.fleetData.fleet.faction.id == Factions.OMEGA) {
             super.canApplyToVariant(member.variant)
         } else false
+    }
+
+    override fun countsTowardsExoticLimit(member: FleetMemberAPI): Boolean {
+        return false
     }
 
     override fun canDropFromFleets(): Boolean {

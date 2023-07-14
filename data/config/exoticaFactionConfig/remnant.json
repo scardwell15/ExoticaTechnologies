@@ -1,5 +1,5 @@
 {
-  "exoticChance": 0.5,
+  "exoticChance": 0.8,
   "upgradeChance": 1.0,
   "bandwidthMult": 2.0,
   "allowedExotics": {
@@ -8,10 +8,12 @@
     "HackedMissileForge": 0.5,
     "SpooledFeeders": 0.5,
     "FullMetalSalvo": 0.5,
-    "PhaseFieldEngine": 0.16,
+    "PhasefieldEngine": 0.5,
     "PhasedFighterTether": 0.4,
-    "HyperspecLPC": 0.5,
-    "AlphaSubcore": 0.75
+    "HyperspecLPC": 0.3,
+    "AlphaSubcore": 0.75,
+    "NanotechArmor":0.15,
+    "AnomalousConjuration": 0.1,
   },
   "allowedUpgrades": {
     "AdvancedFluxCoils": 1.8,
@@ -24,6 +26,6 @@
     "VelocityInjectors": 1,
     "OverclockedFabricators": 1.0,
     "GuidanceComputers": 1,
-    "InterceptionMatrix": 0.2,
+    "InterceptionMatrix": 0.2
   }
 }

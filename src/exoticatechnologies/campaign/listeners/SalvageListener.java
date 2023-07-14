@@ -95,7 +95,7 @@ public class SalvageListener implements ShowLootListener {
                 1f, 1f, 1f, 1f, dropValue, dropRandom);
         loot.addAll(salvage);
 
-        CampaignEventListener.setMergeCheck(true);
+        CampaignEventListener.Companion.setMergeCheck(true);
     }
 
     private static List<SalvageEntityGenDataSpec.DropData> getDropDataFromEntity(SectorEntityToken entity) {

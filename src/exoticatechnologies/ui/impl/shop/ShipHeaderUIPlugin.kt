@@ -28,7 +28,8 @@ class ShipHeaderUIPlugin(
     override var panelHeight: Float = max(100f, Global.getSettings().screenHeight * 0.166f)
 
     var market: MarketAPI = dialog.interactionTarget.market
-    var lastBandwidth: Float = -1f
+    var lastValue: Float = -1f
+    var lastCredits: Float = -1f
 
     var shipImgTooltip: TooltipMakerAPI? = null
 
@@ -43,7 +44,16 @@ class ShipHeaderUIPlugin(
     var bandwidthButton: ButtonAPI? = null
 
     override fun advancePanel(amount: Float) {
-        setBandwidthText()
+        val mods = member.getMods()
+        if (mods.getValue() != lastValue) {
+            lastValue = mods.getValue()
+            setBandwidthText()
+        }
+
+        if (lastCredits != Global.getSector().playerFleet.cargo.credits.get()) {
+            lastCredits = Global.getSector().playerFleet.cargo.credits.get()
+            setBandwidthUpgradeLabel()
+        }
     }
 
     fun layoutPanel(tooltip: TooltipMakerAPI): CustomPanelAPI {

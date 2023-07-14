@@ -29,12 +29,16 @@ public enum Bandwidth {
     public static final float MAX_BANDWIDTH = PERFECT.bandwidth;
     private static Map<Float, Bandwidth> BANDWIDTH_MAP = null;
     private static final List<Bandwidth> BANDWIDTH_LIST = Arrays.asList(values());
-    @Getter private final float bandwidth;
+    @Getter public final float bandwidth;
     @Getter private final String key;
     @Getter private final Color color;
     @Getter private final int weight;
 
     public float getRandomInRange() {
+        if (this == PERFECT) {
+            return bandwidth;
+        }
+
         if(BANDWIDTH_LIST.indexOf(this) == BANDWIDTH_LIST.size() - 1) {
             return bandwidth;
         }

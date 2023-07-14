@@ -42,8 +42,8 @@ object ExoticsGenerator {
         if (rolledChance < exoticChance) {
             val perExoticMult = 1 + smodCount * 0.5f
 
-            val exoticPicker = getExoticPicker(random, allowedExotics)
-            while (!exoticPicker.isEmpty && exotics.exoticData.size < config.getMaxExotics(member)) {
+            val exoticPicker = getExoticPicker(random, allowedExotics, member, mods)
+            while (!exoticPicker.isEmpty && exotics.getCount(member) < config.getMaxExotics(member)) {
                 val exotic = exoticPicker.pick(random)!!
                 if (exotic.canApply(member, mods)) {
                     val roll = random.nextFloat()
@@ -78,6 +78,14 @@ object ExoticsGenerator {
         }
 
         return sizeFactor
+    }
+
+    fun getExoticPicker(random: Random, allowedExotics: Map<Exotic, Float>, member: FleetMemberAPI, mods: ShipModifications): WeightedRandomPicker<Exotic> {
+        val exoticPicker = WeightedRandomPicker<Exotic>(random)
+        allowedExotics.forEach { (exotic, factionChance) ->
+            exoticPicker.add(exotic, factionChance * exotic.getGenerationChanceMult(member) * exotic.getCalculatedWeight(member, mods))
+        }
+        return exoticPicker
     }
 
     fun getExoticPicker(random: Random, allowedExotics: Map<Exotic, Float>): WeightedRandomPicker<Exotic> {

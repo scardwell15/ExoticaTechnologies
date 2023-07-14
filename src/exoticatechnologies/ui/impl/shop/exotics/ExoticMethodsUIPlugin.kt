@@ -1,17 +1,14 @@
 package exoticatechnologies.ui.impl.shop.exotics
 
-import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoAPI
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.impl.campaign.ids.Stats
 import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.cargo.CrateItemPlugin
-import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
@@ -81,8 +78,8 @@ class ExoticMethodsUIPlugin(
             reasons.forEach {
                 tooltip.addPara(it, 1f)
             }
-        } else if (!exotic.checkTags(member, mods, exotic.tag)) {
-            val names: List<String> = mods.getModsThatConflict(exotic.tag!!).map { it.name }
+        } else if (!exotic.checkTags(member, mods, exotic.tags)) {
+            val names: List<String> = mods.getModsThatConflict(exotic.tags).map { it.name }
 
             StringUtils.getTranslation("Conditions", "CannotApplyBecauseTags")
                 .format("conflictMods", names.joinToString(", "))
@@ -220,7 +217,7 @@ class ExoticMethodsUIPlugin(
     companion object {
         @JvmStatic
         fun isUnderExoticLimit(member: FleetMemberAPI, mods: ShipModifications): Boolean {
-            return mods.getMaxExotics(member) > mods.getExoticSet().size
+            return mods.getMaxExotics(member) > mods.exotics.getCount(member)
         }
 
         fun getExoticChips(cargo: CargoAPI, member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic): List<CargoStackAPI> {

@@ -23,7 +23,9 @@ import org.lazywizard.lazylib.CollisionUtils
 import org.lazywizard.lazylib.MathUtils
 import org.lazywizard.lazylib.VectorUtils
 import org.lazywizard.lazylib.combat.CombatUtils
+import org.lazywizard.lazylib.ext.combat.getNearestPointOnBounds
 import org.lwjgl.util.vector.Vector2f
+import org.magiclib.util.MagicRender
 import java.awt.Color
 import java.util.*
 import kotlin.math.abs
@@ -263,6 +265,19 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
             return super.getStateText()
         }
 
+        /*override fun renderWorld(viewport: ViewportAPI?) {
+            val spawnLoc = MathUtils.getRandomPointInCircle(ship.location, ship.collisionRadius * 0.66f)
+            val particleVel = VectorUtils.getDirectionalVector(ship.location, spawnLoc)
+
+            val localLoc = ship.getNearestPointOnBounds(spawnLoc)
+            MagicRender.objectspace(Global.getSettings().getSprite("misc", "flux_smoke"),
+                ship,
+                localLoc,
+                particleVel,
+                Vector2f(32f, 32f),
+                Vector2f(128f, 128f), 0f, 0f, true, ship.ventCoreColor, true, 0.1f, 0.4f, 0.25f, false)
+        }*/
+
         override fun onActivate() {
             lastActivation = Global.getCombatEngine().getTotalElapsedTime(false)
             stats.hullDamageTakenMult.modifyPercent(buffId, getDamageTakenIncrease(member, mods, exoticData))
@@ -296,6 +311,10 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                     ship.velocity.set(VectorUtils.getDirectionalVector(ship.location, ship.velocity))
                 }
                 if (speed < 900f) {
+                    if (ship.velocity.equals(Misc.ZERO)) {
+                        ship.velocity.set(VectorUtils.rotate(Vector2f(1f, 0f), ship.facing))
+                    }
+
                     ship.velocity.normalise()
                     ship.velocity.scale(speed + amount * 3600f * boostScale)
                 }
@@ -308,6 +327,10 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                 stats.maxSpeed.modifyFlat(buffId, (speed.coerceAtMost(200f) - amount * 3600f).coerceAtLeast(0f))
 
                 if (speed > ship.mutableStats.maxSpeed.modifiedValue) {
+                    if (ship.velocity.equals(Misc.ZERO)) {
+                        ship.velocity.set(VectorUtils.rotate(Vector2f(1f, 0f), ship.facing))
+                    }
+
                     ship.velocity.normalise()
                     ship.velocity.scale(speed - amount * 3600f)
                 }

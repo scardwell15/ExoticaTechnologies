@@ -15,6 +15,7 @@ import java.awt.Color
 
 class SubsumedGammaCore(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(0x8F5C29)
+
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
         return false
     }
@@ -29,9 +30,17 @@ class SubsumedGammaCore(key: String, settings: JSONObject) : Exotic(key, setting
         ) {
             return false
         }
-        return if (member.fleetData.fleet.faction.toString() == Factions.OMEGA) {
+        return if (member.fleetData.fleet.faction.id == Factions.OMEGA) {
             super.canApplyToVariant(member.variant)
         } else false
+    }
+
+    override fun countsTowardsExoticLimit(member: FleetMemberAPI): Boolean {
+        return false
+    }
+
+    override fun canDropFromFleets(): Boolean {
+        return false
     }
 
     override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
@@ -50,10 +59,6 @@ class SubsumedGammaCore(key: String, settings: JSONObject) : Exotic(key, setting
             StringUtils.getTranslation(key, "description")
                 .addToTooltip(tooltip, title)
         }
-    }
-
-    override fun canDropFromFleets(): Boolean {
-        return false
     }
 
     /**

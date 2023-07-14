@@ -22,7 +22,7 @@ public class BandwidthHandler {
     }
 
     public static float getMarketBandwidthMult(MarketAPI currMarket) {
-        Map<String, Float> marketBonuses = MagicSettings.getFloatMap("exoticatechnologies", "industryBandwidthBonuses");
+        Map<String, Float> marketBonuses = MagicSettings.getFloatMap("exoticatechnologies", "industryBandwidthPurchaseBonuses");
 
         float bandwidthMult = 1;
         for (Industry industry : currMarket.getIndustries()) {

@@ -1,10 +1,10 @@
 {
-  "exoticChance": 0.15,
-  "upgradeChance": 0.5,
+  "exoticChance": 0.25,
+  "upgradeChance": 0.66,
   "bandwidthMult": 0.75,
   "allowedExotics": {
     "HackedMissileForge": 0.05,
-    "SpooledFeeders": 0.05,
+    "SpooledFeeders": 0.1,
     "FullMetalSalvo": 0.01,
     "PenanceEngine": 5.0
   },

@@ -3,6 +3,10 @@
   "addToRngExotics": true,
   "addToRngExoticTypes": true,
   "allowedExotics": {
-    "TierIIIDriveSystem": 1.5
+    "TierIIIDriveSystem": 1.5,
+    "TerminatorSubsystems": 0.5
+  },
+  "allowedUpgrades": {
+    "WaspDefenseDrones": 0.4
   }
 }

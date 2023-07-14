@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.combat.WeaponAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.modifications.ShipModifications
@@ -82,7 +83,13 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
     }
 
     private fun shouldAffectWeapon(weapon: WeaponAPI): Boolean {
-        return weapon.ammoTracker != null && weapon.ammoTracker.usesAmmo() && weapon.ammoTracker.maxAmmo > 1 && weapon.ammoTracker.ammoPerSecond == 0f && weapon.type == WeaponAPI.WeaponType.MISSILE
+        return (weapon.slot == null || weapon.slot.isSystemSlot)
+                && weapon.type == WeaponAPI.WeaponType.MISSILE
+                && !weapon.spec.hasTag(Tags.NO_RELOAD)
+                && weapon.spec.maxAmmo > 1
+                && weapon.ammoTracker != null
+                && weapon.ammoTracker.usesAmmo()
+                && weapon.ammoTracker.ammoPerSecond == 0f
     }
 
     companion object {

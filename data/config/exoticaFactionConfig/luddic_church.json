@@ -1,13 +1,13 @@
 {
-  "exoticChance": 0.05,
-  "upgradeChance": 0.7,
+  "exoticChance": 0.15,
+  "upgradeChance": 0.8,
   "bandwidthMult": 0.9,
   "allowedExotics": {
-    "HackedMissileForge": 0.3,
-    "SpooledFeeders": 0.45,
-    "FullMetalSalvo": 0.1,
-    "PhasedFighterTether": 0.45,
-    "HyperspecLPC": 0.3
+    "HackedMissileForge": 0.5,
+    "SpooledFeeders": 0.5,
+    "FullMetalSalvo": 0.5,
+    "PhasedFighterTether": 0.6,
+    "HyperspecLPC": 0.6
   },
   "allowedUpgrades": {
     "InfernalEngines": 1,

@@ -15,7 +15,11 @@
       "metals": 3.5,
       "rare_metals": 3.0,
       "heavy_machinery": 0.5
-    }
+    },
+    "conditions": [
+      { "id": "armor", "operator": ">=", "expected": 600, "weightOnly": true, "weight": 1.25 },
+      { "id": "hullmods", "operator": "in", "expected": "heavyarmor", "weightOnly": true, "weight": 1.5 }
+    ]
   },
   "PinataConfig": {
     "name": "Piñata Config",
@@ -77,7 +81,11 @@
       "metals": 1.0,
       "rare_metals": 0.25,
       "heavy_machinery": 1.5
-    }
+    },
+    "conditions": [
+      { "id": "maxSpeed", "operator": ">=", "expected": 100, "weightOnly": true, "weight": 1.25},
+      { "id": "hullmods", "operator": "in", "expected": "unstable_injector", "weightOnly": true, "weight": 1.5}
+    ]
   },
   "FluxInductionDrive": {
     "name": "Flux-Induction Drive",
@@ -112,7 +120,9 @@
       { "id": "engineHealth", "scalingEffect": -16, "startingLevel": 3 }
     ],
     "conditions": [
-      { "id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened." }
+      { "id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened." },
+      { "id": "maxSpeed", "operator": ">=", "expected": 100, "weightOnly": true, "weight": 1.25 },
+      { "id": "hullmods", "operator": "in", "expected": "unstable_injector", "weightOnly": true, "weight": 1.5 }
     ],
     "resourceRatios": {
       "metals": 4.0,
@@ -131,6 +141,10 @@
       {"id": "fluxCapacity", "scalingEffect": 25},
       {"id": "ventSpeed", "scalingEffect": 50},
       {"id": "weaponFluxCost", "scalingEffect": 24, "startingLevel": 3}
+    ],
+    "conditions": [
+      { "id": "fluxCapacity", "operator": ">=", "expected": 5000, "weightOnly": true, "weight": 1.25 },
+      { "id": "shieldFluxDam", "operator": ">=", "expected": 0.75, "weightOnly": true, "weight": 1.25 }
     ],
     "resourceRatios": {
       "supplies": 1.0,
@@ -156,6 +170,10 @@
       { "id": "weaponFluxCost", "scalingEffect": -10 },
       { "id": "hull", "scalingEffect": -10, "startingLevel": 3 }
     ],
+    "conditions": [
+      { "id": "fluxCapacity", "operator": ">=", "expected": 5000, "weightOnly": true, "weight": 1.25 },
+      { "id": "shieldFluxDam", "operator": ">=", "expected": 0.75, "weightOnly": true, "weight": 1.25 }
+    ],
     "resourceRatios": {
       "supplies": 2.0,
       "volatiles": 4.0,
@@ -178,7 +196,8 @@
       {"id": "shieldTurnRate", "scalingEffect": -16, "startingLevel": 3}
     ],
     "conditions": [
-      {"id": "hasShield", "operator": "==", "expected": true, "cannotApplyReason": "The ship must have a shield."}
+      { "id": "hasShield", "operator": "==", "expected": true, "cannotApplyReason": "The ship must have a shield." },
+      { "id": "hullmods", "operator": "in", "expected": "stabilizedshieldemitter", "weightOnly": true, "weight": 1.5 }
     ],
     "resourceRatios": {
       "supplies": 2.0,
@@ -235,14 +254,15 @@
   "InterceptionMatrix": {
     "name": "Interception Matrix",
     "color": [ 240, 120, 210 ],
-    "bandwidthPerLevel": 2.5,
+    "bandwidthPerLevel": 5,
     "stats": [
-      { "id": "damageToMissiles", "scalingEffect": 50 },
-      { "id": "damageToFighters", "scalingEffect": 50 },
+      { "id": "damageToMissiles", "scalingEffect": 100 },
+      { "id": "damageToFighters", "scalingEffect": 100 },
       { "id": "shieldArc", "scalingEffect": -20, "startingLevel": 3 },
       { "id": "shieldTurnRate", "scalingEffect": -20, "startingLevel": 3 },
       { "id": "shieldUnfoldRate", "scalingEffect": -20, "startingLevel": 3 }
     ],
+    "spawnChance": 0.5,
     "conditions": [
       { "id": "hasShield", "operator": "==", "expected": true, "cannotApplyReason": "The ship must have a shield." }
     ],
@@ -263,6 +283,9 @@
       { "id": "missileTurnRate", "scalingEffect": 33 },
       { "id": "missileTurnAcceleration", "scalingEffect": 33, "hidden": true },
       { "id": "missileDamage", "scalingEffect": -20, "startingLevel": 3 }
+    ],
+    "conditions": [
+      { "id": "missileSlots", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have more than one missile slot.", "weight": 0.25, "maxWeight": 1.5 }
     ],
     "resourceRatios": {
       "rare_metals": 0.5,
@@ -288,6 +311,9 @@
       { "id": "missileTurnRate", "scalingEffect": -33, "startingLevel": 3 },
       { "id": "missileTurnAcceleration", "scalingEffect": -33, "hidden": true, "startingLevel": 3 },
     ],
+    "conditions": [
+      { "id": "missileSlots", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have more than one missile slot.", "weight": 0.5, "maxWeight": 1.5 }
+    ],
     "resourceRatios": {
       "rare_metals": 0.5,
       "volatiles": 4.0,
@@ -309,7 +335,8 @@
       { "id": "minCrew", "scalingEffect": 25, "startingLevel": 3 }
     ],
     "conditions": [
-      { "id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew." }
+      { "id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew." },
+      { "id": "hullmods", "operator": "in", "expected": "safetyoverrides", "weightOnly": true, "weight": 1.5 }
     ],
     "resourceRatios": {
       "supplies": 3.0,
@@ -384,7 +411,7 @@
       {"id": "fighterWingRange", "scalingEffect": -33, "startingLevel": 3}
     ],
     "conditions": [
-      {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay."}
+      { "id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay.", "weight": 1.25 }
     ],
     "resourceRatios": {
       "metals": 2.0,
@@ -406,12 +433,26 @@
       { "id": "hull", "scalingEffect": -20, "appliesToFighters": true, "startingLevel": 3 }
     ],
     "conditions": [
-      { "id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay." }
+      { "id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay.", "weight": 1.25 }
     ],
     "resourceRatios": {
       "volatiles": 3.0,
       "heavy_machinery": 1.0,
       "supplies": 0.5
+    }
+  },
+  "WaspDefenseDrones": {
+    "name": "Wasp Defense Drones",
+    "tag": "drones",
+    "color": [ 100, 100, 255 ],
+    "bandwidthPerLevel": 50,
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.WaspDefenseDrones",
+    "resourceRatios": {
+      "volatiles": 100.0,
+      "heavy_machinery": 100.0,
+      "metals": 300.0,
+      "rare_metals": 100.0,
+      "supplies": 200.0
     }
   },
   "OverclockedFabricators": {

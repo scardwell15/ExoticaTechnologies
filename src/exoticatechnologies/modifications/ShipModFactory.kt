@@ -1,5 +1,7 @@
 package exoticatechnologies.modifications
 
+import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Factions
 import exoticatechnologies.ETModSettings
@@ -30,6 +32,22 @@ object ShipModFactory {
 
         mods = ShipModifications()
         mods.bandwidth = generateBandwidth(fm)
+
+        ShipModLoader.set(fm, mods)
+        return mods
+    }
+
+    @JvmStatic
+    fun generateForFleetMember(fm: FleetMemberAPI, market: MarketAPI): ShipModifications {
+        var mods = ShipModLoader.get(fm)
+        if (mods != null) {
+            return mods
+        }
+
+        random.setSeed(fm.id.hashCode().toLong())
+
+        mods = ShipModifications()
+        mods.bandwidth = generateBandwidth(fm, market)
 
         ShipModLoader.set(fm, mods)
         return mods
@@ -79,6 +97,9 @@ object ShipModFactory {
 
     @JvmStatic
     fun generateRandom(member: FleetMemberAPI, faction: String?): ShipModifications {
+        if (faction == Global.getSector().playerFaction.id) {
+            println("generateRandom was just used on a player faction ship, which should not happen.")
+        }
         val mods = ShipModifications()
         val context = GenerationContext(member = member, mods = mods, factionId = faction)
 
@@ -99,21 +120,25 @@ object ShipModFactory {
         }
 
         if (faction == Factions.OMEGA) {
-            return 350f
+            return Bandwidth.UNKNOWN.bandwidth
+        }
+
+
+        var mult = 1.0f
+        if (faction != Factions.PLAYER) {
+            mult *= 1.5f
         }
 
         val manufacturer = member.hullSpec.manufacturer
-        var mult = 1.0f
         val manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult")
-
         if (manufacturerBandwidthMult.containsKey(manufacturer)) {
-            mult = manufacturerBandwidthMult[manufacturer]!!
+            mult *= manufacturerBandwidthMult[manufacturer]!!
         }
 
         faction?.let {
             val factionConfig = FactionConfigLoader.getFactionConfig(it)
             if (factionConfig.bandwidthMult != 1.0) {
-                mult = factionConfig.bandwidthMult.toFloat()
+                mult *= factionConfig.bandwidthMult.toFloat()
             }
         }
 
@@ -138,6 +163,48 @@ object ShipModFactory {
         return if (faction != null) {
             generateBandwidth(fm, faction)
         } else Bandwidth.generate().randomInRange
+    }
+
+    fun generateBandwidth(member: FleetMemberAPI, market: MarketAPI): Float {
+        if (!ETModSettings.getBoolean(ETModSettings.RANDOM_BANDWIDTH)) {
+            return ETModSettings.getFloat(ETModSettings.STARTING_BANDWIDTH)
+        }
+
+        log.info(String.format("Generating bandwidth for fm ID [%s] at market [%s]", member.id, market.name))
+
+        val faction = market.factionId
+        if (faction == Factions.OMEGA) {
+            return Bandwidth.MAX_BANDWIDTH
+        }
+
+        val manufacturer = member.hullSpec.manufacturer
+        var mult = 1.0f
+        val manufacturerBandwidthMult = MagicSettings.getFloatMap("exoticatechnologies", "manufacturerBandwidthMult")
+
+        if (manufacturerBandwidthMult.containsKey(manufacturer)) {
+            mult = manufacturerBandwidthMult[manufacturer]!!
+        }
+
+        faction?.let {
+            val factionConfig = FactionConfigLoader.getFactionConfig(it)
+            if (factionConfig.bandwidthMult != 1.0) {
+                mult = factionConfig.bandwidthMult.toFloat()
+            }
+        }
+
+        if (member.fleetData != null && member.fleetData.fleet != null) {
+            if (member.fleetData.fleet.memoryWithoutUpdate.contains("\$exotica_bandwidthMult")) {
+                mult *= member.fleetData.fleet.memoryWithoutUpdate.getFloat("\$exotica_bandwidthMult")
+            }
+        }
+
+        mult += Utilities.getSModCount(member).toFloat()
+
+        mult += market.industries
+            .mapNotNull { ETModSettings.getProductionBandwidthMults()[it.id] }
+            .sum()
+
+        return Bandwidth.generate(mult).randomInRange
     }
 
     @JvmStatic

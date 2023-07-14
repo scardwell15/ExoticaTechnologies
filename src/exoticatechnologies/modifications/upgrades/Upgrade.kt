@@ -19,7 +19,7 @@ import java.util.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings) {
+open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings) {
     val resourceRatios: MutableMap<String, Float> = LinkedHashMap()
     val upgradeEffects: MutableList<UpgradeModEffect> = ArrayList()
     var bandwidthUsage: Float
@@ -28,12 +28,17 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
     var showInStoreIfNotInstalled: Boolean
     var chipFirstInstall: Boolean
     var chipOnlyInstall: Boolean
+    open var maxLevel: Int = 10
 
     init {
         color = Utilities.colorFromJSONArray(settings.getJSONArray("color"))
         description = StringUtils.getString(key, "description")
         bandwidthUsage = settings.getDouble("bandwidthPerLevel").toFloat()
-        upgradeEffects.addAll(getStatsFromJSONArray(settings.getJSONArray("stats")))
+
+        if (settings.has("stats")) {
+            upgradeEffects.addAll(getStatsFromJSONArray(settings.getJSONArray("stats")))
+        }
+
         spawnChance = settings.optDouble("spawnChance", 1.0).toFloat()
         salvageChance = settings.optDouble("salvageChance", spawnChance.toDouble()).toFloat()
         showInStoreIfNotInstalled = settings.optBoolean("showInStoreIfNotInstalled", true)
@@ -80,54 +85,52 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
     public override val icon: String
         get() = "graphics/icons/upgrades/" + key.lowercase(Locale.getDefault()) + ".png"
 
-    var maxLevel: Int = 10
-
-    fun applyUpgradeToStats(stats: MutableShipStatsAPI?, fm: FleetMemberAPI?, mods: ShipModifications?) {
+    open fun applyUpgradeToStats(stats: MutableShipStatsAPI, fm: FleetMemberAPI, mods: ShipModifications) {
         for (effect in upgradeEffects) {
             if (!effect.appliesToFighters) {
-                effect.applyToStats(stats!!, fm!!, mods!!, this)
+                effect.applyToStats(stats, fm, mods, this)
             }
         }
     }
 
-    fun applyToShip(member: FleetMemberAPI?, ship: ShipAPI?, mods: ShipModifications?) {
+    open fun applyToShip(member: FleetMemberAPI, ship: ShipAPI, mods: ShipModifications) {
         for (effect in upgradeEffects) {
             if (!effect.appliesToFighters) {
-                effect.applyToShip(ship!!, member!!, mods!!, this)
+                effect.applyToShip(ship, member, mods, this)
             }
         }
     }
 
-    fun applyToFighters(member: FleetMemberAPI?, ship: ShipAPI?, fighter: ShipAPI?, mods: ShipModifications?) {
+    open fun applyToFighters(member: FleetMemberAPI, ship: ShipAPI, fighter: ShipAPI, mods: ShipModifications) {
         for (effect in upgradeEffects) {
             if (effect.appliesToFighters) {
-                effect.applyToFighter(ship!!, fighter!!, member!!, mods!!, this)
+                effect.applyToFighter(ship, fighter, member, mods, this)
             }
         }
     }
 
-    fun advanceInCombatUnpaused(ship: ShipAPI?, amount: Float, member: FleetMemberAPI?, mods: ShipModifications?) {
+    open fun advanceInCombatUnpaused(ship: ShipAPI, amount: Float, member: FleetMemberAPI, mods: ShipModifications) {
         for (effect in upgradeEffects) {
-            effect.advanceInCombatUnpaused(ship!!, amount, member!!, mods!!, this)
+            effect.advanceInCombatUnpaused(ship, amount, member, mods, this)
         }
     }
 
-    fun advanceInCombatAlways(ship: ShipAPI?, member: FleetMemberAPI?, mods: ShipModifications?) {
+    open fun advanceInCombatAlways(ship: ShipAPI, member: FleetMemberAPI, mods: ShipModifications) {
         for (effect in upgradeEffects) {
-            effect.advanceInCombatAlways(ship!!, member!!, mods!!, this)
+            effect.advanceInCombatAlways(ship, member, mods, this)
         }
     }
 
-    fun advanceInCampaign(member: FleetMemberAPI?, mods: ShipModifications?, amount: Float?) {
+    open fun advanceInCampaign(member: FleetMemberAPI, mods: ShipModifications, amount: Float) {
         for (effect in upgradeEffects) {
-            effect.advanceInCampaign(member!!, mods!!, this, amount!!)
+            effect.advanceInCampaign(member, mods, this, amount)
         }
     }
 
-    fun modifyToolTip(
+    open fun modifyToolTip(
         tooltip: TooltipMakerAPI,
-        stats: MutableShipStatsAPI?,
-        member: FleetMemberAPI?,
+        stats: MutableShipStatsAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
         expand: Boolean
     ) {
@@ -135,13 +138,13 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
         imageText.addPara("$name (%s)", 0f, color, mods.getUpgrade(this).toString())
         if (expand) {
             for (effect in upgradeEffects) {
-                effect.printToTooltip(imageText, stats!!, member!!, mods, this)
+                effect.printToTooltip(imageText, stats, member, mods, this)
             }
         }
         tooltip.addImageWithText(5f)
     }
 
-    fun modifyInShop(tooltip: TooltipMakerAPI?, member: FleetMemberAPI, mods: ShipModifications?) {
+    open fun modifyInShop(tooltip: TooltipMakerAPI, member: FleetMemberAPI, mods: ShipModifications) {
         val levelToEffectMap: MutableMap<Int, MutableList<UpgradeModEffect>> = HashMap()
         for (effect in upgradeEffects) {
             val startingLevel = effect.startingLevel
@@ -157,7 +160,7 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
                         .addToTooltip(tooltip).position.setYAlignOffset(-10f)
                 }
                 for (effect in levelList) {
-                    effect.printToShop(tooltip!!, member, mods!!, this)
+                    effect.printToShop(tooltip, member, mods, this)
                 }
             }
         }
@@ -172,9 +175,10 @@ class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings
         hullBaseValue = if (hullBaseValue > 450000) {
             225000f
         } else {
-            (hullBaseValue - 1.0 / 900000.0 * hullBaseValue.toDouble().pow(2.0)).toFloat()
+            (hullBaseValue - hullBaseValue.pow(2f) / 900000f)
         }
         hullBaseValue *= 0.01f
+
         val upgradeCostRatioByLevel = 0.25f + 0.75f * (level.toFloat() / maxLevel.toFloat())
         val upgradeCostByHull = hullBaseValue * upgradeCostRatioByLevel
         val resourceCosts: MutableMap<String, Int> = HashMap()

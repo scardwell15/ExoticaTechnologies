@@ -56,7 +56,7 @@ public class FleetMemberUtils {
         }
 
         //note: this looks awful, but it actually doesn't go into this loop all that often.
-        for (CampaignFleetAPI fleet : CampaignEventListener.getActiveFleets()) {
+        for (CampaignFleetAPI fleet : CampaignEventListener.Companion.getActiveFleets()) {
             FleetMemberAPI fm = searchFleetForStats(fleet, stats);
             if(fm != null) {
                 return fm;

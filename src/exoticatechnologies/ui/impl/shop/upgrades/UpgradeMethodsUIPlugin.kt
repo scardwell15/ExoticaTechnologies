@@ -97,8 +97,8 @@ class UpgradeMethodsUIPlugin(
             reasons.forEach {
                 tooltip.addPara(it, 1f)
             }
-        } else if (!upgrade.checkTags(member, mods, upgrade.tag)) {
-            val names: List<String> = mods.getModsThatConflict(upgrade.tag!!).map { it.name }
+        } else if (!upgrade.checkTags(member, mods, upgrade.tags)) {
+            val names: List<String> = mods.getModsThatConflict(upgrade.tags).map { it.name }
 
             StringUtils.getTranslation("Conditions", "CannotApplyBecauseTags")
                 .format("conflictMods", names.joinToString(", "))

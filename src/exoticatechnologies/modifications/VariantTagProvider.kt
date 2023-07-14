@@ -4,9 +4,11 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CoreUITabId
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.loading.VariantSource
 import exoticatechnologies.modifications.exotics.ETExotics
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.modifications.upgrades.ETUpgrades
+import exoticatechnologies.util.fixVariant
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -44,6 +46,10 @@ open class VariantTagProvider : ShipModLoader.Provider {
         val variant: ShipVariantAPI = member.variant
             ?: return null
 
+        if (variant.source != VariantSource.REFIT) {
+            member.fixVariant()
+        }
+
         getFromVariant(variant)?.let {
             if (Global.getSector().campaignUI.currentCoreTab == CoreUITabId.REFIT || Global.getSector().campaignUI.currentCoreTab == CoreUITabId.FLEET) {
                 return it
@@ -56,6 +62,10 @@ open class VariantTagProvider : ShipModLoader.Provider {
     }
 
     override fun set(member: FleetMemberAPI, mods: ShipModifications) {
+        if (member.variant.source != VariantSource.REFIT) {
+            member.fixVariant()
+        }
+
         remove(member)
         member.variant.addTag(EXOTICA_INDICATOR + convertToJson(member, mods))
         cache[member] = mods

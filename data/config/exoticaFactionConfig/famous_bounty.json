@@ -1,6 +1,6 @@
 {
-  "exoticChance": 0.6,
-  "upgradeChance": 0.9,
+  "exoticChance": 0.9,
+  "upgradeChance": 1.0,
   "bandwidthMult": 2.0,
   "allowedExotics": {
     "PlasmaFluxCatalyst": 0.75,
@@ -12,7 +12,8 @@
     "EqualizerCore": 0.4,
     "AlphaSubcore": 0.2,
     "PhasefieldEngine": 0.6,
-    "HyperspecLPC": 0.6
+    "HyperspecLPC": 0.6,
+    "TerminatorSubsystems": 0.5
   },
   "allowedUpgrades": {
     "DerelictWeaponAssistant": 1.0,
@@ -27,6 +28,7 @@
     "FluxInductionDrive": 1.0,
     "InterceptionMatrix": 0.3,
     "VelocityInjectors": 1.0,
-    "OverclockedFabricators": 0.8
+    "OverclockedFabricators": 0.8,
+    "WaspDefenseDrones": 0.4
   }
 }

@@ -10,11 +10,6 @@ import org.json.JSONObject
 class ETExotics {
     var exotics: List<String>? = null
     var exoticData: MutableMap<String, ExoticData> = HashMap()
-        get() {
-            if (field == null)
-                field = HashMap()
-            return field
-        }
 
     constructor() {
         fixExoticsList()
@@ -34,6 +29,12 @@ class ETExotics {
 
     fun getData(exotic: Exotic): ExoticData? {
         return exoticData[exotic.key]
+    }
+
+    fun getCount(member: FleetMemberAPI): Int {
+        return exoticData
+            .filterValues { it.exotic.countsTowardsExoticLimit(member) }
+            .count()
     }
 
     fun hasExotic(exotic: Exotic): Boolean {
@@ -71,20 +72,20 @@ class ETExotics {
             val tagSet: MutableSet<String> = HashSet()
             for (data in exoticData.values) {
                 val exotic = data.exotic
-                if (exotic.tag != null) {
-                    tagSet.add(exotic.tag!!)
-                }
+                tagSet.addAll(exotic.tags)
             }
             return ArrayList(tagSet)
         }
 
-    fun getConflicts(tag: String): List<Exotic> {
+    fun getConflicts(tags: List<String>): List<Exotic> {
         val exotics: MutableList<Exotic> = ArrayList()
         for (data in exoticData.values) {
             val exotic = data.exotic
-            if (exotic.tag == tag) {
-                exotics.add(exotic)
-            }
+            exotic.tags
+                .firstOrNull { tags.contains(it) }
+                ?.let {
+                    exotics.add(exotic)
+                }
         }
         return exotics
     }
@@ -104,7 +105,7 @@ class ETExotics {
                 '}'
     }
 
-    fun toJson(member: FleetMemberAPI?): JSONObject? {
+    fun toJson(): JSONObject? {
         val obj = JSONObject()
         exoticData.values.forEach {
             obj.put(it.key, it.toJson())

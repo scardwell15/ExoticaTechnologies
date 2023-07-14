@@ -26,7 +26,7 @@
     "name": "Phased Fighter Tether",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasedFighterTether",
     "conditions": [
-      {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have a launch bay."}
+      {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have a launch bay.", "weight": 1.5}
     ],
     "valueMult": 1.5
   },
@@ -34,19 +34,23 @@
     "name": "Hyperspec LPC",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HyperspecLPC",
     "conditions": [
-      {"id": "launchBays", "operator": ">", "expected": 1, "cannotApplyReason": "The ship must have more than one launch bay."}
+      {"id": "launchBays", "operator": ">", "expected": 1, "cannotApplyReason": "The ship must have more than one launch bay.", "weight": 1.5}
     ],
     "valueMult": 0.75
   },
   "HackedMissileForge": {
     "name": "Hacked Missile Forge",
-    "exoticClass": "exoticatechnologies.modifications.exotics.impl.HackedMissileForge"
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.HackedMissileForge",
+    "conditions": [
+      #note that weight can be below 1, but is always rounded above 1. the effective result of these two parameters is ships with 6 slots having the max weight of 3
+      {"id": "missileSlots", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have more than one missile slot.", "weight": 0.5, "maxWeight": 3}
+    ]
   },
   "PhasefieldEngine": {
     "name": "Phasefield Engine",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasefieldEngine",
     "conditions": [
-      {"id": "hasPhase", "operator": "==", "expected": true, "cannotApplyReason": "The ship must be a phase ship, or have a phase ship system."}
+      {"id": "hasPhase", "operator": "==", "expected": true, "cannotApplyReason": "The ship must be a phase ship, or have a phase ship system.", "weight": 2}
     ],
     "valueMult": 2.0
   },
@@ -57,6 +61,12 @@
       {"id": "cargoSpace", "operator": ">=", "expected": 400, "cannotApplyReason": "The ship must have at least 400 cargo capacity."}
     ],
     "valueMult": 0.75
+  },
+  "TerminatorSubsystems": {
+    "name": "Terminator Subsystems",
+    "tag": "drones",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.TerminatorSubsystems",
+    "valueMult": 2.5
   },
   "ReactiveDamperField": {
     "name": "Reactive Damper Field",
@@ -71,7 +81,7 @@
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.DaemonCore",
     "conditions": [
       {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."},
-      {"id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew."}
+      {"id": "hullmods", "operator": "notIn", "expected": "automated", "cannotApplyReason": "The ship must not be an automated ship."}
     ],
     "valueMult": 3.0
   },
@@ -79,13 +89,30 @@
     "name": "Alpha Subcore",
     "tag": "aiCore",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore",
-    "valueMult": 3.0
+    "valueMult": 2.5
   },
   "PenanceEngine": {
     "name": "Penance Engine",
-    "tag": "aiCore",
+    "tags": ["aiCore","armorRegen"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PenanceEngine",
-    "valueMult": 1.25
+    "valueMult": 1.25,
+    "conditions": [
+      { "id": "hasShield", "operator": "==", "expected": true, "cannotApplyReason": "The ship must have a shield." },
+      { "id": "hullmods", "operator": "notIn", "expected": "automated", "cannotApplyReason": "The ship must not be an automated ship." },
+      { "id": "armor", "operator": ">=", "expected": 600, "weightOnly": true, "weight": 1.5 }
+    ],
+  },
+  "NanotechArmor": {
+    "name": "Nanotech Armor",
+    "tag": "armorRegen",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.NanotechArmor",
+    "conditions": [
+      { "id": "armor", "operator": ">=", "expected": 600, "weightOnly": true, "weight": 1.5 }
+    ]
+  },
+  "AnomalousConjuration": {
+    "name": "Anomalous Conjuration",
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.AnomalousConjuration"
   },
   "SubsumedAlphaCore": {
     "name": "Subsumed Alpha Core",

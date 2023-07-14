@@ -36,6 +36,14 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         return false
     }
 
+    open fun getGenerationChanceMult(member: FleetMemberAPI): Float {
+        return 1f
+    }
+
+    open fun countsTowardsExoticLimit(member: FleetMemberAPI): Boolean {
+        return true
+    }
+
     open fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
         return false
     }

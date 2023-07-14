@@ -227,6 +227,12 @@
 		"longDescription": "Adds an active ability that increases all weapon projectile speed by *${projSpeedBoost}%%* and non-missile damage by *${damageBoost}%%* for *${boostTime} seconds*. The ability takes *${cooldown} seconds* to recharge. Weapon fire rate is reduced by =${firerateMalus}%%= permanently.",
 		"systemText": "FULL METAL SALVO",
 	},
+	"TerminatorSubsystems": {
+		"description": "A squadron of terminator drones circles this ship, serving as both an effective point defense system, and as deadly weapons.",
+		"tooltip": "Terminator drones circle the ship, serving as point defense. They can be activated to convert into a seeking missile.",
+		"longDescription": "Spawns ${drones} Terminator drones (scales with hull size) that circle the ship, serving as point defense and passive weaponry. Adds an active ability that converts one of the drones into a seeking missile.",
+		"systemText": "TERMINATORS",
+	},
 	"TierIIIDriveSystem": {
 		"description": "Pressurized fuel tanks increase the rate of fuel injection to a custom burn drive, speeding up the entire fleet. A favorite among logistics fleets, the technology required to keep pressurized fuel stable requires almost all of the cargo space, but the technology scales up extremely well and allows for a large amount of fuel to be stored.",
 		"tooltip": "Replaces most of the ship's cargo capacity with fuel storage. Burn speed is increased while the fleet's fuel reserves are high.",
@@ -237,6 +243,12 @@
 		"tooltip": "Increases weapon repair rate and disables shields. Grants armor repair and increased speed in lateral directions while near enemy ships. Large amounts of damage will cause a massive EMP burst on the ship.",
 		"longDescription": "Increases weapon repair rate by *${weaponRepairRate}%%*, and =disables shields and phase systems=. When within 1200 units of an enemy ship, *armor repairs itself at a rate of ${armorRegenPerSec}%% per second per enemy ship* (up to *${armorRegenMax}%%*, max *${armorRegenPerSecondMax} per second*) and *${sideSpeedBoost} higher speed* when moving laterally (strafing). If =${damageThreshold} armor/hull damage= is taken within a short window, the ship will release a massive EMP burst onto itself, damaging most weapons and engines.",
 		"statusBarText": "LUDD",
+	},
+	"NanotechArmor": {
+		"description": "A swarm of nanobots constantly surrounds the armor. Nearly invisible to the naked eye, yet extremely effective at repairing weapons systems and even capable of ongoing repairs during combat.",
+		"tooltip": "Increases weapon repair rate and disables shields. Grants armor repair while near enemy ships. Large amounts of damage will cause a massive EMP burst on the ship.",
+		"longDescription": "Increases weapon repair rate by *${weaponRepairRate}%%*, and =disables shields and phase systems=. When within 1200 units of an enemy ship, *armor repairs itself at a rate of ${armorRegenPerSec}%% per second per enemy ship* (up to *${armorRegenMax}%%*, max *${armorRegenPerSecondMax} per second*). If =${damageThreshold} armor/hull damage= is taken within a short window, the ship will release a massive EMP burst onto itself, damaging most weapons and engines.",
+		"statusBarText": "NANO",
 	},
 	"ReactiveDamperField": {
 		"description": "A grid of sensors mostly found on Daemon-type ships, integrated with an artificial intelligence on board able to harden the ship's armor when detecting a threat severe enough to cause significant damage. The sheer amount of connections required between the intelligence and sensors weakens the armor significantly when not protected by this dampening field.",
@@ -250,6 +262,10 @@
 		"tooltip": "Increases usable bandwidth of the ship. Reduces ordnance point costs for weapons and fighters. Increases damage dealt and received.",
 		"needItem": "You need a ${itemName} to install this.",
 		"longDescription": "Increases bandwidth by *${bandwidthIncrease} TB/s*. Reduces ordnance point costs for weapons by *${smallReduction}/${medReduction}/${largeReduction}* based on weapon size, and for fighters and bombers by *${fghtrReduction}/${bmberReduction}*. Increases damage *dealt* and =received= by &${doubleEdge}%%&."
+	},
+	"AnomalousConjuration": {
+		"description": "Impure.",
+		"tooltip": "Impure."
 	},
 	"SubsumedAlphaCore": {
 		"description": "There's a faint trace of an Alpha-level AI coming from the ship. Whether it actually wants to be there requires a much closer look.",
@@ -293,6 +309,9 @@
 	"DerelictWeaponAssistant": {
 		"description": "Reduces recoil and inaccuracy, and increases projectile speed and ballistic weapon firerate."
 	},
+	"AntimatterBoosters": {
+		"description": "Sindrian overrides on missile fabricators produce missiles with thrusters powered by tiny specks of antimatter. The new boosters are more resilient and grant increased speed, but are much less proficient at turning and tracking targets."
+	},
 	"IronShell": {
 		"description": "Improvements and modifications are made to the armor to increase the space between individual plates of armor. This type of spaced armor is more effective versus high explosive damage, but doesn't fare as well against other kind of weaponry."
 	},
@@ -322,6 +341,10 @@
 	},
 	"FluxInductionDrive": {
 		"description": "This device can increase the efficiency of a drive by a significant margin, although it is extremely susceptible to interference from fields generated by flux conduits."
+	},
+	"WaspDefenseDrones": {
+		"description": "Wasp defense drones surround the ship, protecting it.",
+		"tooltip": "*${drones}* Wasp drones circle the ship. One drone recharges every 20 seconds."
 	},
 	"ExoticTypes": {
 		"TooltipText": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways.",

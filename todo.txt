@@ -7,12 +7,18 @@ consider: System cooldown for weapon range?
 consider: Magazine reload for fire rate
 
 todo: update interface to use new buttonPressed methods
+todo: add Advanced Gunnery Control tags to things that deserve them (like missile spam for hacked missile forge)
 
 done:
-- updated for 0.96a
-- fixed guerilla penance engine sometimes disabling the ship permanently
-- fixed hacked missile forge reloading much faster than intended
-- fixed phased fighter tether breaking terminator sequence
-- fixed exotica market allowing you to go into debt
-- fixed hyperspec LPC adding 1% for each fighter bay removed rather than multiplying
-- reduced exotic drop rate from fleets
+- improved generation of upgrades by making it prefer already-generated upgrades even more, so upgrade distribution should generate higher-leveled upgrades for a spikier distribution
+- fixed antimatter boosters (sindrian diktat exclusive upgrade) not having description
+- exotics and upgrades can now have multiple tags
+- fixed automated ship checking not checking for automated hullmod
+- fixed equalizer core giving 100x the damage bonus for over-ranged weapons
+- fixed bandwidth button not updating when buying credit upgrades
+- generate enemy ships with much higher bandwidths
+- exotic destruction and bandwidth degradation on death for enemy ships so overall loot doesn't change as much and you can't as easily extract nice exotics from salvaged ships
+- curate exotic lists per faction more
+- upgrades and exotics now weight more towards ships and variants that they would be better on (e.g. armored ships or ships with Heavy Armor hullmod will get the Welded Armor upgrade for even more armor)
+- added some drone upgrade and exotic
+- added some pain

@@ -30,9 +30,17 @@ class SubsumedBetaCore(key: String, settings: JSONObject) : Exotic(key, settings
         ) {
             return false
         }
-        return if (member.fleetData.fleet.faction.toString() == Factions.OMEGA) {
+        return if (member.fleetData.fleet.faction.id == Factions.OMEGA) {
             super.canApplyToVariant(member.variant)
         } else false
+    }
+
+    override fun countsTowardsExoticLimit(member: FleetMemberAPI): Boolean {
+        return false
+    }
+
+    override fun canDropFromFleets(): Boolean {
+        return false
     }
 
     override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
@@ -51,10 +59,6 @@ class SubsumedBetaCore(key: String, settings: JSONObject) : Exotic(key, settings
             StringUtils.getTranslation(key, "description")
                 .addToTooltip(tooltip, title)
         }
-    }
-
-    override fun canDropFromFleets(): Boolean {
-        return false
     }
 
     /**

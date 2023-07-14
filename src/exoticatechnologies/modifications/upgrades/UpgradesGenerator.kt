@@ -32,29 +32,24 @@ object UpgradesGenerator {
         if (random.nextFloat() < upgradeChance) {
 
             var usableBandwidth = mods.getBandwidthWithExotics(member)
-            val perUpgradeMult = 1 + smodCount * 0.5f
-            val upgradePicker = getPicker(random, allowedUpgrades)
+            val perUpgradeMult = 2f + smodCount * 0.5f
+            val upgradePicker = getPicker(random, allowedUpgrades, member, mods, upgrades, usableBandwidth)
             while (random.nextFloat() < usableBandwidth / 100f * perUpgradeMult && !upgradePicker.isEmpty) {
                 var upgrade: Upgrade? = null
                 while (upgrade == null && !upgradePicker.isEmpty) {
                     upgrade = upgradePicker.pick()
 
-                    if (upgrade!!.maxLevel <= upgrades.getUpgrade(upgrade)
-                        || !upgrade.canApply(member, mods)
-                        || usableBandwidth - upgrade.bandwidthUsage < 0f) {
+                    if (!canPickUpgrade(member, mods, upgrades, upgrade, usableBandwidth)) {
+                        println("removed $upgrade")
                         upgradePicker.remove(upgrade)
-                        upgrade = null
-                    } else if (upgrades.getUpgrade(upgrade) == 0
-                        && random.nextFloat() > (0.8f - smodCount * 0.25f).coerceAtLeast(0.05f)
-                        && hasLeveledUpgrades(upgradePicker, member, upgrades)
-                    ) {
                         upgrade = null
                     }
                 }
 
                 if (upgrade != null) {
-                    if (random.nextFloat() < (upgrade.spawnChance * (1 + 0.2f * smodCount) * allowedUpgrades[upgrade]!! * context.upgradeChanceMult)) {
+                    if (random.nextFloat() < (upgrade.spawnChance * (1f + 0.2f * smodCount) * allowedUpgrades[upgrade]!! * context.upgradeChanceMult)) {
                         upgrades.addUpgrades(upgrade, 1)
+                        upgradePicker.setWeight(upgradePicker.items.indexOf(upgrade), upgradePicker.getWeight(upgrade) * (1.75f + 0.5f * smodCount))
                     }
                     usableBandwidth -= upgrade.bandwidthUsage
                 }
@@ -76,10 +71,27 @@ object UpgradesGenerator {
 
     fun getPicker(random: Random, allowedUpgrades: Map<Upgrade, Float>): WeightedRandomPicker<Upgrade> {
         val upgradePicker = WeightedRandomPicker<Upgrade>(random)
-        allowedUpgrades.forEach { (upgrade, factionChance) ->
-            upgradePicker.add(upgrade, upgrade.spawnChance * factionChance)
+        allowedUpgrades
+            .forEach { (upgrade, factionChance) ->
+                upgradePicker.add(upgrade, upgrade.spawnChance * factionChance)
+            }
+        return upgradePicker
+    }
+
+    fun getPicker(random: Random, allowedUpgrades: Map<Upgrade, Float>, member: FleetMemberAPI, mods: ShipModifications, upgrades: ETUpgrades, usableBandwidth: Float): WeightedRandomPicker<Upgrade> {
+        val upgradePicker = WeightedRandomPicker<Upgrade>(random)
+        allowedUpgrades
+            .filterKeys { canPickUpgrade(member, mods, upgrades, it, usableBandwidth) }
+            .forEach { (upgrade, factionChance) ->
+            upgradePicker.add(upgrade, upgrade.spawnChance * factionChance * upgrade.getCalculatedWeight(member, mods))
         }
         return upgradePicker
+    }
+
+    private fun canPickUpgrade(member: FleetMemberAPI, mods: ShipModifications, upgrades: ETUpgrades, upgrade: Upgrade, usableBandwidth: Float): Boolean {
+        return upgrade.maxLevel > upgrades.getUpgrade(upgrade)
+                && upgrade.canApply(member, mods)
+                && (usableBandwidth - upgrade.bandwidthUsage) >= 0f
     }
 
     private fun hasLeveledUpgrades(upgradePicker: WeightedRandomPicker<Upgrade>, member: FleetMemberAPI, upgrades: ETUpgrades): Boolean {

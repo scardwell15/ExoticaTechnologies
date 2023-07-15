@@ -89,6 +89,9 @@ class RefitButtonAdder : EveryFrameScript {
                         var shipdisplay = invokeMethod("getShipDisplay", child3!!) as UIPanelAPI?
                         variant = invokeMethod("getCurrentVariant", shipdisplay!!) as HullVariantSpec?
 
+
+                        member = invokeMethod("getMember", child3) as FleetMemberAPI
+
                         if (requiresVariantUpdate)
                         {
                             try {
@@ -100,10 +103,26 @@ class RefitButtonAdder : EveryFrameScript {
                                     var test = ""
                                 }
                             }
+
+                            try {
+                                invokeMethod("saveCurrentVariant", child3!!, false)
+                            } catch (e: Throwable) {
+                                try {
+                                    invokeMethod("saveCurrentVariant", child3!!)
+                                } catch (e: Throwable) {
+                                    var test = ""
+                                }
+                            }
+
+                            try {
+                                invokeMethod("setEditedSinceSave", child3!!, false)
+                            } catch (e: Throwable) {
+                                var test = ""
+                            }
+
+
                             requiresVariantUpdate = false
                         }
-
-                        member = invokeMethod("getMember", child3) as FleetMemberAPI
 
                         var child4 = child3.getChildrenCopy().find { hasMethodOfName("getColorFor", it) } as UIPanelAPI?
 

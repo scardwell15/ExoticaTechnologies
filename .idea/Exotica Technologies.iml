@@ -17,5 +17,6 @@
     <orderEntry type="library" name="projectlombok.lombok" level="application" />
     <orderEntry type="library" name="starfarer.api" level="application" />
     <orderEntry type="library" name="CombatActivators" level="project" />
+    <orderEntry type="library" name="MagicLib-Kotlin" level="project" />
   </component>
 </module>

@@ -13,20 +13,20 @@ import lombok.Getter
 class ResourcesMethod : DefaultUpgradeMethod() {
     @Getter
     override var key = "resources"
-    override fun getOptionText(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): String {
+    override fun getOptionText(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
         return StringUtils.getString("UpgradeMethods", "ResourcesOption")
     }
 
     override fun getOptionTooltip(
-        fm: FleetMemberAPI,
-        es: ShipModifications,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI
+        market: MarketAPI?
     ): String? {
         return null
     }
 
-    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean {
+    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
         if (upgrade.resourceRatios.isEmpty()) return false
         val upgradeCosts = upgrade.getResourceCosts(member, mods.getUpgrade(upgrade))
         val totalStacks = Utilities.getTotalResources(member.fleetData.fleet, market, upgradeCosts.keys)
@@ -43,7 +43,7 @@ class ResourcesMethod : DefaultUpgradeMethod() {
                 && super.canUse(member, mods, upgrade, market))
     }
 
-    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): String {
+    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
         val upgradeCosts = upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade))
         Utilities.takeResources(fm.fleetData.fleet, market, upgradeCosts)
         mods.putUpgrade(upgrade)
@@ -59,7 +59,7 @@ class ResourcesMethod : DefaultUpgradeMethod() {
         fm: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI,
+        market: MarketAPI?,
         hovered: Boolean
     ): Map<String, Float> {
         val resourceCosts: MutableMap<String, Float> = HashMap()

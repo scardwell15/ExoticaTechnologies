@@ -32,7 +32,7 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
 
     open fun onInstall(member: FleetMemberAPI) {}
     open fun onDestroy(member: FleetMemberAPI) {}
-    open fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    open fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return false
     }
 
@@ -44,7 +44,7 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         return true
     }
 
-    open fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
+    open fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI?): Boolean {
         return false
     }
 
@@ -71,7 +71,7 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
     open fun getResourceCostMap(
         fm: FleetMemberAPI,
         mods: ShipModifications,
-        market: MarketAPI
+        market: MarketAPI?
     ): MutableMap<String, Float> {
         return HashMap()
     }

@@ -23,7 +23,7 @@ import java.awt.Color
 
 class PhasedFighterTether(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color.GREEN
-    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return Utilities.hasItem(fleet.cargo, ITEM)
     }
 

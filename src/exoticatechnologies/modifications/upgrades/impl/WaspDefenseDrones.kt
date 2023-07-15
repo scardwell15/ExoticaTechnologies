@@ -92,7 +92,7 @@ class WaspDefenseDrones(key: String, settings: JSONObject) : Upgrade(key, settin
         }
 
         override fun getMaxCharges(): Int {
-            return 2
+            return maxDronesMap[ship.hullSize] ?: 2
         }
 
         override fun getMaxDeployedDrones(): Int {

@@ -16,7 +16,7 @@ abstract class DefaultUpgradeMethod : UpgradeMethod {
      * @param market market
      * @return whether the upgrade method can be used
      */
-    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean {
+    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
         return upgrade.canApply(member, mods) && usesLevel() && mods.getUpgrade(upgrade) + 1 <= upgrade.maxLevel
                 && usesBandwidth() && mods.getUsedBandwidth() + upgrade.bandwidthUsage <= mods.getBandwidthWithExotics(member)
     }
@@ -32,9 +32,13 @@ abstract class DefaultUpgradeMethod : UpgradeMethod {
         member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI
+        market: MarketAPI?
     ): Boolean {
         return true
+    }
+
+    override fun canUseIfMarketIsNull(): Boolean {
+        return false
     }
 
     override fun usesBandwidth(): Boolean {

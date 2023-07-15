@@ -21,11 +21,11 @@ import kotlin.math.ceil
 class PlasmaFluxCatalyst(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(0x00BBFF)
 
-    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return Utilities.hasItem(fleet.cargo, ITEM)
     }
 
-    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
+    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI?): Boolean {
         Utilities.takeItemQuantity(fleet.cargo, ITEM, 1f)
         return true
     }

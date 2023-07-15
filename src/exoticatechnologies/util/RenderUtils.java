@@ -15,6 +15,10 @@ import static org.lwjgl.opengl.GL11.*;
 public class RenderUtils {
     public static LazyFont.DrawableString CAMPAIGN_ITEM_FONT;
     private static final float UIscaling = Global.getSettings().getScreenScaleMult();
+    public static final Color INSTALLED_COLOR = Color.white;
+    public static final Color CAN_APPLY_COLOR = new Color(90, 90, 90);
+    public static final Color CANT_INSTALL_COLOR = new Color(50, 50, 50);
+
 
     static {
         try {

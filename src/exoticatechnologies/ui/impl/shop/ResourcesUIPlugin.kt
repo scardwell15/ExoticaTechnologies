@@ -35,6 +35,9 @@ abstract class ResourcesUIPlugin(
                 addStoryPointsCost(tooltip, cost)
             } else if (Utilities.isSpecialItemId(id)) {
                 addSpecialItemCost(tooltip, id, cost)
+            } else if (id.startsWith("^")) {
+                val splitParentKey = id.substring(1).split(".")
+                addString(tooltip, splitParentKey[0], splitParentKey[1])
             } else {
                 addResourceCost(tooltip, id, cost)
             }
@@ -177,5 +180,10 @@ abstract class ResourcesUIPlugin(
                 .format("amount", Misc.getWithDGS(quantity))
                 .addToTooltip(tooltip)
         }
+    }
+
+    fun addString(tooltip: TooltipMakerAPI, parent: String, key: String) {
+        StringUtils.getTranslation(parent, key)
+            .addToTooltip(tooltip)
     }
 }

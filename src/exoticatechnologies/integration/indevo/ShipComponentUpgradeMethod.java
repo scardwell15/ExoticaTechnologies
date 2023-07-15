@@ -13,6 +13,8 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.ui.impl.shop.upgrades.methods.DefaultUpgradeMethod;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,22 +22,24 @@ import java.util.Map;
 public class ShipComponentUpgradeMethod extends DefaultUpgradeMethod {
     @Getter
     public String key = "shipComponents";
+    @NotNull
     @Override
-    public String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+    public String getOptionText(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market) {
         return StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsOption")
-                .format("components", IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, es.getUpgrade(upgrade)))
+                .format("components", IndEvoUtil.getUpgradeShipComponentPrice(member, upgrade, mods.getUpgrade(upgrade)))
                 .toString();
     }
 
+    @Nullable
     @Override
-    public String getOptionTooltip(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+    public String getOptionTooltip(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market) {
         return StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsTooltip")
-                .format("components", getTotalComponents(fm.getFleetData().getFleet(), market))
+                .format("components", getTotalComponents(member.getFleetData().getFleet(), market))
                 .toString();
     }
 
     @Override
-    public boolean canUse(FleetMemberAPI member, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
+    public boolean canUse(@NotNull FleetMemberAPI member, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         int level = mods.getUpgrade(upgrade);
         int upgradeCost = IndEvoUtil.getUpgradeShipComponentPrice(member, upgrade, level);
         int totalComponents = getTotalComponents(member.getFleetData().getFleet(), market);
@@ -75,8 +79,9 @@ public class ShipComponentUpgradeMethod extends DefaultUpgradeMethod {
                 .toString();
     }
 
+    @NotNull
     @Override
-    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
+    public Map<String, Float> getResourceCostMap(@NotNull FleetMemberAPI fm, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market, boolean hovered) {
         Map<String, Float> resourceCosts = new HashMap<>();
 
         if (hovered) {

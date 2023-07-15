@@ -58,7 +58,7 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
 
         activeUpgrade = upgrade
         if (activeUpgrade != null) {
-            val upgradePlugin = UpgradePanelUIPlugin(innerPanel!!, upgrade!!, member!!, market!!)
+            val upgradePlugin = UpgradePanelUIPlugin(innerPanel!!, upgrade!!, member!!, market)
             upgradePlugin.panelWidth = innerPanel!!.position.width
             upgradePlugin.panelHeight = innerPanel!!.position.height
             activePanel = upgradePlugin.layoutPanels()

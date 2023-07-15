@@ -18,26 +18,20 @@ import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
-import org.lazywizard.lazylib.CollectionUtils.SortEntitiesByDistance
-import org.lazywizard.lazylib.CollisionUtils
 import org.lazywizard.lazylib.MathUtils
 import org.lazywizard.lazylib.VectorUtils
-import org.lazywizard.lazylib.combat.CombatUtils
-import org.lazywizard.lazylib.ext.combat.getNearestPointOnBounds
 import org.lwjgl.util.vector.Vector2f
-import org.magiclib.util.MagicRender
 import java.awt.Color
-import java.util.*
 import kotlin.math.abs
 import kotlin.math.sin
 
 class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(0x9D62C4)
-    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return Utilities.hasItem(fleet.cargo, ITEM)
     }
 
-    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
+    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI?): Boolean {
         Utilities.takeItemQuantity(fleet.cargo, ITEM, 1f)
         return true
     }

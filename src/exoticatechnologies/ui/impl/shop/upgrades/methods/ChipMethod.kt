@@ -18,38 +18,40 @@ class ChipMethod : DefaultUpgradeMethod() {
     override val key = "chip"
     var upgradeChipStack: CargoStackAPI? = null
     override fun getOptionText(
-        fm: FleetMemberAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI
+        market: MarketAPI?
     ): String {
         return StringUtils.getString("UpgradeMethods", "ChipOption")
     }
 
     override fun getOptionTooltip(
-        fm: FleetMemberAPI,
-        es: ShipModifications,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI
+        market: MarketAPI?
     ): String {
         return StringUtils.getString("UpgradeMethods", "ChipOptionTooltip")
     }
 
-    override fun canUse(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean {
+    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
+        market ?: return false
+
         if (upgradeChipStack != null) {
-            val creditCost = getCreditCost(fm, mods, upgrade, upgradeChipStack)
+            val creditCost = getCreditCost(member, mods, upgrade, upgradeChipStack)
             return Global.getSector().playerFleet.cargo.credits.get() >= creditCost
         }
 
-        return (UpgradeChipSearcher().getChips(fm.fleetData.fleet.cargo, fm, mods, upgrade).isNotEmpty()
-                && super.canUse(fm, mods, upgrade, market))
+        return (UpgradeChipSearcher().getChips(member.fleetData.fleet.cargo, member, mods, upgrade).isNotEmpty()
+                && super.canUse(member, mods, upgrade, market))
     }
 
-    override fun canShow(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean {
-        return Utilities.hasUpgradeChip(fm.fleetData.fleet.cargo, upgrade.key)
+    override fun canShow(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
+        return Utilities.hasUpgradeChip(member.fleetData.fleet.cargo, upgrade.key)
     }
 
-    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): String {
+    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
         requireNotNull(upgradeChipStack) { "Missing chip stack." }
         val fleet = Global.getSector().playerFleet
         val stackPlugin = upgradeChipStack!!.plugin as UpgradeSpecialItemPlugin
@@ -69,7 +71,7 @@ class ChipMethod : DefaultUpgradeMethod() {
         fm: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI,
+        market: MarketAPI?,
         hovered: Boolean
     ): Map<String, Float> {
         val resourceCosts: MutableMap<String, Float> = HashMap()

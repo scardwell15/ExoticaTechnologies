@@ -15,17 +15,17 @@ interface UpgradeMethod {
      * The option text
      * @return the option text
      */
-    fun getOptionText(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): String
+    fun getOptionText(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String
 
     /**
      * The option tooltip
-     * @param fm fleet member to be upgraded
-     * @param es modifications object
+     * @param member fleet member to be upgraded
+     * @param mods modifications object
      * @param market market
      * @param upgrade
      * @return the option tooltip
      */
-    fun getOptionTooltip(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): String?
+    fun getOptionTooltip(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String?
 
     /**
      * Whether this upgrade method can be used.
@@ -34,16 +34,16 @@ interface UpgradeMethod {
      * @param market market
      * @return whether the upgrade method can be used
      */
-    fun canUse(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean
+    fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean
 
     /**
      * Whether to show this upgrade method.
-     * @param fm fleet member to be upgraded
-     * @param es modifications object
+     * @param member fleet member to be upgraded
+     * @param mods modifications object
      * @param market market
      * @return whether the upgrade method can be shown
      */
-    fun canShow(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean
+    fun canShow(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean
 
     /**
      * Applies the upgrade to the ship. This should also take the price away from the player.
@@ -53,7 +53,12 @@ interface UpgradeMethod {
      * @param market market
      * @return string to display briefly
      */
-    fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): String
+    fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String
+
+    /**
+     * Can use if market is null.
+     */
+    fun canUseIfMarketIsNull(): Boolean
 
     /**
      * Get cost of resources.
@@ -62,7 +67,7 @@ interface UpgradeMethod {
         fm: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI,
+        market: MarketAPI?,
         hovered: Boolean
     ): Map<String, Float>
 

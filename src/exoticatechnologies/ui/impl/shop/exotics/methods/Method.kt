@@ -6,10 +6,14 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 
 interface Method {
-    fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String
-    fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean
-    fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean
+    fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): String
+    fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean
+    fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean
     fun getButtonText(exotic: Exotic): String
     fun getButtonTooltip(exotic: Exotic): String?
-    fun getResourceMap(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI, hovered: Boolean): Map<String, Float>?
+    fun getResourceMap(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?, hovered: Boolean): Map<String, Float>?
+
+    fun canUseIfMarketIsNull(): Boolean {
+        return false
+    }
 }

@@ -25,12 +25,48 @@ class ExoticListUIPlugin(parentPanel: CustomPanelAPI,
         return rowPlugin
     }
 
+    override fun sortMembers(items: List<Exotic>): List<Exotic> {
+        val mods = member.getMods()
+        val sortedItems = items.sortedWith { a, b ->
+            if (mods.hasExotic(a))
+                if (mods.hasExotic(b))
+                    0
+                else
+                    -1
+            else if (mods.hasExotic(b))
+                    1
+            else
+                if (a.canAfford(member.fleetData.fleet, market))
+                    if (b.canAfford(member.fleetData.fleet, market))
+                        0
+                    else
+                        -1
+                else if (b.canAfford(member.fleetData.fleet, market))
+                    1
+                else
+                    if (a.canApply(member, mods))
+                        if (b.canApply(member, mods))
+                            0
+                        else
+                            -1
+                    else if (b.canApply(member, mods))
+                        1
+            else
+                0
+        }
+        return sortedItems
+    }
+
     override fun shouldMakePanelForItem(item: Exotic): Boolean {
         val mods = member.getMods()
         if (mods.hasExotic(item)) {
             return true
         }
 
-        return item.shouldShow(member, mods, market!!)
+        if (market == null) {
+            return false
+        }
+
+        return item.shouldShow(member, mods, market)
     }
 }

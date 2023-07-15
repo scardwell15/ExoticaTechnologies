@@ -8,6 +8,7 @@ import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.modifications.exotics.types.ExoticTypePanelPlugin
+import exoticatechnologies.ui.SpritePanelPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.StringUtils.Translation
 import org.json.JSONException
@@ -49,21 +50,24 @@ class ExoticData(key: String, var type: ExoticType = ExoticType.NORMAL) {
             .format("exoticName", exotic.name)
     }
 
-    fun addExoticIcon(tooltip: TooltipMakerAPI): Pair<UIComponentAPI, UIComponentAPI?> {
-        tooltip.addImage(exotic.icon, 64f, 0f)
-        val exoticIcon: UIComponentAPI = tooltip.prev
-        val typeOverlay: UIComponentAPI? = addExoticOverlayOver(tooltip, exoticIcon)
+    fun addExoticIcon(tooltip: TooltipMakerAPI): Pair<SpritePanelPlugin, SpritePanelPlugin?> {
+        val spritePlugin = SpritePanelPlugin(Global.getSettings().getSprite(exotic.icon))
+        val iconPanel = Global.getSettings().createCustom(64f, 64f, spritePlugin)
+        spritePlugin.panel = iconPanel
+        tooltip.addCustom(iconPanel, 0f)
 
-        return exoticIcon to typeOverlay
+        val typeOverlay: SpritePanelPlugin? = addExoticOverlayOver(tooltip, iconPanel)
+
+        return spritePlugin to typeOverlay
     }
 
-    fun addExoticOverlayOver(tooltip: TooltipMakerAPI, exoticIcon: UIComponentAPI): UIComponentAPI? {
-        var typeOverlay: UIComponentAPI? = null
+    fun addExoticOverlayOver(tooltip: TooltipMakerAPI, exoticIcon: UIComponentAPI): SpritePanelPlugin? {
+        var typeOverlay: SpritePanelPlugin? = null
 
         if (type.sprite != null) {
-            val overlayPanel = Global.getSettings().createCustom(exoticIcon.position.width, exoticIcon.position.height, ExoticTypePanelPlugin(type))
+            typeOverlay = ExoticTypePanelPlugin(type)
+            val overlayPanel = Global.getSettings().createCustom(exoticIcon.position.width, exoticIcon.position.height, typeOverlay)
             tooltip.addCustom(overlayPanel, -exoticIcon.position.height)
-            typeOverlay = tooltip.prev
         }
 
         return typeOverlay

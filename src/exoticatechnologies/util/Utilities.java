@@ -13,6 +13,7 @@ import exoticatechnologies.modifications.ModSpecialItemPlugin;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
+import exoticatechnologies.modifications.exotics.types.ExoticType;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
 import org.json.JSONArray;
@@ -317,6 +318,48 @@ public class Utilities {
         if (stack.getSize() == 0) {
             stack.getCargo().removeStack(stack);
         }
+    }
+
+    public static int countChips(CargoAPI cargo, String id) {
+        if (cargo == null) return 0;
+
+        int count = 0;
+        for(CargoStackAPI stack : cargo.getStacksCopy()) {
+            if(stack.isSpecialStack()) {
+                if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    count += countChips(plugin.getCargo(), id);
+                } else if (stack.getPlugin() instanceof ModSpecialItemPlugin) {
+                    ModSpecialItemPlugin upgradeItem = (ModSpecialItemPlugin) stack.getPlugin();
+                    if (id.equals(upgradeItem.getModId())) {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public static Set<ExoticType> getTypesInCargo(CargoAPI cargo, String id) {
+        if (cargo == null) return new LinkedHashSet<>();
+
+        Set<ExoticType> types = new LinkedHashSet<>();
+        for(CargoStackAPI stack : cargo.getStacksCopy()) {
+            if(stack.isSpecialStack()) {
+                if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    types.addAll(getTypesInCargo(plugin.getCargo(), id));
+                } else if (stack.getPlugin() instanceof ExoticSpecialItemPlugin) {
+                    ExoticSpecialItemPlugin upgradeItem = (ExoticSpecialItemPlugin) stack.getPlugin();
+                    if (id.equals(upgradeItem.getModId())) {
+                        types.add(upgradeItem.getExoticData().getType());
+                    }
+                }
+            }
+        }
+
+        return types;
     }
 
     public static CargoStackAPI getUpgradeChip(CargoAPI cargo, String id, int level) {

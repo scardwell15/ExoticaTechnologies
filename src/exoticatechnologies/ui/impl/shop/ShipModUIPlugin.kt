@@ -17,7 +17,7 @@ import java.awt.Color
 import kotlin.math.max
 
 class ShipModUIPlugin(
-    val dialog: InteractionDialogAPI,
+    val dialog: InteractionDialogAPI?,
     var parentPanel: CustomPanelAPI, override var panelWidth: Float, override var panelHeight: Float
 ) : InteractiveUIPanelPlugin() {
     private val pad = 3f
@@ -106,7 +106,7 @@ class ShipModUIPlugin(
             tabHolderPlugin.lineColor = plugin.getTabButtonUIPlugin().baseColor
             if (plugin is ShopMenuUIPlugin) {
                 plugin.member = member
-                plugin.market = dialog.interactionTarget.market
+                plugin.market = dialog?.interactionTarget?.market
             }
         }
 

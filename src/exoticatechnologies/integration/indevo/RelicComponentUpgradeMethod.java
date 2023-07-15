@@ -13,6 +13,8 @@ import exoticatechnologies.ui.impl.shop.upgrades.methods.DefaultUpgradeMethod;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,17 +24,19 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
     public String key = "relicComponents";
     private static final String OPTION = "ETShipExtraUpgradeApplyIndEvoRelics";
 
+    @NotNull
     @Override
-    public String getOptionText(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+    public String getOptionText(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market) {
         return StringUtils.getTranslation("UpgradeMethods", "IndEvoRelicsOption")
-                .format("relics", IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, es.getUpgrade(upgrade)))
+                .format("relics", IndEvoUtil.getUpgradeRelicComponentPrice(member, upgrade, mods.getUpgrade(upgrade)))
                 .toString();
     }
 
+    @Nullable
     @Override
-    public String getOptionTooltip(FleetMemberAPI fm, ShipModifications es, Upgrade upgrade, MarketAPI market) {
+    public String getOptionTooltip(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market) {
         return StringUtils.getTranslation("UpgradeMethods", "IndEvoRelicsTooltip")
-                .format("relics", getTotalComponents(fm.getFleetData().getFleet(), market))
+                .format("relics", getTotalComponents(member.getFleetData().getFleet(), market))
                 .toString();
     }
 
@@ -46,8 +50,9 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
                 && super.canUse(member, mods, upgrade, market);
     }
 
+    @NotNull
     @Override
-    public String apply(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
+    public String apply(@NotNull FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
         int level = mods.getUpgrade(upgrade);
         int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, level);
 
@@ -76,8 +81,9 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
                 .toString();
     }
 
+    @NotNull
     @Override
-    public Map<String, Float> getResourceCostMap(FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market, boolean hovered) {
+    public Map<String, Float> getResourceCostMap(@NotNull FleetMemberAPI fm, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market, boolean hovered) {
         Map<String, Float> resourceCosts = new HashMap<>();
 
         if (hovered) {

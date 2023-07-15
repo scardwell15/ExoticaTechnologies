@@ -10,7 +10,7 @@ import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.util.StringUtils
 
 open class DestroyMethod : Method {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String {
+    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): String {
         mods.removeExotic(exotic)
         exotic.onDestroy(member)
 
@@ -20,7 +20,7 @@ open class DestroyMethod : Method {
         return StringUtils.getString("ExoticsDialog", "ExoticDestroyed")
     }
 
-    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean {
+    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean {
         if (mods.hasExotic(exotic)) {
             var shipBandwidth: Float = mods.getBandwidthWithExotics(member)
             var extraBandwidth: Float = 0f
@@ -38,7 +38,7 @@ open class DestroyMethod : Method {
         return false
     }
 
-    override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean {
+    override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean {
         return true
     }
 
@@ -54,7 +54,7 @@ open class DestroyMethod : Method {
         member: FleetMemberAPI,
         mods: ShipModifications,
         exotic: Exotic,
-        market: MarketAPI,
+        market: MarketAPI?,
         hovered: Boolean
     ): Map<String, Float>? {
         if (hovered) {

@@ -22,7 +22,7 @@ class UpgradeMethodsUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     var member: FleetMemberAPI,
-    var market: MarketAPI
+    var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var methodsTooltip: TooltipMakerAPI? = null
@@ -128,7 +128,6 @@ class UpgradeMethodsUIPlugin(
             }
 
             if (upgrade.canUseUpgradeMethod(member, mods, method)) {
-                val canUse = method.canUse(member, mods, upgrade, market)
                 val methodButton: ButtonAPI = tooltip.addButton(buttonText, "", buttonWidth, 18f, 2f)
                 val tooltipText = method.getOptionTooltip(member, mods, upgrade, market)
                 if (tooltipText != null) {
@@ -138,7 +137,7 @@ class UpgradeMethodsUIPlugin(
                     )
                 }
 
-                methodButton.isEnabled = canUse
+                methodButton.isEnabled = (market != null || method.canUseIfMarketIsNull()) && method.canUse(member, mods, upgrade, market)
                 buttons[methodButton] = MethodButtonHandler(method, this)
 
                 if (lastButton == null) {

@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Commodities
-import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.hullmods.ExoticaTechHM
 import exoticatechnologies.modifications.ShipModLoader.Companion.set
 import exoticatechnologies.modifications.ShipModifications
@@ -15,17 +14,8 @@ import lombok.Getter
 class CreditsMethod : DefaultUpgradeMethod() {
     @Getter
     override var key = "credits"
-    override fun getOptionText(fm: FleetMemberAPI, es: ShipModifications, upgrade: Upgrade, market: MarketAPI): String {
-        val level = es.getUpgrade(upgrade)
-        val resourceCreditCost = upgrade.getCreditCostForResources(upgrade.getResourceCosts(fm, level)).toFloat()
-        val convenienceFee =
-            getConvenienceCreditCost(resourceCreditCost, level, upgrade.maxLevel, market)
-        val creditCost = getFinalCreditCost(fm, upgrade, level, market)
-        val creditCostFormatted = Misc.getFormat().format(creditCost.toLong())
-        val convenienceFeeFormatted = Misc.getFormat().format(convenienceFee.toLong())
+    override fun getOptionText(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
         return StringUtils.getTranslation("UpgradeMethods", "CreditsOption")
-            .format("credits", creditCostFormatted)
-            .format("extraTax", convenienceFeeFormatted)
             .toString()
     }
 
@@ -33,12 +23,14 @@ class CreditsMethod : DefaultUpgradeMethod() {
         member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI
+        market: MarketAPI?
     ): String {
         return StringUtils.getString("UpgradeMethods", "CreditsUpgradeTooltip")
     }
 
-    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean {
+    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
+        market ?: return false
+
         if (upgrade.resourceRatios.isEmpty()) return false
         val level = mods.getUpgrade(upgrade)
         val creditCost = getFinalCreditCost(member, upgrade, level, market)
@@ -46,9 +38,9 @@ class CreditsMethod : DefaultUpgradeMethod() {
                 && super.canUse(member, mods, upgrade, market))
     }
 
-    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): String {
+    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
         val level = mods.getUpgrade(upgrade)
-        val creditCost = getFinalCreditCost(fm, upgrade, level, market)
+        val creditCost = getFinalCreditCost(fm, upgrade, level, market!!)
         Global.getSector().playerFleet.cargo.credits.subtract(creditCost.toFloat())
         mods.putUpgrade(upgrade)
         set(fm, mods)
@@ -63,15 +55,13 @@ class CreditsMethod : DefaultUpgradeMethod() {
         member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI,
+        market: MarketAPI?,
         hovered: Boolean
     ): Map<String, Float> {
         val resourceCosts: MutableMap<String, Float> = HashMap()
-        var cost = 0f
         if (hovered) {
-            cost = getFinalCreditCost(member, upgrade, mods.getUpgrade(upgrade), market).toFloat()
+            resourceCosts[Commodities.CREDITS] = getFinalCreditCost(member, upgrade, mods.getUpgrade(upgrade), market!!).toFloat()
         }
-        resourceCosts[Commodities.CREDITS] = cost
         return resourceCosts
     }
 

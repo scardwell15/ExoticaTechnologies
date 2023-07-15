@@ -6,7 +6,6 @@ import com.fs.starfarer.api.ui.CutStyle
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModifications
-import exoticatechnologies.modifications.conditions.impl.Upgrades
 import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import exoticatechnologies.ui.BaseUIPanelPlugin

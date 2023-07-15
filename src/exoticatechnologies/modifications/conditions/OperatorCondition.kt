@@ -39,7 +39,7 @@ abstract class OperatorCondition : Condition {
         extra = condition.opt("extra")
         weight = condition.optFloat("weight", 0f)
         weightScales = condition.optBoolean("weightScales")
-        weightOnly = condition.optBoolean("weightScales")
+        weightOnly = condition.optBoolean("weightOnly")
         maxWeight = condition.optFloat("maxWeight", -1f)
         chipSkips = condition.optBoolean("chipSkips")
         cannotApplyReason = condition.optString("cannotApplyReason", null)

@@ -1,74 +1,11 @@
 package exoticatechnologies.modifications.exotics.types
 
 import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.campaign.CustomUIPanelPlugin
-import com.fs.starfarer.api.graphics.SpriteAPI
-import com.fs.starfarer.api.input.InputEventAPI
-import com.fs.starfarer.api.ui.PositionAPI
-import org.lazywizard.lazylib.opengl.ColorUtils
-import org.lwjgl.opengl.GL11
+import exoticatechnologies.ui.SpritePanelPlugin
 import org.magiclib.kotlin.setAlpha
 
-class ExoticTypePanelPlugin(val type: ExoticType) : CustomUIPanelPlugin {
-    val sprite: SpriteAPI = Global.getSettings().getSprite(type.sprite)
+class ExoticTypePanelPlugin(val type: ExoticType) : SpritePanelPlugin(Global.getSettings().getSprite(type.sprite)) {
     init {
         sprite.color = type.colorOverlay.setAlpha(255)
-    }
-
-    var pos: PositionAPI? = null
-
-    override fun positionChanged(position: PositionAPI?) {
-        pos = position
-    }
-
-    override fun renderBelow(alphaMult: Float) {
-    }
-
-    override fun render(alphaMult: Float) {
-        pos?.let {
-            val x = pos!!.x
-            val y = pos!!.y
-            val w = pos!!.width
-            val h = pos!!.height
-            val color = sprite.color
-
-            //Otherwise, we actually render the thing
-            //This part instantiates OpenGL
-            GL11.glPushMatrix()
-            GL11.glEnable(GL11.GL_TEXTURE_2D)
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, sprite.textureId)
-            GL11.glEnable(GL11.GL_BLEND)
-            GL11.glBegin(GL11.GL_QUADS)
-            ColorUtils.glColor(
-                color
-            )
-            //Sets corner 1, or the first left corner
-            GL11.glTexCoord2f(0f, 0f)
-            GL11.glVertex2f(x - 1.0f, y - 1.0f)
-
-            //Sets corner 2, or the first right corner
-            GL11.glTexCoord2f(1f, 0f)
-            GL11.glVertex2f(x + w + 1.0f, y - 1.0f)
-
-            //Sets corner 3, or the second right corner
-            GL11.glTexCoord2f(1f, 1f)
-            GL11.glVertex2f(x + w + 1.0f, y + h + 1.0f)
-
-            //Sets corner 4, or the second left corner
-            GL11.glTexCoord2f(0f, 1f)
-            GL11.glVertex2f(x - 1.0f, y + h + 1.0f)
-            GL11.glEnd()
-            GL11.glPopMatrix()
-        }
-
-    }
-
-    override fun advance(amount: Float) {
-    }
-
-    override fun processInput(events: MutableList<InputEventAPI>?) {
-    }
-
-    override fun buttonPressed(buttonId: Any?) {
     }
 }

@@ -18,7 +18,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class ShipHeaderUIPlugin(
-    dialog: InteractionDialogAPI,
+    dialog: InteractionDialogAPI?,
     var member: FleetMemberAPI, var parentPanel: CustomPanelAPI
 ) : InteractiveUIPanelPlugin() {
     private val pad = 3f
@@ -27,7 +27,7 @@ class ShipHeaderUIPlugin(
     override var panelWidth: Float = Global.getSettings().screenHeight * 0.65f
     override var panelHeight: Float = max(100f, Global.getSettings().screenHeight * 0.166f)
 
-    var market: MarketAPI = dialog.interactionTarget.market
+    var market: MarketAPI? = dialog?.interactionTarget?.market
     var lastValue: Float = -1f
     var lastCredits: Float = -1f
 
@@ -167,6 +167,14 @@ class ShipHeaderUIPlugin(
     }
 
     private fun setBandwidthUpgradeLabel() {
+        if (market == null) {
+            StringUtils.getTranslation("CommonOptions", "MustBeDockedAtMarket")
+                .setLabelText(bandwidthUpgradeLabel)
+            bandwidthUpgradeLabel?.setColor(Misc.getNegativeHighlightColor())
+            bandwidthButton?.isEnabled = false
+            return
+        }
+
         val mods = member.getMods()
         bandwidthUpgradeLabel?.let {
             if (mods.getBaseBandwidth() >= Bandwidth.MAX_BANDWIDTH) {

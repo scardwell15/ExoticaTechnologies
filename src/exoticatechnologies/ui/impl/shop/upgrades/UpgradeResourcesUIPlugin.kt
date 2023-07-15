@@ -2,6 +2,7 @@ package exoticatechnologies.ui.impl.shop.upgrades
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.bandwidth.Bandwidth
@@ -15,7 +16,7 @@ class UpgradeResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     member: FleetMemberAPI,
-    var market: MarketAPI
+    var market: MarketAPI?
 ) : ResourcesUIPlugin(member) {
     override var mainPanel: CustomPanelAPI? = null
     private var resourcesTooltip: TooltipMakerAPI? = null
@@ -41,21 +42,28 @@ class UpgradeResourcesUIPlugin(
         val mods = member.getMods()
         destroyTooltip()
 
-        //gather resource costs first, across all upgrade methods
         val resourceCosts: MutableMap<String, Float> = linkedMapOf()
-
         resourceCosts[Bandwidth.BANDWIDTH_RESOURCE] = upgrade.bandwidthUsage
-        UpgradesHandler.UPGRADE_METHODS.forEach { method ->
-            val hovered = method == activeMethod
-            method?.getResourceCostMap(member, mods, upgrade, market, hovered)?.forEach { (key, cost) ->
-                if (resourceCosts[key] != null) {
-                    resourceCosts[key] = resourceCosts[key]!!.plus(cost)
-                } else {
-                    resourceCosts[key] = cost
+        resourceCosts[Commodities.CREDITS] = 0f
+
+        if (activeMethod != null) {
+            if (market == null && !activeMethod.canUseIfMarketIsNull()) {
+                resourceCosts["^CommonOptions.MustBeDockedAtMarket"] = 1f
+            } else {
+                activeMethod.getResourceCostMap(member, mods, upgrade, market, false)?.forEach { (key, cost) ->
+                    if (resourceCosts[key] != null) {
+                        resourceCosts[key] = resourceCosts[key]!!.plus(cost)
+                    } else {
+                        resourceCosts[key] = cost
+                    }
                 }
             }
         }
 
         resourcesTooltip = displayResourceCosts(resourceCosts)
+    }
+
+    companion object {
+        const val CANNOT_USE = "##cannotuse##"
     }
 }

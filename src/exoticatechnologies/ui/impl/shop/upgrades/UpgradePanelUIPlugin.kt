@@ -12,7 +12,6 @@ import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipPanelUIPlugin
-import exoticatechnologies.ui.impl.shop.exotics.chips.ExoticChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.chips.UpgradeChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
@@ -24,7 +23,7 @@ class UpgradePanelUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     var member: FleetMemberAPI,
-    var market: MarketAPI
+    var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionPlugin: UpgradeDescriptionUIPlugin? = null
@@ -97,7 +96,7 @@ class UpgradePanelUIPlugin(
         chipsTooltip = mainPanel!!.createUIElement(pW, pH, false)
         val innerPanel = mainPanel!!.createCustomPanel(pW, pH, null)
 
-        chipsPlugin = UpgradeChipPanelUIPlugin(innerPanel, upgrade, member, market)
+        chipsPlugin = UpgradeChipPanelUIPlugin(innerPanel, upgrade, member, market!!)
         chipsPlugin!!.panelWidth = pW
         chipsPlugin!!.panelHeight = pH
         chipsPlugin!!.layoutPanels().position.inTR(0f, 0f)

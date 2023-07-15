@@ -19,12 +19,12 @@ import java.awt.Color
 
 class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(0xFF8902)
-    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return (Utilities.hasItem(fleet.cargo, ITEM)
                 && fleet.cargo.credits.get() >= COST_CREDITS)
     }
 
-    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
+    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI?): Boolean {
         fleet.cargo.credits.subtract(150000f)
         Utilities.takeItemQuantity(fleet.cargo, ITEM, 1f)
         return true

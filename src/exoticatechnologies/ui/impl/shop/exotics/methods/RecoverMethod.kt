@@ -12,7 +12,7 @@ import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
 class RecoverMethod : DestroyMethod() {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String {
+    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): String {
         val fleet: CampaignFleetAPI = member.fleetData.fleet
         
         val exoticData = mods.getExoticData(exotic)
@@ -35,7 +35,7 @@ class RecoverMethod : DestroyMethod() {
         return StringUtils.getString("ExoticsDialog", "ExoticRecovered")
     }
 
-    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean {
+    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean {
         if (Global.getSector().playerStats.storyPoints >= 1f) {
             return super.canUse(member, mods, exotic, market)
         }
@@ -50,7 +50,7 @@ class RecoverMethod : DestroyMethod() {
         member: FleetMemberAPI,
         mods: ShipModifications,
         exotic: Exotic,
-        market: MarketAPI,
+        market: MarketAPI?,
         hovered: Boolean
     ): Map<String, Float>? {
         if (hovered) {

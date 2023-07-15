@@ -34,7 +34,7 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
     }
 
     fun layoutPanels(members: List<T>): CustomPanelAPI {
-        val validMembers = members.filter { shouldMakePanelForItem(it) }
+        var validMembers = members.filter { shouldMakePanelForItem(it) }
 
         val outerPanel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         val outerTooltip = outerPanel.createUIElement(panelWidth, panelHeight, false)
@@ -51,6 +51,7 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
 
         var lastItem: CustomPanelAPI? = null
 
+        validMembers = sortMembers(validMembers)
         validMembers
             .map { it to createPanelForItem(tooltip, it) }
             .filter { (_, rowPlugin) -> rowPlugin != null }
@@ -74,6 +75,10 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
         parentPanel.addComponent(outerPanel).inTL(0f, 0f)
 
         return outerPanel
+    }
+
+    open fun sortMembers(items: List<T>): List<T> {
+        return items
     }
 
     fun clearItems() {

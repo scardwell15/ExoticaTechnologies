@@ -47,11 +47,11 @@ class AnomalousConjuration(key: String, settings: JSONObject) : Exotic(key, sett
         }
     }
 
-    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
+    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
         return false
     }
 
-    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return true
     }
 

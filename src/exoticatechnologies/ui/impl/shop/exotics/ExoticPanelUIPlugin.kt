@@ -22,7 +22,7 @@ class ExoticPanelUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     var member: FleetMemberAPI,
-    var market: MarketAPI
+    var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionPlugin: ExoticDescriptionUIPlugin? = null
@@ -121,7 +121,7 @@ class ExoticPanelUIPlugin(
         chipsTooltip = mainPanel!!.createUIElement(pW, pH, false)
         val innerPanel = mainPanel!!.createCustomPanel(pW, pH, null)
 
-        chipsPlugin = ExoticChipPanelUIPlugin(innerPanel, exotic, member, market)
+        chipsPlugin = ExoticChipPanelUIPlugin(innerPanel, exotic, member, market!!)
         chipsPlugin!!.panelWidth = pW
         chipsPlugin!!.panelHeight = pH
         chipsPlugin!!.layoutPanels().position.inTR(0f, 0f)

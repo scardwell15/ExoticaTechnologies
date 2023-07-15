@@ -24,7 +24,7 @@ class ExoticMethodsUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     var member: FleetMemberAPI,
-    var market: MarketAPI,
+    var market: MarketAPI?,
     var methods: List<Method>
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -119,7 +119,7 @@ class ExoticMethodsUIPlugin(
                     )
                 }
 
-                methodButton.isEnabled = method.canUse(member, mods, exotic, market)
+                methodButton.isEnabled = (market != null || method.canUseIfMarketIsNull()) && method.canUse(member, mods, exotic, market)
                 buttons[methodButton] = MethodButtonHandler(method, this)
 
                 if (lastButton == null) {

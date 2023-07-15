@@ -13,7 +13,7 @@ class ExoticResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     member: FleetMemberAPI,
-    var market: MarketAPI,
+    var market: MarketAPI?,
     var methods: List<Method>
 ) : ResourcesUIPlugin(member) {
     override var mainPanel: CustomPanelAPI? = null
@@ -43,13 +43,16 @@ class ExoticResourcesUIPlugin(
         //gather resource costs first, across all upgrade methods
         val resourceCosts: MutableMap<String, Float> = linkedMapOf()
 
-        methods.forEach { method ->
-            val hovered = method == activeMethod
-            method.getResourceMap(member, mods, exotic, market, hovered)?.forEach { (key, cost) ->
-                if (resourceCosts[key] != null) {
-                    resourceCosts[key] = resourceCosts[key]!!.plus(cost)
-                } else {
-                    resourceCosts[key] = cost
+        if (activeMethod != null) {
+            if (market == null && !activeMethod.canUseIfMarketIsNull()) {
+                resourceCosts["^CommonOptions.MustBeDockedAtMarket"] = 1f
+            } else {
+                activeMethod.getResourceMap(member, mods, exotic, market, false)?.forEach { (key, cost) ->
+                    if (resourceCosts[key] != null) {
+                        resourceCosts[key] = resourceCosts[key]!!.plus(cost)
+                    } else {
+                        resourceCosts[key] = cost
+                    }
                 }
             }
         }

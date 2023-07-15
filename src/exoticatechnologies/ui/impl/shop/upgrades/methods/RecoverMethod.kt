@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Commodities
-import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.hullmods.ExoticaTechHM
 import exoticatechnologies.modifications.ShipModLoader.Companion.set
 import exoticatechnologies.modifications.ShipModifications
@@ -17,40 +16,43 @@ class RecoverMethod : UpgradeMethod {
     @Getter
     override var key = "recover"
     override fun getOptionText(
-        fm: FleetMemberAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI
+        market: MarketAPI?
     ): String {
-        val creditCost = getCreditCost(fm, mods, upgrade)
-        val creditCostFormatted = Misc.getFormat().format(creditCost.toLong())
         return StringUtils.getTranslation("UpgradeMethods", "RecoverOption")
-            .format("credits", creditCostFormatted)
             .toString()
     }
 
     override fun getOptionTooltip(
-        fm: FleetMemberAPI,
-        es: ShipModifications,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI
+        market: MarketAPI?
     ): String {
         return StringUtils.getTranslation("UpgradeMethods", "RecoverOptionTooltip").toString()
     }
 
-    override fun canShow(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean {
+    override fun canShow(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
         return mods.hasUpgrade(upgrade)
     }
 
-    override fun canUse(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): Boolean {
+    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
+        market ?: return false
+
         if (mods.hasUpgrade(upgrade)) {
-            val creditCost = getCreditCost(fm, mods, upgrade)
+            val creditCost = getCreditCost(member, mods, upgrade)
             return Global.getSector().playerFleet.cargo.credits.get() >= creditCost
         }
         return false
     }
 
-    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI): String {
+    override fun canUseIfMarketIsNull(): Boolean {
+        return false
+    }
+
+    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
         val fleet = Global.getSector().playerFleet
         val creditCost = getCreditCost(fm, mods, upgrade)
         val stack = Utilities.getUpgradeChip(fleet.cargo, upgrade.key, mods.getUpgrade(upgrade))
@@ -70,7 +72,7 @@ class RecoverMethod : UpgradeMethod {
         fm: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
-        market: MarketAPI,
+        market: MarketAPI?,
         hovered: Boolean
     ): Map<String, Float> {
         val resourceCosts: MutableMap<String, Float> = HashMap()

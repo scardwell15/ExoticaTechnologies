@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.ETModSettings
 import exoticatechnologies.modifications.Modification
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.stats.UpgradeModEffect
@@ -55,7 +54,7 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
         }
     }
 
-    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
+    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
         if (mods.getUpgrade(this) > 0) {
             return true
         }

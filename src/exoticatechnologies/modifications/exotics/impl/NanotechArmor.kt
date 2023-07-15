@@ -29,7 +29,7 @@ class NanotechArmor(key: String, settingsObj: JSONObject) :
     override var color = Color(0x00000)
         get() = Global.getSector().getFaction(Factions.DERELICT).color
 
-    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
+    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
         return (Utilities.hasExoticChip(member.fleetData.fleet.cargo, key)
                 || Utilities.hasExoticChip(Misc.getStorageCargo(market), key))
     }

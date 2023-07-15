@@ -21,12 +21,12 @@ class AlphaSubcore(key: String, settingsObj: JSONObject) :
         return 0.05f * chanceMult
     }
 
-    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return Utilities.hasItem(fleet.cargo, ITEM)
                 || Utilities.hasItem(Misc.getStorageCargo(market), ITEM)
     }
 
-    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
+    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI?): Boolean {
         if (Utilities.hasItem(fleet.cargo, ITEM)) {
             Utilities.takeItemQuantity(fleet.cargo, ITEM, 1f)
         } else {
@@ -58,7 +58,7 @@ class AlphaSubcore(key: String, settingsObj: JSONObject) :
     override fun getResourceCostMap(
         fm: FleetMemberAPI,
         mods: ShipModifications,
-        market: MarketAPI
+        market: MarketAPI?
     ): MutableMap<String, Float> {
         val resourceCosts: MutableMap<String, Float> = HashMap()
         resourceCosts[ITEM] = 1f

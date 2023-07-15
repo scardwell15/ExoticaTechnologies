@@ -27,7 +27,7 @@ class DaemonCore(key: String, settingsObj: JSONObject) :
         return 0f
     }
 
-    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
+    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
         return (canAfford(member.fleetData.fleet, market)
                 || Utilities.hasExoticChip(
             member.fleetData.fleet.cargo,
@@ -35,14 +35,14 @@ class DaemonCore(key: String, settingsObj: JSONObject) :
         ) || Misc.getStorageCargo(market) != null && Utilities.hasExoticChip(Misc.getStorageCargo(market), key))
     }
 
-    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return Utilities.hasItem(
             fleet.cargo,
             ITEM
         ) || Misc.getStorageCargo(market) != null && Utilities.hasItem(Misc.getStorageCargo(market), ITEM)
     }
 
-    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
+    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI?): Boolean {
         if (Utilities.hasItem(fleet.cargo, ITEM)) {
             Utilities.takeItemQuantity(fleet.cargo, ITEM, 1f)
         } else {
@@ -75,7 +75,7 @@ class DaemonCore(key: String, settingsObj: JSONObject) :
     override fun getResourceCostMap(
         fm: FleetMemberAPI,
         mods: ShipModifications,
-        market: MarketAPI
+        market: MarketAPI?
     ): MutableMap<String, Float> {
         val resourceCosts: MutableMap<String, Float> = HashMap()
         resourceCosts[ITEM] = 1f

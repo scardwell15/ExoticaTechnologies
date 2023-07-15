@@ -44,6 +44,9 @@
 		"BandwidthUsed": "*${usedBandwidth}* used",
 		"BandwidthUsedByUpgrade": "=${upgradeBandwidth}=",
 		"StoryPointCost": "*${storyPoints} story points*",
+
+		"MustBeDockedAtMarket": "=Must be docked at market=",
+		"InStockCount": "${count} in cargo"
 	},
 	"FleetScanner": {
 		"ShipBandwidthShort": "Bandwidth: *${bandwidth}*",

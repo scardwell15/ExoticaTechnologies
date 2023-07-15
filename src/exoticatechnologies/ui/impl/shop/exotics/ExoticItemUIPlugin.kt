@@ -1,6 +1,7 @@
 package exoticatechnologies.ui.impl.shop.exotics
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.LabelAPI
@@ -8,10 +9,13 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.modifications.exotics.types.ExoticType
+import exoticatechnologies.ui.SpritePanelPlugin
 import exoticatechnologies.ui.UIUtils
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
+import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.Utilities
 import exoticatechnologies.util.getMods
 import org.magiclib.kotlin.setAlpha
 import java.awt.Color
@@ -23,9 +27,13 @@ class ExoticItemUIPlugin(
 ) : ListItemUIPanelPlugin<Exotic>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
     private val opad = 6f
+    private var exoticSprite: SpriteAPI? = null
+    private var typeSprite: SpriteAPI? = null
     override var panelWidth: Float = 222f
     override var panelHeight: Float = 64f
     var wasHovered: Boolean = false
+    val selected
+        get() = bgColor.alpha >= 100
 
     var installed: Boolean = false
     var installedText: LabelAPI? = null
@@ -37,6 +45,16 @@ class ExoticItemUIPlugin(
     override fun advance(amount: Float) {
         val mods = member.getMods()
         if (mods.hasExotic(item) != installed) {
+            if (mods.hasExotic(item) || selected) {
+                exoticSprite?.color = RenderUtils.INSTALLED_COLOR
+            } else if (!item.canApply(member, mods)) {
+                exoticSprite?.color = RenderUtils.CANT_INSTALL_COLOR
+                typeSprite?.color = RenderUtils.mergeColors(typeSprite?.color, exoticSprite?.color, 0.5f)
+            } else {
+                exoticSprite?.color = RenderUtils.CAN_APPLY_COLOR
+                typeSprite?.color = RenderUtils.mergeColors(typeSprite?.color, exoticSprite?.color, 0.5f)
+            }
+
             installed = mods.hasExotic(item)
             generate(panel!!)
         }
@@ -69,11 +87,27 @@ class ExoticItemUIPlugin(
         val exoticData = mods.getExoticData(item) ?: ExoticData(item)
 
         itemImage = rowPanel.createUIElement(iconSize, panelHeight, false)
-        exoticData.addExoticIcon(itemImage!!)
+
+        var textColor = Color(255, 255, 255)
+        val iconPlugins = exoticData.addExoticIcon(itemImage!!)
+        exoticSprite = iconPlugins.first.sprite
+        typeSprite = iconPlugins.second?.sprite
+        if (mods.hasExotic(item)) {
+            exoticSprite?.color = RenderUtils.INSTALLED_COLOR
+        } else if (!item.canApply(member, mods)) {
+            exoticSprite?.color = RenderUtils.CANT_INSTALL_COLOR
+            typeSprite?.color = RenderUtils.mergeColors(typeSprite?.color, exoticSprite?.color, 0.5f)
+            textColor = RenderUtils.mergeColors(Color.white, exoticSprite?.color, 0.5f)
+        } else {
+            exoticSprite?.color = RenderUtils.CAN_APPLY_COLOR
+            typeSprite?.color = RenderUtils.mergeColors(typeSprite?.color, exoticSprite?.color, 0.5f)
+            textColor = RenderUtils.mergeColors(Color.white, exoticSprite?.color, 0.5f)
+        }
+
         rowPanel.addUIElement(itemImage).inLMid(0f)
 
         itemInfo = rowPanel.createUIElement(panelWidth - 9f - iconSize, 14f, false)
-        itemInfo!!.addPara(item.name, 0f).position.inTL(0f, 0f)
+        itemInfo!!.addPara(item.name, textColor, 0f).position.inTL(0f, 0f)
         val nameLabel = itemInfo!!.prev
 
         if (installed) {
@@ -90,7 +124,34 @@ class ExoticItemUIPlugin(
                 typeText = null
             }
         } else {
-            installedText = null
+            val quantity = Utilities.countChips(member.fleetData.fleet.cargo, item.key)
+
+            if (quantity > 0) {
+                var newText = StringUtils.getTranslation("CommonOptions", "InStockCount")
+                    .format("count", quantity)
+                    .toStringNoFormats()
+
+                val types = Utilities.getTypesInCargo(member.fleetData.fleet.cargo, item.key)
+                    .filter { it != ExoticType.NORMAL}
+
+                if (types.isNotEmpty()) {
+                    val typeLetters = types.map { it.name.substring(0, 1) }.toMutableList()
+                    val typeColors = types.map { it.colorOverlay.setAlpha(255) }.toMutableList()
+                    typeColors.add(0, Color(150, 150, 150))
+
+                    val newLabelText = newText + " | " + typeLetters.joinToString ( separator = " " )
+
+                    typeLetters.add(0, newText)
+
+                    installedText = itemInfo!!.addPara(newLabelText, 0f)
+                    installedText!!.setHighlightColors(*typeColors.toTypedArray())
+                    installedText!!.setHighlight(*typeLetters.toTypedArray())
+                } else {
+                    installedText = itemInfo!!.addPara(newText, Color(150, 150, 150), 0f)
+                }
+            } else {
+                installedText = null
+            }
             typeText = null
         }
 
@@ -100,7 +161,7 @@ class ExoticItemUIPlugin(
     }
 
     override fun processInput(events: List<InputEventAPI>) {
-        if (bgColor.alpha >= 100) return // selected already
+        if (selected) return
 
         if (isHovered(events)) {
             if (!wasHovered) {

@@ -60,7 +60,7 @@ class ExoticShopUIPlugin: ShopMenuUIPlugin() {
 
         activeExotic = exotic
         if (activeExotic != null) {
-            val exoticPlugin = ExoticPanelUIPlugin(innerPanel!!, exotic!!, member!!, market!!)
+            val exoticPlugin = ExoticPanelUIPlugin(innerPanel!!, exotic!!, member!!, market)
             exoticPlugin.panelWidth = innerPanel!!.position.width
             exoticPlugin.panelHeight = innerPanel!!.position.height
             activePanel = exoticPlugin.layoutPanels()

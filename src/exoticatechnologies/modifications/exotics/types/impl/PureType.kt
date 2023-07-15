@@ -10,11 +10,11 @@ import java.awt.Color
 
 class PureType : ExoticType("PURE", colorOverlay = Color(255, 200, 125, 255), sprite = "graphics/icons/overlays/pure.png") {
     override fun getPositiveMult(member: FleetMemberAPI, mods: ShipModifications): Float {
-        return 2.5f - 0.75f * getBandwidthRatio(member, mods) - 0.75f * getExoticRatio(member, mods)
+        return 2.5f - 1.5f * getBandwidthRatio(member, mods) - 0.75f * getExoticRatio(member, mods)
     }
 
     override fun getNegativeMult(member: FleetMemberAPI, mods: ShipModifications): Float {
-        return 1f + 0.25f * getBandwidthRatio(member, mods) + 0.25f * getExoticRatio(member, mods)
+        return 1f + 0.5f * getBandwidthRatio(member, mods) + 0.25f * getExoticRatio(member, mods)
     }
 
     private fun getBandwidthRatio(member: FleetMemberAPI, mods: ShipModifications): Float {
@@ -27,14 +27,14 @@ class PureType : ExoticType("PURE", colorOverlay = Color(255, 200, 125, 255), sp
 
     override fun getChanceMult(context: ShipModFactory.GenerationContext): Float {
         if (context.mods.hasExotics()) {
-            return 0.5f
+            return 0.1f
         }
         return 1f
     }
 
     override fun mutateGenerationContext(context: ShipModFactory.GenerationContext) {
-        context.upgradeChanceMult *= 0.5f
-        context.exoticChanceMult *= 0.5f
+        context.upgradeChanceMult *= 0.1f
+        context.exoticChanceMult *= 0.01f
     }
 
     override fun getDescriptionTranslation(member: FleetMemberAPI, mods: ShipModifications): StringUtils.Translation? {

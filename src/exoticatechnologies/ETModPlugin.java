@@ -17,6 +17,7 @@ import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.stats.impl.logistics.CrewSalaryEffect;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
+import exoticatechnologies.refit.RefitButtonAdder;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.ui.impl.shop.overview.OverviewPanelUIPlugin;
 import exoticatechnologies.util.FleetMemberUtils;
@@ -80,6 +81,7 @@ public class ETModPlugin extends BaseModPlugin {
         campaignListener = new CampaignEventListener(false);
         Global.getSector().getListenerManager().addListener(salvageListener = new SalvageListener(), true);
         Global.getSector().addTransientScript(campaignListener);
+        Global.getSector().addTransientScript(new RefitButtonAdder());
         Global.getSector().addListener(campaignListener);
     }
 

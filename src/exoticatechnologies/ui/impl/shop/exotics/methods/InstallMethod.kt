@@ -13,7 +13,7 @@ import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
 class InstallMethod : Method {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): String {
+    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): String {
         val stack = Utilities.getExoticChip(member.fleetData.fleet.cargo, exotic.key)
         if (stack != null) {
             Utilities.takeItem(stack)
@@ -30,14 +30,14 @@ class InstallMethod : Method {
         return StringUtils.getString("ExoticsDialog", "ExoticInstalled")
     }
 
-    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean {
+    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean {
         return !mods.hasExotic(exotic)
                 && exotic.canApply(member, mods)
                 && ExoticMethodsUIPlugin.isUnderExoticLimit(member, mods)
                 && (exotic.canAfford(member.fleetData.fleet, market))
     }
 
-    override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI): Boolean {
+    override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean {
         return !ChipMethod().canUse(member, mods, exotic, market)
     }
 
@@ -53,7 +53,7 @@ class InstallMethod : Method {
         member: FleetMemberAPI,
         mods: ShipModifications,
         exotic: Exotic,
-        market: MarketAPI,
+        market: MarketAPI?,
         hovered: Boolean
     ): Map<String, Float>? {
         if (hovered) {

@@ -16,6 +16,7 @@ import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
 import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
+import exoticatechnologies.ui.SpritePanelPlugin;
 import exoticatechnologies.ui.UIUtils;
 import exoticatechnologies.ui.java.TabbedCustomUIPanelPlugin;
 import exoticatechnologies.util.StringUtils;
@@ -161,18 +162,20 @@ public class ScanUtils {
             TooltipMakerAPI tooltip = textPanel.beginTooltip();
             UIComponentAPI lastImg = null;
             for (ExoticData exoticData : mods.getExoticSet()) {
-                Pair<UIComponentAPI, UIComponentAPI> pair = exoticData.addExoticIcon(tooltip);
+                Pair<SpritePanelPlugin, SpritePanelPlugin> pair = exoticData.addExoticIcon(tooltip);
 
-                if (lastImg != null) {
-                    pair.component1().getPosition().rightOfMid(lastImg, 3f);
+                UIComponentAPI exoticIcon = pair.component1().getPanel();
+                UIComponentAPI typeIcon = pair.component2().getPanel();
+                if (lastImg != null && exoticIcon != null) {
+                    exoticIcon.getPosition().rightOfMid(lastImg, 3f);
 
-                    if (pair.component2() != null) {
-                        pair.component2().getPosition().rightOfMid(lastImg, 3f);
+                    if (typeIcon != null) {
+                        typeIcon.getPosition().rightOfMid(lastImg, 3f);
                     }
                 }
 
                 tooltip.addTooltipToPrevious(new ExoticTooltip(exoticData, tooltip), TooltipMakerAPI.TooltipLocation.BELOW);
-                lastImg = pair.component1();
+                lastImg = exoticIcon;
             }
             UIUtils.INSTANCE.autoResize(tooltip);
             textPanel.addTooltip();

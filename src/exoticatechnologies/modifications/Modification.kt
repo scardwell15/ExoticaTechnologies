@@ -86,7 +86,7 @@ abstract class Modification(val key: String, val settings: JSONObject) {
         return true
     }
 
-    open fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
+    open fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
         return true
     }
 

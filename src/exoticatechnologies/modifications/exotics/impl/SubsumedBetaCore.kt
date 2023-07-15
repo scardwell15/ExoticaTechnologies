@@ -16,11 +16,11 @@ import java.awt.Color
 class SubsumedBetaCore(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(0x6AA900)
 
-    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI): Boolean {
+    override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
         return false
     }
 
-    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI): Boolean {
+    override fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return true
     }
 
@@ -43,7 +43,7 @@ class SubsumedBetaCore(key: String, settings: JSONObject) : Exotic(key, settings
         return false
     }
 
-    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI): Boolean {
+    override fun removeItemsFromFleet(fleet: CampaignFleetAPI, member: FleetMemberAPI, market: MarketAPI?): Boolean {
         return true
     }
 

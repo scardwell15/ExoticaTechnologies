@@ -1,6 +1,7 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
 import exoticatechnologies.modifications.ShipModLoader
@@ -10,12 +11,18 @@ import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.util.StringUtils
 
 open class DestroyMethod : Method {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): String {
+    override fun apply(
+        member: FleetMemberAPI,
+        variant: ShipVariantAPI,
+        mods: ShipModifications,
+        exotic: Exotic,
+        market: MarketAPI?
+    ): String {
         mods.removeExotic(exotic)
         exotic.onDestroy(member)
 
-        ShipModLoader.set(member, mods)
-        ExoticaTechHM.addToFleetMember(member)
+        ShipModLoader.set(member, variant, mods)
+        ExoticaTechHM.addToFleetMember(member, variant)
 
         return StringUtils.getString("ExoticsDialog", "ExoticDestroyed")
     }

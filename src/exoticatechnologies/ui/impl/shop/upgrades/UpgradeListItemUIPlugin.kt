@@ -1,12 +1,15 @@
 package exoticatechnologies.ui.impl.shop.upgrades
 
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
+import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.ui.SpritePanelPlugin
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
@@ -14,12 +17,12 @@ import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
-import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class UpgradeListItemUIPlugin(
     item: Upgrade,
     var member: FleetMemberAPI,
+    var variant: ShipVariantAPI,
     private val listPanel: ListUIPanelPlugin<Upgrade>
 ) : ListItemUIPanelPlugin<Upgrade>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
@@ -37,53 +40,17 @@ class UpgradeListItemUIPlugin(
     var lastValue = 0f
 
     override fun advance(amount: Float) {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
 
         val newValue = mods.getValue()
         if (newValue != lastValue) {
             lastValue = newValue
-            
-            if (mods.hasUpgrade(item) || selected) {
-                upgradeSprite.color = RenderUtils.INSTALLED_COLOR
-            } else if (!item.canApply(member, mods)) {
-                upgradeSprite.color = RenderUtils.CANT_INSTALL_COLOR
-            } else {
-                upgradeSprite.color = RenderUtils.CAN_APPLY_COLOR
-            }
-
-            if (mods.getUpgrade(item) != upgradeLevel) {
-                upgradeLevel = mods.getUpgrade(item)
-                StringUtils.getTranslation("UpgradesDialog", "UpgradeLevel")
-                    .format("level", upgradeLevel, Misc.getHighlightColor())
-                    .setLabelText(levelText!!)
-            }
-
-            if (upgradeLevel == 0) {
-                levelText!!.text = ""
-
-                if (!item.canApply(member, mods)) {
-                    val newText = StringUtils.getString("Conditions", "CannotApplyTitle")
-                    levelText!!.text = newText
-                    levelText!!.setHighlightColor(Color(200,100,100))
-                    levelText!!.setHighlight(newText)
-                } else {
-                    val quantity = Utilities.countChips(member.fleetData.fleet.cargo, item.key)
-
-                    if (quantity > 0) {
-                        val newText = StringUtils.getTranslation("CommonOptions", "InStockCount")
-                            .format("count", quantity)
-                            .toStringNoFormats()
-                        levelText!!.text = newText
-                        levelText!!.setHighlightColor(Color(150, 150, 150))
-                        levelText!!.setHighlight(newText)
-                    }
-                }
-            }
+            valueUpdated(mods)
         }
     }
 
     override fun layoutPanel(tooltip: TooltipMakerAPI): CustomPanelAPI {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         val rowPanel: CustomPanelAPI =
             listPanel.parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         val imagePanel = rowPanel.createCustomPanel(iconSize, panelHeight, SpritePanelPlugin(upgradeSprite))
@@ -114,9 +81,51 @@ class UpgradeListItemUIPlugin(
         // done, add row to TooltipMakerAPI
         tooltip.addCustom(rowPanel, opad)
 
+        lastValue = mods.getValue()
+        valueUpdated(mods)
+
         panel = rowPanel
 
         return panel!!
+    }
+
+    fun valueUpdated(mods: ShipModifications) {
+        if (mods.hasUpgrade(item) || selected) {
+            upgradeSprite.color = RenderUtils.INSTALLED_COLOR
+        } else if (!item.canApply(member, mods)) {
+            upgradeSprite.color = RenderUtils.CANT_INSTALL_COLOR
+        } else {
+            upgradeSprite.color = RenderUtils.CAN_APPLY_COLOR
+        }
+
+        if (mods.getUpgrade(item) != upgradeLevel) {
+            upgradeLevel = mods.getUpgrade(item)
+            StringUtils.getTranslation("UpgradesDialog", "UpgradeLevel")
+                .format("level", upgradeLevel, Misc.getHighlightColor())
+                .setLabelText(levelText!!)
+        }
+
+        if (upgradeLevel == 0) {
+            levelText!!.text = ""
+
+            if (!item.canApply(member, mods)) {
+                val newText = StringUtils.getString("Conditions", "CannotApplyTitle")
+                levelText!!.text = newText
+                levelText!!.setHighlightColor(Color(200,100,100))
+                levelText!!.setHighlight(newText)
+            } else {
+                val quantity = Utilities.countChips(member.fleetData.fleet.cargo, item.key)
+
+                if (quantity > 0) {
+                    val newText = StringUtils.getTranslation("CommonOptions", "InStockCount")
+                        .format("count", quantity)
+                        .toStringNoFormats()
+                    levelText!!.text = newText
+                    levelText!!.setHighlightColor(Color(150, 150, 150))
+                    levelText!!.setHighlight(newText)
+                }
+            }
+        }
     }
 
     override fun processInput(events: List<InputEventAPI>) {

@@ -2,11 +2,13 @@ package exoticatechnologies.ui.impl.shop
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModFactory
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.ui.BaseUIPanelPlugin
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.tabs.TabPanelUIPlugin
@@ -30,7 +32,7 @@ class ShipModUIPlugin(
     private var activeShopPlugin: TabPanelUIPlugin? = null
 
     companion object {
-        private var lastTabOpen: TabPanelUIPlugin? = null
+        private var lastTabOpen: String? = null
     }
 
     fun layoutPanels(): CustomPanelAPI {
@@ -52,7 +54,7 @@ class ShipModUIPlugin(
         return outerPanel
     }
 
-    fun showPanel(member: FleetMemberAPI?): CustomPanelAPI? {
+    fun showPanel(member: FleetMemberAPI?, variant: ShipVariantAPI? = member?.variant): CustomPanelAPI? {
         if (activeShopPlugin != null && member != null) {
             activeShopPlugin!!.deactivated(tabbedShopPlugin!!)
             activeShopPlugin = null
@@ -62,7 +64,7 @@ class ShipModUIPlugin(
 
         innerPanel!!.removeComponent(innerTooltip)
         if (member != null) {
-            innerTooltip = showMember(member)
+            innerTooltip = showMember(member, variant ?: member.variant)
         } else {
             innerTooltip = showNothing()
         }
@@ -77,12 +79,10 @@ class ShipModUIPlugin(
         return tooltip
     }
 
-    private fun showMember(member: FleetMemberAPI): TooltipMakerAPI {
-        val mods = ShipModFactory.generateForFleetMember(member)
-
+    private fun showMember(member: FleetMemberAPI, variant: ShipVariantAPI): TooltipMakerAPI {
         val tooltip = innerPanel!!.createUIElement(panelWidth, panelHeight, false)
 
-        val rowPlugin = ShipHeaderUIPlugin(dialog, member, innerPanel!!)
+        val rowPlugin = ShipHeaderUIPlugin(dialog, member, variant, innerPanel!!)
         rowPlugin.panelWidth = panelWidth
         rowPlugin.panelHeight = max(panelHeight * 0.1f, Global.getSettings().screenHeight * 0.16f)
         shipHeaderPanel = rowPlugin.layoutPanel(tooltip)
@@ -101,20 +101,21 @@ class ShipModUIPlugin(
         shopPanel.position.belowLeft(shipHeaderPanel, opad)
 
         tabbedShopPlugin!!.addListener { plugin ->
-            lastTabOpen = plugin
+            lastTabOpen = plugin.tabText
             activeShopPlugin = plugin
             tabHolderPlugin.lineColor = plugin.getTabButtonUIPlugin().baseColor
             if (plugin is ShopMenuUIPlugin) {
                 plugin.member = member
+                plugin.variant = variant
                 plugin.market = dialog?.interactionTarget?.market
             }
         }
 
-        var openTab = lastTabOpen
-        openTab?.let {
+        var openTab: ShopMenuUIPlugin? = null
+        lastTabOpen?.let {
             var newTab: ShopMenuUIPlugin? = null
             for (plugin: ShopMenuUIPlugin in ShopManager.shopMenuUIPlugins) {
-                if (plugin::class == it::class) {
+                if (plugin.tabText == it) {
                     newTab = plugin
                 }
             }

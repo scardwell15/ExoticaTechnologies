@@ -45,7 +45,7 @@ public class et_spawnnotablederelict implements BaseCommand {
             ExoticsGenerator.generate(member, mods, generationContext);
             UpgradesGenerator.generate(member, mods, generationContext);
 
-            ShipModLoader.set(member, mods);
+            ShipModLoader.set(member, member.getVariant(), mods);
 
             DerelictShipEntityPlugin.DerelictShipData params = new DerelictShipEntityPlugin.DerelictShipData(perShipData, false);
             SectorEntityToken ship = BaseThemeGenerator.addSalvageEntity(Global.getSector().getPlayerFleet().getContainingLocation(), Entities.WRECK, Factions.NEUTRAL, params);

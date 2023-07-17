@@ -15,11 +15,15 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
     private val opad = 10f
 
     private var listeners: MutableList<ListListener<T>> = mutableListOf()
+    var panelPluginMap: HashMap<T, BaseUIPanelPlugin> = hashMapOf()
 
     override var panelWidth: Float = this.getListWidth()
     override var panelHeight: Float = Global.getSettings().screenHeight * 0.66f
 
-    var panelPluginMap: HashMap<T, BaseUIPanelPlugin> = hashMapOf()
+    var lastMembers: List<T>? = null
+    var outerPanel: CustomPanelAPI? = null
+    var outerTooltip: TooltipMakerAPI? = null
+    var innerPanel: CustomPanelAPI? = null
 
     private fun getListWidth(): Float {
         return rowWidth
@@ -33,25 +37,41 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
         tooltip.addSectionHeading(listHeader, Alignment.MID, 0f)
     }
 
+    fun layoutPanels(): CustomPanelAPI {
+        return layoutPanels(lastMembers!!)
+    }
+
     fun layoutPanels(members: List<T>): CustomPanelAPI {
+        if (outerPanel != null) {
+            outerTooltip!!.removeComponent(innerPanel)
+            outerPanel!!.removeComponent(outerTooltip)
+            parentPanel.removeComponent(outerPanel)
+            clearItems()
+        }
+
+        val parentPanel = outerPanel ?: parentPanel.createCustomPanel(panelWidth, panelHeight, this)
+        outerPanel = parentPanel
+
+        lastMembers = members
         var validMembers = members.filter { shouldMakePanelForItem(it) }
+        validMembers = sortMembers(validMembers)
 
-        val outerPanel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
-        val outerTooltip = outerPanel.createUIElement(panelWidth, panelHeight, false)
+        val parentTooltip = parentPanel.createUIElement(panelWidth, panelHeight, false)
+        outerTooltip = parentTooltip
 
-        createListHeader(outerTooltip)
+        createListHeader(parentTooltip)
 
-        val heading = outerTooltip.prev
+        val heading = parentTooltip.prev
 
-        val innerPanel = outerPanel.createCustomPanel(panelWidth, panelHeight, null)
-        val scrollerTooltip: TooltipMakerAPI = innerPanel.createUIElement(panelWidth, panelHeight, true)
+        val holdingPanel = parentPanel.createCustomPanel(panelWidth, panelHeight, null)
+        innerPanel = holdingPanel
+        val scrollerTooltip: TooltipMakerAPI = holdingPanel.createUIElement(panelWidth, panelHeight, true)
         val scrollingPanel: CustomPanelAPI =
-            innerPanel.createCustomPanel(panelWidth, getListHeight(validMembers.size), null)
+            holdingPanel.createCustomPanel(panelWidth, getListHeight(validMembers.size), null)
         val tooltip: TooltipMakerAPI = scrollingPanel.createUIElement(panelWidth, panelHeight, false)
 
         var lastItem: CustomPanelAPI? = null
 
-        validMembers = sortMembers(validMembers)
         validMembers
             .map { it to createPanelForItem(tooltip, it) }
             .filter { (_, rowPlugin) -> rowPlugin != null }
@@ -69,12 +89,12 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
 
         scrollingPanel.addUIElement(tooltip).inTL(0f, 0f)
         scrollerTooltip.addCustom(scrollingPanel, 0f).position.inTL(0f, 0f)
-        innerPanel.addUIElement(scrollerTooltip).inTL(0f, 0f)
-        outerTooltip.addCustom(innerPanel, 0f).position.belowMid(heading, 0f)
-        outerPanel.addUIElement(outerTooltip).inTL(0f, 0f)
-        parentPanel.addComponent(outerPanel).inTL(0f, 0f)
+        holdingPanel.addUIElement(scrollerTooltip).inTL(0f, 0f)
+        parentTooltip.addCustom(holdingPanel, 0f).position.belowMid(heading, 0f)
+        parentPanel.addUIElement(parentTooltip).inTL(0f, 0f)
+        this.parentPanel.addComponent(parentPanel).inTL(0f, 0f)
 
-        return outerPanel
+        return parentPanel
     }
 
     open fun sortMembers(items: List<T>): List<T> {

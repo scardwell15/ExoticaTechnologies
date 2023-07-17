@@ -1,6 +1,7 @@
 package exoticatechnologies.ui.impl.shop.upgrades.methods
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
@@ -47,13 +48,19 @@ interface UpgradeMethod {
 
     /**
      * Applies the upgrade to the ship. This should also take the price away from the player.
-     * @param fm fleet member to be upgraded
+     * @param member fleet member to be upgraded
      * @param mods modifications object
      * @param upgrade upgrade
      * @param market market
      * @return string to display briefly
      */
-    fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String
+    fun apply(
+        member: FleetMemberAPI,
+        variant: ShipVariantAPI,
+        mods: ShipModifications,
+        upgrade: Upgrade,
+        market: MarketAPI?
+    ): String
 
     /**
      * Can use if market is null.
@@ -64,7 +71,7 @@ interface UpgradeMethod {
      * Get cost of resources.
      */
     fun getResourceCostMap(
-        fm: FleetMemberAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
         market: MarketAPI?,

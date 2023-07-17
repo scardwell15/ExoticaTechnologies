@@ -123,10 +123,10 @@ class CrewSalaryEffect : UpgradeModEffect() {
             get() {
                 val fleet = Global.getSector().playerFleet ?: return 0
                 var increasedSalary = 0
-                for (fm in fleet.membersWithFightersCopy) {
-                    val mods = ShipModLoader.get(fm)
+                for (member in fleet.membersWithFightersCopy) {
+                    val mods = ShipModLoader.get(member, member.variant)
                     if (mods != null) {
-                        increasedSalary += getIncreasedSalaryForMember(fm, mods)
+                        increasedSalary += getIncreasedSalaryForMember(member, mods)
                     }
                 }
                 return increasedSalary

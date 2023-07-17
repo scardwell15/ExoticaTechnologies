@@ -24,7 +24,8 @@ class RefitButtonAdder : EveryFrameScript {
 
     var frames = 0
 
-    var buttonPanel: CustomPanelAPI? = null
+    var openButtonPanel: CustomPanelAPI? = null
+    var closeButtonPanel: CustomPanelAPI? = null
     var member: FleetMemberAPI? = null
     var variant: HullVariantSpec? = null
     var firstButtonLoad = true
@@ -97,29 +98,40 @@ class RefitButtonAdder : EveryFrameScript {
                             try {
                                 invokeMethod("syncWithCurrentVariant", child3!!, true)
                             } catch (e: Throwable) {
+                                //do nothing
                                 try {
                                     invokeMethod("syncWithCurrentVariant", child3!!)
                                 } catch (e: Throwable) {
-                                    var test = ""
+                                    println("error while pre-syncing variant in refit: $e")
                                 }
                             }
 
                             try {
                                 invokeMethod("saveCurrentVariant", child3!!, false)
                             } catch (e: Throwable) {
+                                //do nothing
                                 try {
                                     invokeMethod("saveCurrentVariant", child3!!)
                                 } catch (e: Throwable) {
-                                    var test = ""
+                                    println("error while saving variant in refit: $e")
                                 }
                             }
 
                             try {
                                 invokeMethod("setEditedSinceSave", child3!!, false)
                             } catch (e: Throwable) {
-                                var test = ""
+                                //do nothing
                             }
 
+                            try {
+                                invokeMethod("syncWithCurrentVariant", child3!!, true)
+                            } catch (e: Throwable) {
+                                try {
+                                    invokeMethod("syncWithCurrentVariant", child3!!)
+                                } catch (e: Throwable) {
+                                    println("error while post-syncing variant in refit: $e")
+                                }
+                            }
 
                             requiresVariantUpdate = false
                         }
@@ -133,7 +145,7 @@ class RefitButtonAdder : EveryFrameScript {
 
                             if (modWidget is UIPanelAPI)
                             {
-                                if (modWidget.getChildrenCopy().any { it == buttonPanel }) {
+                                if (modWidget.getChildrenCopy().any { it == openButtonPanel }) {
                                     return
                                 }
 
@@ -153,48 +165,28 @@ class RefitButtonAdder : EveryFrameScript {
 
         if (modWidget != null && buildButton != null)
         {
-            buttonPanel = Global.getSettings().createCustom(buildButton.position.width , buildButton.position.height, null)
-            modWidget.addComponent(buttonPanel)
-            buttonPanel!!.position.belowLeft(buildButton, 3f)
+            openButtonPanel = Global.getSettings().createCustom(buildButton.position.width , buildButton.position.height, null)
+            modWidget.addComponent(openButtonPanel)
+            openButtonPanel!!.position.belowLeft(buildButton, 3f)
 
-            var element = buttonPanel!!.createUIElement(buildButton.position.width , buildButton.position.height, false)
-            element.position.inTL(-5f, 0f)
-            buttonPanel!!.addUIElement(element)
-            var openExoticaButton = element.addLunaSpriteElement("graphics/ui/exoticaButton.png", LunaSpriteElement.ScalingTypes.STRETCH_SPRITE, buildButton.position.width , buildButton.position.height).apply {
+            var openElement = openButtonPanel!!.createUIElement(buildButton.position.width , buildButton.position.height, false)
+            var exoticaButtonPos = openElement.position.inTL(-5f, 0f)
+            openButtonPanel!!.addUIElement(openElement)
+            var openExoticaButton = openElement.addLunaSpriteElement("graphics/ui/exoticaButton.png", LunaSpriteElement.ScalingTypes.STRETCH_SPRITE, buildButton.position.width , buildButton.position.height).apply {
                 enableTransparency = true
 
             }
 
-            element.setParaFont(Fonts.ORBITRON_20AA)
-            var para = element.addPara("Exotica", 0f, Color(200, 150, 255).setAlpha(0), Misc.getHighlightColor())
+            openElement.setParaFont(Fonts.ORBITRON_20AA)
+            var openPara = openElement.addPara("Exotica", 0f, Color(215, 175, 255).setAlpha(0), Misc.getHighlightColor())
 
-           /* element.setTitleFont(Fonts.INSIGNIA_LARGE)
-            var para = element.addTitle("Exotica", Color(100, 0, 200))*/
-            para.position.inTL(buildButton.position.width / 2 - para.computeTextWidth(para.text) / 2 + 5 ,2f)
+            openPara.position.inTL(buildButton.position.width / 2 - openPara.computeTextWidth(openPara.text) / 2 + 5 ,2f)
 
             openExoticaButton.getSprite().alphaMult = 0.8f
 
             openExoticaButton.onHoverEnter {
                 openExoticaButton.getSprite().alphaMult = 1f
                 openExoticaButton.playSound("ui_button_mouseover", 1f, 1f)
-            }
-
-            if (firstButtonLoad)
-            {
-                openExoticaButton.getSprite().alphaMult = 0.0f
-                openExoticaButton.advance {
-                    var sprite = openExoticaButton.getSprite()
-                    if (sprite.alphaMult < 0.8f)
-                    {
-                        sprite.alphaMult += 0.1f
-
-                        var colorAlpha = (150 * sprite.alphaMult) + 100
-                        colorAlpha = MathUtils.clamp(colorAlpha, 0f, 254f)
-
-                        para.setColor(Color(200, 150, 255).setAlpha(colorAlpha.toInt()))
-                    }
-
-                }
             }
 
             openExoticaButton.onHoverExit {
@@ -216,10 +208,60 @@ class RefitButtonAdder : EveryFrameScript {
                     var exoticaPanel = Global.getSettings().createCustom(width, height, plugin)
                     plugin.panel = exoticaPanel
                     corePanel.addComponent(exoticaPanel)
-                    exoticaPanel.position.inTL(Global.getSettings().screenWidth / 2 - width / 2, Global.getSettings().screenHeight / 2 - height / 2)
 
                     var custom = CustomExoticaPanel()
                     custom.init(exoticaPanel, plugin, width, height,  member!!, variant!!)
+
+                    exoticaPanel.position.inTL(exoticaButtonPos.x - 4f - width, Global.getSettings().screenHeight / 2 - height / 2)
+
+                    closeButtonPanel = Global.getSettings().createCustom(buildButton.position.width , buildButton.position.height, null)
+                    plugin.closeButtonPanel = closeButtonPanel
+                    exoticaPanel.addComponent(closeButtonPanel)
+                    //turns out hierarchical siblings can be anchored on if you remember to remove them from their parent panel before removing the parent panel.
+                    closeButtonPanel!!.position.belowLeft(buildButton, 3f).setXAlignOffset(-4f)
+
+                    var closeElement = closeButtonPanel!!.createUIElement(buildButton.position.width , buildButton.position.height, false)
+                    closeButtonPanel!!.addUIElement(closeElement)
+                    var closeExoticaButton = closeElement.addLunaSpriteElement("graphics/ui/exoticaButton.png", LunaSpriteElement.ScalingTypes.STRETCH_SPRITE, buildButton.position.width , buildButton.position.height).apply {
+                        enableTransparency = true
+                    }
+
+                    closeElement.setParaFont(Fonts.ORBITRON_20AA)
+                    var closePara = closeElement.addPara("Close", 0f, Color(215, 175, 255), Misc.getHighlightColor())
+
+                    closePara.position.inTL(buildButton.position.width / 2 - closePara.computeTextWidth(closePara.text) / 2 + 5 ,2f)
+
+                    closeExoticaButton.getSprite().alphaMult = 0.8f
+
+                    closeExoticaButton.onHoverEnter {
+                        closeExoticaButton.getSprite().alphaMult = 1f
+                        closeExoticaButton.playSound("ui_button_mouseover", 1f, 1f)
+                    }
+
+                    closeExoticaButton.onHoverExit {
+                        closeExoticaButton.getSprite().alphaMult = 0.8f
+                    }
+
+                    closeExoticaButton.onClick {
+                        plugin.close()
+                    }
+                }
+            }
+
+            if (firstButtonLoad)
+            {
+                openExoticaButton.getSprite().alphaMult = 0.0f
+                openExoticaButton.advance {
+                    var sprite = openExoticaButton.getSprite()
+                    if (sprite.alphaMult < 0.8f)
+                    {
+                        sprite.alphaMult += 0.1f
+
+                        var colorAlpha = (150 * sprite.alphaMult) + 100
+                        colorAlpha = MathUtils.clamp(colorAlpha, 0f, 254f)
+
+                        openPara.setColor(Color(215, 175, 255).setAlpha(colorAlpha.toInt()))
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications
 
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial
 
@@ -10,39 +11,39 @@ class ShipModLoader {
         PersistentDataProvider.inst
     )
 
-    private fun getData(member: FleetMemberAPI): ShipModifications? {
-        return providers.firstNotNullOfOrNull { it.get(member) }
+    private fun getData(member: FleetMemberAPI, variant: ShipVariantAPI = member.variant): ShipModifications? {
+        return providers.firstNotNullOfOrNull { it.get(member, variant) }
     }
 
-    private fun saveData(member: FleetMemberAPI, mods: ShipModifications) {
+    private fun saveData(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications) {
         for (i in providers.indices) {
             val provider = providers[i]
             if (!provider.setOnlyIfFirst() || i == 0) {
-                provider.set(member, mods)
+                provider.set(member, variant, mods)
             }
         }
     }
 
-    private fun removeData(member: FleetMemberAPI) {
-        providers.forEach { it.remove(member) }
+    private fun removeData(member: FleetMemberAPI, variant: ShipVariantAPI) {
+        providers.forEach { it.remove(member, variant) }
     }
 
     companion object {
         private val inst = ShipModLoader()
 
         @JvmStatic
-        fun get(member: FleetMemberAPI): ShipModifications? {
-            return inst.getData(member)
+        fun get(member: FleetMemberAPI, variant: ShipVariantAPI): ShipModifications? {
+            return inst.getData(member, variant)
         }
 
         @JvmStatic
-        fun set(member: FleetMemberAPI, mods: ShipModifications) {
-            return inst.saveData(member, mods)
+        fun set(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications) {
+            return inst.saveData(member, variant, mods)
         }
 
         @JvmStatic
-        fun remove(member: FleetMemberAPI) {
-            return inst.removeData(member)
+        fun remove(member: FleetMemberAPI, variant: ShipVariantAPI) {
+            return inst.removeData(member, variant)
         }
 
         @JvmStatic
@@ -66,9 +67,9 @@ class ShipModLoader {
     }
 
     interface Provider {
-        fun get(member: FleetMemberAPI): ShipModifications?
-        fun set(member: FleetMemberAPI, mods: ShipModifications)
-        fun remove(member: FleetMemberAPI)
+        fun get(member: FleetMemberAPI, variant: ShipVariantAPI): ShipModifications?
+        fun set(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications)
+        fun remove(member: FleetMemberAPI, variant: ShipVariantAPI)
 
         fun setOnlyIfFirst(): Boolean {
             return true

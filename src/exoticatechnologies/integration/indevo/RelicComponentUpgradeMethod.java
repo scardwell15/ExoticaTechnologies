@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exoticatechnologies.hullmods.ExoticaTechHM;
@@ -41,7 +42,7 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
     }
 
     @Override
-    public boolean canUse(FleetMemberAPI member, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
+    public boolean canUse(@NotNull FleetMemberAPI member, ShipModifications mods, @NotNull Upgrade upgrade, MarketAPI market) {
         int level = mods.getUpgrade(upgrade);
         int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(member, upgrade, level);
         int totalComponents = getTotalComponents(member.getFleetData().getFleet(), market);
@@ -52,9 +53,9 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
 
     @NotNull
     @Override
-    public String apply(@NotNull FleetMemberAPI fm, ShipModifications mods, Upgrade upgrade, MarketAPI market) {
+    public String apply(@NotNull FleetMemberAPI member, @NotNull ShipVariantAPI variant, ShipModifications mods, @NotNull Upgrade upgrade, MarketAPI market) {
         int level = mods.getUpgrade(upgrade);
-        int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, level);
+        int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(member, upgrade, level);
 
         if (market != null
                 && market.getSubmarket(Submarkets.SUBMARKET_STORAGE) != null
@@ -65,14 +66,14 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
             upgradeCost = removeCommodityAndReturnRemainingCost(storageCargo, IndEvoUtil.RELIC_COMPONENT_ITEM_ID, upgradeCost);
         }
 
-        CargoAPI fleetCargo = fm.getFleetData().getFleet().getCargo();
+        CargoAPI fleetCargo = member.getFleetData().getFleet().getCargo();
         if (upgradeCost > 0) {
             removeCommodity(fleetCargo, IndEvoUtil.RELIC_COMPONENT_ITEM_ID, upgradeCost);
         }
 
         mods.putUpgrade(upgrade);
-        ShipModLoader.set(fm, mods);
-        ExoticaTechHM.addToFleetMember(fm);
+        ShipModLoader.set(member, variant, mods);
+        ExoticaTechHM.addToFleetMember(member);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
@@ -83,11 +84,11 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
 
     @NotNull
     @Override
-    public Map<String, Float> getResourceCostMap(@NotNull FleetMemberAPI fm, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market, boolean hovered) {
+    public Map<String, Float> getResourceCostMap(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market, boolean hovered) {
         Map<String, Float> resourceCosts = new HashMap<>();
 
         if (hovered) {
-            float cost = IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, mods.getUpgrade(upgrade));
+            float cost = IndEvoUtil.getUpgradeRelicComponentPrice(member, upgrade, mods.getUpgrade(upgrade));
             resourceCosts.put(IndEvoUtil.RELIC_COMPONENT_ITEM_ID, cost);
         }
 

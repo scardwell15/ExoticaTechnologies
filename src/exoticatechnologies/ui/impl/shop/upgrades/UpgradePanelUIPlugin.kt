@@ -3,12 +3,15 @@ package exoticatechnologies.ui.impl.shop.upgrades
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
+import exoticatechnologies.refit.RefitButtonAdder
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipPanelUIPlugin
@@ -23,6 +26,7 @@ class UpgradePanelUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     var member: FleetMemberAPI,
+    var variant: ShipVariantAPI,
     var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -36,17 +40,17 @@ class UpgradePanelUIPlugin(
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         mainPanel = panel
 
-        descriptionPlugin = UpgradeDescriptionUIPlugin(mainPanel!!, upgrade, member)
+        descriptionPlugin = UpgradeDescriptionUIPlugin(mainPanel!!, upgrade, member, variant)
         descriptionPlugin!!.panelWidth = panelWidth / 2f
         descriptionPlugin!!.panelHeight = panelHeight
         descriptionPlugin!!.layoutPanels().position.inTL(0f, 0f)
 
-        resourcesPlugin = UpgradeResourcesUIPlugin(mainPanel!!, upgrade, member, market)
+        resourcesPlugin = UpgradeResourcesUIPlugin(mainPanel!!, upgrade, member, variant, market)
         resourcesPlugin!!.panelWidth = panelWidth / 2f - 6f
         resourcesPlugin!!.panelHeight = panelHeight / 10f * 7f - 6f
         resourcesPlugin!!.layoutPanels().position.inTR(3f, 3f)
 
-        methodsPlugin = UpgradeMethodsUIPlugin(mainPanel!!, upgrade, member, market)
+        methodsPlugin = UpgradeMethodsUIPlugin(mainPanel!!, upgrade, member, variant, market)
         methodsPlugin!!.panelWidth = panelWidth / 2f - 6f
         methodsPlugin!!.panelHeight = panelHeight / 10f * 3f - 6f
         methodsPlugin!!.layoutPanels().position.inBR(3f, 13f)
@@ -73,13 +77,13 @@ class UpgradePanelUIPlugin(
     }
 
     fun doUpgradeWithMethod(upgrade: Upgrade, method: UpgradeMethod) {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
 
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
-        method.apply(member, mods, upgrade, market)
-
+        method.apply(member, variant, mods, upgrade, market)
+        RefitButtonAdder.requiresVariantUpdate = true
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
 
         descriptionPlugin!!.resetDescription()

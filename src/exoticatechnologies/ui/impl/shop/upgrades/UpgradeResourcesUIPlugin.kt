@@ -1,10 +1,12 @@
 package exoticatechnologies.ui.impl.shop.upgrades
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
@@ -16,8 +18,9 @@ class UpgradeResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     member: FleetMemberAPI,
+    variant: ShipVariantAPI,
     var market: MarketAPI?
-) : ResourcesUIPlugin(member) {
+) : ResourcesUIPlugin(member, variant) {
     override var mainPanel: CustomPanelAPI? = null
     private var resourcesTooltip: TooltipMakerAPI? = null
 
@@ -39,7 +42,7 @@ class UpgradeResourcesUIPlugin(
     }
 
     fun redisplayResourceCosts(activeMethod: UpgradeMethod?) {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         destroyTooltip()
 
         val resourceCosts: MutableMap<String, Float> = linkedMapOf()

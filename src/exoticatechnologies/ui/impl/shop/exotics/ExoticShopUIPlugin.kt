@@ -16,6 +16,7 @@ class ExoticShopUIPlugin: ShopMenuUIPlugin() {
     val pad: Float = 3f
     val opad: Float = 10f
     override var bgColor: Color = Color(200, 180, 40, 0)
+    override val tabText: String = "Exotics"
 
     var innerPanel: CustomPanelAPI? = null
     var listPanel: CustomPanelAPI? = null
@@ -30,7 +31,7 @@ class ExoticShopUIPlugin: ShopMenuUIPlugin() {
         val tooltip = holdingPanel.createUIElement(panelWidth, panelHeight, false)
         val panel = holdingPanel.createCustomPanel(panelWidth, panelHeight, this)
 
-        val listPlugin = ExoticListUIPlugin(panel, member!!, market)
+        val listPlugin = ExoticListUIPlugin(panel, member!!, variant!!, market)
         listPlugin.panelHeight = panelHeight - 22f
         listPanel = listPlugin.layoutPanels(ExoticsHandler.EXOTIC_LIST)
 
@@ -60,7 +61,7 @@ class ExoticShopUIPlugin: ShopMenuUIPlugin() {
 
         activeExotic = exotic
         if (activeExotic != null) {
-            val exoticPlugin = ExoticPanelUIPlugin(innerPanel!!, exotic!!, member!!, market)
+            val exoticPlugin = ExoticPanelUIPlugin(innerPanel!!, exotic!!, member!!, variant!!, market)
             exoticPlugin.panelWidth = innerPanel!!.position.width
             exoticPlugin.panelHeight = innerPanel!!.position.height
             activePanel = exoticPlugin.layoutPanels()

@@ -64,11 +64,11 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
 
                         if (shipData.getVariant() == null) continue;
 
-                        FleetMemberAPI fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
+                        FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
                         if (shipData.fleetMemberId == null) {
-                            shipData.fleetMemberId = fm.getId();
+                            shipData.fleetMemberId = member.getId();
                         } else {
-                            fm.setId(shipData.fleetMemberId);
+                            member.setId(shipData.fleetMemberId);
                         }
 
                         log.info("debris field: generating for fmId " + shipData.fleetMemberId);
@@ -77,8 +77,8 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
                         //it will never find one.
 
                         ShipModFactory.random.setSeed(shipData.fleetMemberId.hashCode());
-                        ShipModifications mods = ShipModFactory.generateRandom(fm);
-                        ShipModLoader.set(fm, mods);
+                        ShipModifications mods = ShipModFactory.generateRandom(member);
+                        ShipModLoader.set(member, member.getVariant(), mods);
 
                         derelictVariantMap.put(String.valueOf(shipData.fleetMemberId.hashCode()), mods);
 

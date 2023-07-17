@@ -1,6 +1,7 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
 import exoticatechnologies.modifications.ShipModLoader
@@ -13,7 +14,13 @@ import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
 class InstallMethod : Method {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): String {
+    override fun apply(
+        member: FleetMemberAPI,
+        variant: ShipVariantAPI,
+        mods: ShipModifications,
+        exotic: Exotic,
+        market: MarketAPI?
+    ): String {
         val stack = Utilities.getExoticChip(member.fleetData.fleet.cargo, exotic.key)
         if (stack != null) {
             Utilities.takeItem(stack)
@@ -23,8 +30,8 @@ class InstallMethod : Method {
 
         mods.putExotic(ExoticData(exotic.key))
 
-        ShipModLoader.set(member, mods)
-        ExoticaTechHM.addToFleetMember(member)
+        ShipModLoader.set(member, variant, mods)
+        ExoticaTechHM.addToFleetMember(member, variant)
         exotic.onInstall(member)
 
         return StringUtils.getString("ExoticsDialog", "ExoticInstalled")

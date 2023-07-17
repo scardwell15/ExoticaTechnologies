@@ -16,6 +16,7 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
     val pad: Float = 3f
     val opad: Float = 10f
     override var bgColor: Color = Color(150, 255, 200, 0)
+    override val tabText: String = "Upgrades"
 
     var innerPanel: CustomPanelAPI? = null
     var listPanel: CustomPanelAPI? = null
@@ -31,7 +32,7 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
         val panel = holdingPanel.createCustomPanel(panelWidth, panelHeight, this)
 
 
-        val listPlugin = UpgradeListUIPlugin(panel, member!!, market)
+        val listPlugin = UpgradeListUIPlugin(panel, member!!, variant!!, market)
         listPlugin.panelHeight = panelHeight - 22f
         listPanel = listPlugin.layoutPanels(UpgradesHandler.UPGRADES_LIST)
 
@@ -58,7 +59,7 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
 
         activeUpgrade = upgrade
         if (activeUpgrade != null) {
-            val upgradePlugin = UpgradePanelUIPlugin(innerPanel!!, upgrade!!, member!!, market)
+            val upgradePlugin = UpgradePanelUIPlugin(innerPanel!!, upgrade!!, member!!, variant!!, market)
             upgradePlugin.panelWidth = innerPanel!!.position.width
             upgradePlugin.panelHeight = innerPanel!!.position.height
             activePanel = upgradePlugin.layoutPanels()

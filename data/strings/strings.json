@@ -46,7 +46,8 @@
 		"StoryPointCost": "*${storyPoints} story points*",
 
 		"MustBeDockedAtMarket": "=Must be docked at market=",
-		"InStockCount": "${count} in cargo"
+		"InStockCount": "${count} in cargo",
+		"ESCToClose": "Press ESC to close."
 	},
 	"FleetScanner": {
 		"ShipBandwidthShort": "Bandwidth: *${bandwidth}*",

@@ -16,7 +16,7 @@ class ExoticaEveryFramePlugin :
         for (ship in ships) {
             val member = ship.fleetMember
             if (ship.fleetMember != null) {
-                val mods = ShipModLoader.get(ship.fleetMember)
+                val mods = ShipModLoader.get(ship.fleetMember, ship.fleetMember.variant)
                 if (mods != null) {
                     for (upgrade in UpgradesHandler.UPGRADES_LIST) {
                         val level = mods.getUpgrade(upgrade)

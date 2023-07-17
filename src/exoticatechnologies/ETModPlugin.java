@@ -113,7 +113,7 @@ public class ETModPlugin extends BaseModPlugin {
                 for (CampaignFleetAPI campaignFleetAPI : loc.getFleets()) {
                     for (FleetMemberAPI member : campaignFleetAPI.getFleetData().getMembersListCopy()) {
                         ExoticaTechHM.removeHullModFromVariant(member.getVariant());
-                        ShipModLoader.remove(member);
+                        ShipModLoader.remove(member, member.getVariant());
                         Console.showMessage("Cleared ET data from: " + member.getShipName());
                     }
                 }
@@ -153,7 +153,7 @@ public class ETModPlugin extends BaseModPlugin {
                 if (member.getVariant() != null) {
                     ExoticaTechHM.removeHullModFromVariant(member.getVariant());
                 }
-                ShipModLoader.remove(member);
+                ShipModLoader.remove(member, member.getVariant());
             }
         }
 
@@ -162,7 +162,7 @@ public class ETModPlugin extends BaseModPlugin {
                 if (member.getVariant() != null) {
                     ExoticaTechHM.removeHullModFromVariant(member.getVariant());
                 }
-                ShipModLoader.remove(member);
+                ShipModLoader.remove(member, member.getVariant());
             }
         }
     }

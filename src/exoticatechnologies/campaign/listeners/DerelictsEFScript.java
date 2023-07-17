@@ -62,14 +62,14 @@ public class DerelictsEFScript implements EveryFrameScript {
     }
 
     private void linkDerelictsToNewMembers(List<FleetMemberAPI> newMembers) {
-        for (FleetMemberAPI fm : newMembers) {
+        for (FleetMemberAPI member : newMembers) {
             ShipModifications mods = null;
 
-            String fmIdHash = String.valueOf(fm.getId().hashCode());
+            String fmIdHash = String.valueOf(member.getId().hashCode());
             if (derelictVariantMap.containsKey(fmIdHash)) {
                 mods = derelictVariantMap.get(fmIdHash);
             } else {
-                ShipVariantAPI var = fm.getVariant();
+                ShipVariantAPI var = member.getVariant();
                 if (var == null) continue;
 
                 for (int i = 0; i < derelictVariantMap.size(); i++) {
@@ -82,8 +82,8 @@ public class DerelictsEFScript implements EveryFrameScript {
                         mods = derelictVariantMap.get(varHash);
                         break;
                     } else {
-                        varHash = String.valueOf(var.hashCode() + fm.getShipName().hashCode() + i);
-                        hullVarHash = String.valueOf(var.getHullVariantId().hashCode() + fm.getShipName().hashCode() + i);
+                        varHash = String.valueOf(var.hashCode() + member.getShipName().hashCode() + i);
+                        hullVarHash = String.valueOf(var.getHullVariantId().hashCode() + member.getShipName().hashCode() + i);
                         if (derelictVariantMap.containsKey(hullVarHash)) {
                             mods = derelictVariantMap.get(hullVarHash);
                             break;
@@ -96,8 +96,8 @@ public class DerelictsEFScript implements EveryFrameScript {
             }
 
             if (mods != null) {
-                ShipModLoader.set(fm, mods);
-                ExoticaTechHM.addToFleetMember(fm);
+                ShipModLoader.set(member, member.getVariant(), mods);
+                ExoticaTechHM.addToFleetMember(member);
             }
         }
     }

@@ -5,15 +5,9 @@ import com.fs.starfarer.api.campaign.CoreUITabId
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.loading.VariantSource
-import exoticatechnologies.modifications.exotics.ETExotics
-import exoticatechnologies.modifications.exotics.ExoticData
-import exoticatechnologies.modifications.upgrades.ETUpgrades
 import exoticatechnologies.util.fixVariant
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import org.lazywizard.lazylib.ext.json.optFloat
-import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 
 open class VariantTagProvider : ShipModLoader.Provider {
@@ -28,7 +22,7 @@ open class VariantTagProvider : ShipModLoader.Provider {
     val cache: MutableMap<FleetMemberAPI, ShipModifications> = WeakHashMap()
     val EXOTICA_INDICATOR = "$\$EXOTICA$$"
 
-    override fun get(member: FleetMemberAPI): ShipModifications? {
+    override fun get(member: FleetMemberAPI, variant: ShipVariantAPI): ShipModifications? {
         val members: Int = Global.getSector()?.playerFleet?.numMembersFast ?: 0
         if (currGets++ >= maxGetsPerMember * members) {
             cache.clear()
@@ -43,10 +37,7 @@ open class VariantTagProvider : ShipModLoader.Provider {
             return cacheMods
         }
 
-        val variant: ShipVariantAPI = member.variant
-            ?: return null
-
-        if (variant.source != VariantSource.REFIT) {
+        if (variant == member.variant && variant.source != VariantSource.REFIT) {
             member.fixVariant()
         }
 
@@ -61,18 +52,24 @@ open class VariantTagProvider : ShipModLoader.Provider {
         return null
     }
 
-    override fun set(member: FleetMemberAPI, mods: ShipModifications) {
-        if (member.variant.source != VariantSource.REFIT) {
+    override fun set(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications) {
+        if (variant == member.variant && variant.source != VariantSource.REFIT) {
             member.fixVariant()
         }
 
-        remove(member)
-        member.variant.addTag(EXOTICA_INDICATOR + convertToJson(member, mods))
+        removeFromTags(variant)
+
+        val tag = EXOTICA_INDICATOR + convertToJson(member, mods)
+        variant.addTag(tag)
+        if (variant != member.variant) {
+            member.variant.addTag(tag)
+        }
+
         cache[member] = mods
     }
 
-    override fun remove(member: FleetMemberAPI) {
-        removeFromTags(member.variant)
+    override fun remove(member: FleetMemberAPI, variant: ShipVariantAPI) {
+        removeFromTags(variant)
     }
 
     private fun removeFromTags(variant: ShipVariantAPI) {

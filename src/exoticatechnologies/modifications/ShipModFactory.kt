@@ -22,34 +22,34 @@ object ShipModFactory {
     val random = Random()
 
     @JvmStatic
-    fun generateForFleetMember(fm: FleetMemberAPI): ShipModifications {
-        var mods = ShipModLoader.get(fm)
+    fun generateForFleetMember(member: FleetMemberAPI): ShipModifications {
+        var mods = ShipModLoader.get(member, member.variant)
         if (mods != null) {
             return mods
         }
 
-        random.setSeed(fm.id.hashCode().toLong())
+        random.setSeed(member.id.hashCode().toLong())
 
         mods = ShipModifications()
-        mods.bandwidth = generateBandwidth(fm)
+        mods.bandwidth = generateBandwidth(member)
 
-        ShipModLoader.set(fm, mods)
+        ShipModLoader.set(member, member.variant, mods)
         return mods
     }
 
     @JvmStatic
-    fun generateForFleetMember(fm: FleetMemberAPI, market: MarketAPI): ShipModifications {
-        var mods = ShipModLoader.get(fm)
+    fun generateForFleetMember(member: FleetMemberAPI, market: MarketAPI): ShipModifications {
+        var mods = ShipModLoader.get(member, member.variant)
         if (mods != null) {
             return mods
         }
 
-        random.setSeed(fm.id.hashCode().toLong())
+        random.setSeed(member.id.hashCode().toLong())
 
         mods = ShipModifications()
-        mods.bandwidth = generateBandwidth(fm, market)
+        mods.bandwidth = generateBandwidth(member, market)
 
-        ShipModLoader.set(fm, mods)
+        ShipModLoader.set(member, member.variant, mods)
         return mods
     }
 
@@ -76,7 +76,7 @@ object ShipModFactory {
 
     @JvmStatic
     fun generateRandom(member: FleetMemberAPI): ShipModifications {
-        val mods = ShipModLoader.get(member)
+        val mods = ShipModLoader.get(member, member.variant)
         if (mods != null) {
             return mods
         }
@@ -109,7 +109,7 @@ object ShipModFactory {
             mods.upgrades = UpgradesGenerator.generate(member, mods, context)
         }
 
-        ShipModLoader.set(member, mods)
+        ShipModLoader.set(member, member.variant, mods)
 
         return mods
     }

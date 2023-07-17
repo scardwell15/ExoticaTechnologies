@@ -2,10 +2,11 @@ package exoticatechnologies.ui.impl.shop.upgrades.methods
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import exoticatechnologies.hullmods.ExoticaTechHM
-import exoticatechnologies.modifications.ShipModLoader.Companion.set
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.util.StringUtils
@@ -52,24 +53,26 @@ class RecoverMethod : UpgradeMethod {
         return false
     }
 
-    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
+    override fun apply(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
         val fleet = Global.getSector().playerFleet
-        val creditCost = getCreditCost(fm, mods, upgrade)
+        val creditCost = getCreditCost(member, mods, upgrade)
         val stack = Utilities.getUpgradeChip(fleet.cargo, upgrade.key, mods.getUpgrade(upgrade))
         if (stack != null) {
             stack.add(1f)
         } else {
             fleet.cargo.addSpecial(upgrade.getNewSpecialItemData(mods.getUpgrade(upgrade)), 1f)
         }
-        mods.removeUpgrade(upgrade)
         fleet.cargo.credits.subtract(creditCost.toFloat())
-        set(fm, mods)
-        ExoticaTechHM.addToFleetMember(fm)
+
+        mods.removeUpgrade(upgrade)
+        ShipModLoader.set(member, variant, mods)
+        ExoticaTechHM.addToFleetMember(member, variant)
+
         return StringUtils.getString("UpgradesDialog", "UpgradeRecoveredSuccessfully")
     }
 
     override fun getResourceCostMap(
-        fm: FleetMemberAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
         market: MarketAPI?,
@@ -77,7 +80,7 @@ class RecoverMethod : UpgradeMethod {
     ): Map<String, Float> {
         val resourceCosts: MutableMap<String, Float> = HashMap()
         if (hovered) {
-            resourceCosts[Commodities.CREDITS] = getCreditCost(fm, mods, upgrade).toFloat()
+            resourceCosts[Commodities.CREDITS] = getCreditCost(member, mods, upgrade).toFloat()
             var resourceName = StringUtils.getTranslation("ShipListDialog", "ChipName")
                 .format("name", upgrade.name)
                 .toString()

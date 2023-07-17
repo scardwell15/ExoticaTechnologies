@@ -25,41 +25,44 @@ import java.util.Objects;
 public class ExoticaTechHM extends BaseHullMod {
     private static final Color hullmodColor = new Color(94, 206, 226);
 
-    public static void addToFleetMember(FleetMemberAPI fm) {
-        if (fm.getVariant() == null) {
+    public static void addToFleetMember(FleetMemberAPI member, ShipVariantAPI variant) {
+        if (variant == null) {
             return;
         }
 
-        ShipModifications mods = ShipModFactory.generateForFleetMember(fm);
-        ShipVariantAPI shipVariant = fm.getVariant();
+        ShipModifications mods = ShipModFactory.generateForFleetMember(member);
 
-        if (shipVariant.hasHullMod("exoticatech")) {
-            shipVariant.removePermaMod("exoticatech");
+        if (variant.hasHullMod("exoticatech")) {
+            variant.removePermaMod("exoticatech");
         }
 
         if (mods.shouldApplyHullmod()) {
 
-            ExtensionsKt.fixVariant(fm);
-            shipVariant.addPermaMod("exoticatech");
+            ExtensionsKt.fixVariant(member);
+            variant.addPermaMod("exoticatech");
 
-            for (String moduleVariantId : shipVariant.getStationModules().keySet()) {
-                ShipVariantAPI moduleVariant = shipVariant.getModuleVariant(moduleVariantId);
+            for (String moduleVariantId : variant.getStationModules().keySet()) {
+                ShipVariantAPI moduleVariant = variant.getModuleVariant(moduleVariantId);
 
                 if (moduleVariant != null) {
                     moduleVariant.addPermaMod("exoticatech");
                 }
             }
 
-            fm.updateStats();
+            member.updateStats();
         }
     }
 
-    public static void removeFromFleetMember(FleetMemberAPI fm) {
-        if (fm.getVariant() == null) {
+    public static void addToFleetMember(FleetMemberAPI member) {
+        addToFleetMember(member, member.getVariant());
+    }
+
+    public static void removeFromFleetMember(FleetMemberAPI member) {
+        if (member.getVariant() == null) {
             return;
         }
 
-        ShipVariantAPI shipVariant = fm.getVariant();
+        ShipVariantAPI shipVariant = member.getVariant();
         if (shipVariant.hasHullMod("exoticatech")) {
             shipVariant.removePermaMod("exoticatech");
         }
@@ -76,22 +79,22 @@ public class ExoticaTechHM extends BaseHullMod {
     }
 
     @Override
-    public void advanceInCampaign(FleetMemberAPI fm, float amount) {
-        ShipModifications mods = ShipModLoader.get(fm);
+    public void advanceInCampaign(FleetMemberAPI member, float amount) {
+        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) {
-            fm.getVariant().removePermaMod("exoticatech");
+            member.getVariant().removePermaMod("exoticatech");
             return;
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);
             if (level <= 0) continue;
-            upgrade.advanceInCampaign(fm, mods, amount);
+            upgrade.advanceInCampaign(member, mods, amount);
         }
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (mods.hasExotic(exotic)) {
-                exotic.advanceInCampaign(fm, mods, amount, Objects.requireNonNull(mods.getExoticData(exotic)));
+                exotic.advanceInCampaign(member, mods, amount, Objects.requireNonNull(mods.getExoticData(exotic)));
             }
         }
     }
@@ -101,7 +104,7 @@ public class ExoticaTechHM extends BaseHullMod {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if (member == null) return;
 
-        ShipModifications mods = ShipModLoader.get(member);
+        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
@@ -120,8 +123,8 @@ public class ExoticaTechHM extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
-        if (fm == null) {
+        FleetMemberAPI member = FleetMemberUtils.findMemberForStats(stats);
+        if (member == null) {
             return;
         }
 
@@ -132,31 +135,31 @@ public class ExoticaTechHM extends BaseHullMod {
                 for (Map.Entry<String, String> e : stats.getVariant().getStationModules().entrySet()) {
                     ShipVariantAPI module = stats.getVariant().getModuleVariant(e.getKey());
 
-                    FleetMemberUtils.moduleMap.put(module.getHullVariantId(), fm);
+                    FleetMemberUtils.moduleMap.put(module.getHullVariantId(), member);
                 }
             }
         } catch (Exception e) {
             log.info("Failed to get modules", e);
         }
 
-        ShipModifications mods = ShipModLoader.get(fm);
+        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
 
         if (mods == null) {
-            fm.getVariant().removePermaMod("exoticatech");
+            member.getVariant().removePermaMod("exoticatech");
             return;
         }
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
 
-            exotic.applyExoticToStats(id, stats, fm, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
+            exotic.applyExoticToStats(id, stats, member, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = mods.getUpgrade(upgrade);
             if (level <= 0) continue;
 
-            upgrade.applyUpgradeToStats(stats, fm, mods);
+            upgrade.applyUpgradeToStats(stats, member, mods);
         }
     }
 
@@ -165,7 +168,7 @@ public class ExoticaTechHM extends BaseHullMod {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if (member == null) return;
 
-        ShipModifications mods = ShipModLoader.get(member);
+        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
@@ -184,7 +187,7 @@ public class ExoticaTechHM extends BaseHullMod {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if (member == null) return;
 
-        ShipModifications mods = ShipModLoader.get(member);
+        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
@@ -209,20 +212,20 @@ public class ExoticaTechHM extends BaseHullMod {
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI hullmodTooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
-        FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
-        if (fm == null) return;
-        if (fm.getShipName() == null) {
+        FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
+        if (member == null) return;
+        if (member.getShipName() == null) {
             hullmodTooltip.addPara("Ship modules do not support tooltips.", 0);
             return;
         }
 
-        ShipModifications mods = ShipModLoader.get(fm);
+        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
         boolean exoticsExpand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
         boolean upgradesExpand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F2"));
 
-        mods.populateTooltip(fm, ship.getMutableStats(), hullmodTooltip, width, 500f, upgradesExpand, exoticsExpand, false);
+        mods.populateTooltip(member, ship.getMutableStats(), hullmodTooltip, width, 500f, upgradesExpand, exoticsExpand, false);
 
         if (!exoticsExpand && !upgradesExpand) {
             StringUtils.getTranslation("CommonOptions", "ExpandExotics").addToTooltip(hullmodTooltip);

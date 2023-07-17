@@ -1,11 +1,13 @@
 package exoticatechnologies.ui.impl.shop.upgrades
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
@@ -22,6 +24,7 @@ class UpgradeMethodsUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     var member: FleetMemberAPI,
+    var variant: ShipVariantAPI,
     var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -41,7 +44,7 @@ class UpgradeMethodsUIPlugin(
     }
 
     override fun advancePanel(amount: Float) {
-        val value = member.getMods().getValue()
+        val value = ShipModLoader.get(member, variant)!!.getValue()
         if (value != oldValue) {
             destroyTooltip()
             createTooltip()
@@ -49,7 +52,7 @@ class UpgradeMethodsUIPlugin(
     }
 
     fun createTooltip() {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         oldValue = mods.getValue()
 
 
@@ -74,7 +77,6 @@ class UpgradeMethodsUIPlugin(
             tooltip.addTitle(StringUtils.getString("UpgradeMethods", "UpgradeMethodsTitle"))
         }
         showMethods(mods, tooltip, prev)
-
 
         mainPanel!!.addUIElement(tooltip).inTL(0f, 0f)
     }

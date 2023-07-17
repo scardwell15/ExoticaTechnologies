@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications
 
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 
 class PersistentDataProvider: VariantTagProvider() {
@@ -8,21 +9,21 @@ class PersistentDataProvider: VariantTagProvider() {
         return shipModificationMap[id]
     }
 
-    override fun get(member: FleetMemberAPI): ShipModifications? {
+    override fun get(member: FleetMemberAPI, variant: ShipVariantAPI): ShipModifications? {
         val mods: ShipModifications? = getFromId(member.id)
         if (mods != null) {
-            super.set(member, mods) //set variant tag
+            super.set(member, variant, mods) //set variant tag
         }
         return mods
     }
 
-    override fun set(member: FleetMemberAPI, mods: ShipModifications) {
+    override fun set(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications) {
         throw RuntimeException("This provider is not intended to be used.")
 
         shipModificationMap[member.id] = mods
     }
 
-    override fun remove(member: FleetMemberAPI) {
+    override fun remove(member: FleetMemberAPI, variant: ShipVariantAPI) {
         shipModificationMap.remove(member.id)
     }
 

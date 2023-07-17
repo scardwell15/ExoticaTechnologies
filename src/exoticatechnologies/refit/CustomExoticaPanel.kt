@@ -5,18 +5,20 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.HullMods
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.loading.specs.HullVariantSpec
+import exoticatechnologies.modifications.ShipModFactory
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.ui.impl.shop.ShipModUIPlugin
 
 class CustomExoticaPanel {
     companion object {
         //Overwrite for Background Panel Width
         fun getWidth() : Float {
-            return 960f
+            return (Global.getSettings().screenWidth * 0.66f).coerceAtLeast(960f)
         }
 
         //Overwrite for Background Panel Height
         fun getHeight() : Float {
-            return 540f
+            return (Global.getSettings().screenHeight * 0.66f).coerceAtLeast(540f)
         }
 
         fun renderDefaultBorder() = true
@@ -33,9 +35,11 @@ class CustomExoticaPanel {
         element.addPara("Member: ${member.shipName}", 0f)
         panel.addUIElement(element)*/
 
+        ShipModLoader.get(member, variant) ?: ShipModLoader.set(member, variant, ShipModFactory.generateForFleetMember(member))
+
         var plugin = ShipModUIPlugin(Global.getSector().campaignUI.currentInteractionDialog, backgroundPanel, width, height)
         plugin.layoutPanels()
-        plugin.showPanel(member)
+        plugin.showPanel(member, variant)
 
         //Call this whenever you need to close the panel.
         //backgroundPlugin.close()

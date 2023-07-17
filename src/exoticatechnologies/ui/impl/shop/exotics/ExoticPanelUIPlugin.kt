@@ -3,25 +3,28 @@ package exoticatechnologies.ui.impl.shop.exotics
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
+import exoticatechnologies.refit.RefitButtonAdder
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.TimedUIPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.exotics.chips.ExoticChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.exotics.methods.*
 import exoticatechnologies.util.RenderUtils
-import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class ExoticPanelUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     var member: FleetMemberAPI,
+    var variant: ShipVariantAPI,
     var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -35,19 +38,19 @@ class ExoticPanelUIPlugin(
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         mainPanel = panel
 
-        descriptionPlugin = ExoticDescriptionUIPlugin(panel, exotic, member)
+        descriptionPlugin = ExoticDescriptionUIPlugin(panel, exotic, member, variant)
         descriptionPlugin!!.panelWidth = panelWidth / 2
         descriptionPlugin!!.panelHeight = panelHeight
         descriptionPlugin!!.layoutPanels().position.inTL(0f, 0f)
 
         val methods = getMethods()
 
-        resourcesPlugin = ExoticResourcesUIPlugin(panel, exotic, member, market, methods)
+        resourcesPlugin = ExoticResourcesUIPlugin(panel, exotic, member, variant, market, methods)
         resourcesPlugin!!.panelWidth = panelWidth / 2
         resourcesPlugin!!.panelHeight = panelHeight / 2
         resourcesPlugin!!.layoutPanels().position.inTR(0f, 0f)
 
-        methodsPlugin = ExoticMethodsUIPlugin(panel, exotic, member, market, methods)
+        methodsPlugin = ExoticMethodsUIPlugin(panel, exotic, member, variant, market, methods)
         methodsPlugin!!.panelWidth = panelWidth / 2
         methodsPlugin!!.panelHeight = panelHeight / 2
         methodsPlugin!!.layoutPanels().position.inBR(0f, 0f)
@@ -64,7 +67,10 @@ class ExoticPanelUIPlugin(
             if (it.highlightedItem != null) {
                 setChipDescription = true
                 ExoticDescriptionUIPlugin.displayDescription = false
-                descriptionPlugin!!.resetDescription(member.getMods(), it.highlightedItem!!.exoticData!!)
+                descriptionPlugin!!.resetDescription(
+                    ShipModLoader.get(member, variant)!!,
+                    it.highlightedItem!!.exoticData!!
+                )
             }
         }
 
@@ -100,10 +106,12 @@ class ExoticPanelUIPlugin(
     }
 
     fun applyMethod(exotic: Exotic, method: Method) {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
-        method.apply(member, mods, exotic, market)
+
+        method.apply(member, variant, mods, exotic, market)
+        RefitButtonAdder.requiresVariantUpdate = true
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
 
@@ -169,7 +177,7 @@ class ExoticPanelUIPlugin(
         }
     }
 
-    private inner class ChipPanelListener: ChipPanelUIPlugin.Listener<ExoticSpecialItemPlugin>() {
+    private inner class ChipPanelListener : ChipPanelUIPlugin.Listener<ExoticSpecialItemPlugin>() {
         override fun checkedBackButton() {
             this@ExoticPanelUIPlugin.clickedChipPanelBackButton()
         }

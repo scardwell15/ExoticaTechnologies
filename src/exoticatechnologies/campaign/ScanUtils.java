@@ -88,8 +88,8 @@ public class ScanUtils {
         return notableMembers;
     }
 
-    public static boolean isFleetMemberNotable(FleetMemberAPI fm) {
-        ShipModifications mods = ShipModLoader.get(fm);
+    public static boolean isFleetMemberNotable(FleetMemberAPI member) {
+        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods != null) {
             return ScanUtils.doesEntityHaveNotableMods(mods);
         }

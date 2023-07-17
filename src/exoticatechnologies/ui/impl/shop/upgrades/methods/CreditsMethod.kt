@@ -2,10 +2,11 @@ package exoticatechnologies.ui.impl.shop.upgrades.methods
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import exoticatechnologies.hullmods.ExoticaTechHM
-import exoticatechnologies.modifications.ShipModLoader.Companion.set
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.util.StringUtils
@@ -38,13 +39,15 @@ class CreditsMethod : DefaultUpgradeMethod() {
                 && super.canUse(member, mods, upgrade, market))
     }
 
-    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
+    override fun apply(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
         val level = mods.getUpgrade(upgrade)
-        val creditCost = getFinalCreditCost(fm, upgrade, level, market!!)
+        val creditCost = getFinalCreditCost(member, upgrade, level, market!!)
         Global.getSector().playerFleet.cargo.credits.subtract(creditCost.toFloat())
+
         mods.putUpgrade(upgrade)
-        set(fm, mods)
-        ExoticaTechHM.addToFleetMember(fm)
+        ShipModLoader.set(member, variant, mods)
+        ExoticaTechHM.addToFleetMember(member, variant)
+
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
             .format("name", upgrade.name)
             .format("level", mods.getUpgrade(upgrade))

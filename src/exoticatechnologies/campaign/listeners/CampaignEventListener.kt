@@ -95,7 +95,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
             //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
             //it will never find one.
             val mods = generateRandom(fm)
-            ShipModLoader.set(fm, mods)
+            ShipModLoader.set(fm, fm.variant, mods)
             Global.getSector().addTransientScript(DerelictsEFScript(shipData.fleetMemberId, mods))
             return
         }
@@ -127,7 +127,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
                     val mods = generateRandom(fm)
                     //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                     //it will never find one.
-                    ShipModLoader.set(fm, mods)
+                    ShipModLoader.set(fm, fm.variant, mods)
                     derelictVariantMap[shipData.fleetMemberId] = mods
                 }
                 Global.getSector().addTransientScript(DerelictsEFScript(derelictVariantMap))
@@ -166,7 +166,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
         npcMembers.addAll(otherResult.destroyed)
 
         for (member in npcMembers) {
-            val mods = ShipModLoader.get(member)
+            val mods = ShipModLoader.get(member, member.variant)
             if (mods != null) {
                 if (ShipModFactory.random.nextFloat() <= 0.75f) {
                     mods.bandwidth /= 2f
@@ -191,10 +191,10 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
             playerMembers.addAll(playerResult.disabled)
             playerMembers.addAll(playerResult.destroyed)
             for (member in playerMembers) {
-                val mods = ShipModLoader.get(member)
+                val mods = ShipModLoader.get(member,  member.variant)
                 if (mods != null) {
                     ExoticaTechHM.removeFromFleetMember(member)
-                    ShipModLoader.remove(member)
+                    ShipModLoader.remove(member, member.variant)
                 }
             }
         }
@@ -275,12 +275,12 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
 
         private fun getDrops(
             result: EngagementResultAPI,
-            fms: List<FleetMemberAPI>
+            members: List<FleetMemberAPI>
         ): Pair<Map<String, MutableMap<Int, Int>>, Map<ExoticData, Int>> {
             val upgradesMap: MutableMap<String, MutableMap<Int, Int>> = HashMap()
             val exotics: MutableMap<ExoticData, Int> = HashMap()
-            for (fm in fms) {
-                val mods = ShipModLoader.get(fm)
+            for (member in members) {
+                val mods = ShipModLoader.get(member, member.variant)
                 if (mods != null) {
                     for ((upgrade, level) in mods.getUpgradeMap()) {
                         if (!upgradesMap.containsKey(upgrade.key)) {
@@ -389,10 +389,10 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
                 dlog("This fleet is the player fleet.")
                 return
             }
-            for (fm in fleet.fleetData.membersListCopy) {
-                if (!isInFleet(fm.id, Global.getSector().playerFleet)) {
-                    dlog(String.format("Removed mods for member %s", fm.id))
-                    ShipModLoader.remove(fm)
+            for (member in fleet.fleetData.membersListCopy) {
+                if (!isInFleet(member.id, Global.getSector().playerFleet)) {
+                    dlog(String.format("Removed mods for member %s", member.id))
+                    ShipModLoader.remove(member, member.variant)
                 }
             }
         }
@@ -401,14 +401,14 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
         fun applyExtraSystemsToFleet(fleet: CampaignFleetAPI) {
             val hash = fleet.id.hashCode()
             ShipModFactory.random.setSeed(hash.toLong())
-            for (fm in fleet.fleetData.membersListCopy) {
-                if (fm.isFighterWing) continue
+            for (member in fleet.fleetData.membersListCopy) {
+                if (member.isFighterWing) continue
 
                 //generate random extra system
-                val mods = generateRandom(fm)
-                ShipModLoader.set(fm, mods)
-                ExoticaTechHM.addToFleetMember(fm)
-                dlog(String.format("Added modifications to member %s", fm.shipName))
+                val mods = generateRandom(member)
+                ShipModLoader.set(member, member.variant, mods)
+                ExoticaTechHM.addToFleetMember(member)
+                dlog(String.format("Added modifications to member %s", member.shipName))
             }
         }
 

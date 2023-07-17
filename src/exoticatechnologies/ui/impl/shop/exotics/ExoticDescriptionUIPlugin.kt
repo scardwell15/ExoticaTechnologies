@@ -1,9 +1,11 @@
 package exoticatechnologies.ui.impl.shop.exotics
 
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
@@ -18,7 +20,8 @@ import org.magiclib.kotlin.setAlpha
 class ExoticDescriptionUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
-    var member: FleetMemberAPI
+    var member: FleetMemberAPI,
+    var variant: ShipVariantAPI
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
@@ -41,13 +44,13 @@ class ExoticDescriptionUIPlugin(
     }
 
     fun resetDescription() {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         val exoticData = mods.getExoticData(exotic) ?: ExoticData(exotic)
 
         resetDescription(mods, exoticData)
     }
 
-    fun resetDescription(mods: ShipModifications = member.getMods(), exoticData: ExoticData) {
+    fun resetDescription(mods: ShipModifications = ShipModLoader.get(member, variant)!!, exoticData: ExoticData) {
         if (!displayDescription) {
             if (exoticData == displayedExoticData) {
                 return

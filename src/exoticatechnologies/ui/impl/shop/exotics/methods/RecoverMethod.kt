@@ -3,6 +3,7 @@ package exoticatechnologies.ui.impl.shop.exotics.methods
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
@@ -12,7 +13,13 @@ import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
 class RecoverMethod : DestroyMethod() {
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): String {
+    override fun apply(
+        member: FleetMemberAPI,
+        variant: ShipVariantAPI,
+        mods: ShipModifications,
+        exotic: Exotic,
+        market: MarketAPI?
+    ): String {
         val fleet: CampaignFleetAPI = member.fleetData.fleet
         
         val exoticData = mods.getExoticData(exotic)
@@ -30,7 +37,7 @@ class RecoverMethod : DestroyMethod() {
         /**
          * Super call
          */
-        super.apply(member, mods, exotic, market)
+        super.apply(member, variant, mods, exotic, market)
 
         return StringUtils.getString("ExoticsDialog", "ExoticRecovered")
     }

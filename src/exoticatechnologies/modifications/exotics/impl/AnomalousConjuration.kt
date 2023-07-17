@@ -129,7 +129,10 @@ class AnomalousConjuration(key: String, settings: JSONObject) : Exotic(key, sett
             val type = typePicker!!.pick()
             val variants = ShardSpawner.variantData[HullSize.FIGHTER]
             val variantPicker = variants!![type]
-            val variantId = variantPicker.pick()
+            var variantId = variantPicker.pick()
+            Global.getSettings().getFighterWingSpec(variantId) ?: run {
+                variantId = "aspect_shock_wing"
+            }
 
             val loc = Misc.getUnitVectorAtDegreeAngle(angle)
             loc.scale(ship.collisionRadius * 0.1f)
@@ -138,8 +141,6 @@ class AnomalousConjuration(key: String, settings: JSONObject) : Exotic(key, sett
             val wasSuppressed = fleetManager.isSuppressDeploymentMessages
             fleetManager.isSuppressDeploymentMessages = true
 
-            val spec = Global.getSettings().getFighterWingSpec(variantId)
-            val ships = arrayOfNulls<ShipAPI>(spec.numFighters)
             val captain = Global.getSettings().createPerson()
             captain.setPersonality(Personalities.RECKLESS) // doesn't matter for fighters
             captain.stats.setSkillLevel(Skills.POINT_DEFENSE, 2f)
@@ -147,6 +148,8 @@ class AnomalousConjuration(key: String, settings: JSONObject) : Exotic(key, sett
             captain.stats.setSkillLevel(Skills.IMPACT_MITIGATION, 2f)
             val leader: ShipAPI = engine.getFleetManager(ship.originalOwner)
                 .spawnShipOrWing(variantId, loc, facing, 0f, captain)
+
+            val ships = arrayOfNulls<ShipAPI>(leader.wing.wingMembers.size)
             for (i in ships.indices) {
                 ships[i] = leader.wing.wingMembers[i]
                 ships[i]!!.location.set(loc)

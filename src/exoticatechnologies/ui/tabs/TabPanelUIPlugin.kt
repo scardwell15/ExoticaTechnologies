@@ -6,7 +6,7 @@ import exoticatechnologies.ui.InteractiveUIPanelPlugin
 
 abstract class TabPanelUIPlugin : InteractiveUIPanelPlugin() {
     protected var tabPlugin: TabButtonUIPlugin? = null
-    protected var tabText: String = "TabText"
+    abstract val tabText: String
 
     abstract fun layoutPanel(holdingPanel: CustomPanelAPI, parentPlugin: TabbedPanelUIPlugin): TooltipMakerAPI?
 

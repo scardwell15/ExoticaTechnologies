@@ -8,16 +8,18 @@ import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.UIPanelAPI
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.refit.CustomExoticaPanel
+import exoticatechnologies.util.RenderUtils
+import exoticatechnologies.util.StringUtils
 import org.lazywizard.lazylib.MathUtils
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.GL11
+import org.lwjgl.util.vector.Vector2f
 import java.awt.Color
 
 class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: FleetMemberAPI) : CustomUIPanelPlugin {
-
     var position: PositionAPI? = null
     var panel: UIPanelAPI? = null
-
+    var closeButtonPanel: UIPanelAPI? = null
     var fadeIn = 0f
 
     override fun positionChanged(position: PositionAPI?) {
@@ -65,6 +67,11 @@ class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: Fle
         if (position == null) return
         if (!CustomExoticaPanel.renderDefaultBorder()) return
 
+        val x = position!!.x
+        val y = position!!.y
+        val width = position!!.width
+        val height = position!!.height
+
         var c = Misc.getDarkPlayerColor()
         GL11.glPushMatrix()
 
@@ -72,7 +79,6 @@ class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: Fle
         GL11.glRotatef(0f, 0f, 0f, 1f)
 
         GL11.glDisable(GL11.GL_TEXTURE_2D)
-
         GL11.glDisable(GL11.GL_BLEND)
 
         GL11.glColor4f(c.red / 255f,
@@ -82,11 +88,6 @@ class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: Fle
 
         GL11.glEnable(GL11.GL_LINE_SMOOTH)
         GL11.glBegin(GL11.GL_LINE_STRIP)
-
-        var x = position!!.x
-        var y = position!!.y
-        var width = position!!.width
-        var height = position!!.height
 
         GL11.glVertex2f(x, y)
         GL11.glVertex2f(x, y + height)
@@ -99,7 +100,7 @@ class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: Fle
     }
 
     override fun advance(amount: Float) {
-        fadeIn = MathUtils.clamp(fadeIn + 0.025f, 0f, 0.4f)
+        fadeIn = MathUtils.clamp(fadeIn + 0.05f, 0f, 0.8f)
 
     }
 
@@ -130,7 +131,7 @@ class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: Fle
     }
 
     fun close() {
-        RefitButtonAdder.requiresVariantUpdate = true
+        panel?.removeComponent(closeButtonPanel)
         parent.removeComponent(panel)
     }
 

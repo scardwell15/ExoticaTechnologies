@@ -16,7 +16,6 @@ import exoticatechnologies.modifications.ShipModFactory.generateRandom
 import exoticatechnologies.modifications.ShipModLoader.Companion.getForSpecialData
 import exoticatechnologies.modifications.ShipModLoader.Companion.set
 import exoticatechnologies.modifications.ShipModifications
-import lombok.extern.log4j.Log4j
 import org.apache.log4j.Logger
 
 /**
@@ -53,19 +52,19 @@ class ETGenerateForDerelict : BaseCommandPlugin() {
                         val shipData = data.ships[i]
                         if (getForSpecialData(shipData) != null) continue
                         if (shipData.getVariant() == null) continue
-                        val fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant())
+                        val member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant())
                         if (shipData.fleetMemberId == null) {
-                            shipData.fleetMemberId = fm.id
+                            shipData.fleetMemberId = member.id
                         } else {
-                            fm.id = shipData.fleetMemberId
+                            member.id = shipData.fleetMemberId
                         }
                         log.info("derelict: generating for fmId " + shipData.fleetMemberId)
 
                         //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
                         //it will never find one.
                         ShipModFactory.random.setSeed(shipData.fleetMemberId.hashCode().toLong())
-                        val mods = generateRandom(fm)
-                        set(fm, mods)
+                        val mods = generateRandom(member)
+                        set(member, member.variant, mods)
                         derelictVariantMap[shipData.fleetMemberId.hashCode().toString()] = mods
                     }
                     Global.getSector().addTransientScript(DerelictsEFScript(derelictVariantMap))

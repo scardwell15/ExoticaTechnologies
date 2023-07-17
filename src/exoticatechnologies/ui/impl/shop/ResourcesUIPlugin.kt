@@ -3,21 +3,23 @@ package exoticatechnologies.ui.impl.shop
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoAPI
 import com.fs.starfarer.api.campaign.SpecialItemData
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
-import exoticatechnologies.util.getMods
 import kotlin.math.absoluteValue
 
 abstract class ResourcesUIPlugin(
-    var member: FleetMemberAPI): InteractiveUIPanelPlugin() {
+    var member: FleetMemberAPI,
+    var variant: ShipVariantAPI): InteractiveUIPanelPlugin() {
     abstract var mainPanel: CustomPanelAPI?
 
     fun displayResourceCosts(resourceCosts: MutableMap<String, Float>): TooltipMakerAPI {
@@ -49,7 +51,7 @@ abstract class ResourcesUIPlugin(
     }
 
     fun addBandwidthString(tooltip: TooltipMakerAPI, bandwidth: Float) {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         val used = mods.getUsedBandwidth()
 
         if (bandwidth != 0f) {

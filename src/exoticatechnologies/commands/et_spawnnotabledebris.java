@@ -55,7 +55,7 @@ public class et_spawnnotabledebris implements BaseCommand {
             ExoticsGenerator.generate(member, mods, generationContext);
             UpgradesGenerator.generate(member, mods, generationContext);
 
-            ShipModLoader.set(member, mods);
+            ShipModLoader.set(member, member.getVariant(), mods);
             data.addShip(perShipData);
             debris.getMemoryWithoutUpdate().set(MemFlags.SALVAGE_SPECIAL_DATA, data);
             return CommandResult.SUCCESS;

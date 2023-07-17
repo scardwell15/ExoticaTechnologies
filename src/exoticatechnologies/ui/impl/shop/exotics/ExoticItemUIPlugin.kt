@@ -1,15 +1,16 @@
 package exoticatechnologies.ui.impl.shop.exotics
 
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.modifications.exotics.types.ExoticType
-import exoticatechnologies.ui.SpritePanelPlugin
 import exoticatechnologies.ui.UIUtils
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
@@ -23,6 +24,7 @@ import java.awt.Color
 class ExoticItemUIPlugin(
     item: Exotic,
     var member: FleetMemberAPI,
+    var variant: ShipVariantAPI,
     private val listPanel: ListUIPanelPlugin<Exotic>
 ) : ListItemUIPanelPlugin<Exotic>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
@@ -43,7 +45,7 @@ class ExoticItemUIPlugin(
     var itemInfo: TooltipMakerAPI? = null
 
     override fun advance(amount: Float) {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         if (mods.hasExotic(item) != installed) {
             if (mods.hasExotic(item) || selected) {
                 exoticSprite?.color = RenderUtils.INSTALLED_COLOR

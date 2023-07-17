@@ -1,19 +1,32 @@
 package exoticatechnologies.ui.impl.shop.upgrades.methods
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
-import exoticatechnologies.modifications.ShipModLoader.Companion.set
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import lombok.Getter
+import kotlin.collections.HashMap
+import kotlin.collections.Map
+import kotlin.collections.MutableMap
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
+import kotlin.collections.set
 
 class ResourcesMethod : DefaultUpgradeMethod() {
     @Getter
     override var key = "resources"
-    override fun getOptionText(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
+    override fun getOptionText(
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        upgrade: Upgrade,
+        market: MarketAPI?
+    ): String {
         return StringUtils.getString("UpgradeMethods", "ResourcesOption")
     }
 
@@ -26,7 +39,12 @@ class ResourcesMethod : DefaultUpgradeMethod() {
         return null
     }
 
-    override fun canUse(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
+    override fun canUse(
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        upgrade: Upgrade,
+        market: MarketAPI?
+    ): Boolean {
         if (upgrade.resourceRatios.isEmpty()) return false
         val upgradeCosts = upgrade.getResourceCosts(member, mods.getUpgrade(upgrade))
         val totalStacks = Utilities.getTotalResources(member.fleetData.fleet, market, upgradeCosts.keys)
@@ -43,12 +61,20 @@ class ResourcesMethod : DefaultUpgradeMethod() {
                 && super.canUse(member, mods, upgrade, market))
     }
 
-    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
-        val upgradeCosts = upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade))
-        Utilities.takeResources(fm.fleetData.fleet, market, upgradeCosts)
+    override fun apply(
+        member: FleetMemberAPI,
+        variant: ShipVariantAPI,
+        mods: ShipModifications,
+        upgrade: Upgrade,
+        market: MarketAPI?
+    ): String {
+        val upgradeCosts = upgrade.getResourceCosts(member, mods.getUpgrade(upgrade))
+        Utilities.takeResources(member.fleetData.fleet, market, upgradeCosts)
+
         mods.putUpgrade(upgrade)
-        set(fm, mods)
-        ExoticaTechHM.addToFleetMember(fm)
+        ShipModLoader.set(member, variant, mods)
+        ExoticaTechHM.addToFleetMember(member, variant)
+
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
             .format("name", upgrade.name)
             .format("level", mods.getUpgrade(upgrade))
@@ -56,7 +82,7 @@ class ResourcesMethod : DefaultUpgradeMethod() {
     }
 
     override fun getResourceCostMap(
-        fm: FleetMemberAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
         market: MarketAPI?,
@@ -64,7 +90,7 @@ class ResourcesMethod : DefaultUpgradeMethod() {
     ): Map<String, Float> {
         val resourceCosts: MutableMap<String, Float> = HashMap()
         if (hovered) {
-            val upgradeCosts = upgrade.getResourceCosts(fm, mods.getUpgrade(upgrade))
+            val upgradeCosts = upgrade.getResourceCosts(member, mods.getUpgrade(upgrade))
             for (key in upgradeCosts.keys) {
                 val cost = java.lang.Float.valueOf(upgradeCosts[key]!!.toFloat())
                 if (cost != 0f) {

@@ -36,13 +36,13 @@ public class ETScanFleet extends BaseCommandPlugin {
             FleetEncounterContext context = (FleetEncounterContext) interactionPlugin.getContext();
             CampaignFleetAPI otherFleet = context.getBattle().getNonPlayerCombined();
 
-            for (FleetMemberAPI fm : otherFleet.getMembersWithFightersCopy()) {
-                if (fm.isFighterWing()) continue;
+            for (FleetMemberAPI member : otherFleet.getMembersWithFightersCopy()) {
+                if (member.isFighterWing()) continue;
 
-                ShipModifications mods = ShipModLoader.get(fm);
+                ShipModifications mods = ShipModLoader.get(member, member.getVariant());
                 if (mods != null) {
                     if (ScanUtils.doesEntityHaveNotableMods(mods)) {
-                        validSelectionList.add(fm);
+                        validSelectionList.add(member);
                     }
                 }
             }

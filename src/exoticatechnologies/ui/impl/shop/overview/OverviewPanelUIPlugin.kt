@@ -5,6 +5,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.CutStyle
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
@@ -15,13 +16,13 @@ import exoticatechnologies.ui.impl.shop.upgrades.methods.RecoverMethod
 import exoticatechnologies.ui.tabs.TabButtonUIPlugin
 import exoticatechnologies.ui.tabs.TabbedPanelUIPlugin
 import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
     val pad: Float = 3f
     val opad: Float = 10f
     override var bgColor: Color = Color(200, 180, 40, 0)
+    override val tabText: String = "Overview"
 
     private var mainPanel: CustomPanelAPI? = null
     private var innerPanel: CustomPanelAPI? = null
@@ -53,7 +54,7 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
             innerPanel = null
         }
 
-        val mods: ShipModifications = member!!.getMods()
+        val mods: ShipModifications = ShipModLoader.get(member!!, variant!!)!!
 
         val panelPlugin = BaseUIPanelPlugin()
         panelPlugin.bgColor = Color(255, 0, 0, 0)
@@ -128,11 +129,11 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
     inner class ClearUpgradesButtonHandler: ButtonHandler() {
         override fun checked() {
             this@OverviewPanelUIPlugin.apply {
-                val mods = member!!.getMods()
+                val mods = ShipModLoader.get(member!!, variant!!)!!
                 mods.upgrades.map.keys
                     .mapNotNull { UpgradesHandler.UPGRADES[it] }
                     .forEach {
-                        RecoverMethod().apply(member!!, mods, it, market!!)
+                        RecoverMethod().apply(member!!, variant!!, mods, it, market!!)
                     }
                 showPanel(mainPanel!!)
             }
@@ -142,11 +143,17 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
     inner class ClearExoticsButtonHandler: ButtonHandler() {
         override fun checked() {
             this@OverviewPanelUIPlugin.apply {
-                val mods = member!!.getMods()
+                val mods = ShipModLoader.get(member!!, variant!!)!!
                 mods.exotics.list
                     .map { ExoticsHandler.EXOTICS[it] }
                     .forEach {
-                        exoticatechnologies.ui.impl.shop.exotics.methods.RecoverMethod().apply(member!!, mods, it!!, market!!)
+                        exoticatechnologies.ui.impl.shop.exotics.methods.RecoverMethod().apply(
+                            member!!,
+                            variant!!,
+                            mods,
+                            it!!,
+                            market!!
+                        )
                     }
                 expandExotics = !expandExotics
                 showPanel(mainPanel!!)

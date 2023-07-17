@@ -2,6 +2,7 @@ package exoticatechnologies.ui.impl.shop.exotics.methods
 
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.hullmods.ExoticaTechHM
 import exoticatechnologies.modifications.ShipModLoader
@@ -16,13 +17,19 @@ import exoticatechnologies.util.Utilities
 class ChipMethod : Method {
     var chipStack: CargoStackAPI? = null
 
-    override fun apply(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): String {
+    override fun apply(
+        member: FleetMemberAPI,
+        variant: ShipVariantAPI,
+        mods: ShipModifications,
+        exotic: Exotic,
+        market: MarketAPI?
+    ): String {
         val plugin = chipStack!!.plugin as ExoticSpecialItemPlugin
         val exoticData = plugin.exoticData!!
         mods.putExotic(exoticData)
 
-        ShipModLoader.set(member, mods)
-        ExoticaTechHM.addToFleetMember(member)
+        ShipModLoader.set(member, variant, mods)
+        ExoticaTechHM.addToFleetMember(member, variant)
         exotic.onInstall(member)
 
         Utilities.takeItem(chipStack)

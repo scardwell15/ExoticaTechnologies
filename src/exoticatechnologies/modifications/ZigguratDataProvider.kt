@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications
 
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 
 /**
@@ -25,17 +26,17 @@ class ZigguratDataProvider: VariantTagProvider() {
         else null
     }
 
-    override fun get(member: FleetMemberAPI): ShipModifications? {
+    override fun get(member: FleetMemberAPI, variant: ShipVariantAPI): ShipModifications? {
         return if (member.hullId.contains("ziggurat")) getZigguratMods() else null
     }
 
-    override fun set(member: FleetMemberAPI, mods: ShipModifications) {
+    override fun set(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications) {
         if (member.hullId.contains("ziggurat")) {
             setZigguratMods(member, mods)
         }
     }
 
-    override fun remove(member: FleetMemberAPI) {
+    override fun remove(member: FleetMemberAPI, variant: ShipVariantAPI) {
         //donothing
     }
 

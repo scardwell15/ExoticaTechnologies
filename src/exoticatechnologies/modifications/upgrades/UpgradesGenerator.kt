@@ -40,7 +40,6 @@ object UpgradesGenerator {
                     upgrade = upgradePicker.pick()
 
                     if (!canPickUpgrade(member, mods, upgrades, upgrade, usableBandwidth)) {
-                        println("removed $upgrade")
                         upgradePicker.remove(upgrade)
                         upgrade = null
                     }

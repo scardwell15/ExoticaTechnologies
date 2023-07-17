@@ -3,6 +3,7 @@ package exoticatechnologies.ui.impl.shop
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.*
 import com.fs.starfarer.api.util.Misc
@@ -10,6 +11,7 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthHandler
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
+import exoticatechnologies.refit.RefitButtonAdder
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.StringTooltip
 import exoticatechnologies.util.StringUtils
@@ -19,7 +21,9 @@ import kotlin.math.min
 
 class ShipHeaderUIPlugin(
     dialog: InteractionDialogAPI?,
-    var member: FleetMemberAPI, var parentPanel: CustomPanelAPI
+    var member: FleetMemberAPI,
+    var variant: ShipVariantAPI,
+    var parentPanel: CustomPanelAPI
 ) : InteractiveUIPanelPlugin() {
     private val pad = 3f
     private val opad = 10f
@@ -44,7 +48,7 @@ class ShipHeaderUIPlugin(
     var bandwidthButton: ButtonAPI? = null
 
     override fun advancePanel(amount: Float) {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         if (mods.getValue() != lastValue) {
             lastValue = mods.getValue()
             setBandwidthText()
@@ -116,7 +120,7 @@ class ShipHeaderUIPlugin(
     }
 
     private fun setBandwidthText() {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         val baseBandwidth = mods.getBaseBandwidth(member)
         val bandwidthWithExotics = mods.getBandwidthWithExotics(member)
         val usedBandwidth = mods.getUsedBandwidth()
@@ -175,7 +179,7 @@ class ShipHeaderUIPlugin(
             return
         }
 
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         bandwidthUpgradeLabel?.let {
             if (mods.getBaseBandwidth() >= Bandwidth.MAX_BANDWIDTH) {
                 modifyBandwidthUpgradeLabel(it, -1f, -1f, "BandwidthDialog", "BandwidthUpgradePeak")
@@ -225,7 +229,7 @@ class ShipHeaderUIPlugin(
     }
 
     private fun doBandwidthUpgrade() {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         val marketMult = BandwidthHandler.getMarketBandwidthMult(market)
         val increase = Bandwidth.BANDWIDTH_STEP * marketMult
         val upgradePrice = BandwidthHandler.getBandwidthUpgradePrice(member, mods.getBaseBandwidth(), marketMult)
@@ -234,7 +238,8 @@ class ShipHeaderUIPlugin(
 
         val newBandwidth = min(mods.getBaseBandwidth() + increase, Bandwidth.MAX_BANDWIDTH)
         mods.bandwidth = newBandwidth
-        ShipModLoader.set(member, mods)
+        ShipModLoader.set(member, variant, mods)
+        RefitButtonAdder.requiresVariantUpdate = true
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 0.75f)
     }

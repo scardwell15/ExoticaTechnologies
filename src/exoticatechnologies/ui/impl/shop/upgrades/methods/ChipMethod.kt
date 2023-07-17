@@ -3,6 +3,7 @@ package exoticatechnologies.ui.impl.shop.upgrades.methods
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import exoticatechnologies.hullmods.ExoticaTechHM
@@ -51,16 +52,25 @@ class ChipMethod : DefaultUpgradeMethod() {
         return Utilities.hasUpgradeChip(member.fleetData.fleet.cargo, upgrade.key)
     }
 
-    override fun apply(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): String {
+    override fun apply(
+        member: FleetMemberAPI,
+        variant: ShipVariantAPI,
+        mods: ShipModifications,
+        upgrade: Upgrade,
+        market: MarketAPI?
+    ): String {
         requireNotNull(upgradeChipStack) { "Missing chip stack." }
+
         val fleet = Global.getSector().playerFleet
         val stackPlugin = upgradeChipStack!!.plugin as UpgradeSpecialItemPlugin
-        val creditCost = getCreditCost(fm, mods, upgrade, upgradeChipStack)
+        val creditCost = getCreditCost(member, mods, upgrade, upgradeChipStack)
         fleet.cargo.credits.subtract(creditCost.toFloat())
         Utilities.takeItem(upgradeChipStack)
+
         mods.putUpgrade(upgrade, stackPlugin.upgradeLevel)
-        ShipModLoader.set(fm, mods)
-        ExoticaTechHM.addToFleetMember(fm)
+        ShipModLoader.set(member, variant, mods)
+        ExoticaTechHM.addToFleetMember(member, variant)
+
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
             .format("name", upgrade.name)
             .format("level", mods.getUpgrade(upgrade))
@@ -68,7 +78,7 @@ class ChipMethod : DefaultUpgradeMethod() {
     }
 
     override fun getResourceCostMap(
-        fm: FleetMemberAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
         upgrade: Upgrade,
         market: MarketAPI?,
@@ -83,7 +93,7 @@ class ChipMethod : DefaultUpgradeMethod() {
                 resourceCosts[String.format("&%s", resourceName)] = 1f
                 return resourceCosts
             }
-            resourceCosts[Commodities.CREDITS] = getCreditCost(fm, mods, upgrade, upgradeChipStack).toFloat()
+            resourceCosts[Commodities.CREDITS] = getCreditCost(member, mods, upgrade, upgradeChipStack).toFloat()
             resourceCosts[Utilities.formatSpecialItem(upgradeChipStack!!.specialDataIfSpecial)] =
                 1f
         }

@@ -1,9 +1,11 @@
 package exoticatechnologies.ui.impl.shop.exotics
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.ui.impl.shop.ResourcesUIPlugin
 import exoticatechnologies.ui.impl.shop.exotics.methods.Method
@@ -13,9 +15,10 @@ class ExoticResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     member: FleetMemberAPI,
+    variant: ShipVariantAPI,
     var market: MarketAPI?,
     var methods: List<Method>
-) : ResourcesUIPlugin(member) {
+) : ResourcesUIPlugin(member, variant) {
     override var mainPanel: CustomPanelAPI? = null
     private var resourcesTooltip: TooltipMakerAPI? = null
 
@@ -37,7 +40,7 @@ class ExoticResourcesUIPlugin(
     }
 
     fun redisplayResourceCosts(activeMethod: Method?) {
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         destroyTooltip()
 
         //gather resource costs first, across all upgrade methods

@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Vector2f
 import java.awt.Color
 
-class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: FleetMemberAPI) : CustomUIPanelPlugin {
+class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: FleetMemberAPI, private var buttonAdder: RefitButtonAdder) : CustomUIPanelPlugin {
     var position: PositionAPI? = null
     var panel: UIPanelAPI? = null
     var closeButtonPanel: UIPanelAPI? = null
@@ -133,6 +133,7 @@ class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: Fle
     fun close() {
         panel?.removeComponent(closeButtonPanel)
         parent.removeComponent(panel)
+        buttonAdder.syncVariantIfNeeded()
     }
 
 }

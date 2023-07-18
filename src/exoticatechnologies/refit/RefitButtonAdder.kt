@@ -24,11 +24,13 @@ class RefitButtonAdder : EveryFrameScript {
 
     var frames = 0
 
+    var refitPanel: UIPanelAPI? = null
     var openButtonPanel: CustomPanelAPI? = null
     var closeButtonPanel: CustomPanelAPI? = null
     var member: FleetMemberAPI? = null
     var variant: HullVariantSpec? = null
     var firstButtonLoad = true
+    var buttonAdded = false
 
     companion object {
         var requiresVariantUpdate = false
@@ -54,6 +56,14 @@ class RefitButtonAdder : EveryFrameScript {
 
         if (Global.getSector().campaignUI.currentCoreTab != CoreUITabId.REFIT)
         {
+            buttonAdded = false
+            return
+        }
+
+        if (buttonAdded) {
+            member = invokeMethod("getMember", refitPanel!!) as FleetMemberAPI
+            var shipdisplay = invokeMethod("getShipDisplay", refitPanel!!) as UIPanelAPI?
+            variant = invokeMethod("getCurrentVariant", shipdisplay!!) as HullVariantSpec?
             return
         }
 
@@ -88,55 +98,10 @@ class RefitButtonAdder : EveryFrameScript {
 
                     if (child3 is UIPanelAPI)
                     {
-
-                        var shipdisplay = invokeMethod("getShipDisplay", child3!!) as UIPanelAPI?
+                        refitPanel = child3
+                        member = invokeMethod("getMember", refitPanel!!) as FleetMemberAPI
+                        var shipdisplay = invokeMethod("getShipDisplay", refitPanel!!) as UIPanelAPI?
                         variant = invokeMethod("getCurrentVariant", shipdisplay!!) as HullVariantSpec?
-
-
-                        member = invokeMethod("getMember", child3) as FleetMemberAPI
-
-                        if (requiresVariantUpdate)
-                        {
-                            try {
-                                invokeMethod("syncWithCurrentVariant", child3!!, true)
-                            } catch (e: Throwable) {
-                                //do nothing
-                                try {
-                                    invokeMethod("syncWithCurrentVariant", child3!!)
-                                } catch (e: Throwable) {
-                                    println("error while pre-syncing variant in refit: $e")
-                                }
-                            }
-
-                            try {
-                                invokeMethod("saveCurrentVariant", child3!!, false)
-                            } catch (e: Throwable) {
-                                //do nothing
-                                try {
-                                    invokeMethod("saveCurrentVariant", child3!!)
-                                } catch (e: Throwable) {
-                                    println("error while saving variant in refit: $e")
-                                }
-                            }
-
-                            try {
-                                invokeMethod("setEditedSinceSave", child3!!, false)
-                            } catch (e: Throwable) {
-                                //do nothing
-                            }
-
-                            try {
-                                invokeMethod("syncWithCurrentVariant", child3!!, true)
-                            } catch (e: Throwable) {
-                                try {
-                                    invokeMethod("syncWithCurrentVariant", child3!!)
-                                } catch (e: Throwable) {
-                                    println("error while post-syncing variant in refit: $e")
-                                }
-                            }
-
-                            requiresVariantUpdate = false
-                        }
 
                         var child4 = child3.getChildrenCopy().find { hasMethodOfName("getColorFor", it) } as UIPanelAPI?
 
@@ -167,6 +132,8 @@ class RefitButtonAdder : EveryFrameScript {
 
         if (modWidget != null && buildButton != null)
         {
+            buttonAdded = true
+
             openButtonPanel = Global.getSettings().createCustom(buildButton.position.width , buildButton.position.height, null)
             modWidget.addComponent(openButtonPanel)
             openButtonPanel!!.position.belowLeft(buildButton, 3f)
@@ -203,7 +170,7 @@ class RefitButtonAdder : EveryFrameScript {
 
                 if (corePanel is UIPanelAPI)
                 {
-                    var plugin = ExoticaPanelPlugin(corePanel, member!!)
+                    var plugin = ExoticaPanelPlugin(corePanel, member!!, this)
 
                     var width = CustomExoticaPanel.getWidth()
                     var height = CustomExoticaPanel.getHeight()
@@ -277,7 +244,7 @@ class RefitButtonAdder : EveryFrameScript {
     }
 
     //Required to execute obfuscated methods without referencing their obfuscated class name.
-    private fun invokeMethod(methodName: String, instance: Any, vararg arguments: Any?) : Any?
+    fun invokeMethod(methodName: String, instance: Any, vararg arguments: Any?) : Any?
     {
         var method: Any? = null
 
@@ -326,4 +293,49 @@ class RefitButtonAdder : EveryFrameScript {
         return invokeMethod("getChildrenCopy", this) as List<UIComponentAPI>
     }
 
+    fun syncVariantIfNeeded() {
+        if (requiresVariantUpdate)
+        {
+            try {
+                invokeMethod("syncWithCurrentVariant", refitPanel!!, true)
+            } catch (e: Throwable) {
+                //do nothing
+                try {
+                    invokeMethod("syncWithCurrentVariant", refitPanel!!)
+                } catch (e: Throwable) {
+                    println("error while pre-syncing variant in refit: $e")
+                }
+            }
+
+            try {
+                invokeMethod("saveCurrentVariant", refitPanel!!, false)
+            } catch (e: Throwable) {
+                //do nothing
+                try {
+                    invokeMethod("saveCurrentVariant", refitPanel!!)
+                } catch (e: Throwable) {
+                    println("error while saving variant in refit: $e")
+                }
+            }
+
+            try {
+                invokeMethod("setEditedSinceSave", refitPanel!!, false)
+            } catch (e: Throwable) {
+                //do nothing
+            }
+
+            try {
+                invokeMethod("syncWithCurrentVariant", refitPanel!!, true)
+            } catch (e: Throwable) {
+                try {
+                    invokeMethod("syncWithCurrentVariant", refitPanel!!)
+                } catch (e: Throwable) {
+                    println("error while post-syncing variant in refit: $e")
+                }
+            }
+
+            requiresVariantUpdate = false
+        }
+
+    }
 }

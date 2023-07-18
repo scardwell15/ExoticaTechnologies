@@ -34,6 +34,14 @@ class RefitButtonAdder : EveryFrameScript {
         var requiresVariantUpdate = false
     }
 
+    private val fieldClass = Class.forName("java.lang.reflect.Field", false, Class::class.java.classLoader)
+    private val setFieldHandle = MethodHandles.lookup().findVirtual(fieldClass, "set", MethodType.methodType(Void.TYPE, Any::class.java, Any::class.java))
+    private val setFieldAccessibleHandle = MethodHandles.lookup().findVirtual(fieldClass,"setAccessible", MethodType.methodType(Void.TYPE, Boolean::class.javaPrimitiveType))
+
+    private val methodClass = Class.forName("java.lang.reflect.Method", false, Class::class.java.classLoader)
+    private val getMethodNameHandle = MethodHandles.lookup().findVirtual(methodClass, "getName", MethodType.methodType(String::class.java))
+    private val invokeMethodHandle = MethodHandles.lookup().findVirtual(methodClass, "invoke", MethodType.methodType(Any::class.java, Any::class.java, Array<Any>::class.java))
+
     override fun isDone(): Boolean {
         return false
     }
@@ -44,23 +52,15 @@ class RefitButtonAdder : EveryFrameScript {
 
     override fun advance(amount: Float) {
 
-        //Returns if not paused, so that this doesnt run while the player isnt in any UI screen.
-        if (!Global.getSector().isPaused)
-        {
-            return
-        }
-
         if (Global.getSector().campaignUI.currentCoreTab != CoreUITabId.REFIT)
         {
             return
         }
 
-
         var state = AppDriver.getInstance().currentState
 
         //Makes sure that the current state is the campaign state.
         if (state !is CampaignState) return
-
 
         var modWidget: UIPanelAPI? = null
         var buildButton: UIComponentAPI? = null
@@ -75,6 +75,8 @@ class RefitButtonAdder : EveryFrameScript {
 
         if (core is UIPanelAPI)
         {
+
+
             var child1 = core.getChildrenCopy().find { hasMethodOfName("setBorderInsetLeft", it) }
             if (child1 is UIPanelAPI)
             {
@@ -269,49 +271,34 @@ class RefitButtonAdder : EveryFrameScript {
 
     //Used to be able to find specific files without having to reference their obfuscated class name.
     private fun hasMethodOfName(name: String, instance: Any) : Boolean {
-        val methodClass = Class.forName("java.lang.reflect.Method", false, Class::class.java.classLoader)
-        val getNameMethod = MethodHandles.lookup().findVirtual(methodClass, "getName", MethodType.methodType(String::class.java))
 
         val instancesOfMethods: Array<out Any> = instance.javaClass.getDeclaredMethods()
-        return instancesOfMethods.any { getNameMethod.invoke(it) == name }
+        return instancesOfMethods.any { getMethodNameHandle.invoke(it) == name }
     }
 
     //Required to execute obfuscated methods without referencing their obfuscated class name.
     private fun invokeMethod(methodName: String, instance: Any, vararg arguments: Any?) : Any?
     {
-        val methodClass = Class.forName("java.lang.reflect.Method", false, Class::class.java.classLoader)
-        val getNameMethod = MethodHandles.lookup().findVirtual(methodClass, "getName", MethodType.methodType(String::class.java))
-        val invokeMethod = MethodHandles.lookup().findVirtual(methodClass, "invoke", MethodType.methodType(Any::class.java, Any::class.java, Array<Any>::class.java))
+        var method: Any? = null
 
-        var foundMethod: Any? = null
-        for (method in instance::class.java.methods as Array<Any>)
-        {
-            if (getNameMethod.invoke(method) == methodName)
-            {
-                foundMethod = method
-            }
-        }
+        val clazz = instance.javaClass
+        val args = arguments.map { it!!::class.javaPrimitiveType ?: it::class.java }
+        val methodType = MethodType.methodType(Void.TYPE, args)
 
-        return invokeMethod.invoke(foundMethod, instance, arguments)
+        method = clazz.getMethod(methodName, *methodType.parameterArray())
+
+        return invokeMethodHandle.invoke(method, instance, arguments)
     }
 
     fun setPrivateVariable(fieldName: String, instanceToModify: Any, newValue: Any?)
     {
-        val fieldClass = Class.forName("java.lang.reflect.Field", false, Class::class.java.classLoader)
-        val setMethod = MethodHandles.lookup().findVirtual(fieldClass, "set", MethodType.methodType(Void.TYPE, Any::class.java, Any::class.java))
-        val getNameMethod = MethodHandles.lookup().findVirtual(fieldClass, "getName", MethodType.methodType(String::class.java))
-        val setAcessMethod = MethodHandles.lookup().findVirtual(fieldClass,"setAccessible", MethodType.methodType(Void.TYPE, Boolean::class.javaPrimitiveType))
-
-        val instancesOfFields: Array<out Any> = instanceToModify.javaClass.getDeclaredFields()
-        for (obj in instancesOfFields)
-        {
-            setAcessMethod.invoke(obj, true)
-            val name = getNameMethod.invoke(obj)
-            if (name.toString() == fieldName)
-            {
-                setMethod.invoke(obj, instanceToModify, newValue)
-            }
+        var field: Any? = null
+        try {  field = instanceToModify.javaClass.getField(fieldName) } catch (e: Throwable) {
+            try {  field = instanceToModify.javaClass.getDeclaredField(fieldName) } catch (e: Throwable) { }
         }
+
+        setFieldAccessibleHandle.invoke(field, true)
+        setFieldHandle.invoke(field, instanceToModify, newValue)
     }
 
     //Required to get certain variables.

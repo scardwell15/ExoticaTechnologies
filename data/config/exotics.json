@@ -89,6 +89,11 @@
     "name": "Alpha Subcore",
     "tag": "aiCore",
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore",
+    "conditions": [
+      { "id": "hullmods", "operator": "notIn", "expected": "specialsphmod_alpha_core_upgrades", "cannotApplyReason": "The ship must not have an AI core already installed." },
+      { "id": "hullmods", "operator": "notIn", "expected": "specialsphmod_beta_core_upgrades", "cannotApplyReason": "The ship must not have an AI core already installed." },
+      { "id": "hullmods", "operator": "notIn", "expected": "specialsphmod_gamma_core_upgrades", "cannotApplyReason": "The ship must not have an AI core already installed." }
+    ],
     "valueMult": 2.5
   },
   "PenanceEngine": {

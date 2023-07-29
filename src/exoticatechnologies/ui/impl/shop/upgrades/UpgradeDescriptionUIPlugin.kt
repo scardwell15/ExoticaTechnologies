@@ -21,10 +21,6 @@ class UpgradeDescriptionUIPlugin(
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
 
-    companion object {
-        private var displayDescription: Boolean = true
-    }
-
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         mainPanel = panel
@@ -56,34 +52,10 @@ class UpgradeDescriptionUIPlugin(
             .toStringNoFormats()
         descriptionTooltip!!.addPara(levelText, color,3f)
 
-        val buttonText: String
-        if (displayDescription) {
-            descriptionTooltip!!.addPara(upgrade.description, 3f)
-            buttonText = StringUtils.getString("UpgradesDialog", "ModStatsButtonText")
-        } else {
-            upgrade.modifyInShop(tooltip, member, mods)
-            buttonText = StringUtils.getString("UpgradesDialog", "ModDescriptionButtonText")
-        }
-
-        val descButton = descriptionTooltip!!.addButton(
-            buttonText, "switchDescriptionButton",
-            panelWidth - 6f, 18f, 0f
-        )
-        descButton.position.inTL(3f, 0f).setYAlignOffset(-panelHeight + 24f)
-        buttons[descButton] = DescriptionSwapHandler(descButton, this)
+        descriptionTooltip!!.addPara(upgrade.description, 3f)
+        descriptionTooltip!!.addPara("", color,3f)
+        upgrade.modifyInShop(tooltip, member, mods)
 
         mainPanel!!.addUIElement(tooltip).inTL(0f, 0f)
-    }
-
-    fun swapDescription() {
-        displayDescription = !displayDescription
-        resetDescription()
-    }
-
-    private class DescriptionSwapHandler(val button: ButtonAPI, val shopPlugin: UpgradeDescriptionUIPlugin) : ButtonHandler() {
-        override fun checked() {
-            shopPlugin.buttons.remove(button)
-            shopPlugin.swapDescription()
-        }
     }
 }

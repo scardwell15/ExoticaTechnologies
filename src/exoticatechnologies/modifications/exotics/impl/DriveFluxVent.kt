@@ -233,8 +233,8 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                 desire += 1.5f
             }
 
-            if (ship.fluxLevel > getFluxVented() / ship.maxFlux) {
-                desire += 0.5f + ((ship.fluxLevel / (getFluxVented() / ship.maxFlux)) - 1f)
+            if (ship.currFlux > getFluxVented()) {
+                desire += 0.5f + ((ship.currFlux / (getFluxVented())) - 1f)
             }
 
             val targetDesire: Float = if (charges <= 1) {
@@ -372,7 +372,7 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
 
         private const val FLUX_VENTED = 20f
         private const val FLUX_VENTED_MAX = 4000f
-        private const val COOLDOWN = 15f
+        private const val COOLDOWN = 10f
         private const val DAMAGE_TAKEN_INCREASE = 20f
     }
 }

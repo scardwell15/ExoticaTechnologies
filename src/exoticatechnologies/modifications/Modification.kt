@@ -1,6 +1,8 @@
 package exoticatechnologies.modifications
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.MutableShipStatsAPI
+import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.conditions.Condition
@@ -87,6 +89,14 @@ abstract class Modification(val key: String, val settings: JSONObject) {
     }
 
     open fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
+        return true
+    }
+
+    open fun shouldAffectModule(ship: ShipAPI?, module: ShipAPI?): Boolean {
+        return true
+    }
+
+    open fun shouldAffectModule(moduleStats: MutableShipStatsAPI): Boolean {
         return true
     }
 

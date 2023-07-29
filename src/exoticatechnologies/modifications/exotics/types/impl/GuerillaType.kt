@@ -15,7 +15,7 @@ import kotlin.math.pow
 class GuerillaType : ExoticType("GUERILLA", colorOverlay = Color(140, 200, 125, 255), sprite = "graphics/icons/overlays/guerilla.png") {
     override fun getPositiveMult(member: FleetMemberAPI, mods: ShipModifications): Float {
         val thresholdScale = 0.5f - getThresholdScale(member, 0.5f)
-        return 1.75f - thresholdScale.coerceAtMost(0f)
+        return 2f - thresholdScale.coerceAtMost(0f)
     }
 
     override fun getNegativeMult(member: FleetMemberAPI, mods: ShipModifications): Float {

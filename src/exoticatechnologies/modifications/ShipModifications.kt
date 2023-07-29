@@ -253,93 +253,126 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
 
         mainTooltip.addPara("The ship has %s bandwidth.", 0f, Bandwidth.getColor(bandwidth), bandwidthString)
 
-        //shitty special case
-        val panelHeight = height
-        val customPanelAPI: CustomPanelAPI = Global.getSettings().createCustom(width, panelHeight, null)
+        val customPanelAPI: CustomPanelAPI = Global.getSettings().createCustom(width, height, null)
         val scrollTooltip = customPanelAPI.createUIElement(width, height, !noScroller)
 
         var tooltip: TooltipMakerAPI = scrollTooltip
 
+        var scrollerParentPanel: CustomPanelAPI? = null
         if (!noScroller) {
-            val innerHeight = (this.getExoticSet().size + this.getUpgradeMap().size) * 84f + 44f
-            val innerPanel = customPanelAPI.createCustomPanel(width, innerHeight, null)
-            tooltip = innerPanel.createUIElement(width, innerHeight, false)
-            innerPanel.addUIElement(tooltip)
-            scrollTooltip.addCustom(innerPanel, 0f)
+            val innerPanel = customPanelAPI.createCustomPanel(width, 0f, null)
+            scrollerParentPanel = innerPanel
+            tooltip = innerPanel.createUIElement(width, 0f, false)
         }
 
-        var lastThing: UIComponentAPI? = null
         var addedExoticSection = false
-        try {
-            for (exotic in ExoticsHandler.EXOTIC_LIST) {
-                if (!this.hasExotic(exotic.key)) continue
-                if (!addedExoticSection) {
-                    addedExoticSection = true
-                    tooltip.addSectionHeading(
-                        StringUtils.getString("FleetScanner", "ExoticHeader"),
-                        Alignment.MID,
-                        6f
-                    )
-                    lastThing = tooltip.prev
-                }
-
-                val exoticData = this.getExoticData(exotic)!!
-
-                val innerPanel = Global.getSettings().createCustom(width - 4f, 64f, null)
-
-                val iconTooltip = innerPanel.createUIElement(64f, 64f, false)
-                exoticData.addExoticIcon(iconTooltip)
-                innerPanel.addUIElement(iconTooltip)
-
-                val textTooltip = innerPanel.createUIElement(width - 68f, 64f, false)
-                textTooltip.addTitle(exoticData.getNameTranslation().toStringNoFormats(), exotic.color)
-                val title = textTooltip.prev
-                exotic.modifyToolTip(textTooltip, title, member, this, exoticData, expandExotics)
-                innerPanel.addUIElement(textTooltip).rightOfMid(iconTooltip, 4f)
-
-                UIUtils.autoResize(textTooltip)
-
-                innerPanel.position.setSize(width - 4f, textTooltip.position.height.coerceAtLeast(64f))
-
-                tooltip.addCustom(innerPanel, 4f).position.belowLeft(lastThing, 8f)
-                lastThing = innerPanel
-
-                tooltip.setParaFontDefault()
-                tooltip.setParaFontColor(tooltipColor)
+        if (!expandUpgrades) {
+            try {
+                addedExoticSection = addExoticSection(tooltip, width, member, expandExotics)
+            } catch (th: Throwable) {
+                log.info("Caught exotic description exception", th)
+                tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
             }
-        } catch (th: Throwable) {
-            log.info("Caught exotic description exception", th)
-            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
         }
 
-        if (addedExoticSection && expandExotics) {
+
+        if (addedExoticSection) {
             tooltip.addSpacer(12f)
         }
 
         var addedUpgradeSection = false
-        try {
-            for (upgrade in UpgradesHandler.UPGRADES_LIST) {
-                if (this.getUpgrade(upgrade) < 1) continue
-                if (!addedUpgradeSection) {
-                    addedUpgradeSection = true
-                    tooltip.addSectionHeading(
-                        StringUtils.getString("FleetScanner", "UpgradeHeader"),
-                        Alignment.MID,
-                        6f
-                    )
-                }
-                upgrade.modifyToolTip(tooltip, stats, member, this, expandUpgrades)
-                tooltip.setParaFontDefault()
-                tooltip.setParaFontColor(tooltipColor)
+        if (!expandExotics) {
+            try {
+                addedUpgradeSection = addUpgradeSection(tooltip, stats, member, expandUpgrades)
+            } catch (th: Throwable) {
+                log.info("Caught upgrade description exception", th)
+                tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
             }
-        } catch (th: Throwable) {
-            log.info("Caught upgrade description exception", th)
-            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
         }
 
-        customPanelAPI.addUIElement(scrollTooltip).inTL(-10f, 6f)
+        scrollerParentPanel?.apply {
+            tooltip.addSpacer(6f)
+            position.setSize(position.width, tooltip.heightSoFar)
+
+            addUIElement(tooltip)
+            scrollTooltip.addCustom(this, 0f)
+        }
+
+        customPanelAPI.addUIElement(scrollTooltip).inTL(-8f, 0f)
         mainTooltip.addCustom(customPanelAPI, 0f)
         mainTooltip.setForceProcessInput(true)
+    }
+
+    private fun addUpgradeSection(
+        tooltip: TooltipMakerAPI,
+        stats: MutableShipStatsAPI,
+        member: FleetMemberAPI,
+        expandUpgrades: Boolean
+    ): Boolean {
+        var addedUpgradeSection = false
+        for (upgrade in UpgradesHandler.UPGRADES_LIST) {
+            if (this.getUpgrade(upgrade) < 1) continue
+            if (!addedUpgradeSection) {
+                addedUpgradeSection = true
+                tooltip.addSectionHeading(
+                    StringUtils.getString("FleetScanner", "UpgradeHeader"),
+                    Alignment.MID,
+                    6f
+                )
+            }
+
+            upgrade.modifyToolTip(tooltip, stats, member, this, expandUpgrades)
+            tooltip.setParaFontDefault()
+            tooltip.setParaFontColor(tooltipColor)
+        }
+
+        return addedUpgradeSection
+    }
+
+    private fun addExoticSection(
+        tooltip: TooltipMakerAPI,
+        width: Float,
+        member: FleetMemberAPI,
+        expandExotics: Boolean
+    ): Boolean {
+        var addedExoticSection = false
+        var lastThing: UIComponentAPI? = null
+        for (exotic in ExoticsHandler.EXOTIC_LIST) {
+            if (!this.hasExotic(exotic.key)) continue
+            if (!addedExoticSection) {
+                addedExoticSection = true
+                tooltip.addSectionHeading(
+                    StringUtils.getString("FleetScanner", "ExoticHeader"),
+                    Alignment.MID,
+                    6f
+                )
+                lastThing = tooltip.prev
+            }
+
+            val exoticData = this.getExoticData(exotic)!!
+
+            val innerPanel = Global.getSettings().createCustom(width - 4f, 64f, null)
+
+            val iconTooltip = innerPanel.createUIElement(64f, 64f, false)
+            exoticData.addExoticIcon(iconTooltip)
+            innerPanel.addUIElement(iconTooltip)
+
+            val textTooltip = innerPanel.createUIElement(width - 68f, 64f, false)
+            textTooltip.addTitle(exoticData.getNameTranslation().toStringNoFormats(), exotic.color)
+            val title = textTooltip.prev
+            exotic.modifyToolTip(textTooltip, title, member, this, exoticData, expandExotics)
+            innerPanel.addUIElement(textTooltip).rightOfMid(iconTooltip, 4f)
+
+            UIUtils.autoResize(textTooltip)
+            innerPanel.position.setSize(width - 4f, textTooltip.position.height.coerceAtLeast(64f))
+
+            tooltip.addCustom(innerPanel, 4f).position.belowLeft(lastThing, 8f)
+            lastThing = innerPanel
+
+            tooltip.setParaFontDefault()
+            tooltip.setParaFontColor(tooltipColor)
+        }
+        return addedExoticSection
     }
 
     fun populateTooltip(

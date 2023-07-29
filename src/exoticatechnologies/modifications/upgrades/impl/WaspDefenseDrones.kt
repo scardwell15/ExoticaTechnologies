@@ -18,13 +18,17 @@ class WaspDefenseDrones(key: String, settings: JSONObject) : Upgrade(key, settin
         ActivatorManager.addActivator(ship, WaspDroneActivator(ship))
     }
 
+    override fun shouldAffectModule(ship: ShipAPI?, module: ShipAPI?): Boolean {
+        return false
+    }
+
     override fun modifyToolTip(
         tooltip: TooltipMakerAPI,
         stats: MutableShipStatsAPI,
         member: FleetMemberAPI,
         mods: ShipModifications,
         expand: Boolean
-    ) {
+    ): TooltipMakerAPI {
         val imageText = tooltip.beginImageWithText(icon, 64f)
         imageText.addPara("$name (%s)", 0f, color, mods.getUpgrade(this).toString())
         if (expand) {
@@ -33,6 +37,8 @@ class WaspDefenseDrones(key: String, settings: JSONObject) : Upgrade(key, settin
                 .addToTooltip(imageText)
         }
         tooltip.addImageWithText(5f)
+
+        return imageText
     }
 
     override fun modifyInShop(tooltip: TooltipMakerAPI, member: FleetMemberAPI, mods: ShipModifications) {

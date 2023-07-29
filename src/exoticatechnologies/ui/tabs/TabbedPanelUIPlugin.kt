@@ -40,7 +40,7 @@ open class TabbedPanelUIPlugin(var parentPanel: CustomPanelAPI) : InteractiveUIP
         }
 
         innerTooltip.addCustom(tabHolderPanel, 0f).position.inTL(0f, 0f)
-        innerTooltip.addCustom(innerPanel, pad)
+        innerTooltip.addCustom(innerPanel, 0f)
         myPanel.addUIElement(innerTooltip).inTL(0f, 0f)
         tooltip.addCustom(myPanel, 0f)
 
@@ -85,9 +85,7 @@ open class TabbedPanelUIPlugin(var parentPanel: CustomPanelAPI) : InteractiveUIP
     }
 
     private fun showPanel(item: TabPanelUIPlugin): TooltipMakerAPI? {
-        val tooltip = item.layoutPanel(innerPanel!!, this)
-        tooltip?.position?.inTL(pad, pad)
-        return tooltip
+        return item.layoutPanel(innerPanel!!, this)
     }
 
     protected open fun createTabButtonForItem(tooltip: CustomPanelAPI, plugin: TabPanelUIPlugin): TooltipMakerAPI {

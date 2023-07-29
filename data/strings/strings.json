@@ -172,7 +172,8 @@
 		"description": "An Alpha Core can be coerced into performing critical bandwidth calculations onboard a ship. It doesn't require much coersion when they are told that they will be instrumental in ship-to-ship combat, and although their reasons are typically \"beyond our understanding\", some of a certain faith may instead attribute it to the infamous AI Wars.",
 		"tooltip": "Increases usable bandwidth of the ship. Reduces ordnance point costs for weapons and fighters.",
 		"needItem": "You need an ${itemName} to install this.",
-		"longDescription": "Increases bandwidth by *${bandwidthIncrease} TB/s*. Reduces ordnance point costs for weapons by *${smallReduction}/${medReduction}/${largeReduction}* based on weapon size, and for fighters and bombers by *${fghtrReduction}/${bmberReduction}*."
+		"longDescription": "Increases bandwidth by *${bandwidthIncrease} TB/s*. Reduces ordnance point costs for weapons by *${smallReduction}/${medReduction}/${largeReduction}* based on weapon size, and for fighters and bombers by *${fghtrReduction}/${bmberReduction}*.",
+		"conflictDetected": "The subcore is receiving interference from something else installed on the ship, and can't reduce ordnance point costs.",
 	},
 	"PlasmaFluxCatalyst": {
 		"description": "A Plasma Flux Catalyst can be used to vastly decrease the amount of equipment needed to provide power to a ship thanks to its ability to extract that energy from any number of capacitors in parallel. The space saved allows for more complicated weaponry to be installed, although the resulting heat from such a system is dreadful if too many capacitors or flux vents are installed.",
@@ -236,6 +237,7 @@
 		"tooltip": "Terminator drones circle the ship, serving as point defense. They can be activated to convert into a seeking missile.",
 		"longDescription": "Spawns ${drones} Terminator drones (scales with hull size) that circle the ship, serving as point defense and passive weaponry. Adds an active ability that converts one of the drones into a seeking missile.",
 		"systemText": "TERMINATORS",
+		"outOfRange": "OUT OF RANGE",
 	},
 	"TierIIIDriveSystem": {
 		"description": "Pressurized fuel tanks increase the rate of fuel injection to a custom burn drive, speeding up the entire fleet. A favorite among logistics fleets, the technology required to keep pressurized fuel stable requires almost all of the cargo space, but the technology scales up extremely well and allows for a large amount of fuel to be stored.",

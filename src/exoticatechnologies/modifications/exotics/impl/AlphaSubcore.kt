@@ -52,6 +52,11 @@ class AlphaSubcore(key: String, settingsObj: JSONObject) :
                 .format("fghtrReduction", FIGHTER_REDUCTION)
                 .format("bmberReduction", BOMBER_REDUCTION)
                 .addToTooltip(tooltip, title)
+
+            if(member.variant.hullMods.any { BLOCKED_HULLMODS.contains(it) }) {
+                StringUtils.getTranslation("AlphaSubcore", "conflictDetected")
+                    .addToTooltip(tooltip)
+            }
         }
     }
 
@@ -95,5 +100,11 @@ class AlphaSubcore(key: String, settingsObj: JSONObject) :
         private const val LARGE_REDUCTION = 4
         private const val FIGHTER_REDUCTION = 2
         private const val BOMBER_REDUCTION = 4
+
+        val BLOCKED_HULLMODS: MutableSet<String> = HashSet<String>().apply {
+            add("specialsphmod_alpha_core_upgrades")
+            add("specialsphmod_beta_core_upgrades")
+            add("specialsphmod_gamma_core_upgrades")
+        }
     }
 }

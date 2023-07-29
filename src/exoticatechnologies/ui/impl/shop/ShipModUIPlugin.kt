@@ -47,7 +47,7 @@ class ShipModUIPlugin(
 
         innerTooltip = showNothing()
 
-        outerTooltip.addCustom(innerPanel, 3f).position.belowMid(heading, 3f)
+        outerTooltip.addCustom(innerPanel, 0f).position.belowMid(heading, 0f)
         outerPanel.addUIElement(outerTooltip).inTL(0f, 0f)
         parentPanel.addComponent(outerPanel).inTR(0f, 0f)
 
@@ -92,13 +92,15 @@ class ShipModUIPlugin(
         tabbedShopPlugin!!.panelHeight = panelHeight - rowPlugin.panelHeight - 36f
 
         val tabHolderPlugin = ShopTabHolderUIPlugin()
+        tabHolderPlugin.panelWidth = panelWidth
+
         val shopPanel = tabbedShopPlugin!!.layoutPanels(
             tooltip,
             ShopManager.shopMenuUIPlugins,
             tabHolderPlugin,
             ShopHolderUIPlugin()
         )
-        shopPanel.position.belowLeft(shipHeaderPanel, opad)
+        shopPanel.position.belowLeft(shipHeaderPanel, 0f)
 
         tabbedShopPlugin!!.addListener { plugin ->
             lastTabOpen = plugin.tabText
@@ -141,7 +143,7 @@ class ShipModUIPlugin(
             RenderUtils.pushUIRenderingStack()
 
             //separator line
-            RenderUtils.renderBox(pos.x, pos.y - 3f, pos.width, 1f, lineColor, 1f)
+            RenderUtils.renderBox(pos.x, pos.y - 3f, panelWidth, 1f, lineColor, 1f)
 
             RenderUtils.popUIRenderingStack()
         }

@@ -9,11 +9,11 @@ import java.awt.Color
 
 class CorruptedType : ExoticType("CORRUPTED", colorOverlay = Color(255, 0, 0, 160), sprite = "graphics/icons/overlays/corrupted.png") {
     override fun getPositiveMult(member: FleetMemberAPI, mods: ShipModifications): Float {
-        return 1.5f
+        return 2f
     }
 
     override fun getNegativeMult(member: FleetMemberAPI, mods: ShipModifications): Float {
-        return 1.5f
+        return 1.75f
     }
 
     override fun getDescriptionTranslation(member: FleetMemberAPI, mods: ShipModifications): StringUtils.Translation? {

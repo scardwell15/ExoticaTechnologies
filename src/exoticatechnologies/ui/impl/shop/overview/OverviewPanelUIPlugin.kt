@@ -101,8 +101,8 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
 
         innerPanel!!.addUIElement(buttonTooltip).inTL(0f, 0f)
 
-        val statsTooltip = innerPanel!!.createUIElement(panelWidth, panelHeight - 56f, true)
-        mods.populateTooltip(member!!, statsTooltip, panelWidth, panelHeight - 56f, expandUpgrades, expandExotics, true)
+        val statsTooltip = innerPanel!!.createUIElement(panelWidth, panelHeight - 56f, false)
+        mods.populateTooltip(member!!, statsTooltip, panelWidth, panelHeight - 56f, expandUpgrades, expandExotics, false)
         innerPanel!!.addUIElement(statsTooltip).belowMid(buttonTooltip, -70f)
 
         panel.addComponent(innerPanel).inTL(0f, 0f)

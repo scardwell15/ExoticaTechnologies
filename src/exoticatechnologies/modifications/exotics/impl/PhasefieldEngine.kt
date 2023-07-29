@@ -144,7 +144,7 @@ class PhasefieldEngine(key: String, settings: JSONObject) : Exotic(key, settings
             if (target === ship) {
                 damageAPI.modifier.modifyMult(
                     buffId,
-                    0.66f * INVULNERABLE_INTERVAL
+                    0.66f
                 )
                 return buffId
             }

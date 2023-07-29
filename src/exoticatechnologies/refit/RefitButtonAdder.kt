@@ -22,8 +22,6 @@ import java.lang.invoke.MethodType
 
 class RefitButtonAdder : EveryFrameScript {
 
-    var frames = 0
-
     var refitPanel: UIPanelAPI? = null
     var openButtonPanel: CustomPanelAPI? = null
     var closeButtonPanel: CustomPanelAPI? = null

@@ -66,7 +66,6 @@ class ExoticPanelUIPlugin(
         chipsPlugin?.let {
             if (it.highlightedItem != null) {
                 setChipDescription = true
-                ExoticDescriptionUIPlugin.displayDescription = false
                 descriptionPlugin!!.resetDescription(
                     ShipModLoader.get(member, variant)!!,
                     it.highlightedItem!!.exoticData!!

@@ -21,6 +21,7 @@ import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.util.StringUtils
 import org.json.JSONObject
 import org.lwjgl.util.vector.Vector2f
+import org.magiclib.kotlin.getDistanceSq
 import java.awt.Color
 import java.util.*
 import kotlin.math.abs
@@ -58,6 +59,10 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
         return false
     }
 
+    override fun shouldAffectModule(ship: ShipAPI?, module: ShipAPI?): Boolean {
+        return false
+    }
+
     class TerminatorDroneActivator(ship: ShipAPI) : DroneActivator(ship) {
         private val droneStrikeStats = DroneStrikeStats()
         private var weaponBackingField: WeaponAPI? = null
@@ -68,7 +73,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
                 }
                 return weaponBackingField!!
             }
-        private val aiInterval = IntervalUtil(0.05f, 0.1f)
+
         companion object {
             val maxDronesMap: Map<HullSize, Int> = mapOf(
                 HullSize.FRIGATE to 2,
@@ -187,6 +192,15 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
             arc.setSingleFlickerMode()
         }
 
+        override fun getStateText(): String {
+            if (state == State.READY) {
+                if (findTarget(ship) == null) {
+                    return StringUtils.getString("TerminatorSubsystems", "outOfRange")
+                }
+            }
+            return super.getStateText()
+        }
+
         fun findTarget(ship: ShipAPI): ShipAPI? {
             if (activeWings.isEmpty()) {
                 return null
@@ -194,7 +208,11 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
 
             val range: Float = droneStrikeStats.getMaxRange(ship)
             val player = ship === Global.getCombatEngine().playerShip
-            var target = ship.shipTarget
+            var target: ShipAPI? = null
+
+            if (ship.shipTarget != null && ship.shipTarget.location.getDistanceSq(ship.location) <= range * range) {
+                target = ship.shipTarget
+            }
 
             // If not the player:
             // The AI sets forceNextTarget, so if we're here, that target got destroyed in the last frame
@@ -251,7 +269,14 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
                         score += 8f
                     }
 
-                if (score > 10f) {
+                var desiredScore = 10f
+                if (charges >= 2) {
+                    desiredScore = 5f
+                } else if (charges >= 1) {
+                    desiredScore = 7.5f
+                }
+
+                if (score > desiredScore) {
                     return true
                 }
             }

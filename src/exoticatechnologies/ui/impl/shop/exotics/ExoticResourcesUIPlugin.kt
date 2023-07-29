@@ -50,7 +50,7 @@ class ExoticResourcesUIPlugin(
             if (market == null && !activeMethod.canUseIfMarketIsNull()) {
                 resourceCosts["^CommonOptions.MustBeDockedAtMarket"] = 1f
             } else {
-                activeMethod.getResourceMap(member, mods, exotic, market, false)?.forEach { (key, cost) ->
+                activeMethod.getResourceMap(member, mods, exotic, market, true)?.forEach { (key, cost) ->
                     if (resourceCosts[key] != null) {
                         resourceCosts[key] = resourceCosts[key]!!.plus(cost)
                     } else {

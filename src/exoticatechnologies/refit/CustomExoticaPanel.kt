@@ -8,17 +8,18 @@ import com.fs.starfarer.loading.specs.HullVariantSpec
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.ui.impl.shop.ShipModUIPlugin
+import exoticatechnologies.util.RenderUtils
 
 class CustomExoticaPanel {
     companion object {
         //Overwrite for Background Panel Width
         fun getWidth() : Float {
-            return (Global.getSettings().screenWidth * 0.66f).coerceAtLeast(960f)
+            return (RenderUtils.getWidth() * 0.66f).coerceAtLeast(960f)
         }
 
         //Overwrite for Background Panel Height
         fun getHeight() : Float {
-            return (Global.getSettings().screenHeight * 0.66f).coerceAtLeast(540f)
+            return (RenderUtils.getHeight() * 0.66f).coerceAtLeast(540f)
         }
 
         fun renderDefaultBorder() = true

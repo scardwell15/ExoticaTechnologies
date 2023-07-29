@@ -26,12 +26,6 @@ class ExoticDescriptionUIPlugin(
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
 
-    private var displayedExoticData: ExoticData? = null
-
-    companion object {
-        var displayDescription: Boolean = true
-    }
-
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         mainPanel = panel
@@ -51,14 +45,6 @@ class ExoticDescriptionUIPlugin(
     }
 
     fun resetDescription(mods: ShipModifications = ShipModLoader.get(member, variant)!!, exoticData: ExoticData) {
-        if (!displayDescription) {
-            if (exoticData == displayedExoticData) {
-                return
-            }
-
-            displayedExoticData = exoticData
-        }
-
         if (descriptionTooltip != null) {
             mainPanel!!.removeComponent(descriptionTooltip)
         }
@@ -83,35 +69,10 @@ class ExoticDescriptionUIPlugin(
 
         tooltip.setParaFontDefault()
 
-        val buttonText: String
-        if (displayDescription) {
-            exotic.printDescriptionToTooltip(tooltip, member)
-            buttonText = StringUtils.getString("UpgradesDialog", "ModStatsButtonText")
-        } else {
-            exotic.modifyToolTip(tooltip, tooltip.prev, member, mods, exoticData, true)
-            buttonText = StringUtils.getString("UpgradesDialog", "ModDescriptionButtonText")
-        }
-
-        val descButton = descriptionTooltip!!.addButton(
-            buttonText, "switchDescriptionButton",
-            panelWidth - 6f, 18f, 0f
-        )
-        descButton.position.inTL(3f, 0f).setYAlignOffset(-panelHeight + 24f)
-        buttons[descButton] = DescriptionSwapHandler(descButton, this)
+        exotic.printDescriptionToTooltip(tooltip, member)
+        tooltip.addPara("",3f)
+        exotic.modifyToolTip(tooltip, tooltip.prev, member, mods, exoticData, true)
 
         mainPanel!!.addUIElement(tooltip).inTL(0f, 0f)
-    }
-
-    fun swapDescription() {
-        displayDescription = !displayDescription
-        resetDescription()
-    }
-
-    private class DescriptionSwapHandler(val button: ButtonAPI, val shopPlugin: ExoticDescriptionUIPlugin) :
-        ButtonHandler() {
-        override fun checked() {
-            shopPlugin.buttons.remove(button)
-            shopPlugin.swapDescription()
-        }
     }
 }

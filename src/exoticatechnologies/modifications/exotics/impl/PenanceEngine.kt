@@ -45,7 +45,7 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
     ) {
         if (expand) {
             StringUtils.getTranslation(key, "longDescription")
-                .format("weaponRepairRate", WEAPON_REPAIRRATE_BUFF * getPositiveMult(member, mods, exoticData))
+                .format("weaponRepairRate", getRepairRateBuff(member, mods, exoticData))
                 .format("buffRange", getBuffRange(member, mods, exoticData))
                 .formatFloat("armorRegenPerSec", ARMOR_REGEN_PER_SECOND)
                 .format("armorRegenMax", ARMOR_REGEN_MAX)
@@ -65,7 +65,7 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
     ) {
         stats.combatWeaponRepairTimeMult.modifyMult(
             buffId,
-            1 - (WEAPON_REPAIRRATE_BUFF * getPositiveMult(member, mods, exoticData)) / 100f
+            1 - getRepairRateBuff(member, mods, exoticData) / 100f
         )
     }
 
@@ -252,6 +252,14 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
         exoticData: ExoticData
     ): Float {
         return SIDE_SPEED_BOOST * getPositiveMult(member, mods, exoticData)
+    }
+
+    fun getRepairRateBuff(
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        exoticData: ExoticData
+    ): Float {
+        return (WEAPON_REPAIRRATE_BUFF * getPositiveMult(member, mods, exoticData)).coerceAtMost(99f)
     }
 
     fun getDamageThreshold(

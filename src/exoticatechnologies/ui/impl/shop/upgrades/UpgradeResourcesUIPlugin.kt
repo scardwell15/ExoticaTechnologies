@@ -53,7 +53,7 @@ class UpgradeResourcesUIPlugin(
             if (market == null && !activeMethod.canUseIfMarketIsNull()) {
                 resourceCosts["^CommonOptions.MustBeDockedAtMarket"] = 1f
             } else {
-                activeMethod.getResourceCostMap(member, mods, upgrade, market, false)?.forEach { (key, cost) ->
+                activeMethod.getResourceCostMap(member, mods, upgrade, market, true).forEach { (key, cost) ->
                     if (resourceCosts[key] != null) {
                         resourceCosts[key] = resourceCosts[key]!!.plus(cost)
                     } else {

@@ -173,11 +173,16 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
                 }
 
                 mods.exotics.exoticData
-                    .filter { (_, data) -> ShipModFactory.random.nextFloat() >= data.exotic.getSalvageChance(2f) }
+                    .filter { (_, data) -> data.exotic.canDropFromFleets() }
+                    .filter { (_, data) -> ShipModFactory.random.nextFloat() >= data.exotic.getSalvageChance(4f) }
                     .forEach { (_, data) -> mods.removeExotic(data.exotic) }
 
                 mods.getUpgradeMap()
-                    .forEach { (upg, level) -> mods.putUpgrade(upg, ((0.5f + 0.5f * ShipModFactory.random.nextFloat()) * level * upg.salvageChance).roundToInt().coerceAtLeast(1)) }
+                    .forEach { (upg, level) ->
+                        val mult = (0.33f + 0.33f * ShipModFactory.random.nextFloat()) * (1 + upg.salvageChance)
+
+                        mods.putUpgrade(upg, (mult.coerceAtMost(1f) * level).roundToInt().coerceAtLeast(1))
+                    }
             }
         }
 

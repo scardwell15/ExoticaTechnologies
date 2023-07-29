@@ -68,6 +68,7 @@ public class ETModPlugin extends BaseModPlugin {
 
     @Override
     public void beforeGameSave() {
+        CampaignEventListener.Companion.getActiveFleets().clear();
         removeListeners();
         ETModPlugin.removeHullmodsFromAutoFitGoalVariants();
     }

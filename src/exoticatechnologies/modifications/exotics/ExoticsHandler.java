@@ -30,6 +30,7 @@ public class ExoticsHandler {
     }
 
     public static void populateExotics() {
+
         try {
             JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/exotics.json", "exoticatechnologies");
 

@@ -107,17 +107,18 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
-        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            int level = mods.getUpgrade(upgrade);
-            if (level <= 0) continue;
-
-            upgrade.advanceInCombatUnpaused(ship, amount, member, mods);
-        }
-
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
+            if (ship.getParentStation() != null && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
 
             exotic.advanceInCombatUnpaused(ship, amount, member, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
+        }
+
+        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if (!mods.hasUpgrade(upgrade)) continue;
+            if (ship.getParentStation() != null && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
+
+            upgrade.advanceInCombatUnpaused(ship, amount, member, mods);
         }
     }
 
@@ -151,13 +152,14 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
+            if (stats.getFleetMember() != null && stats.getFleetMember().getShipName() == null && !exotic.shouldAffectModule(stats)) continue;
 
             exotic.applyExoticToStats(id, stats, member, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            int level = mods.getUpgrade(upgrade);
-            if (level <= 0) continue;
+            if (!mods.hasUpgrade(upgrade)) continue;
+            if (stats.getFleetMember() != null && stats.getFleetMember().getShipName() == null && !upgrade.shouldAffectModule(stats)) continue;
 
             upgrade.applyUpgradeToStats(stats, member, mods);
         }
@@ -173,11 +175,13 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
+            if (ship.getParentStation() != null && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
             exotic.applyToShip(id, member, ship, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if (!mods.hasUpgrade(upgrade)) continue;
+            if (ship.getParentStation() != null && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
             upgrade.applyToShip(member, ship, mods);
         }
     }
@@ -192,10 +196,12 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
+            if (ship.getParentStation() != null && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
             exotic.applyToFighters(member, ship, fighter, mods);
         }
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if (!mods.hasUpgrade(upgrade)) continue;
+            if (ship.getParentStation() != null && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
             upgrade.applyToFighters(member, ship, fighter, mods);
         }
     }
@@ -222,17 +228,8 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
-        boolean exoticsExpand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
-        boolean upgradesExpand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F2"));
 
-        mods.populateTooltip(member, ship.getMutableStats(), hullmodTooltip, width, 500f, upgradesExpand, exoticsExpand, false);
-
-        if (!exoticsExpand && !upgradesExpand) {
-            StringUtils.getTranslation("CommonOptions", "ExpandExotics").addToTooltip(hullmodTooltip);
-            StringUtils.getTranslation("CommonOptions", "ExpandUpgrades").addToTooltip(hullmodTooltip);
-        } else {
-            StringUtils.getTranslation("CommonOptions", "UnexpandInfo").addToTooltip(hullmodTooltip);
-        }
+        mods.populateTooltip(member, ship.getMutableStats(), hullmodTooltip, width, 500f, false, false, false);
     }
 
     public static void removeHullModFromVariant(ShipVariantAPI v) {

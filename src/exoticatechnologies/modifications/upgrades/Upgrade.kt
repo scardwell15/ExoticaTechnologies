@@ -132,7 +132,7 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
         member: FleetMemberAPI,
         mods: ShipModifications,
         expand: Boolean
-    ) {
+    ): TooltipMakerAPI {
         val imageText = tooltip.beginImageWithText(icon, 64f)
         imageText.addPara("$name (%s)", 0f, color, mods.getUpgrade(this).toString())
         if (expand) {
@@ -141,6 +141,8 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
             }
         }
         tooltip.addImageWithText(5f)
+
+        return imageText
     }
 
     open fun modifyInShop(tooltip: TooltipMakerAPI, member: FleetMemberAPI, mods: ShipModifications) {

@@ -10,6 +10,8 @@ import com.fs.starfarer.api.combat.EngagementResultAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.fleet.FleetMemberType
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin
+import com.fs.starfarer.api.impl.campaign.FleetEncounterContext
+import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl
 import com.fs.starfarer.api.impl.campaign.ids.Entities
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets
@@ -42,6 +44,26 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
 
     override fun reportShownInteractionDialog(dialog: InteractionDialogAPI) {
         val interactionTarget = dialog.interactionTarget ?: return
+        val plugin = dialog.plugin
+        if (plugin is FleetInteractionDialogPluginImpl) {
+            val context = plugin.context as FleetEncounterContext
+
+            val battle: BattleAPI = context.battle
+            val allFleets: MutableList<CampaignFleetAPI> = mutableListOf()
+            allFleets.addAll(battle.bothSides ?: listOf())
+            allFleets
+                .filterNot { it == Global.getSector().playerFleet }
+                .forEach {
+                if (activeFleets.contains(it)) {
+                    return
+                }
+                dlog("Generating modifications for fleet.")
+                activeFleets.add(it)
+                applyExtraSystemsToFleet(it)
+            }
+
+            FireAll.fire(null, dialog, dialog.plugin.memoryMap, "GeneratedESForFleet")
+        }
 
         val defenderFleet = interactionTarget.memoryWithoutUpdate.getFleet("\$defenderFleet")
         if (defenderFleet != null) {
@@ -135,6 +157,10 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
         }
     }
 
+    fun checkInteractionDialog(dialog: InteractionDialogAPI = Global.getSector().campaignUI.currentInteractionDialog) {
+
+    }
+
     override fun reportFleetSpawned(fleet: CampaignFleetAPI) {
         if (fleet.isPlayerFleet) {
             return
@@ -218,9 +244,11 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
             mergeCheck = false
             Utilities.mergeChipsIntoCrate(Global.getSector().playerFleet.cargo)
         }
+
         if (Global.getSector().campaignUI.currentCoreTab != CoreUITabId.REFIT) {
             FleetMemberUtils.moduleMap.clear()
         }
+
         val checkFleets = false
         cleaningInterval.advance(v)
         if (checkFleets || cleaningInterval.intervalElapsed()) {

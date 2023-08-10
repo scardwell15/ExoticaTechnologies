@@ -207,6 +207,10 @@ public class StringUtils {
         }
 
         public Translation format(String flag, Object value, Color color) {
+            if (color == null) {
+                return format(flag, value);
+            }
+
             formats.add(flag);
             values.add(StringUtils.formatValue(value));
             colors.put(values.size() - 1, color);

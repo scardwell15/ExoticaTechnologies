@@ -114,6 +114,10 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         return usedBandwidth
     }
 
+    fun getUsableBandwidth(member: FleetMemberAPI): Float {
+        return getBandwidthWithExotics(member) - getUsedBandwidth()
+    }
+
     //exotics
     fun getExoticSet(): Set<ExoticData> {
         val exoticSet: MutableSet<ExoticData> = HashSet()

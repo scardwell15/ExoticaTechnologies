@@ -495,10 +495,8 @@ public class Utilities {
         return null;
     }
 
-    public static void mergeChipsIntoCrate(CargoAPI cargo) {
+    public static void mergeChipsIntoCrate(CargoAPI cargo, CrateSpecialData crateData) {
         if (cargo == null) return;
-
-        CrateSpecialData crateData = null;
 
         for (CargoStackAPI stack : cargo.getStacksCopy()) {
             if (stack.isSpecialStack()) {
@@ -536,6 +534,12 @@ public class Utilities {
                 }
             }
         }
+    }
+
+    public static void mergeChipsIntoCrate(CargoAPI cargo) {
+        if (cargo == null) return;
+
+        mergeChipsIntoCrate(cargo, null);
     }
 
     public static String formatSpecialItem(SpecialItemData data) {

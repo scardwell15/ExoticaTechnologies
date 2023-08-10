@@ -28,7 +28,6 @@ class RefitButtonAdder : EveryFrameScript {
     var member: FleetMemberAPI? = null
     var variant: HullVariantSpec? = null
     var firstButtonLoad = true
-    var buttonAdded = false
 
     companion object {
         var requiresVariantUpdate = false
@@ -51,17 +50,8 @@ class RefitButtonAdder : EveryFrameScript {
     }
 
     override fun advance(amount: Float) {
-
         if (Global.getSector().campaignUI.currentCoreTab != CoreUITabId.REFIT)
         {
-            buttonAdded = false
-            return
-        }
-
-        if (buttonAdded) {
-            member = invokeMethod("getMember", refitPanel!!) as FleetMemberAPI
-            var shipdisplay = invokeMethod("getShipDisplay", refitPanel!!) as UIPanelAPI?
-            variant = invokeMethod("getCurrentVariant", shipdisplay!!) as HullVariantSpec?
             return
         }
 
@@ -130,8 +120,6 @@ class RefitButtonAdder : EveryFrameScript {
 
         if (modWidget != null && buildButton != null)
         {
-            buttonAdded = true
-
             openButtonPanel = Global.getSettings().createCustom(buildButton.position.width , buildButton.position.height, null)
             modWidget.addComponent(openButtonPanel)
             openButtonPanel!!.position.belowLeft(buildButton, 3f)

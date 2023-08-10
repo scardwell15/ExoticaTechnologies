@@ -9,18 +9,16 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.upgrades.Upgrade
-import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import exoticatechnologies.ui.impl.shop.ResourcesUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
-import exoticatechnologies.util.getMods
 
 class UpgradeResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     member: FleetMemberAPI,
     variant: ShipVariantAPI,
-    var market: MarketAPI?
-) : ResourcesUIPlugin(member, variant) {
+    market: MarketAPI?
+) : ResourcesUIPlugin(member, variant, market) {
     override var mainPanel: CustomPanelAPI? = null
     private var resourcesTooltip: TooltipMakerAPI? = null
 

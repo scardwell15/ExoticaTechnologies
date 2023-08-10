@@ -10,20 +10,15 @@ todo: update interface to use new buttonPressed methods
 todo: add Advanced Gunnery Control tags to things that deserve them (like missile spam for hacked missile forge)
 
 done:
-- buffed exotic and upgrade drop rates from enemy fleets
-- fixed drive flux vent AI activation, and it now has reduced cooldown (15s to 10s)
-- updated terminator subsystems AI to use drones more frequently if it has more
-- fixed drone stuff applying to modules
-- fixed pain from dropping as part of certain ships (it is now removed after battle)
-- noticed that pure type exotics were the most used ones:
--- corrupted type exotics positive mult increased (150% to 200%), and negative mult (150% to 175%)
--- guerilla type exotics positive mult increased (175% to 200%). note that it still scales with fleet size
-- blocked alpha subcore from having any effect if the SHU Armament Support System is installed
--- additionally prevented alpha subcore from being installed if the SHU Armament Support System is installed
 - multiple UI level improvements
--- upgrades and exotics now display both description and effects at once
--- overview tab is now the main source to view all upgrades/exotics that your ship has at once
--- removed hullmod expanding info
+-- fixed refit menu scaling
+-- chip lists now use refit variant, fixing multiple bugs with that display
+-- upgrade chip list now displays all upgrade chips for an upgrade, but sorts based on whether you can actually apply it.
+-- fixed resource displays not displaying quantity stored in the current market's storage
+- opening a crate now merges all other creates in your inventory into it
+- phase ship check now checks for the phase hint
+- added flux use for terminator subsystem use
+- fleet mods generation will now generate for all allied and enemy fleets in an encounter. before, it only generated for the main enemy fleet.
 
 for selkie:
 lostech:

@@ -9,10 +9,10 @@ class MissileSlots : OperatorCondition() {
     override val key = "missileSlots"
 
     override fun getActual(member: FleetMemberAPI, mods: ShipModifications?): Any? {
-        return member.variant.fittedWeaponSlots
-            .map { member.variant.getSlot(it) }
+        return member.hullSpec.allWeaponSlotsCopy
             .filter { !it.isSystemSlot && !it.isStationModule && !it.isDecorative }
-            .count {it.weaponType.equals(WeaponAPI.WeaponType.MISSILE)
+            .count {
+                it.weaponType.equals(WeaponAPI.WeaponType.MISSILE)
                     || it.weaponType.equals(WeaponAPI.WeaponType.COMPOSITE)
                     || it.weaponType.equals(WeaponAPI.WeaponType.SYNERGY)
                     || it.weaponType.equals(WeaponAPI.WeaponType.UNIVERSAL)

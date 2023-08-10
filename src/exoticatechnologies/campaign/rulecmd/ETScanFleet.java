@@ -1,5 +1,7 @@
 package exoticatechnologies.campaign.rulecmd;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -34,7 +36,10 @@ public class ETScanFleet extends BaseCommandPlugin {
 
             FleetInteractionDialogPluginImpl interactionPlugin = (FleetInteractionDialogPluginImpl) dialog.getPlugin();
             FleetEncounterContext context = (FleetEncounterContext) interactionPlugin.getContext();
-            CampaignFleetAPI otherFleet = context.getBattle().getNonPlayerCombined();
+
+            BattleAPI battle = context.getBattle();
+            BattleAPI.BattleSide playerSide = battle.pickSide(Global.getSector().getPlayerFleet());
+            CampaignFleetAPI otherFleet = battle.getOtherSideCombined(playerSide);
 
             for (FleetMemberAPI member : otherFleet.getMembersWithFightersCopy()) {
                 if (member.isFighterWing()) continue;

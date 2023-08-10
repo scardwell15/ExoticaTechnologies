@@ -19,7 +19,7 @@ import exoticatechnologies.util.StringUtils
 import kotlin.math.min
 
 class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var market: MarketAPI) : CustomDialogDelegate {
-    var panelHeight: Float = Global.getSettings().screenHeight * 0.65f
+    var panelHeight: Float = (Global.getSettings().screenHeight * 0.65f).coerceAtLeast(540f)
     var panelWidth = min(Global.getSettings().screenWidth * 0.85f, 1280f)
 
     var members: MutableList<FleetMemberAPI> = mutableListOf()

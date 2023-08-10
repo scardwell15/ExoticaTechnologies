@@ -9,9 +9,7 @@ import exoticatechnologies.modifications.ModSpecialItemPlugin
 import exoticatechnologies.modifications.Modification
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
-import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.getMods
-import java.awt.Color
 
 abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
     var parentPanel: CustomPanelAPI,
@@ -41,7 +39,7 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
         val mods = member.getMods()
         val upgradeChips: List<CargoStackAPI> = getChipSearcher().getChips(member.fleetData.fleet.cargo, member, mods, mod)
 
-        listPlugin = getChipListPlugin(listPanel, member)
+        listPlugin = getChipListPlugin(listPanel)
         listPlugin!!.panelWidth = panelWidth
         listPlugin!!.panelHeight = panelHeight - 28
         listPlugin!!.layoutPanels(upgradeChips).position.inTL(0f, 0f)
@@ -76,7 +74,7 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
     }
 
     abstract fun getChipSearcher(): ChipSearcher<T>
-    abstract fun getChipListPlugin(listPanel: CustomPanelAPI, member: FleetMemberAPI): ChipListUIPlugin
+    abstract fun getChipListPlugin(listPanel: CustomPanelAPI): ChipListUIPlugin
 
     fun destroyTooltip() {
         mainTooltip?.let {

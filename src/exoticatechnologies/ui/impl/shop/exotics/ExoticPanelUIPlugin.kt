@@ -128,7 +128,7 @@ class ExoticPanelUIPlugin(
         chipsTooltip = mainPanel!!.createUIElement(pW, pH, false)
         val innerPanel = mainPanel!!.createCustomPanel(pW, pH, null)
 
-        chipsPlugin = ExoticChipPanelUIPlugin(innerPanel, exotic, member, market!!)
+        chipsPlugin = ExoticChipPanelUIPlugin(innerPanel, exotic, member, variant, market!!)
         chipsPlugin!!.panelWidth = pW
         chipsPlugin!!.panelHeight = pH
         chipsPlugin!!.layoutPanels().position.inTR(0f, 0f)

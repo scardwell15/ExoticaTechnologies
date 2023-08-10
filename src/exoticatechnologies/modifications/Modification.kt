@@ -101,6 +101,10 @@ abstract class Modification(val key: String, val settings: JSONObject) {
     }
 
     open fun canApply(member: FleetMemberAPI, mods: ShipModifications?): Boolean {
+        return canApply(member, member.variant, mods)
+    }
+
+    open fun canApply(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications?): Boolean {
         val condCheck = checkConditions(member, mods)
         val tagsCheck = checkTags(member, mods, tags)
         val varCheck = canApplyToVariant(member.variant)

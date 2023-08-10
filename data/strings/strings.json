@@ -42,7 +42,7 @@
 		"UsedBandwidthForShip": "Used bandwidth: *${usedBandwidth}* of ${allBandwidth}",
 
 		"BandwidthUsed": "*${usedBandwidth}* used",
-		"BandwidthUsedByUpgrade": "=${upgradeBandwidth}=",
+		"BandwidthUsedByUpgrade": "*${upgradeBandwidth}*",
 		"StoryPointCost": "*${storyPoints} story points*",
 
 		"MustBeDockedAtMarket": "=Must be docked at market=",
@@ -89,7 +89,7 @@
 		"TitleText": "\"Big Create\" Crate",
 		"SideText": "*Available* chips in your fleet's cargo is displayed on top of the *selected* cargo to be stored in the crate.",
 		"SideText2": "Note that when moving stacks between the two locations, it is possible for the stack size to be reported as zero. *This is a purely visual error, and can be safely ignored*; your fleet's logistics personnel are experts, after all.",
-		"ContentsText": "Any Exotica Technologies branch is able to use chips directly from this crate.\nContents:",
+		"ContentsText": "Any Exotica Technologies branch is able to use chips directly from this crate. Opening the crate will merge the contents of all other crates into it.\nContents:",
 		"UpgradeText": "*${upgradeItemName}* (${levelQuantities})",
 		"ExoticText": "*${exoticItemName}* (${quantity})",
 		"MoveOption": "Move",
@@ -238,6 +238,7 @@
 		"longDescription": "Spawns ${drones} Terminator drones (scales with hull size) that circle the ship, serving as point defense and passive weaponry. Adds an active ability that converts one of the drones into a seeking missile.",
 		"systemText": "TERMINATORS",
 		"outOfRange": "OUT OF RANGE",
+		"noFlux": "FLUX LEVELS TOO HIGH"
 	},
 	"TierIIIDriveSystem": {
 		"description": "Pressurized fuel tanks increase the rate of fuel injection to a custom burn drive, speeding up the entire fleet. A favorite among logistics fleets, the technology required to keep pressurized fuel stable requires almost all of the cargo space, but the technology scales up extremely well and allows for a large amount of fuel to be stored.",

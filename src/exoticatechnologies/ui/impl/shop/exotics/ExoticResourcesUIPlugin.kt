@@ -9,16 +9,15 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.ui.impl.shop.ResourcesUIPlugin
 import exoticatechnologies.ui.impl.shop.exotics.methods.Method
-import exoticatechnologies.util.getMods
 
 class ExoticResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     member: FleetMemberAPI,
     variant: ShipVariantAPI,
-    var market: MarketAPI?,
+    market: MarketAPI?,
     var methods: List<Method>
-) : ResourcesUIPlugin(member, variant) {
+) : ResourcesUIPlugin(member, variant, market) {
     override var mainPanel: CustomPanelAPI? = null
     private var resourcesTooltip: TooltipMakerAPI? = null
 

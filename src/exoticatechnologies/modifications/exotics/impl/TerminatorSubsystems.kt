@@ -197,6 +197,10 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
                 if (findTarget(ship) == null) {
                     return StringUtils.getString("TerminatorSubsystems", "outOfRange")
                 }
+
+                if (!canUseFlux()) {
+                    return StringUtils.getString("TerminatorSubsystems", "noFlux")
+                }
             }
             return super.getStateText()
         }
@@ -282,13 +286,20 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
             }
             return false
         }
-    }
 
-    companion object {
-        private const val RATE_OF_FIRE_BUFF = 100f
-        private const val RATE_OF_FIRE_DEBUFF = -33f
-        private const val COOLDOWN = 8
-        private const val BUFF_DURATION = 5
-        private const val DEBUFF_DURATION = 4
+        fun getFluxCost(): Float {
+            return 0.1f
+        }
+
+        fun canUseFlux(): Boolean {
+            return (1f - ship.fluxLevel) > getFluxCost()
+        }
+
+        override fun getHUDColor(): Color {
+            if (!canUseFlux()) {
+                return Misc.getNegativeHighlightColor()
+            }
+            return super.getHUDColor()
+        }
     }
 }

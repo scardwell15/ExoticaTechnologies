@@ -6,6 +6,7 @@ import exoticatechnologies.ui.BaseUIPanelPlugin
 
 abstract class ListItemUIPanelPlugin<T>(var item: T): BaseUIPanelPlugin() {
     var panel: CustomPanelAPI? = null
+    var disabled: Boolean = false
 
     fun setUpItem(tooltip: TooltipMakerAPI): CustomPanelAPI {
         panel = layoutPanel(tooltip)

@@ -3,6 +3,7 @@ package exoticatechnologies.ui.impl.shop
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoAPI
 import com.fs.starfarer.api.campaign.SpecialItemData
+import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Commodities
@@ -19,7 +20,9 @@ import kotlin.math.absoluteValue
 
 abstract class ResourcesUIPlugin(
     var member: FleetMemberAPI,
-    var variant: ShipVariantAPI): InteractiveUIPanelPlugin() {
+    var variant: ShipVariantAPI,
+    val market: MarketAPI?
+): InteractiveUIPanelPlugin() {
     abstract var mainPanel: CustomPanelAPI?
 
     fun displayResourceCosts(resourceCosts: MutableMap<String, Float>): TooltipMakerAPI {
@@ -168,7 +171,7 @@ abstract class ResourcesUIPlugin(
     fun addResourceCost(tooltip: TooltipMakerAPI, id: String, cost: Float) {
         //commodities
         val name = Utilities.getItemName(id)
-        val quantity = Global.getSector().playerFleet.cargo.getCommodityQuantity(id)
+        val quantity = Utilities.getTotalQuantity(Global.getSector().playerFleet, market, id).toFloat()
 
         if (cost != 0f) {
             StringUtils.getTranslation("CommonOptions", "ResourceTextWithCost")

@@ -1,22 +1,19 @@
 package exoticatechnologies.ui.impl.shop.exotics.chips
 
 import com.fs.starfarer.api.campaign.CargoStackAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.ui.BaseTooltipCreator
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModifications
-import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipListItemUIPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
-import exoticatechnologies.util.getMods
-import lombok.Getter
 import org.magiclib.kotlin.setAlpha
 
 class ExoticChipListItemUIPlugin(
     item: CargoStackAPI,
     member: FleetMemberAPI,
+    val variant: ShipVariantAPI,
     listPanel: ListUIPanelPlugin<CargoStackAPI>
 ) : ChipListItemUIPlugin(item, member, listPanel) {
 

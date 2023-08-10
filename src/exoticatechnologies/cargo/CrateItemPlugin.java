@@ -11,6 +11,7 @@ import com.fs.starfarer.api.util.Pair;
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
 import exoticatechnologies.util.StringUtils;
+import exoticatechnologies.util.Utilities;
 import lombok.SneakyThrows;
 
 import java.awt.Color;
@@ -43,10 +44,10 @@ public class CrateItemPlugin extends BaseSpecialItemPlugin {
     @SneakyThrows
     @Override
     public void performRightClickAction() {
-
         //fix for campaign post-combat crash
         if (Global.getSector().getCampaignUI().getCurrentInteractionDialog() != null) return;
 
+        Utilities.mergeChipsIntoCrate(stack.getCargo(), (CrateSpecialData) stack.getSpecialDataIfSpecial());
         Global.getSector().addTransientScript(new CrateDisplayScript(stack.getCargo(), this));
     }
 

@@ -1,6 +1,7 @@
 package exoticatechnologies.ui.impl.shop.upgrades.chips
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import exoticatechnologies.modifications.upgrades.Upgrade
@@ -14,6 +15,7 @@ class UpgradeChipPanelUIPlugin(
     parentPanel: CustomPanelAPI,
     val upgrade: Upgrade,
     member: FleetMemberAPI,
+    val variant: ShipVariantAPI,
     market: MarketAPI
 ) : ChipPanelUIPlugin<UpgradeSpecialItemPlugin>(parentPanel, upgrade, member, market) {
     override var bgColor: Color = Color(255, 70, 255, 0)
@@ -22,7 +24,7 @@ class UpgradeChipPanelUIPlugin(
         return UpgradeChipSearcher()
     }
 
-    override fun getChipListPlugin(listPanel: CustomPanelAPI, member: FleetMemberAPI): ChipListUIPlugin {
-        return UpgradeChipListUIPlugin(parentPanel, member)
+    override fun getChipListPlugin(listPanel: CustomPanelAPI): ChipListUIPlugin {
+        return UpgradeChipListUIPlugin(parentPanel, member, variant)
     }
 }

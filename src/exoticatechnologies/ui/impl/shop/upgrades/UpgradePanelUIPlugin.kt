@@ -19,7 +19,6 @@ import exoticatechnologies.ui.impl.shop.upgrades.chips.UpgradeChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.util.RenderUtils
-import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class UpgradePanelUIPlugin(
@@ -100,7 +99,7 @@ class UpgradePanelUIPlugin(
         chipsTooltip = mainPanel!!.createUIElement(pW, pH, false)
         val innerPanel = mainPanel!!.createCustomPanel(pW, pH, null)
 
-        chipsPlugin = UpgradeChipPanelUIPlugin(innerPanel, upgrade, member, market!!)
+        chipsPlugin = UpgradeChipPanelUIPlugin(innerPanel, upgrade, member, variant, market!!)
         chipsPlugin!!.panelWidth = pW
         chipsPlugin!!.panelHeight = pH
         chipsPlugin!!.layoutPanels().position.inTR(0f, 0f)

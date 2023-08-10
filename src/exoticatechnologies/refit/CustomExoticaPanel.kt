@@ -14,12 +14,12 @@ class CustomExoticaPanel {
     companion object {
         //Overwrite for Background Panel Width
         fun getWidth() : Float {
-            return (RenderUtils.getWidth() * 0.66f).coerceAtLeast(960f)
+            return (Global.getSettings().screenWidthPixels * 0.66f).coerceIn(960f..1366f)
         }
 
         //Overwrite for Background Panel Height
         fun getHeight() : Float {
-            return (RenderUtils.getHeight() * 0.66f).coerceAtLeast(540f)
+            return (Global.getSettings().screenHeightPixels * 0.65f).coerceIn(540f..968f)
         }
 
         fun renderDefaultBorder() = true

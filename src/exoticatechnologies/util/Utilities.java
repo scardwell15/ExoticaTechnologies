@@ -501,6 +501,7 @@ public class Utilities {
         if (cargo == null) return;
 
         CrateGlobalData crateData = CrateGlobalData.getInstance();
+        boolean hasCrate = false;
 
         for (CargoStackAPI stack : cargo.getStacksCopy()) {
             if (stack.isSpecialStack()) {
@@ -517,8 +518,15 @@ public class Utilities {
                         CrateGlobalData.addCargo(data.getCargo());
                         data.getCargo().removeAll(CrateGlobalData.getInstance().getCargo());
                     }
+                    hasCrate = true;
                 }
             }
+        }
+
+        if (!hasCrate) {
+            CargoStackAPI stack = Global.getFactory().createCargoStack(CargoAPI.CargoItemType.SPECIAL, new CrateSpecialData(), cargo);
+            stack.setSize(1);
+            cargo.addFromStack(stack);
         }
     }
 

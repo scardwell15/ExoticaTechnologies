@@ -22,6 +22,7 @@ import com.fs.starfarer.api.impl.campaign.shared.SharedData
 import com.fs.starfarer.api.util.IntervalUtil
 import com.fs.starfarer.api.util.Misc
 import com.fs.starfarer.api.util.Pair
+import com.fs.starfarer.campaign.CampaignState
 import exoticatechnologies.ETModSettings
 import exoticatechnologies.campaign.market.MarketManager
 import exoticatechnologies.hullmods.ExoticaTechHM
@@ -240,7 +241,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
     }
 
     override fun advance(v: Float) {
-        if (mergeCheck && !Global.getSector().campaignUI.isShowingMenu) {
+        if (mergeCheck && !Global.getSector().campaignUI.isShowingMenu && Global.getSector().campaignUI.currentInteractionDialog == null) {
             mergeCheck = false
             Utilities.mergeChipsIntoCrate(Global.getSector().playerFleet.cargo)
         }

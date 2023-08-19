@@ -49,7 +49,7 @@ class ShipModUIPlugin(
 
         outerTooltip.addCustom(innerPanel, 0f).position.belowMid(heading, 0f)
         outerPanel.addUIElement(outerTooltip).inTL(0f, 0f)
-        parentPanel.addComponent(outerPanel).inTL(-1f, 0f)
+        parentPanel.addComponent(outerPanel)
 
         return outerPanel
     }

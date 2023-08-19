@@ -30,11 +30,11 @@ public class RenderUtils {
 
 
     public static int getWidth() {
-        return (int) (Display.getWidth() * Display.getPixelScaleFactor());
+        return (int) Global.getSettings().getScreenWidth();
     }
 
     public static int getHeight() {
-        return (int) (Display.getHeight() * Display.getPixelScaleFactor());
+        return (int) Global.getSettings().getScreenHeight();
     }
 
     public static void pushUIRenderingStack() {

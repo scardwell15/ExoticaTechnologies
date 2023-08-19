@@ -14,12 +14,12 @@ class CustomExoticaPanel {
     companion object {
         //Overwrite for Background Panel Width
         fun getWidth() : Float {
-            return (Global.getSettings().screenWidthPixels * 0.66f).coerceIn(960f..1366f)
+            return (Global.getSettings().screenWidth * 0.66f)
         }
 
         //Overwrite for Background Panel Height
         fun getHeight() : Float {
-            return (Global.getSettings().screenHeightPixels * 0.65f).coerceIn(540f..968f)
+            return (Global.getSettings().screenHeight * 0.65f)
         }
 
         fun renderDefaultBorder() = true
@@ -39,7 +39,8 @@ class CustomExoticaPanel {
         ShipModLoader.get(member, variant) ?: ShipModLoader.set(member, variant, ShipModFactory.generateForFleetMember(member))
 
         var plugin = ShipModUIPlugin(Global.getSector().campaignUI.currentInteractionDialog, backgroundPanel, width, height)
-        plugin.layoutPanels()
+        var modPanel = plugin.layoutPanels()
+        modPanel.position.inTL(-1f, 0f)
         plugin.showPanel(member, variant)
 
         //Call this whenever you need to close the panel.

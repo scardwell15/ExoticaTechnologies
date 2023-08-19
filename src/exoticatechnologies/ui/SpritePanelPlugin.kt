@@ -22,7 +22,6 @@ open class SpritePanelPlugin(val sprite: SpriteAPI) : CustomUIPanelPlugin {
     }
 
     override fun render(alphaMult: Float) {
-        RenderUtils.pushUIRenderingStack()
         pos?.let {
             val x = pos!!.x
             val y = pos!!.y
@@ -33,6 +32,7 @@ open class SpritePanelPlugin(val sprite: SpriteAPI) : CustomUIPanelPlugin {
             GL11.glEnable(GL11.GL_TEXTURE_2D)
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, sprite.textureId)
             GL11.glEnable(GL11.GL_BLEND)
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
             GL11.glBegin(GL11.GL_QUADS)
 
             ColorUtils.glColor(
@@ -55,7 +55,6 @@ open class SpritePanelPlugin(val sprite: SpriteAPI) : CustomUIPanelPlugin {
             GL11.glVertex2f(x - 1.0f, y + h + 1.0f)
             GL11.glEnd()
         }
-        RenderUtils.popUIRenderingStack()
     }
 
     override fun advance(amount: Float) {

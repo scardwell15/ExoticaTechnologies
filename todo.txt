@@ -23,3 +23,8 @@ done:
 -- range reduced by 33% (this means it is 66% of the original ship system's range)
 -- drone recharge time increased from 20 seconds to 30 seconds
 -- also tri tachyon will use them less now lol
+
+hotfix:
+- fixed exploration crash (upgrades were being generated with level 0)
+- fixed fleet UI being broken
+- fixed scanner UI not displaying exotics correctly with high UI scaling

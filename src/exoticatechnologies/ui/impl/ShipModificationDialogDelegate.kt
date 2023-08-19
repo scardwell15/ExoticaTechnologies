@@ -36,6 +36,7 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
 
         val modPlugin = ShipModUIPlugin(dialog, panel, panelWidth - listPlugin.panelWidth, panelHeight)
         val shipModTooltip = modPlugin.layoutPanels()
+        shipModTooltip.position.inTR(0f, 0f)
 
         listPlugin.addListener { member ->
             run {

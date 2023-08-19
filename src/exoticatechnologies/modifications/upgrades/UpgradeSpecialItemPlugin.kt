@@ -39,38 +39,26 @@ class UpgradeSpecialItemPlugin : ModSpecialItemPlugin() {
         get() = Global.getSettings().getSprite("upgrades", upgrade!!.key)
 
     override fun resolveDropParamsToSpecificItemData(params: String, random: Random): String? {
-        var upgrade: Upgrade? = null
-        var level = 1
-
         val paramsObj = JSONObject(params)
+
+        var upgrade: Upgrade? = null
+        var level = paramsObj.optInt("level", -1)
+
         if (paramsObj.optBoolean("rng")) {
             upgrade = UpgradesGenerator.getDefaultPicker(random).pick()
-            if (upgrade.maxLevel > 1) {
-                level = (random.nextFloat() * upgrade.maxLevel).toInt()
-            }
         } else if (paramsObj.optString("faction") != null) {
             val factionConfig = FactionConfigLoader.getFactionConfig(paramsObj.getString("faction"))
             upgrade = UpgradesGenerator.getPicker(random, factionConfig.allowedUpgrades).pick()
-
-            if (upgrade.maxLevel > 1) {
-                level = (random.nextFloat() * upgrade.maxLevel).toInt()
-            }
         } else if (paramsObj.optString("upgrade") != null) {
             upgrade = UpgradesHandler.UPGRADES[paramsObj.getString("upgrade")]
-            val levelParam = paramsObj.optInt("level")
-
-            if (upgrade != null) {
-                if (levelParam == 0) {
-                    if (upgrade.maxLevel > 1) {
-                        level = (random.nextFloat() * upgrade.maxLevel).toInt()
-                    }
-                } else {
-                    level = levelParam
-                }
-            }
         }
 
         upgrade ?: return null
+
+        if (level == -1) {
+            level = (random.nextFloat() * upgrade.maxLevel).toInt().coerceAtLeast(1)
+        }
+
         return "${upgrade.key},${level}"
     }
 

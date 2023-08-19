@@ -42,7 +42,7 @@ open class TabbedPanelUIPlugin(var parentPanel: CustomPanelAPI) : InteractiveUIP
         innerTooltip.addCustom(tabHolderPanel, 0f).position.inTL(0f, 0f)
         innerTooltip.addCustom(innerPanel, 0f)
         myPanel.addUIElement(innerTooltip).inTL(0f, 0f)
-        tooltip.addCustom(myPanel, 0f)
+        pos = tooltip.addCustom(myPanel, 0f).position
 
         return myPanel
     }

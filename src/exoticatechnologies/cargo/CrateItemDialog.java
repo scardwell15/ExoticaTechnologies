@@ -15,17 +15,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CrateItemDialog implements InteractionDialogPlugin {
     private final CargoAPI playerCargo;
-    private final CrateItemPlugin cratePlugin;
+    private final CargoAPI crateCargo;
     private InteractionDialogAPI dialog;
     private boolean loadedChestCargo = false;
 
     @Override
     public void init(InteractionDialogAPI dialog) {
         this.dialog = dialog;
-        test();
+        showCratePickerDialog();
     }
 
-    public void test() {
+    public void showCratePickerDialog() {
         final CargoAPI availableCargo = Global.getFactory().createCargo(false);
 
 
@@ -40,16 +40,16 @@ public class CrateItemDialog implements InteractionDialogPlugin {
         availableCargo.sort();
         this.dialog.showCargoPickerDialog("Crate", StringUtils.getString("CrateText", "MoveOption"), StringUtils.getString("CrateText", "CancelOption"), true, 240.0F, availableCargo, new CargoPickerListener() {
             public void pickedCargo(CargoAPI selectedCargo) {
-                selectedCargo.removeAll(cratePlugin.getCargo());
-                cratePlugin.getCargo().addAll(selectedCargo);
-                cratePlugin.getCargo().removeAll(availableCargo);
+                selectedCargo.removeAll(crateCargo);
+                crateCargo.addAll(selectedCargo);
+                crateCargo.removeAll(availableCargo);
 
                 playerCargo.removeAll(selectedCargo);
                 playerCargo.addAll(availableCargo);
 
-                for (CargoStackAPI stack : cratePlugin.getCargo().getStacksCopy()) {
+                for (CargoStackAPI stack : crateCargo.getStacksCopy()) {
                     if (stack.isNull() || stack.getSize() == 0) {
-                        cratePlugin.getCargo().removeStack(stack);
+                        crateCargo.removeStack(stack);
                     }
                 }
 
@@ -65,9 +65,9 @@ public class CrateItemDialog implements InteractionDialogPlugin {
                 float opad = 10.0F;
                 if (!loadedChestCargo) {
                     loadedChestCargo = true;
-                    cargo.addAll(cratePlugin.getCargo());
+                    cargo.addAll(crateCargo);
                 }
-                combined.removeAll(cratePlugin.getCargo());
+                combined.removeAll(crateCargo);
 
                 panel.setParaOrbitronLarge();
                 panel.addPara(StringUtils.getString("CrateText", "TitleText"), Global.getSector().getPlayerFaction().getBaseUIColor(), opad);

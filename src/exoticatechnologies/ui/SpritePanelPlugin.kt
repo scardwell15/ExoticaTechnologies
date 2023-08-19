@@ -5,6 +5,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.PositionAPI
+import exoticatechnologies.util.RenderUtils
 import org.lazywizard.lazylib.opengl.ColorUtils
 import org.lwjgl.opengl.GL11
 
@@ -21,6 +22,7 @@ open class SpritePanelPlugin(val sprite: SpriteAPI) : CustomUIPanelPlugin {
     }
 
     override fun render(alphaMult: Float) {
+        RenderUtils.pushUIRenderingStack()
         pos?.let {
             val x = pos!!.x
             val y = pos!!.y
@@ -28,9 +30,6 @@ open class SpritePanelPlugin(val sprite: SpriteAPI) : CustomUIPanelPlugin {
             val h = pos!!.height
             val color = sprite.color
 
-            //Otherwise, we actually render the thing
-            //This part instantiates OpenGL
-            GL11.glPushMatrix()
             GL11.glEnable(GL11.GL_TEXTURE_2D)
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, sprite.textureId)
             GL11.glEnable(GL11.GL_BLEND)
@@ -55,9 +54,8 @@ open class SpritePanelPlugin(val sprite: SpriteAPI) : CustomUIPanelPlugin {
             GL11.glTexCoord2f(0f, 1f)
             GL11.glVertex2f(x - 1.0f, y + h + 1.0f)
             GL11.glEnd()
-            GL11.glPopMatrix()
         }
-
+        RenderUtils.popUIRenderingStack()
     }
 
     override fun advance(amount: Float) {

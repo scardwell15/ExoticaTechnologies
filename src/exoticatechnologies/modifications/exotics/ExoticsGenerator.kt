@@ -2,9 +2,9 @@ package exoticatechnologies.modifications.exotics
 
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.impl.campaign.skills.BaseSkillEffectDescription
 import com.fs.starfarer.api.util.WeightedRandomPicker
 import exoticatechnologies.config.FactionConfig
+import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.types.ExoticType
@@ -134,6 +134,24 @@ object ExoticsGenerator {
             typePicker.add(ExoticType.NORMAL)
         }
 
+        return typePicker
+    }
+
+    fun getDefaultExoticPicker(random: Random): WeightedRandomPicker<Exotic> {
+        val exoticPicker = WeightedRandomPicker<Exotic>(random)
+        FactionConfigLoader.getDefaultFactionExotics().forEach { (exotic, factionChance) ->
+            exoticPicker.add(exotic, factionChance)
+        }
+        return exoticPicker
+    }
+
+    fun getDefaultTypePicker(random: Random, exotic: Exotic): WeightedRandomPicker<ExoticType> {
+        val typePicker = WeightedRandomPicker<ExoticType>(random)
+        FactionConfigLoader.getDefaultFactionExoticTypes().forEach { (type, factionChance) ->
+            if (exotic.canUseExoticType(type)) {
+                typePicker.add(type, factionChance)
+            }
+        }
         return typePicker
     }
 }

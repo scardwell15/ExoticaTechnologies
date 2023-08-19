@@ -1,8 +1,10 @@
 package exoticatechnologies.modifications.conditions
 
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.conditions.operators.Operator
+import exoticatechnologies.refit.checkRefitVariant
 import exoticatechnologies.util.Utilities
 import org.apache.log4j.Logger
 import org.json.JSONException
@@ -66,7 +68,7 @@ abstract class OperatorCondition : Condition {
         }
     }
 
-    abstract fun getActual(member: FleetMemberAPI, mods: ShipModifications?): Any?
+    abstract fun getActual(member: FleetMemberAPI, mods: ShipModifications?, variant: ShipVariantAPI = member.checkRefitVariant()): Any?
 
     override fun calculateWeight(member: FleetMemberAPI, mods: ShipModifications?): Float {
         var calculatedWeight = weight

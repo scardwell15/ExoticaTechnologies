@@ -12,7 +12,6 @@
     "PhasedFighterTether": 0.4,
     "HyperspecLPC": 0.3,
     "AlphaSubcore": 0.75,
-    "NanotechArmor":0.15,
     "AnomalousConjuration": 0.1,
   },
   "allowedUpgrades": {

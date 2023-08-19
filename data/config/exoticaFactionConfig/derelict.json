@@ -7,7 +7,7 @@
     "FullMetalSalvo": 0.6,
     "AlphaSubcore": 0.1,
     "EqualizerCore": 0.6,
-    "NanotechArmor":0.15
+    "NanotechArmor":0.2
   },
   "allowedUpgrades": {
     "OverchargedShields": 0.5,

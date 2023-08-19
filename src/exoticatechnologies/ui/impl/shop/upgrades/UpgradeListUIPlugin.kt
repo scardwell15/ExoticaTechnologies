@@ -7,8 +7,10 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.upgrades.Upgrade
+import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
+import exoticatechnologies.ui.lists.filtered.FilteredListPanelPlugin
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
@@ -17,7 +19,7 @@ class UpgradeListUIPlugin(
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
     var market: MarketAPI?
-): ListUIPanelPlugin<Upgrade>(parentPanel) {
+): FilteredListPanelPlugin<Upgrade>(parentPanel) {
     override val listHeader = StringUtils.getTranslation("UpgradesDialog", "OpenUpgradeOptions").toString()
     override var bgColor: Color = Color(255, 70, 255, 0)
     private var modsValue: Float = ShipModLoader.get(member, variant)!!.getValue()
@@ -63,6 +65,8 @@ class UpgradeListUIPlugin(
     }
 
     override fun shouldMakePanelForItem(item: Upgrade): Boolean {
+        if (!super.shouldMakePanelForItem(item)) return false
+
         val mods = ShipModLoader.get(member, variant)!!
 
         if (mods.hasUpgrade(item)) {
@@ -74,5 +78,13 @@ class UpgradeListUIPlugin(
         }
         
         return item.shouldShow(member, mods, market)
+    }
+
+    override fun getFilters(): List<String>? {
+        return UpgradesHandler.UPGRADES_BY_HINT.keys.filterNot { it.isEmpty() }.toList()
+    }
+
+    override fun getFiltersFromItem(item: Upgrade): List<String> {
+        return item.hints
     }
 }

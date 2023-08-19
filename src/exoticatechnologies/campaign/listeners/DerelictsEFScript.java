@@ -5,8 +5,10 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exoticatechnologies.hullmods.ExoticaTechHM;
+import exoticatechnologies.modifications.PersistentDataProvider;
 import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.modifications.VariantTagProvider;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 
@@ -65,31 +67,41 @@ public class DerelictsEFScript implements EveryFrameScript {
         for (FleetMemberAPI member : newMembers) {
             ShipModifications mods = null;
 
-            String fmIdHash = String.valueOf(member.getId().hashCode());
-            if (derelictVariantMap.containsKey(fmIdHash)) {
-                mods = derelictVariantMap.get(fmIdHash);
-            } else {
-                ShipVariantAPI var = member.getVariant();
-                if (var == null) continue;
+            String memberId = member.getId();
+            ShipVariantAPI var = member.getVariant();
+            if (var != null) {
+                mods = VariantTagProvider.getInst().getFromVariant(var);
+            }
 
-                for (int i = 0; i < derelictVariantMap.size(); i++) {
-                    String varHash = String.valueOf(var.hashCode() + i);
-                    String hullVarHash = String.valueOf(var.getHullVariantId().hashCode() + i);
-                    if (derelictVariantMap.containsKey(hullVarHash)) {
-                        mods = derelictVariantMap.get(hullVarHash);
-                        break;
-                    } else if (derelictVariantMap.containsKey(varHash)) {
-                        mods = derelictVariantMap.get(varHash);
-                        break;
-                    } else {
-                        varHash = String.valueOf(var.hashCode() + member.getShipName().hashCode() + i);
-                        hullVarHash = String.valueOf(var.getHullVariantId().hashCode() + member.getShipName().hashCode() + i);
+            if (mods == null) {
+                mods = PersistentDataProvider.getInst().getFromId(memberId);
+            }
+
+            if (mods == null) {
+                if (derelictVariantMap.containsKey(memberId)) {
+                    mods = derelictVariantMap.get(memberId);
+                } else {
+                    if (var == null) continue;
+
+                    for (int i = 0; i < derelictVariantMap.size(); i++) {
+                        String varHash = String.valueOf(var.hashCode() + i);
+                        String hullVarHash = String.valueOf(var.getHullVariantId().hashCode() + i);
                         if (derelictVariantMap.containsKey(hullVarHash)) {
                             mods = derelictVariantMap.get(hullVarHash);
                             break;
                         } else if (derelictVariantMap.containsKey(varHash)) {
                             mods = derelictVariantMap.get(varHash);
                             break;
+                        } else {
+                            varHash = String.valueOf(var.hashCode() + member.getShipName().hashCode() + i);
+                            hullVarHash = String.valueOf(var.getHullVariantId().hashCode() + member.getShipName().hashCode() + i);
+                            if (derelictVariantMap.containsKey(hullVarHash)) {
+                                mods = derelictVariantMap.get(hullVarHash);
+                                break;
+                            } else if (derelictVariantMap.containsKey(varHash)) {
+                                mods = derelictVariantMap.get(varHash);
+                                break;
+                            }
                         }
                     }
                 }

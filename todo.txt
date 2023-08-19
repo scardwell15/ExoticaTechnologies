@@ -10,28 +10,16 @@ todo: update interface to use new buttonPressed methods
 todo: add Advanced Gunnery Control tags to things that deserve them (like missile spam for hacked missile forge)
 
 done:
-- multiple UI level improvements
--- fixed refit menu scaling
--- chip lists now use refit variant, fixing multiple bugs with that display
--- upgrade chip list now displays all upgrade chips for an upgrade, but sorts based on whether you can actually apply it.
--- fixed resource displays not displaying quantity stored in the current market's storage
-- opening a crate now merges all other creates in your inventory into it
-- phase ship check now checks for the phase hint
-- added flux use for terminator subsystem use
-- fleet mods generation will now generate for all allied and enemy fleets in an encounter. before, it only generated for the main enemy fleet.
-
-for selkie:
-lostech:
-- shield drones
--- drone shield color corresponds to flux level
--- shield drones do not vent automatically
--- player should manually vent drones via activator during downtime or openings
--- drone count and respawn time scale with ship size
-
-ace combat:
-- elysian drones
--- fires dumb-flare cone on parent ship vent
-- afterburner
--- high speed
--- low turn rate
--- 120% engine/glow length
+- fixed crate disappearing when you open it (sorry)
+-- crates now share a global inventory
+- added filters to upgrade and exotic UI
+- added new upgrade Oversized Magazines
+- fixed OCD in ship mod panel
+- fixed debris field generation and scanning again
+- fixed newer exotics not dropping from salvage loot (like research stations)
+- fixed exotic types not appearing in salvage loot
+- added upgrades to salvage loot. total value of exotica drops has increased to offset this
+- nerfed terminator subsystems
+-- range reduced by 33% (this means it is 66% of the original ship system's range)
+-- drone recharge time increased from 20 seconds to 30 seconds
+-- also tri tachyon will use them less now lol

@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.conditions
 
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.stats.UpgradeModEffect
@@ -9,7 +10,7 @@ import exoticatechnologies.modifications.stats.UpgradeStatBonusWithFinalEffect
 class StatCondition(var stat: UpgradeModEffect) : OperatorCondition() {
     override val key = "!!!stat"
 
-    override fun getActual(member: FleetMemberAPI, mods: ShipModifications?): Any? {
+    override fun getActual(member: FleetMemberAPI, mods: ShipModifications?, variant: ShipVariantAPI): Any? {
         if (stat is UpgradeMutableStatEffect) {
             return (stat as UpgradeMutableStatEffect).getStat(member.stats).baseValue
         } else if (stat is UpgradeStatBonusWithFinalEffect) {

@@ -60,27 +60,28 @@ public class ETGenerateForDebrisField extends BaseCommandPlugin {
                     for (int i = 0; i < data.ships.size(); i++) {
                         ShipRecoverySpecial.PerShipData shipData = data.ships.get(i);
 
-                        if (ShipModLoader.getForSpecialData(shipData) != null) continue;
+                        ShipModifications mods = ShipModLoader.getForSpecialData(shipData);
+                        if (mods == null) {
+                            if (shipData.getVariant() == null) continue;
 
-                        if (shipData.getVariant() == null) continue;
+                            FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
+                            if (shipData.fleetMemberId == null) {
+                                shipData.fleetMemberId = member.getId();
+                            } else {
+                                member.setId(shipData.fleetMemberId);
+                            }
 
-                        FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant());
-                        if (shipData.fleetMemberId == null) {
-                            shipData.fleetMemberId = member.getId();
-                        } else {
-                            member.setId(shipData.fleetMemberId);
+                            log.info("debris field: generating for fmId " + shipData.fleetMemberId);
+
+                            //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
+                            //it will never find one.
+
+                            ShipModFactory.random.setSeed(shipData.fleetMemberId.hashCode());
+                            mods = ShipModFactory.generateRandom(member);
+                            ShipModLoader.set(member, member.getVariant(), mods);
                         }
 
-                        log.info("debris field: generating for fmId " + shipData.fleetMemberId);
-
-                        //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
-                        //it will never find one.
-
-                        ShipModFactory.random.setSeed(shipData.fleetMemberId.hashCode());
-                        ShipModifications mods = ShipModFactory.generateRandom(member);
-                        ShipModLoader.set(member, member.getVariant(), mods);
-
-                        derelictVariantMap.put(String.valueOf(shipData.fleetMemberId.hashCode()), mods);
+                        derelictVariantMap.put(shipData.fleetMemberId, mods);
 
                         if(ScanUtils.doesEntityHaveNotableMods(mods)) {
                             notableModsGenerated = true;

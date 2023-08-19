@@ -7,12 +7,18 @@ import com.fs.starfarer.api.campaign.SpecialItemPlugin
 import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
+import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.ModSpecialItemPlugin
+import exoticatechnologies.modifications.exotics.ExoticsGenerator
+import exoticatechnologies.modifications.exotics.ExoticsHandler
+import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.RomanNumeral
+import org.json.JSONObject
 import org.lazywizard.lazylib.ui.LazyFont
 import org.lwjgl.util.vector.Vector2f
 import java.awt.Color
+import java.util.*
 
 class UpgradeSpecialItemPlugin : ModSpecialItemPlugin() {
     var upgradeLevel = 0
@@ -31,6 +37,42 @@ class UpgradeSpecialItemPlugin : ModSpecialItemPlugin() {
         get() = ModType.UPGRADE
     override val sprite: SpriteAPI
         get() = Global.getSettings().getSprite("upgrades", upgrade!!.key)
+
+    override fun resolveDropParamsToSpecificItemData(params: String, random: Random): String? {
+        var upgrade: Upgrade? = null
+        var level = 1
+
+        val paramsObj = JSONObject(params)
+        if (paramsObj.optBoolean("rng")) {
+            upgrade = UpgradesGenerator.getDefaultPicker(random).pick()
+            if (upgrade.maxLevel > 1) {
+                level = (random.nextFloat() * upgrade.maxLevel).toInt()
+            }
+        } else if (paramsObj.optString("faction") != null) {
+            val factionConfig = FactionConfigLoader.getFactionConfig(paramsObj.getString("faction"))
+            upgrade = UpgradesGenerator.getPicker(random, factionConfig.allowedUpgrades).pick()
+
+            if (upgrade.maxLevel > 1) {
+                level = (random.nextFloat() * upgrade.maxLevel).toInt()
+            }
+        } else if (paramsObj.optString("upgrade") != null) {
+            upgrade = UpgradesHandler.UPGRADES[paramsObj.getString("upgrade")]
+            val levelParam = paramsObj.optInt("level")
+
+            if (upgrade != null) {
+                if (levelParam == 0) {
+                    if (upgrade.maxLevel > 1) {
+                        level = (random.nextFloat() * upgrade.maxLevel).toInt()
+                    }
+                } else {
+                    level = levelParam
+                }
+            }
+        }
+
+        upgrade ?: return null
+        return "${upgrade.key},${level}"
+    }
 
     override fun createTooltip(
         tooltip: TooltipMakerAPI,

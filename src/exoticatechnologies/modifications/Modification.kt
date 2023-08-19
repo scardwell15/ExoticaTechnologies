@@ -21,6 +21,7 @@ abstract class Modification(val key: String, val settings: JSONObject) {
 
     var name: String = settings.getString("name")
     var tags: List<String>
+    var hints: List<String>
 
     open var color: Color = Color.white
     open var description: String = ""
@@ -39,6 +40,12 @@ abstract class Modification(val key: String, val settings: JSONObject) {
             tags = settings.getJSONArray("tags").toList()
         } else {
             tags = listOf()
+        }
+
+        if (settings.has("hints")) {
+            hints = settings.getJSONArray("hints").toList()
+        } else {
+            hints = listOf()
         }
     }
 

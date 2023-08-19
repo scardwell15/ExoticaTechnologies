@@ -13,6 +13,8 @@ import java.util.List;
 public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
     private final float SWITCHER_BUTTON_WIDTH = 68;
 
+    protected PositionAPI pos;
+
     @Getter
     @Setter
     protected CustomPanelAPI myPanel;
@@ -76,6 +78,10 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
     }
 
     protected void switchPanels(int newPanelIndex) {
+        if (switcherPanel == null && shouldMakeSwitcher()) {
+            makeSwitcher(newPanelIndex);
+        }
+
         myPanel.getPosition().setSize(getSwitcherPanelWidth(newPanelIndex), getSwitcherPanelHeight(newPanelIndex));
         myTooltip.getPosition().inTL(0,0);
 
@@ -119,11 +125,11 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
     protected abstract float getSwitcherLabelWidth(int newPanelIndex);
 
     private void makeSwitcher(int newPanelIndex) {
-        makeSwitcherPanel(newPanelIndex, getSwitcherButtonXOffset(newPanelIndex), getSwitcherPanelWidth(newPanelIndex), getSwitcherPanelHeight(newPanelIndex));
+        makeSwitcherPanel(getSwitcherPanelWidth(newPanelIndex), getSwitcherPanelHeight(newPanelIndex));
         makeSwitcherButtons(newPanelIndex, getSwitcherButtonWidth(newPanelIndex), getSwitcherButtonHeight(newPanelIndex));
     }
 
-    protected void makeSwitcherPanel(int newPanelIndex, float panelX, float panelWidth, float panelHeight) {
+    protected void makeSwitcherPanel(float panelWidth, float panelHeight) {
         switcherPanel = myPanel.createUIElement(panelWidth, panelHeight, false);
         myPanel.addUIElement(switcherPanel).inTL(0, 0);
     }
@@ -167,6 +173,7 @@ public abstract class TabbedCustomUIPanelPlugin implements CustomUIPanelPlugin {
 
     @Override
     public void positionChanged(PositionAPI position) {
+        this.pos = position;
     }
 
     @Override

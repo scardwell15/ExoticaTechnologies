@@ -100,7 +100,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
         }
 
         override fun canActivate(): Boolean {
-            return activeWings.isNotEmpty()
+            return activeWings.isNotEmpty() && canUseFlux()
         }
 
         override fun hasSeparateDroneCharges(): Boolean {
@@ -112,7 +112,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
         }
 
         override fun getDroneCreationTime(): Float {
-            return 20f
+            return 30f
         }
 
         override fun getMaxDeployedDrones(): Int {
@@ -139,6 +139,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
             val target: ShipAPI? = findTarget(ship)
             if (target != null) {
                 convertDrone(ship, target)
+                ship.fluxTracker.increaseFlux(ship.currFlux * getFluxCost(), false)
             }
         }
 
@@ -166,7 +167,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
             //missile.setHitpoints(missile.getHitpoints() * drone.getHullLevel());
             missile.empResistance = 10000
             val base = missile.maxRange
-            val max: Float = droneStrikeStats.getMaxRange(ship)
+            val max: Float = getSystemRange(ship)
             missile.maxRange = max
             missile.maxFlightTime = missile.maxFlightTime * max / base
 
@@ -210,7 +211,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
                 return null
             }
 
-            val range: Float = droneStrikeStats.getMaxRange(ship)
+            val range: Float = getSystemRange(ship)
             val player = ship === Global.getCombatEngine().playerShip
             var target: ShipAPI? = null
 
@@ -251,11 +252,14 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
             return target
         }
 
+        private fun getSystemRange(ship: ShipAPI) = droneStrikeStats.getMaxRange(ship) * 0.66f
+
         private val goodAiFlags = setOf(
             AIFlags.PHASE_ATTACK_RUN_FROM_BEHIND_DIST_CRITICAL,
             AIFlags.PHASE_ATTACK_RUN_IN_GOOD_SPOT,
             AIFlags.IN_ATTACK_RUN
         )
+
         override fun shouldActivateAI(amount: Float): Boolean {
             var target = findTarget(ship)
             if (target != null) {

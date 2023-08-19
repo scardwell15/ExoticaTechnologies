@@ -4,6 +4,7 @@
     "color": [90, 225, 60],
     "bandwidthPerLevel": 15,
     "tag": "weldedarmor",
+    "hints": ["durability"],
     "stats": [
       {"id": "hull", "scalingEffect": 30},
       {"id": "armor", "scalingEffect": 30},
@@ -26,6 +27,7 @@
     "color": [225, 120, 200],
     "bandwidthPerLevel": 15,
     "tag": "weldedarmor",
+    "hints": ["durability"],
     "stats": [
       {"id": "hull", "scalingEffect": 50},
       {"id": "empDamageTaken", "scalingEffect": -50},
@@ -45,6 +47,7 @@
     "bandwidthPerLevel": 5,
     "spawnChance": 3.0,
     "salvageChance": 0.1,
+    "hints": ["durability"],
     "showInStoreIfNotInstalled": false,
     "chipFirstInstall": true,
     "stats": [
@@ -67,6 +70,7 @@
     "color": [255, 225, 95],
     "bandwidthPerLevel": 10,
     "tag": "infengines",
+    "hints": ["speed"],
     "stats": [
       {"id": "maxSpeed", "scalingEffect": 20},
       {"id": "acceleration", "scalingEffect": 30},
@@ -92,6 +96,7 @@
     "color": [150, 140, 240],
     "bandwidthPerLevel": 10,
     "tag": "infengines",
+    "hints": ["speed"],
     "stats": [
       {"id": "zeroFluxSpeed", "scalingEffect": 80},
       {"id": "acceleration", "scalingEffect": 30},
@@ -110,6 +115,7 @@
     "tag": "infengines",
     "spawnChance": 3.0,
     "salvageChance": 0.1,
+    "hints": ["speed"],
     "showInStoreIfNotInstalled": false,
     "chipFirstInstall": true,
     "stats": [
@@ -137,6 +143,7 @@
     "color": [143, 86, 182],
     "bandwidthPerLevel": 15,
     "tag": "hypecap",
+    "hints": ["flux"],
     "stats": [
       {"id": "fluxCapacity", "scalingEffect": 25},
       {"id": "ventSpeed", "scalingEffect": 50},
@@ -162,6 +169,7 @@
     "salvageChance": 0.1,
     "color": [ 105, 74, 227 ],
     "tag": "hypecap",
+    "hints": ["flux"],
     "showInStoreIfNotInstalled": false,
     "chipFirstInstall": true,
     "stats": [
@@ -188,6 +196,7 @@
     "name": "Overcharged Shields",
     "color": [60, 200, 170],
     "bandwidthPerLevel": 15,
+    "hints": ["durability"],
     "stats": [
       {"id": "shieldFluxDam", "scalingEffect": -25},
       {"id": "shieldArc", "scalingEffect": 50},
@@ -213,6 +222,7 @@
     "color": [215, 130, 60],
     "bandwidthPerLevel": 5,
     "tag": "trc",
+    "hints": ["weapons"],
     "stats": [
       {"id": "recoilPerShot", "scalingEffect": -30},
       {"id": "maxRecoil", "scalingEffect": -20},
@@ -233,6 +243,7 @@
     "spawnChance": 3.0,
     "salvageChance": 0.1,
     "tag": "trc",
+    "hints": ["weapons"],
     "showInStoreIfNotInstalled": false,
     "chipFirstInstall": true,
     "stats": [
@@ -251,10 +262,29 @@
     },
     "valueMult": 3.0
   },
+  "OversizedMagazines": {
+    "name": "Oversized Magazines",
+    "color": [ 255, 60, 60 ],
+    "bandwidthPerLevel": 5,
+    "tag": "mags",
+    "hints": [ "weapons" ],
+    "stats": [
+      { "id": "ballisticMagazines", "scalingEffect": 25 },
+      { "id": "energyMagazines", "scalingEffect": 25 },
+      { "id": "ballisticFireRate", "scalingEffect": -40 },
+      { "id": "energyFireRate", "scalingEffect": -40 }
+    ],
+    "resourceRatios": {
+      "hand_weapons": 1.5,
+      "rare_metals": 1.5,
+      "heavy_machinery": 2.5
+    }
+  },
   "InterceptionMatrix": {
     "name": "Interception Matrix",
     "color": [ 240, 120, 210 ],
     "bandwidthPerLevel": 5,
+    "hints": ["weapons"],
     "stats": [
       { "id": "damageToMissiles", "scalingEffect": 100 },
       { "id": "damageToFighters", "scalingEffect": 100 },
@@ -277,6 +307,7 @@
     "tag": "guidancecomputers",
     "color": [ 120, 220, 110 ],
     "bandwidthPerLevel": 7.5,
+    "hints": ["weapons"],
     "stats": [
       { "id": "missileSpeed", "scalingEffect": 25 },
       { "id": "missileHealth", "scalingEffect": 20 },
@@ -297,11 +328,12 @@
   },
   "AntimatterBoosters": {
     "name": "Antimatter Boosters",
-    "tag": "guidancecomputers",
     "color": [ 220, 120, 180 ],
     "bandwidthPerLevel": 5,
     "spawnChance": 3.0,
     "salvageChance": 0.1,
+    "tag": "guidancecomputers",
+    "hints": ["weapons"],
     "showInStoreIfNotInstalled": false,
     "chipFirstInstall": true,
     "stats": [
@@ -327,6 +359,7 @@
     "color": [ 124, 124, 124 ],
     "bandwidthPerLevel": 5,
     "spawnChance": 0.6,
+    "hints": ["readiness"],
     "stats": [
       { "id": "crRecoveryRate", "scalingEffect": 30 },
       { "id": "peakPerformanceTime", "scalingEffect": 30 },
@@ -349,6 +382,7 @@
     "color": [178, 178, 178],
     "bandwidthPerLevel": 2.5,
     "spawnChance": 0.75,
+    "hints": ["logistics"],
     "stats": [
       {"id": "sensorStrength", "scalingEffect": 50},
       {"id": "sensorProfile", "scalingEffect": 12, "startingLevel": 3},
@@ -365,6 +399,7 @@
     "color": [93, 59, 210],
     "bandwidthPerLevel": 2.5,
     "spawnChance": 0.75,
+    "hints": ["logistics"],
     "stats": [
       {"id": "sensorProfile", "scalingEffect": -50},
       {"id": "suppliesPerMonth", "scalingEffect": 16, "startingLevel": 3}
@@ -381,6 +416,7 @@
     "color": [ 230, 200, 25 ],
     "bandwidthPerLevel": 5,
     "spawnChance": 0,
+    "hints": ["logistics"],
     "stats": [
       { "id": "crewSalary", "scalingEffect": 15, "flat": true },
       { "id": "suppliesPerMonth", "scalingEffect": -30 },
@@ -403,6 +439,7 @@
     "name": "Assault Wings",
     "color": [230, 75, 75],
     "bandwidthPerLevel": 7.5,
+    "hints": ["fighters"],
     "stats": [
       {"id": "hull", "scalingEffect": 25, "appliesToFighters": true},
       {"id": "armor", "scalingEffect": 25, "appliesToFighters": true},
@@ -424,6 +461,7 @@
     "name": "Velocity Injectors",
     "color": [ 75, 180, 230 ],
     "bandwidthPerLevel": 7.5,
+    "hints": ["speed"],
     "stats": [
       { "id": "maxSpeed", "scalingEffect": 50, "appliesToFighters": true },
       { "id": "acceleration", "scalingEffect": 50, "appliesToFighters": true },
@@ -445,6 +483,7 @@
     "name": "Wasp Defense Drones",
     "tag": "drones",
     "color": [ 100, 100, 255 ],
+    "hints": ["drones"],
     "bandwidthPerLevel": 50,
     "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.WaspDefenseDrones",
     "resourceRatios": {
@@ -459,6 +498,7 @@
     "name": "Overclocked Fabricators",
     "color": [ 200, 255, 210 ],
     "bandwidthPerLevel": 5,
+    "hints": ["fighters"],
     "stats": [
       { "id": "replacementRateRegen", "scalingEffect": 40},
       { "id": "replacementRateDegen", "scalingEffect": -20},

@@ -3,6 +3,7 @@ package exoticatechnologies.modifications.upgrades
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.util.WeightedRandomPicker
+import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.util.Utilities
@@ -84,6 +85,15 @@ object UpgradesGenerator {
             .forEach { (upgrade, factionChance) ->
             upgradePicker.add(upgrade, upgrade.spawnChance * factionChance * upgrade.getCalculatedWeight(member, mods))
         }
+        return upgradePicker
+    }
+
+    fun getDefaultPicker(random: Random): WeightedRandomPicker<Upgrade> {
+        val upgradePicker = WeightedRandomPicker<Upgrade>(random)
+        FactionConfigLoader.getDefaultFactionUpgrades()
+            .forEach { (upgrade, factionChance) ->
+                upgradePicker.add(upgrade, upgrade.spawnChance * factionChance)
+            }
         return upgradePicker
     }
 

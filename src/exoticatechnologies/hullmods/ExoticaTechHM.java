@@ -1,5 +1,8 @@
 package exoticatechnologies.hullmods;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BattleAPI;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,9 +15,7 @@ import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.util.ExtensionsKt;
 import exoticatechnologies.util.FleetMemberUtils;
-import exoticatechnologies.util.StringUtils;
 import lombok.extern.log4j.Log4j;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.List;
@@ -109,14 +110,15 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
-            if (ship.getParentStation() != null && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
+
+            if (cachedCheckIsModule(ship) && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
 
             exotic.advanceInCombatUnpaused(ship, amount, member, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if (!mods.hasUpgrade(upgrade)) continue;
-            if (ship.getParentStation() != null && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
+            if (cachedCheckIsModule(ship) && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
 
             upgrade.advanceInCombatUnpaused(ship, amount, member, mods);
         }
@@ -175,13 +177,13 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
-            if (ship.getParentStation() != null && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
+            if (cachedCheckIsModule(ship) && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
             exotic.applyToShip(id, member, ship, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
         }
 
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if (!mods.hasUpgrade(upgrade)) continue;
-            if (ship.getParentStation() != null && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
+            if (cachedCheckIsModule(ship) && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
             upgrade.applyToShip(member, ship, mods);
         }
     }
@@ -196,12 +198,12 @@ public class ExoticaTechHM extends BaseHullMod {
 
         for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
             if (!mods.hasExotic(exotic)) continue;
-            if (ship.getParentStation() != null && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
+            if (cachedCheckIsModule(ship) && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
             exotic.applyToFighters(member, ship, fighter, mods);
         }
         for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             if (!mods.hasUpgrade(upgrade)) continue;
-            if (ship.getParentStation() != null && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
+            if (cachedCheckIsModule(ship) && !upgrade.shouldAffectModule(ship.getParentStation(), ship)) continue;
             upgrade.applyToFighters(member, ship, fighter, mods);
         }
     }
@@ -246,5 +248,60 @@ public class ExoticaTechHM extends BaseHullMod {
                 removeHullModFromVariant(module);
             }
         }
+    }
+
+    private static boolean checkIsModuleInternal(ShipAPI ship) {
+        boolean isStationModule = ship.isStationModule();
+        if (isStationModule) return true;
+
+        boolean hasParentStation = ship.getParentStation() != null;
+        if (hasParentStation) return true;
+
+        boolean hasStationSlot = ship.getStationSlot() != null;
+        if (hasStationSlot) return true;
+
+        boolean isNameNull = false;
+        FleetMemberAPI shipMember = ship.getFleetMember();
+        if (shipMember != null) {
+            isNameNull = shipMember.getShipName() == null;
+        }
+        if (isNameNull) return true;
+
+        if (Global.getCombatEngine() == null) return false;
+
+        String id = ship.getFleetMemberId();
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        BattleAPI battle = playerFleet.getBattle();
+        if (battle != null) {
+            List<CampaignFleetAPI> battleFleets = battle.getBothSides();
+
+            for (CampaignFleetAPI fleet : battleFleets) {
+                for (FleetMemberAPI member : fleet.getMembersWithFightersCopy()) {
+                    if (member.getId().equals(id)) {
+                        return false;
+                    }
+                }
+            }
+        } else { // just check player fleet, at least.
+            for (FleetMemberAPI member : playerFleet.getMembersWithFightersCopy()) {
+                if (member.getId().equals(id)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static String MODULE_DATA_HINT = "exotica_IsModule";
+    public static boolean cachedCheckIsModule(ShipAPI ship) {
+        Object isModuleData = ship.getCustomData().get(MODULE_DATA_HINT);
+        if (isModuleData != null) {
+            return (Boolean) isModuleData;
+        }
+
+        boolean isModuleInternal = checkIsModuleInternal(ship);
+        ship.setCustomData(MODULE_DATA_HINT, isModuleInternal);
+        return isModuleInternal;
     }
 }

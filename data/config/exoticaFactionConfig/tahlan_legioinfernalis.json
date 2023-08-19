@@ -11,8 +11,7 @@
     "PhasedFighterTether": 0.25,
     "HyperspecLPC": 0.3,
     "EqualizerCore": 0.3,
-    "DaemonCore": 0.9,
-    "TerminatorSubsystems": 0.4
+    "DaemonCore": 0.9
   },
   "allowedUpgrades": {
     "OverchargedShields": 0.5,

@@ -58,6 +58,7 @@
         "OverchargedShields",
         "TracerRecoilCalculator",
         "DerelictWeaponAssistant",
+        "OversizedMagazines",
         "InterceptionMatrix",
         "GuidanceComputers",
         "AntimatterBoosters",
@@ -65,6 +66,7 @@
         "AuxiliarySensors",
         "InterferenceShielding",
         "CommissionedCrews",
+        "WaspDefenseDrones",
         "AssaultWings",
         "VelocityInjectors",
         "OverclockedFabricators"

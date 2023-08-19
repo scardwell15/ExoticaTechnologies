@@ -85,6 +85,7 @@
 			"AntimatterBoosters": "graphics/icons/upgrades/antimatterboosters.png",
 			"HelDrives": "graphics/icons/upgrades/heldrives.png",
 			"WaspDefenseDrones": "graphics/icons/upgrades/waspdefensedrones.png",
+			"OversizedMagazines": "graphics/icons/upgrades/oversizedmagazines.png"
 		},
 		"overlays": {
 			"Corrupted": "graphics/icons/overlays/corrupted.png",

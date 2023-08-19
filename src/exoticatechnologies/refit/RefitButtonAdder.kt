@@ -3,6 +3,7 @@ package exoticatechnologies.refit
 import com.fs.starfarer.api.EveryFrameScript
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CoreUITabId
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.Fonts
@@ -21,15 +22,16 @@ import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 
 class RefitButtonAdder : EveryFrameScript {
-
     var refitPanel: UIPanelAPI? = null
+    var modWidget: UIPanelAPI? = null
     var openButtonPanel: CustomPanelAPI? = null
     var closeButtonPanel: CustomPanelAPI? = null
-    var member: FleetMemberAPI? = null
-    var variant: HullVariantSpec? = null
+
     var firstButtonLoad = true
 
     companion object {
+        var member: FleetMemberAPI? = null
+        var variant: HullVariantSpec? = null
         var requiresVariantUpdate = false
     }
 
@@ -60,7 +62,7 @@ class RefitButtonAdder : EveryFrameScript {
         //Makes sure that the current state is the campaign state.
         if (state !is CampaignState) return
 
-        var modWidget: UIPanelAPI? = null
+        var modWidgetLocal: UIPanelAPI? = null
         var buildButton: UIComponentAPI? = null
 
         var core = invokeMethod("getCore", state)
@@ -73,8 +75,6 @@ class RefitButtonAdder : EveryFrameScript {
 
         if (core is UIPanelAPI)
         {
-
-
             var child1 = core.getChildrenCopy().find { hasMethodOfName("setBorderInsetLeft", it) }
             if (child1 is UIPanelAPI)
             {
@@ -88,6 +88,12 @@ class RefitButtonAdder : EveryFrameScript {
                     {
                         refitPanel = child3
                         member = invokeMethod("getMember", refitPanel!!) as FleetMemberAPI
+                        if (member == null || member?.shipName == null)
+                        {
+                            removeExoticaButton()
+                            return
+                        }
+
                         var shipdisplay = invokeMethod("getShipDisplay", refitPanel!!) as UIPanelAPI?
                         variant = invokeMethod("getCurrentVariant", shipdisplay!!) as HullVariantSpec?
 
@@ -95,16 +101,16 @@ class RefitButtonAdder : EveryFrameScript {
 
                         if (child4 is UIPanelAPI)
                         {
-                            modWidget = child4.getChildrenCopy().find { hasMethodOfName("removeNotApplicableMods", it) } as UIPanelAPI?
+                            modWidgetLocal = child4.getChildrenCopy().find { hasMethodOfName("removeNotApplicableMods", it) } as UIPanelAPI?
 
-
-                            if (modWidget is UIPanelAPI)
+                            if (modWidgetLocal is UIPanelAPI)
                             {
-                                if (modWidget.getChildrenCopy().any { it == openButtonPanel }) {
+                                modWidget = modWidgetLocal
+                                if (modWidgetLocal.getChildrenCopy().any { it == openButtonPanel }) {
                                     return
                                 }
 
-                                var buttons = modWidget.getChildrenCopy().filter { hasMethodOfName("getText", it) }
+                                var buttons = modWidgetLocal.getChildrenCopy().filter { hasMethodOfName("getText", it) }
 
                                 buildButton = buttons.find { (invokeMethod("getText", it) as String).contains("Build in") } as UIComponentAPI
                             }
@@ -113,15 +119,16 @@ class RefitButtonAdder : EveryFrameScript {
                 }
             }
         }
-        if (modWidget == null)
+
+        if (modWidgetLocal == null)
         {
             firstButtonLoad = true
         }
 
-        if (modWidget != null && buildButton != null)
+        if (modWidgetLocal != null && buildButton != null)
         {
             openButtonPanel = Global.getSettings().createCustom(buildButton.position.width , buildButton.position.height, null)
-            modWidget.addComponent(openButtonPanel)
+            modWidgetLocal.addComponent(openButtonPanel)
             openButtonPanel!!.position.belowLeft(buildButton, 3f)
 
             var openElement = openButtonPanel!!.createUIElement(buildButton.position.width , buildButton.position.height, false)
@@ -282,16 +289,7 @@ class RefitButtonAdder : EveryFrameScript {
     fun syncVariantIfNeeded() {
         if (requiresVariantUpdate)
         {
-            try {
-                invokeMethod("syncWithCurrentVariant", refitPanel!!, true)
-            } catch (e: Throwable) {
-                //do nothing
-                try {
-                    invokeMethod("syncWithCurrentVariant", refitPanel!!)
-                } catch (e: Throwable) {
-                    println("error while pre-syncing variant in refit: $e")
-                }
-            }
+            refreshVariant()
 
             try {
                 invokeMethod("saveCurrentVariant", refitPanel!!, false)
@@ -310,18 +308,38 @@ class RefitButtonAdder : EveryFrameScript {
                 //do nothing
             }
 
-            try {
-                invokeMethod("syncWithCurrentVariant", refitPanel!!, true)
-            } catch (e: Throwable) {
-                try {
-                    invokeMethod("syncWithCurrentVariant", refitPanel!!)
-                } catch (e: Throwable) {
-                    println("error while post-syncing variant in refit: $e")
-                }
-            }
+            refreshVariant()
 
             requiresVariantUpdate = false
         }
-
     }
+
+    fun refreshVariant() {
+        try {
+            invokeMethod("syncWithCurrentVariant", refitPanel!!, true)
+        } catch (e: Throwable) {
+            try {
+                invokeMethod("syncWithCurrentVariant", refitPanel!!)
+            } catch (e: Throwable) {
+                println("error while post-syncing variant in refit: $e")
+            }
+        }
+    }
+
+    fun removeExoticaButton() {
+        openButtonPanel?.let {
+            modWidget!!.removeComponent(it)
+        }
+
+        closeButtonPanel?.let {
+            modWidget!!.removeComponent(it)
+        }
+    }
+}
+
+fun FleetMemberAPI.checkRefitVariant(): ShipVariantAPI {
+    if (RefitButtonAdder.member == this) {
+        return RefitButtonAdder.variant as ShipVariantAPI
+    }
+    return this.variant
 }

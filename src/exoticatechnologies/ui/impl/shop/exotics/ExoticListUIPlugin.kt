@@ -7,8 +7,9 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.exotics.Exotic
+import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
-import exoticatechnologies.ui.lists.ListUIPanelPlugin
+import exoticatechnologies.ui.lists.filtered.FilteredListPanelPlugin
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
@@ -17,7 +18,7 @@ class ExoticListUIPlugin(
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
     var market: MarketAPI?
-): ListUIPanelPlugin<Exotic>(parentPanel) {
+) : FilteredListPanelPlugin<Exotic>(parentPanel) {
     override val listHeader = StringUtils.getTranslation("ExoticsDialog", "OpenExoticOptions").toString()
     override var bgColor: Color = Color(255, 70, 255, 0)
     private var modsValue: Float = ShipModLoader.get(member, variant)!!.getValue()
@@ -48,7 +49,7 @@ class ExoticListUIPlugin(
                 else
                     -1
             else if (mods.hasExotic(b))
-                    1
+                1
             else
                 if (a.canAfford(member.fleetData.fleet, market))
                     if (b.canAfford(member.fleetData.fleet, market))
@@ -65,13 +66,15 @@ class ExoticListUIPlugin(
                             -1
                     else if (b.canApply(member, mods))
                         1
-            else
-                0
+                    else
+                        0
         }
         return sortedItems
     }
 
     override fun shouldMakePanelForItem(item: Exotic): Boolean {
+        if (!super.shouldMakePanelForItem(item)) return false
+
         val mods = ShipModLoader.get(member, variant)!!
         if (mods.hasExotic(item)) {
             return true
@@ -82,5 +85,13 @@ class ExoticListUIPlugin(
         }
 
         return item.shouldShow(member, mods, market)
+    }
+
+    override fun getFilters(): List<String>? {
+        return ExoticsHandler.EXOTICS_BY_HINT.keys.filterNot { it.isEmpty() }.toList()
+    }
+
+    override fun getFiltersFromItem(item: Exotic): List<String> {
+        return item.hints
     }
 }

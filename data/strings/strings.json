@@ -310,6 +310,9 @@
 	"TracerRecoilCalculator": {
 		"description": "Loading weapons with a special kind of tracer round allows this subsystem to make trajectory adjustments to reduce recoil and inaccuracy at the cost of weapon turn rate. The durability of the weapon is increased as a side effect."
 	},
+	"OversizedMagazines": {
+		"description": "Ultra-sized magazines and compatible loaders offer more consistent firing rates for weaponry loaded through magazines, but the short-term damage burst from such weapons is reduced as a result."
+	},
 	"AdvancedFluxCoils": {
 		"description": "Improve flux capacity, vent speed, and decrease the flux cost of weapons. The size of the new cabling required for the flux coils reduces the stability of the hull."
 	},
@@ -416,9 +419,13 @@
 		"projectileSpeed": "Projectile speed",
 		"weaponFireRate": "Weapon rate of fire",
 		"ballisticFireRate": "Ballistic rate of fire",
+		"energyFireRate": "Energy rate of fire",
+		"ballisticMagazines": "Ballistic magazine size",
+		"energyMagazines": "Energy magazine size",
 		"weaponHealth": "Weapon health",
 		"weaponTurnRate": "Weapon turn rate",
 		"weaponFluxCost": "Weapon flux costs",
+		"weaponMagazines": "Weapon magazine size",
 		"missileDamage": "Missile damage",
 		"missileHealth": "Missile health",
 		"missileSpeed": "Missile speed",
@@ -442,5 +449,17 @@
 		"CannotApplyBecauseBandwidth": "The ship does not have enough bandwidth.",
 		"CannotApplyBecauseLevel": "The ship has the max level for this upgrade.",
 		"CannotApplyBecauseTooManyExotics": "The ship has reached its capacity for exotics, which is 2, increased by 1 if the *Best of the Best* skill is unlocked."
+	},
+	"Filters": {
+		"durability": "Durability",
+		"speed": "Speed",
+		"flux": "Flux",
+		"weapons": "Weapons",
+		"phase": "Phase",
+		"readiness": "Readiness",
+		"logistics": "Logistics",
+		"fighters": "Fighters",
+		"drones": "Drones",
+		"special": "Special"
 	}
 }

@@ -2,28 +2,34 @@
   "SpooledFeeders": {
       "name": "Spooled Feeders",
       "tag": "weaponFeeders",
+      "hints": ["weapons"],
       "exoticClass": "exoticatechnologies.modifications.exotics.impl.SpooledFeeders"
   },
   "FullMetalSalvo": {
     "name": "Full Metal Salvo",
     "tag": "weaponFeeders",
+    "hints": ["weapons"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.FullMetalSalvo",
     "valueMult": 1.5
   },
   "PlasmaFluxCatalyst": {
       "name": "Plasma Flux Catalyst",
+      "hints": ["flux"],
       "exoticClass": "exoticatechnologies.modifications.exotics.impl.PlasmaFluxCatalyst"
   },
   "DriveFluxVent": {
     "name": "Drive Flux Vent",
+    "hints": ["flux"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.DriveFluxVent"
   },
   "EqualizerCore": {
     "name": "Equalizer Core",
+    "hints": ["weapons"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.EqualizerCore"
   },
   "PhasedFighterTether": {
     "name": "Phased Fighter Tether",
+    "hints": ["fighters"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasedFighterTether",
     "conditions": [
       {"id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship must have a launch bay.", "weight": 1.5}
@@ -32,6 +38,7 @@
   },
   "HyperspecLPC": {
     "name": "Hyperspec LPC",
+    "hints": ["fighters"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HyperspecLPC",
     "conditions": [
       {"id": "launchBays", "operator": ">", "expected": 1, "cannotApplyReason": "The ship must have more than one launch bay.", "weight": 1.5}
@@ -40,6 +47,7 @@
   },
   "HackedMissileForge": {
     "name": "Hacked Missile Forge",
+    "hints": ["weapons"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.HackedMissileForge",
     "conditions": [
       #note that weight can be below 1, but is always rounded above 1. the effective result of these two parameters is ships with 6 slots having the max weight of 3
@@ -48,6 +56,7 @@
   },
   "PhasefieldEngine": {
     "name": "Phasefield Engine",
+    "hints": ["phase"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PhasefieldEngine",
     "conditions": [
       {"id": "hasPhase", "operator": "==", "expected": true, "cannotApplyReason": "The ship must be a phase ship, or have a phase ship system.", "weight": 2}
@@ -56,6 +65,7 @@
   },
   "TierIIIDriveSystem": {
     "name": "Tier IIIb Drive System",
+    "hints": ["logistics"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.TierIIIDriveSystem",
     "conditions": [
       {"id": "cargoSpace", "operator": ">=", "expected": 400, "cannotApplyReason": "The ship must have at least 400 cargo capacity."}
@@ -65,11 +75,13 @@
   "TerminatorSubsystems": {
     "name": "Terminator Subsystems",
     "tag": "drones",
+    "hints": ["drones"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.TerminatorSubsystems",
     "valueMult": 2.5
   },
   "ReactiveDamperField": {
     "name": "Reactive Damper Field",
+    "hints": ["durability"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.ReactiveDamperField",
     "conditions": [
       {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."}
@@ -78,6 +90,7 @@
   "DaemonCore": {
     "name": "Daemon Core",
     "tag": "aiCore",
+    "hints": ["special"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.DaemonCore",
     "conditions": [
       {"id": "globalMemory", "extra": "$tahlan_triggered", "operator": "==", "expected": true, "cannotApplyReason": "Hel has not awakened."},
@@ -88,6 +101,7 @@
   "AlphaSubcore": {
     "name": "Alpha Subcore",
     "tag": "aiCore",
+    "hints": ["special"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.AlphaSubcore",
     "conditions": [
       { "id": "hullmods", "operator": "notIn", "expected": "specialsphmod_alpha_core_upgrades", "cannotApplyReason": "The ship must not have an AI core already installed." },
@@ -99,6 +113,7 @@
   "PenanceEngine": {
     "name": "Penance Engine",
     "tags": ["aiCore","armorRegen"],
+    "hints": ["durability"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.PenanceEngine",
     "valueMult": 1.25,
     "conditions": [
@@ -110,6 +125,7 @@
   "NanotechArmor": {
     "name": "Nanotech Armor",
     "tag": "armorRegen",
+    "hints": ["durability"],
     "exoticClass": "exoticatechnologies.modifications.exotics.impl.NanotechArmor",
     "conditions": [
       { "id": "armor", "operator": ">=", "expected": 600, "weightOnly": true, "weight": 1.5 }

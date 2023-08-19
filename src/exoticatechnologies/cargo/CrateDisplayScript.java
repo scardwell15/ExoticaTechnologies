@@ -13,14 +13,12 @@ import java.awt.event.KeyEvent;
  */
 public class CrateDisplayScript implements EveryFrameScript {
     private final CargoAPI cargo;
-    private final CrateItemPlugin augmentChestPlugin;
     private final Robot robot;
     private boolean success = false;
 
     @SneakyThrows
-    public CrateDisplayScript(CargoAPI cargo, CrateItemPlugin augmentChestPlugin) {
+    public CrateDisplayScript(CargoAPI cargo) {
         this.cargo = cargo;
-        this.augmentChestPlugin = augmentChestPlugin;
         this.robot = new Robot();
     }
 
@@ -41,7 +39,7 @@ public class CrateDisplayScript implements EveryFrameScript {
         } else {
             robot.keyPress(KeyEvent.VK_ESCAPE);
             robot.keyRelease(KeyEvent.VK_ESCAPE);
-            success = Global.getSector().getCampaignUI().showInteractionDialog(new CrateItemDialog(cargo, augmentChestPlugin), null);
+            success = Global.getSector().getCampaignUI().showInteractionDialog(new CrateItemDialog(cargo, CrateGlobalData.getInstance().getCargo()), null);
         }
     }
 }

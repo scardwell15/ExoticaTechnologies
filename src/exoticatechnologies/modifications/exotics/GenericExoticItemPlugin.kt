@@ -2,13 +2,56 @@ package exoticatechnologies.modifications.exotics
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.SpecialItemPlugin.SpecialItemRendererAPI
+import exoticatechnologies.config.FactionConfig
+import exoticatechnologies.config.FactionConfigLoader
+import exoticatechnologies.modifications.exotics.types.ExoticType
+import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import lombok.extern.log4j.Log4j
+import org.json.JSONObject
 import org.magiclib.kotlin.setAlpha
+import java.util.*
 
 @Log4j
 class GenericExoticItemPlugin : ExoticSpecialItemPlugin() {
     override fun getName(): String {
         return String.format("%s - %s", super.getName(), exoticData!!.getNameTranslation().toStringNoFormats())
+    }
+
+    override fun resolveDropParamsToSpecificItemData(params: String, random: Random): String? {
+        var exotic: Exotic? = null
+        var type: ExoticType = ExoticType.NORMAL
+
+        val paramsObj = JSONObject(params)
+        if (paramsObj.optBoolean("rng")) {
+            exotic = ExoticsGenerator.getDefaultExoticPicker(random).pick()
+
+            if (random.nextFloat() < 0.15f) {
+                type = ExoticsGenerator.getDefaultTypePicker(random, exotic).pick()
+            }
+        } else if (paramsObj.optString("faction") != null) {
+            val factionConfig = FactionConfigLoader.getFactionConfig(paramsObj.getString("faction"))
+            exotic = ExoticsGenerator.getExoticPicker(random, factionConfig.allowedExotics).pick()
+
+            if (random.nextFloat() < 0.15f) {
+                type = ExoticsGenerator.getTypePicker(random, exotic, factionConfig.allowedExoticTypes).pick()
+            }
+        } else if (paramsObj.optString("exotic") != null) {
+            exotic = ExoticsHandler.EXOTICS[paramsObj.getString("exotic")]
+            var typeParam: String? = paramsObj.optString("type")
+
+            if (exotic != null) {
+                if (typeParam == null) {
+                    if (random.nextFloat() < 0.15f) {
+                        type = ExoticsGenerator.getDefaultTypePicker(random, exotic).pick()
+                    }
+                } else {
+                    type = ExoticType.valueOf(typeParam)
+                }
+            }
+        }
+
+        exotic ?: return null
+        return "${exotic.key},${type.nameKey}"
     }
 
     override fun render(

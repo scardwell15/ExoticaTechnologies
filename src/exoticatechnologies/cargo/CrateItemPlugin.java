@@ -11,7 +11,6 @@ import com.fs.starfarer.api.util.Pair;
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
 import exoticatechnologies.util.StringUtils;
-import exoticatechnologies.util.Utilities;
 import lombok.SneakyThrows;
 
 import java.awt.Color;
@@ -28,7 +27,11 @@ public class CrateItemPlugin extends BaseSpecialItemPlugin {
     }
 
     public CargoAPI getCargo() {
-        return getData().getCargo();
+        CargoAPI globalCargo = CrateGlobalData.getInstance().getCargo();
+        if (globalCargo.isEmpty()) {
+            return getData().getCargo();
+        }
+        return globalCargo;
     }
 
     @Override
@@ -47,8 +50,7 @@ public class CrateItemPlugin extends BaseSpecialItemPlugin {
         //fix for campaign post-combat crash
         if (Global.getSector().getCampaignUI().getCurrentInteractionDialog() != null) return;
 
-        Utilities.mergeChipsIntoCrate(stack.getCargo(), (CrateSpecialData) stack.getSpecialDataIfSpecial());
-        Global.getSector().addTransientScript(new CrateDisplayScript(stack.getCargo(), this));
+        Global.getSector().addTransientScript(new CrateDisplayScript(stack.getCargo()));
     }
 
     @Override
@@ -71,12 +73,12 @@ public class CrateItemPlugin extends BaseSpecialItemPlugin {
 
         if (cargoStacks.isEmpty()) return;
 
-        Iterator<CargoStackAPI> stackIterator = cargoStacks.iterator();
 
         List<Pair<StringUtils.Translation, Color>> upgradeStrings = new ArrayList<>();
         List<Pair<StringUtils.Translation, Color>> exoticStrings = new ArrayList<>();
         List<Pair<String, Color>> otherStrings = new ArrayList<>();
 
+        Iterator<CargoStackAPI> stackIterator = cargoStacks.iterator();
         while (stackIterator.hasNext()) {
             CargoStackAPI newStack = stackIterator.next();
 

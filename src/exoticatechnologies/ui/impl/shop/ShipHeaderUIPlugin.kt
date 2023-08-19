@@ -114,7 +114,7 @@ class ShipHeaderUIPlugin(
 
 
         // done, add row to TooltipMakerAPI
-        tooltip.addCustom(panel, opad)
+        pos = tooltip.addCustom(panel, opad).position
 
         return panel
     }

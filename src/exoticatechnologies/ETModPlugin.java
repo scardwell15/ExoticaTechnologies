@@ -10,6 +10,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
 import exoticatechnologies.campaign.market.MarketManager;
+import exoticatechnologies.cargo.CrateGlobalData;
+import exoticatechnologies.cargo.CrateSpecialData;
 import exoticatechnologies.config.FactionConfigLoader;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
@@ -21,6 +23,7 @@ import exoticatechnologies.refit.RefitButtonAdder;
 import exoticatechnologies.ui.impl.shop.ShopManager;
 import exoticatechnologies.ui.impl.shop.overview.OverviewPanelUIPlugin;
 import exoticatechnologies.util.FleetMemberUtils;
+import exoticatechnologies.util.Utilities;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.console.Console;
 import org.lazywizard.lazylib.MathUtils;
@@ -57,6 +60,8 @@ public class ETModPlugin extends BaseModPlugin {
         }
 
         addListeners();
+
+        Utilities.mergeChipsIntoCrate(Global.getSector().getPlayerFleet().getCargo());
     }
 
     public static String getSectorSeedString() {

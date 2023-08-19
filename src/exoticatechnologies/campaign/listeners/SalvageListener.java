@@ -144,18 +144,25 @@ public class SalvageListener implements ShowLootListener {
             int value = -1;
             //rare_tech is more valuable tech-wise than rare_tech_low
             if (data.group.equals("rare_tech")) {
-                value = Math.round(data.value * 0.3f);
+                value = Math.round(data.value * 0.6f);
             } else if (data.group.equals("rare_tech_low")) {
-                value = Math.round(data.value * 0.1f);
+                value = Math.round(data.value * 0.3f);
             }
 
             if (value != -1) {
-                SalvageEntityGenDataSpec.DropData dropValue = new SalvageEntityGenDataSpec.DropData();
-                dropValue.group = "et_exotic";
-                dropValue.valueMult = data.valueMult;
-                dropValue.value = value;
+                SalvageEntityGenDataSpec.DropData exoticDropValue = new SalvageEntityGenDataSpec.DropData();
+                exoticDropValue.group = "et_exotic";
+                exoticDropValue.valueMult = data.valueMult;
+                exoticDropValue.value = value;
 
-                dropValueList.add(dropValue);
+                dropValueList.add(exoticDropValue);
+
+                SalvageEntityGenDataSpec.DropData upgradeDropValue = new SalvageEntityGenDataSpec.DropData();
+                upgradeDropValue.group = "et_upgrade";
+                upgradeDropValue.valueMult = data.valueMult;
+                upgradeDropValue.value = value;
+
+                dropValueList.add(upgradeDropValue);
             }
         }
 
@@ -173,18 +180,25 @@ public class SalvageListener implements ShowLootListener {
             int chances = -1;
             //rare_tech is more valuable tech-wise than rare_tech_low
             if (data.group.equals("rare_tech")) {
-                chances = Math.round(data.chances * 1.5f);
+                chances = Math.round(data.chances * 2f);
             } else if (data.group.equals("rare_tech_low")) {
-                chances = Math.round(data.chances * 0.5f);
+                chances = Math.round(data.chances * 1f);
             }
 
             if (chances != -1) {
-                SalvageEntityGenDataSpec.DropData dropRandom = new SalvageEntityGenDataSpec.DropData();
-                dropRandom.group = "et_exotic";
-                dropRandom.maxChances = data.maxChances;
-                dropRandom.chances = chances;
+                SalvageEntityGenDataSpec.DropData exoticDropValue = new SalvageEntityGenDataSpec.DropData();
+                exoticDropValue.group = "et_exotic";
+                exoticDropValue.maxChances = data.maxChances;
+                exoticDropValue.chances = chances;
 
-                dropRandomList.add(dropRandom);
+                dropRandomList.add(exoticDropValue);
+
+                SalvageEntityGenDataSpec.DropData upgradeDropValue = new SalvageEntityGenDataSpec.DropData();
+                upgradeDropValue.group = "et_upgrade";
+                upgradeDropValue.maxChances = data.maxChances;
+                upgradeDropValue.chances = chances;
+
+                dropRandomList.add(upgradeDropValue);
             }
         }
 

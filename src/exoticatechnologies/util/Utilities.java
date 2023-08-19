@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import exoticatechnologies.cargo.CrateGlobalData;
 import exoticatechnologies.cargo.CrateItemPlugin;
 import exoticatechnologies.cargo.CrateSpecialData;
 import exoticatechnologies.modifications.ModSpecialItemPlugin;
@@ -16,6 +17,7 @@ import exoticatechnologies.modifications.exotics.GenericExoticItemPlugin;
 import exoticatechnologies.modifications.exotics.types.ExoticType;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -495,51 +497,29 @@ public class Utilities {
         return null;
     }
 
-    public static void mergeChipsIntoCrate(CargoAPI cargo, CrateSpecialData crateData) {
+    public static void mergeChipsIntoCrate(CargoAPI cargo) {
         if (cargo == null) return;
 
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            if (stack.isSpecialStack()) {
-                SpecialItemData data = stack.getSpecialDataIfSpecial();
-                if (data.getId().equals("et_crate")) {
-                    if (crateData == null) {
-                        crateData = (CrateSpecialData) data;
-                    } else {
-                        //merge crates while we're here.
-                        crateData.getCargo().addAll(((CrateSpecialData) data).getCargo());
-                        cargo.removeStack(stack);
-                    }
-                }
-            }
-        }
-
-        if (crateData == null) {
-            CargoStackAPI stack = Global.getFactory().createCargoStack(CargoAPI.CargoItemType.SPECIAL, new CrateSpecialData(), cargo);
-            stack.setSize(1);
-            cargo.addFromStack(stack);
-
-            crateData = (CrateSpecialData) stack.getSpecialDataIfSpecial();
-        }
+        CrateGlobalData crateData = CrateGlobalData.getInstance();
 
         for (CargoStackAPI stack : cargo.getStacksCopy()) {
             if (stack.isSpecialStack()) {
                 String specialId = stack.getSpecialDataIfSpecial().getId();
                 if (specialId.equals("et_upgrade") || specialId.equals("et_exotic")) {
                     ModSpecialItemPlugin plugin = (ModSpecialItemPlugin) stack.getPlugin();
-                    if (!plugin.getIgnoreCrate())
-                    {
+                    if (!plugin.getIgnoreCrate()) {
                         crateData.getCargo().addFromStack(stack);
                         cargo.removeStack(stack);
+                    }
+                } else if (stack.getSpecialDataIfSpecial() instanceof CrateSpecialData) {
+                    CrateSpecialData data = (CrateSpecialData) stack.getSpecialDataIfSpecial();
+                    if (data != null && data.getCargo() != null && !data.getCargo().isEmpty()) {
+                        CrateGlobalData.addCargo(data.getCargo());
+                        data.getCargo().removeAll(CrateGlobalData.getInstance().getCargo());
                     }
                 }
             }
         }
-    }
-
-    public static void mergeChipsIntoCrate(CargoAPI cargo) {
-        if (cargo == null) return;
-
-        mergeChipsIntoCrate(cargo, null);
     }
 
     public static String formatSpecialItem(SpecialItemData data) {

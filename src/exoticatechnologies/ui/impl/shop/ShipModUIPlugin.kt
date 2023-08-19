@@ -43,13 +43,13 @@ class ShipModUIPlugin(
         outerTooltip.addSectionHeading(headerStr, Alignment.MID, 0f)
         val heading = outerTooltip.prev
 
-        innerPanel = outerPanel.createCustomPanel(panelWidth, panelHeight - 16, null)
+        innerPanel = outerPanel.createCustomPanel(panelWidth, panelHeight - 16f, null)
 
         innerTooltip = showNothing()
 
         outerTooltip.addCustom(innerPanel, 0f).position.belowMid(heading, 0f)
         outerPanel.addUIElement(outerTooltip).inTL(0f, 0f)
-        parentPanel.addComponent(outerPanel).inTR(0f, 0f)
+        parentPanel.addComponent(outerPanel).inTL(-1f, 0f)
 
         return outerPanel
     }
@@ -86,6 +86,7 @@ class ShipModUIPlugin(
         rowPlugin.panelWidth = panelWidth
         rowPlugin.panelHeight = max(panelHeight * 0.1f, Global.getSettings().screenHeight * 0.16f)
         shipHeaderPanel = rowPlugin.layoutPanel(tooltip)
+        shipHeaderPanel!!.position.inTL(1f, opad)
 
         tabbedShopPlugin = TabbedPanelUIPlugin(innerPanel!!)
         tabbedShopPlugin!!.panelWidth = panelWidth

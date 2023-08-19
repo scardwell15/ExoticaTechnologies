@@ -11,8 +11,8 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
     abstract val listHeader: String
     open val rowHeight = 64f
     open val rowWidth = 240f
-    private val pad = 3f
-    private val opad = 10f
+    protected val pad = 3f
+    protected val opad = 10f
 
     private var listeners: MutableList<ListListener<T>> = mutableListOf()
     var panelPluginMap: HashMap<T, BaseUIPanelPlugin> = hashMapOf()
@@ -25,11 +25,11 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
     var outerTooltip: TooltipMakerAPI? = null
     var innerPanel: CustomPanelAPI? = null
 
-    private fun getListWidth(): Float {
+    fun getListWidth(): Float {
         return rowWidth
     }
 
-    private fun getListHeight(rows: Int): Float {
+    fun getListHeight(rows: Int): Float {
         return opad + (rowHeight + pad) * rows
     }
 
@@ -41,7 +41,7 @@ abstract class ListUIPanelPlugin<T>(var parentPanel: CustomPanelAPI) : Interacti
         return layoutPanels(lastMembers!!)
     }
 
-    fun layoutPanels(members: List<T>): CustomPanelAPI {
+    open fun layoutPanels(members: List<T>): CustomPanelAPI {
         if (outerPanel != null) {
             outerTooltip!!.removeComponent(innerPanel)
             outerPanel!!.removeComponent(outerTooltip)

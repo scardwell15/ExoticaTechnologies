@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications.conditions.impl
 
 import com.fs.starfarer.api.combat.ShieldAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.conditions.OperatorCondition
@@ -10,13 +11,13 @@ import exoticatechnologies.modifications.conditions.OperatorCondition
  **/
 class HasShield: OperatorCondition() {
     override val key = "hasShield"
-    override fun getActual(member: FleetMemberAPI, mods: ShipModifications?): Any? {
-        member.variant?.let {
-            if (member.variant.hasHullMod("shield_shunt")) {
+    override fun getActual(member: FleetMemberAPI, mods: ShipModifications?, variant: ShipVariantAPI): Any? {
+        variant?.let {
+            if (variant.hasHullMod("shield_shunt")) {
                 return false;
             }
 
-            if (member.variant.hasHullMod("frontshield")) {
+            if (variant.hasHullMod("frontshield")) {
                 return true;
             }
         }

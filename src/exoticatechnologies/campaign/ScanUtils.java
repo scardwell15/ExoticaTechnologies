@@ -19,6 +19,8 @@ import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.ui.SpritePanelPlugin;
 import exoticatechnologies.ui.UIUtils;
 import exoticatechnologies.ui.java.TabbedCustomUIPanelPlugin;
+import exoticatechnologies.util.RenderUtils;
+import exoticatechnologies.util.RomanNumeral;
 import exoticatechnologies.util.StringUtils;
 import kotlin.Pair;
 import lombok.*;
@@ -262,6 +264,10 @@ public class ScanUtils {
 
             // done, add row to TooltipMakerAPI
             tooltip.addCustom(rowHolder, opad);
+
+            if (mods.hasExotics() && !mods.hasUpgrades()) {
+                scanMemberPanelPlugin.switchToPanel(ScanCustomUIPanelPlugin.EXOTICS_INDEX);
+            }
         }
 
         @Override
@@ -339,7 +345,6 @@ public class ScanUtils {
         private static final int UPGRADES_INDEX = 0;
         private static final int EXOTICS_INDEX = 1;
 
-        private final float SWITCHER_BUTTON_WIDTH = NOTABLE_SHIPS_ROW_HEIGHT + 4;
         private final float UPGRADES_TEXT_WIDTH = 64;
         private final float EXOTICS_TEXT_WIDTH = 45;
 
@@ -351,10 +356,6 @@ public class ScanUtils {
 
             this.mods = mods;
             this.hullSize = hullSize;
-
-            if (this.mods.hasExotics() && !this.mods.hasUpgrades()) {
-                currentPanelIndex = EXOTICS_INDEX;
-            }
         }
 
         @Override
@@ -443,7 +444,7 @@ public class ScanUtils {
                 upgIcon.addTooltipToPrevious(new UpgradeTooltip(upgrade, myTooltip, mods, hullSize),
                         TooltipMakerAPI.TooltipLocation.BELOW);
 
-                upgIcon.addPara("LVL" + mods.getUpgrade(upgrade), 0).getPosition().rightOfTop(imgComponent, -32);
+                upgIcon.addPara(RomanNumeral.INSTANCE.toRoman(mods.getUpgrade(upgrade)), 0).getPosition().rightOfTop(imgComponent, -32);
 
                 if (lastImg == null) {
                     iconPanel.addUIElement(upgIcon).inTL(getSwitcherPanelUpperOffset(UPGRADES_INDEX) + 3, 0);

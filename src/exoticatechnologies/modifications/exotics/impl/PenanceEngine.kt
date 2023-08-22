@@ -6,12 +6,12 @@ import com.fs.starfarer.api.combat.*
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI
 import com.fs.starfarer.api.combat.listeners.DamageListener
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.IntervalUtil
 import com.fs.starfarer.api.util.Misc
-import org.magiclib.util.MagicUI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
@@ -19,9 +19,14 @@ import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
+import org.lazywizard.lazylib.MathUtils
 import org.lazywizard.lazylib.VectorUtils
 import org.lazywizard.lazylib.combat.AIUtils
+import org.lwjgl.opengl.GL11
+import org.lwjgl.util.vector.Vector2f
+import org.magiclib.util.MagicUI
 import java.awt.Color
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.sin
 
@@ -54,6 +59,11 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
                 .format("damageThreshold", getDamageThreshold(member, mods, exoticData))
                 .addToTooltip(tooltip, title)
         }
+    }
+
+    override fun init(engine: CombatEngineAPI) {
+        smokeController = PenanceEngineSmokeController()
+        engine.addLayeredRenderingPlugin(smokeController)
     }
 
     override fun applyExoticToStats(
@@ -196,6 +206,24 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
                         }
                     }
                 }
+
+                if (regened > 0) {
+                    for (i in 0..(regened / 25f).toInt().coerceAtLeast(1)) {
+                        val randomX = ship.collisionRadius * MathUtils.getRandomNumberInRange(-0.5f, 0.5f)
+                        val randomY = ship.collisionRadius * MathUtils.getRandomNumberInRange(-0.5f, 0.5f)
+                        smokeController?.addSmoke(
+                            x = ship.location.x + randomX,
+                            y = ship.location.y + randomY,
+                            xVel = ship.velocity.x * MathUtils.getRandomNumberInRange(-0.5f, 0.5f),
+                            yVel = ship.velocity.y * MathUtils.getRandomNumberInRange(-0.5f, 0.5f),
+                            angle = MathUtils.getRandomNumberInRange(0f, 360f),
+                            aVel = MathUtils.getRandomNumberInRange(0f, 100f),
+                            startingSize = 20f,
+                            ttl = 1f,
+                            color = color
+                        )
+                    }
+                }
             }
         } else {
             ship.mutableStats.maxSpeed.unmodify(buffId)
@@ -274,8 +302,7 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
         val modifiedArmor = baseArmor + member.stats.armorBonus.computeEffective(member.hullSpec.armorRating)
 
         var thresh = modifiedHull * 0.125f
-        if (thresh < modifiedArmor * 1.75f)
-        {
+        if (thresh < modifiedArmor * 1.75f) {
             thresh = modifiedArmor * 1.75f
         }
 
@@ -292,5 +319,149 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
 
         private const val KADUR_CALIPH_SHIELD_GEN_ID = "vayra_caliph_shieldgenerator"
         private const val KADUR_CALIPH_SHIELD_PART_ID = "vayra_caliph_shieldpart"
+
+        private var smokeController: PenanceEngineSmokeController? = null
+    }
+}
+
+class PenanceEngineSmokeController : BaseCombatLayeredRenderingPlugin() {
+    val SMOKE_RENDER_LAYER = EnumSet.of(CombatEngineLayers.CONTRAILS_LAYER)
+    var SMOKES: MutableList<PenanceEngineSmoke> = mutableListOf()
+    val SPRITE: SpriteAPI = Global.getSettings().getSprite("graphics/fx/cleaner_clouds00.png")
+    val SPRITESHEET_SIZE: Int = 2
+    val RANDOM: Random = Random()
+
+    fun addSmoke(
+        x: Float,
+        y: Float,
+        xVel: Float,
+        yVel: Float,
+        angle: Float = MathUtils.getRandomNumberInRange(0f, 360f),
+        aVel: Float,
+        ttl: Float,
+        startingSize: Float,
+        startingOpacity: Float = 255f,
+        color: Color = Color(255, 255, 255)
+    ) {
+        val randTexX = RANDOM.nextInt(SPRITESHEET_SIZE)
+        val randTexY = RANDOM.nextInt(SPRITESHEET_SIZE)
+        SMOKES.add(
+            PenanceEngineSmoke(
+                x,
+                y,
+                xVel,
+                yVel,
+                angle,
+                aVel,
+                Global.getCombatEngine().getTotalElapsedTime(false),
+                ttl,
+                startingSize,
+                0f,
+                startingOpacity,
+                color,
+                randTexX / (SPRITESHEET_SIZE).toFloat(),
+                randTexY / (SPRITESHEET_SIZE).toFloat(),
+                (randTexX + 1) / (SPRITESHEET_SIZE).toFloat(),
+                (randTexY + 1) / (SPRITESHEET_SIZE).toFloat()
+            )
+        )
+    }
+
+    override fun render(layer: CombatEngineLayers?, viewport: ViewportAPI?) {
+        SMOKES = SMOKES
+            .onEach { renderParticle(it) }
+            .filter { it.elapsedRatio() > 0f }
+            .toMutableList()
+    }
+
+    fun renderParticle(smoke: PenanceEngineSmoke) {
+        GL11.glEnable(GL11.GL_BLEND)
+        GL11.glEnable(GL11.GL_TEXTURE_2D)
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, SPRITE.textureId)
+        GL11.glBegin(GL11.GL_QUADS)
+
+        val elapsed = smoke.elapsedRatio()
+        val size = smoke.startingSize * elapsed + smoke.endSize * (1f - elapsed)
+        val position = Vector2f(smoke.x, smoke.y)
+        val angle = smoke.angle
+
+        GL11.glColor4ub(
+            smoke.color.red.toByte(),
+            smoke.color.green.toByte(),
+            smoke.color.blue.toByte(),
+            (smoke.startingOpacity * elapsed).toInt().toByte()
+        )
+
+        /*
+        val texXStart = smoke.texXStart
+        val texYStart = smoke.texYStart
+        val texXEnd = smoke.texXEnd
+        val texYEnd = smoke.texYEnd*/
+
+        val texXStart = 0f
+        val texYStart = 0f
+        val texXEnd = 0.5f
+        val texYEnd = 0.5f
+
+        GL11.glTexCoord2f(texXStart, texYEnd) //lower left
+        var vec = MathUtils.getPointOnCircumference(position, size, angle + 315f)
+        GL11.glVertex2f(vec.getX(), vec.getY())
+
+        GL11.glTexCoord2f(texXStart, texYStart) //upper left
+        vec = MathUtils.getPointOnCircumference(position, size, angle + 225f)
+        GL11.glVertex2f(vec.getX(), vec.getY())
+
+        GL11.glTexCoord2f(texXEnd, texYStart) //upper right
+        vec = MathUtils.getPointOnCircumference(position, size, angle + 135f)
+        GL11.glVertex2f(vec.getX(), vec.getY())
+
+        GL11.glTexCoord2f(texXEnd, texYEnd) //lower right
+        vec = MathUtils.getPointOnCircumference(position, size, angle + 45f)
+        GL11.glVertex2f(vec.getX(), vec.getY())
+
+        GL11.glEnd()
+
+        if (Global.getCombatEngine().isPaused) return
+        smoke.x += smoke.xVel * Global.getCombatEngine().elapsedInLastFrame
+        smoke.y += smoke.yVel * Global.getCombatEngine().elapsedInLastFrame
+        smoke.angle += smoke.aVel * Global.getCombatEngine().elapsedInLastFrame
+    }
+
+    override fun getRenderRadius(): Float {
+        return 9999999f
+    }
+
+    override fun isExpired(): Boolean {
+        return false
+    }
+
+    override fun getActiveLayers(): EnumSet<CombatEngineLayers> {
+        return SMOKE_RENDER_LAYER
+    }
+}
+
+data class PenanceEngineSmoke(
+    var x: Float,
+    var y: Float,
+    val xVel: Float,
+    val yVel: Float,
+    var angle: Float,
+    val aVel: Float,
+    val startingTime: Float,
+    val ttl: Float,
+    val startingSize: Float,
+    val endSize: Float,
+    val startingOpacity: Float,
+    val color: Color,
+    val texXStart: Float = 0f,
+    val texYStart: Float = 0f,
+    val texXEnd: Float = 1f,
+    val texYEnd: Float = 1f
+) {
+    fun elapsedRatio(): Float {
+        val endTime = startingTime + ttl
+        val curTime = Global.getCombatEngine().getTotalElapsedTime(false)
+        return (endTime - curTime) / ttl
     }
 }

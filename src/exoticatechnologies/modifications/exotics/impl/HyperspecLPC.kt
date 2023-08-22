@@ -118,24 +118,23 @@ class HyperspecLPC(key: String, settings: JSONObject) : Exotic(key, settings) {
     }
 
     fun getSpeedBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (FIGHTER_SPEED_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_SPEED_MAX)
+        return (FIGHTER_SPEED_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_SPEED_MAX) * exoticData.type.getPositiveMult(member, mods)
     }
-
 
     fun getArmorBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
         return (FIGHTER_ARMOR_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_ARMOR_MAX)
     }
 
     fun getFluxBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (FIGHTER_FLUX_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_FLUX_MAX)
+        return (FIGHTER_FLUX_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_FLUX_MAX) * exoticData.type.getPositiveMult(member, mods)
     }
 
     fun getReplacementTimeMalus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (REPLACEMENT_TIME_PER_BAY * getBaysRemoved(member)).coerceAtMost(REPLACEMENT_TIME_MAX)
+        return (REPLACEMENT_TIME_PER_BAY * getBaysRemoved(member)).coerceAtMost(REPLACEMENT_TIME_MAX) * exoticData.type.getNegativeMult(member, mods)
     }
 
     fun getHullBonus(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
-        return (FIGHTER_HULL_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_HULL_MAX)
+        return (FIGHTER_HULL_PER_BAY * getBaysRemoved(member)).coerceAtMost(FIGHTER_HULL_MAX) * exoticData.type.getPositiveMult(member, mods)
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package exoticatechnologies.modifications
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.CombatEngineAPI
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
@@ -120,5 +121,9 @@ abstract class Modification(val key: String, val settings: JSONObject) {
 
     open fun canApplyToVariant(variant: ShipVariantAPI): Boolean {
         return true
+    }
+
+    open fun init(engine: CombatEngineAPI) {
+
     }
 }

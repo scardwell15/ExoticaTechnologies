@@ -17,10 +17,11 @@ public class CrateGlobalData {
 
     private static String GLOBAL_KEY = "exoticaCrateData";
     public static CrateGlobalData getInstance() {
-        if (Global.getSector().getPersistentData().containsKey(GLOBAL_KEY)) {
-            return (CrateGlobalData) Global.getSector().getPersistentData().get(GLOBAL_KEY);
+        if (!Global.getSector().getPersistentData().containsKey(GLOBAL_KEY)) {
+            Global.getSector().getPersistentData().put(GLOBAL_KEY, new CrateGlobalData());
         }
-        return new CrateGlobalData();
+
+        return (CrateGlobalData) Global.getSector().getPersistentData().get(GLOBAL_KEY);
     }
 
     public static void addCargo(CargoAPI cargo) {

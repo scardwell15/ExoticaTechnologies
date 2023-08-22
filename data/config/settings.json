@@ -31,7 +31,7 @@
 	],
 	"plugins": {
 		"ESCampaignPlugin":"exoticatechnologies.campaign.listeners.ETCampaignPlugin",
-		"ETCombatPlugin":"exoticatechnologies.combat.ExoticaEveryFramePlugin"
+		"ETCombatPlugin":"exoticatechnologies.combat.ExoticaEveryFramePlugin",
 	},
 	"graphics": {
 		"misc":{

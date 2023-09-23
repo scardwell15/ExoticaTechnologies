@@ -15,6 +15,7 @@ import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.ui.BaseUIPanelPlugin
 import exoticatechnologies.ui.impl.ships.ShipListUIPlugin
 import exoticatechnologies.ui.impl.shop.ShipModUIPlugin
+import exoticatechnologies.util.MusicController
 import exoticatechnologies.util.StringUtils
 import kotlin.math.min
 
@@ -26,6 +27,8 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
     var plugin: CustomUIPanelPlugin = BaseUIPanelPlugin()
 
     override fun createCustomDialog(panel: CustomPanelAPI, callback: CustomDialogCallback) {
+        MusicController.startMusic()
+
         members = Global.getSector().playerFleet.membersWithFightersCopy
             .filterNot { it.isFighterWing }
             .toMutableList()
@@ -60,12 +63,14 @@ class ShipModificationDialogDelegate(var dialog: InteractionDialogAPI, var marke
     }
 
     override fun customDialogConfirm() {
+        MusicController.stopMusic()
         /*ShowDefaultVisual().execute(null, dialog, Misc.tokenize(""), dialog.plugin.memoryMap)
         dialog.plugin.memoryMap[MemKeys.LOCAL]!!["\$option", "ETDialogBack"] = 0f
         FireAll.fire(null, dialog, dialog.plugin.memoryMap, "DialogOptionSelected")*/
     }
 
     override fun customDialogCancel() {
+        MusicController.stopMusic()
         //customDialogConfirm()
     }
 

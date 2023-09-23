@@ -14,6 +14,7 @@ import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
+import java.awt.Color
 import java.util.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -27,11 +28,17 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
     var showInStoreIfNotInstalled: Boolean
     var chipFirstInstall: Boolean
     var chipOnlyInstall: Boolean
+    var italicsText: String? = null
     open var maxLevel: Int = 10
 
     init {
         color = Utilities.colorFromJSONArray(settings.getJSONArray("color"))
         description = StringUtils.getString(key, "description")
+
+        if (settings.has("italicsKey")) {
+            italicsText = settings.getString("italicsKey")
+        }
+
         bandwidthUsage = settings.getDouble("bandwidthPerLevel").toFloat()
 
         if (settings.has("stats")) {
@@ -84,7 +91,7 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
     public override val icon: String
         get() = "graphics/icons/upgrades/" + key.lowercase(Locale.getDefault()) + ".png"
 
-    open fun applyUpgradeToStats(stats: MutableShipStatsAPI, fm: FleetMemberAPI, mods: ShipModifications) {
+    open fun applyUpgradeToStats(stats: MutableShipStatsAPI, fm: FleetMemberAPI, mods: ShipModifications, level: Int) {
         for (effect in upgradeEffects) {
             if (!effect.appliesToFighters) {
                 effect.applyToStats(stats, fm, mods, this)
@@ -145,7 +152,19 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
         return imageText
     }
 
-    open fun modifyInShop(tooltip: TooltipMakerAPI, member: FleetMemberAPI, mods: ShipModifications) {
+    open fun showDescriptionInShop(tooltip: TooltipMakerAPI, member: FleetMemberAPI, mods: ShipModifications) {
+        if (italicsText != null) {
+            val italicsLabel = StringUtils.getTranslation(key, italicsText)
+                .addToTooltip(tooltip)
+            italicsLabel.italicize()
+            italicsLabel.setColor(Color.GRAY)
+        }
+
+        StringUtils.getTranslation(key, "description")
+            .addToTooltip(tooltip)
+    }
+
+    open fun showStatsInShop(tooltip: TooltipMakerAPI, member: FleetMemberAPI, mods: ShipModifications) {
         val levelToEffectMap: MutableMap<Int, MutableList<UpgradeModEffect>> = HashMap()
         for (effect in upgradeEffects) {
             val startingLevel = effect.startingLevel

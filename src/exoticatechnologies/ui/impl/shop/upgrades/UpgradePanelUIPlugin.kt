@@ -2,6 +2,7 @@ package exoticatechnologies.ui.impl.shop.upgrades
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoStackAPI
+import com.fs.starfarer.api.campaign.CoreUITabId
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
@@ -82,7 +83,11 @@ class UpgradePanelUIPlugin(
         resourcesPlugin!!.destroyTooltip()
 
         method.apply(member, variant, mods, upgrade, market)
-        RefitButtonAdder.requiresVariantUpdate = true
+
+        if (Global.getSector().campaignUI.currentCoreTab == CoreUITabId.REFIT) {
+            RefitButtonAdder.requiresVariantUpdate = true
+        }
+
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f)
 
         descriptionPlugin!!.resetDescription()

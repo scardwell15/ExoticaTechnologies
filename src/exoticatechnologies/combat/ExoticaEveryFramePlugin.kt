@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin
 import com.fs.starfarer.api.combat.CombatEngineAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.input.InputEventAPI
+import exoticatechnologies.combat.particles.ParticleController
 import exoticatechnologies.modifications.Modification
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.exotics.ExoticsHandler
@@ -12,6 +13,11 @@ import exoticatechnologies.modifications.upgrades.UpgradesHandler
 
 class ExoticaEveryFramePlugin :
     BaseEveryFrameCombatPlugin() {
+
+    override fun init(engine: CombatEngineAPI) {
+        ParticleController.INSTANCE.PARTICLES.clear()
+        engine.addLayeredRenderingPlugin(ParticleController.INSTANCE)
+    }
 
     override fun advance(amount: Float, events: List<InputEventAPI>) {
         val engine = Global.getCombatEngine()

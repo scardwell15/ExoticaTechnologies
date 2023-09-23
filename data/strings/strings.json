@@ -356,6 +356,11 @@
 		"description": "Wasp defense drones surround the ship, protecting it.",
 		"tooltip": "*${drones}* Wasp drones circle the ship. One drone recharges every 20 seconds."
 	},
+	"Kingslayer": {
+		"italics": "Cut them down to size.",
+		"description": "This ship poses an extreme threat to cruisers and capital ships.",
+		"tooltip": "*+${damageToCruisers}%%* damage to cruisers. *+${damageToCapitals}%%* damage to capital ships."
+	},
 	"ExoticTypes": {
 		"TooltipText": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways.",
 		"TooltipTextCondition": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways, and is strongest when *${condition}*.",

@@ -91,10 +91,14 @@ public class RenderUtils {
     }
 
     public static Color mergeColors(Color fromColor, Color toColor, float ratio) {
+        return mergeColors(fromColor, toColor, ratio, ratio);
+    }
+
+    public static Color mergeColors(Color fromColor, Color toColor, float ratio, float alphaRatio) {
         float r = fromColor.getRed() * (1 - ratio) + toColor.getRed() * ratio;
         float g = fromColor.getGreen() * (1 - ratio) + toColor.getGreen() * ratio;
         float b = fromColor.getBlue() * (1 - ratio) + toColor.getBlue() * ratio;
-        float a = fromColor.getAlpha() * (1 - ratio) + toColor.getAlpha() * ratio;
+        float a = fromColor.getAlpha() * (1 - alphaRatio) + toColor.getAlpha() * alphaRatio;
         return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
     }
 

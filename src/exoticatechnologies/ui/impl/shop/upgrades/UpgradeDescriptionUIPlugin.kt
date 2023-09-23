@@ -2,12 +2,10 @@ package exoticatechnologies.ui.impl.shop.upgrades
 
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.upgrades.Upgrade
-import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
@@ -52,9 +50,9 @@ class UpgradeDescriptionUIPlugin(
             .toStringNoFormats()
         descriptionTooltip!!.addPara(levelText, color,3f)
 
-        descriptionTooltip!!.addPara(upgrade.description, 3f)
+        upgrade.showDescriptionInShop(tooltip, member, mods)
         descriptionTooltip!!.addPara("", color,3f)
-        upgrade.modifyInShop(tooltip, member, mods)
+        upgrade.showStatsInShop(tooltip, member, mods)
 
         mainPanel!!.addUIElement(tooltip).inTL(0f, 0f)
     }

@@ -9,22 +9,18 @@ consider: Magazine reload for fire rate
 todo: update interface to use new buttonPressed methods
 todo: add Advanced Gunnery Control tags to things that deserve them (like missile spam for hacked missile forge)
 
-done:
-- fixed crate disappearing when you open it (sorry)
--- crates now share a global inventory
-- added filters to upgrade and exotic UI
-- added new upgrade Oversized Magazines
-- fixed OCD in ship mod panel
-- fixed debris field generation and scanning again
-- fixed newer exotics not dropping from salvage loot (like research stations)
-- fixed exotic types not appearing in salvage loot
-- added upgrades to salvage loot. total value of exotica drops has increased to offset this
-- nerfed terminator subsystems
--- range reduced by 33% (this means it is 66% of the original ship system's range)
--- drone recharge time increased from 20 seconds to 30 seconds
--- also tri tachyon will use them less now lol
 
-hotfix:
-- fixed exploration crash (upgrades were being generated with level 0)
-- fixed fleet UI being broken
-- fixed scanner UI not displaying exotics correctly with high UI scaling
+done:
+- fixed phase condition not working correctly
+- added shop music
+
+
+todo:
+
+
+"variantLoadouts": {
+  "variantID": {
+      "exotics": {"exotic1":2.0, "exotic2":0.5},
+      "upgrades": {"upgrade1":1.5, "upgrade2": 0}
+  }
+}

@@ -2,13 +2,16 @@ package exoticatechnologies.modifications.exotics.impl
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
+import exoticatechnologies.refit.checkRefitVariant
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.getRefitVariant
 import org.json.JSONObject
 import java.awt.Color
 
@@ -20,16 +23,33 @@ open class HullmodExotic(
     override var color: Color
 ) : Exotic(key, settingsObj) {
     override fun onInstall(member: FleetMemberAPI) {
-        if (member.variant != null && !member.variant.hasHullMod(hullmodId)) {
-            member.variant.addMod(hullmodId)
+        installOnVariant(member.variant)
+        installOnVariant(member.checkRefitVariant())
+    }
+
+    fun installOnVariant(variant: ShipVariantAPI?) {
+        variant?.let {
+            variant.addPermaMod(hullmodId)
         }
     }
 
     override fun onDestroy(member: FleetMemberAPI) {
-        if (member.variant != null) {
-            member.variant.removeMod(hullmodId)
+        removeFromVariant(member.variant)
+        removeFromVariant(member.checkRefitVariant())
+
+        val check = member.checkRefitVariant().hasHullMod(hullmodId)
+        println("$check has mod still")
+    }
+
+    fun removeFromVariant(variant: ShipVariantAPI?) {
+        variant?.let {
+            variant.addSuppressedMod(hullmodId)
+            variant.removePermaMod(hullmodId)
+            variant.removeSuppressedMod(hullmodId)
         }
     }
+
+
 
     override fun applyExoticToStats(
         id: String,

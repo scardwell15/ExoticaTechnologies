@@ -127,9 +127,6 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
     ) {}
     open fun advanceInCombatAlways(ship: ShipAPI, member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) {}
     open fun advanceInCampaign(member: FleetMemberAPI, mods: ShipModifications, amount: Float, exoticData: ExoticData) {}
-    open fun canDropFromFleets(): Boolean {
-        return true
-    }
 
     open fun getSalvageChance(chanceMult: Float): Float {
         return 0.2f * chanceMult

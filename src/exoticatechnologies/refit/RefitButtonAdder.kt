@@ -13,6 +13,8 @@ import com.fs.starfarer.api.util.Misc
 import com.fs.starfarer.campaign.CampaignState
 import com.fs.starfarer.loading.specs.HullVariantSpec
 import com.fs.state.AppDriver
+import exoticatechnologies.util.fixVariant
+import exoticatechnologies.util.getRefitVariant
 import lunalib.lunaExtensions.addLunaSpriteElement
 import lunalib.lunaUI.elements.LunaSpriteElement
 import org.lazywizard.lazylib.MathUtils

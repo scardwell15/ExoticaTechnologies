@@ -1,6 +1,7 @@
 package exoticatechnologies.ui.impl.shop
 
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.CoreUITabId
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
@@ -239,7 +240,10 @@ class ShipHeaderUIPlugin(
         val newBandwidth = min(mods.getBaseBandwidth() + increase, Bandwidth.MAX_BANDWIDTH)
         mods.bandwidth = newBandwidth
         ShipModLoader.set(member, variant, mods)
-        RefitButtonAdder.requiresVariantUpdate = true
+
+        if (Global.getSector().campaignUI.currentCoreTab == CoreUITabId.REFIT) {
+            RefitButtonAdder.requiresVariantUpdate = true
+        }
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 0.75f)
     }

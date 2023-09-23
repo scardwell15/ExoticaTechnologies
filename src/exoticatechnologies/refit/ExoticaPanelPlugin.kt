@@ -8,6 +8,7 @@ import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.UIPanelAPI
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.refit.CustomExoticaPanel
+import exoticatechnologies.util.MusicController
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import org.lazywizard.lazylib.MathUtils
@@ -131,6 +132,8 @@ class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: Fle
     }
 
     fun close() {
+        MusicController.stopMusic()
+
         panel?.removeComponent(closeButtonPanel)
         parent.removeComponent(panel)
         buttonAdder.syncVariantIfNeeded()

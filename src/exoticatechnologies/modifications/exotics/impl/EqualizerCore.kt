@@ -50,18 +50,6 @@ class EqualizerCore(key: String, settings: JSONObject) : Exotic(key, settings) {
                     RANGE_DECREASE_DAMAGE_INCREASE * getPositiveMult(member, mods, exoticData)
                 )
                 .addToTooltip(tooltip, title)
-
-            /*
-            StringUtils.getTranslation(key, "longDescription")
-                .formatWithColorIfModified("recoilReduction", abs(RECOIL_REDUCTION) * getPositiveMult(member, mods, exoticData), abs(RECOIL_REDUCTION), exoticData.type.colorOverlay)
-                .formatWithColorIfModified("weaponTurnBonus", TURN_RATE_BUFF * getPositiveMult(member, mods, exoticData), TURN_RATE_BUFF, exoticData.type.colorOverlay)
-                .formatWithColorIfModified("lowRangeThreshold", getLowerRangeLimit(member, mods, exoticData), RANGE_LIMIT_BOTTOM, exoticData.type.colorOverlay)
-                .formatWithColorIfModified("rangeBonus", RANGE_BOTTOM_BUFF * getPositiveMult(member, mods, exoticData), RANGE_BOTTOM_BUFF, exoticData.type.colorOverlay)
-                .formatWithColorIfModified("highRangeThreshold", getUpperRangeLimit(member, mods, exoticData), RANGE_LIMIT_TOP, exoticData.type.colorOverlay)
-                .formatWithColorIfModified("rangeMalus", abs(RANGE_TOP_BUFF) * getNegativeMult(member, mods, exoticData), abs(RANGE_TOP_BUFF), exoticData.type.colorOverlay)
-                .formatWithColorIfModified("rangeDecreaseDamageIncrease", RANGE_DECREASE_DAMAGE_INCREASE * getPositiveMult(member, mods, exoticData), RANGE_DECREASE_DAMAGE_INCREASE, exoticData.type.colorOverlay)
-                .addToTooltip(tooltip, title)
-             */
         }
     }
 
@@ -102,17 +90,6 @@ class EqualizerCore(key: String, settings: JSONObject) : Exotic(key, settings) {
         exoticData: ExoticData
     ) {
         if (!ship.hasListenerOfClass(ET_EqualizerCoreListener::class.java)) {
-
-            //big warning: causes huge rendering issues.
-            //for some reason any change to the "multiplier" causes damage to skyrocket into the billions.
-            /*for (weapon in ship.allWeapons) {
-                if (weapon.type == WeaponAPI.WeaponType.MISSILE) continue
-                if (weapon.spec.maxRange > getUpperRangeLimit(member, mods, exoticData)) {
-                    val buff = (RANGE_DECREASE_DAMAGE_INCREASE / 100f * getPositiveMult(member, mods, exoticData)) * (weapon.spec.maxRange - getUpperRangeLimit(member, mods, exoticData)).coerceAtLeast(0f)
-                    weapon.damage.multiplier *= buff
-                }
-            }*/
-
             ship.addListener(ET_EqualizerCoreListener(member, mods, exoticData))
         }
     }

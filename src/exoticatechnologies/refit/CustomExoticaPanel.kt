@@ -8,6 +8,7 @@ import com.fs.starfarer.loading.specs.HullVariantSpec
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.ui.impl.shop.ShipModUIPlugin
+import exoticatechnologies.util.MusicController
 import exoticatechnologies.util.RenderUtils
 
 class CustomExoticaPanel {
@@ -35,6 +36,8 @@ class CustomExoticaPanel {
         var element = panel.createUIElement(width, height, false)
         element.addPara("Member: ${member.shipName}", 0f)
         panel.addUIElement(element)*/
+
+        MusicController.startMusic()
 
         ShipModLoader.get(member, variant) ?: ShipModLoader.set(member, variant, ShipModFactory.generateForFleetMember(member))
 

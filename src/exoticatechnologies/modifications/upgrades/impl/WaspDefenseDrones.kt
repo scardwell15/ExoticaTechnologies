@@ -41,7 +41,7 @@ class WaspDefenseDrones(key: String, settings: JSONObject) : Upgrade(key, settin
         return imageText
     }
 
-    override fun modifyInShop(tooltip: TooltipMakerAPI, member: FleetMemberAPI, mods: ShipModifications) {
+    override fun showStatsInShop(tooltip: TooltipMakerAPI, member: FleetMemberAPI, mods: ShipModifications) {
         StringUtils.getTranslation("WaspDefenseDrones", "tooltip")
             .format("drones", WaspDroneActivator.maxDronesMap[member.hullSpec.hullSize] ?: 1)
             .addToTooltip(tooltip)

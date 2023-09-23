@@ -163,7 +163,7 @@ public class ExoticaTechHM extends BaseHullMod {
             if (!mods.hasUpgrade(upgrade)) continue;
             if (stats.getFleetMember() != null && stats.getFleetMember().getShipName() == null && !upgrade.shouldAffectModule(stats)) continue;
 
-            upgrade.applyUpgradeToStats(stats, member, mods);
+            upgrade.applyUpgradeToStats(stats, member, mods, mods.getUpgrade(upgrade));
         }
     }
 

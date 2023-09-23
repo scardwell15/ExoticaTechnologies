@@ -32,6 +32,7 @@
 	"plugins": {
 		"ESCampaignPlugin":"exoticatechnologies.campaign.listeners.ETCampaignPlugin",
 		"ETCombatPlugin":"exoticatechnologies.combat.ExoticaEveryFramePlugin",
+		"ETParticleController":"exoticatechnologies.combat.particles.ParticleController"
 	},
 	"graphics": {
 		"misc":{
@@ -85,7 +86,8 @@
 			"AntimatterBoosters": "graphics/icons/upgrades/antimatterboosters.png",
 			"HelDrives": "graphics/icons/upgrades/heldrives.png",
 			"WaspDefenseDrones": "graphics/icons/upgrades/waspdefensedrones.png",
-			"OversizedMagazines": "graphics/icons/upgrades/oversizedmagazines.png"
+			"OversizedMagazines": "graphics/icons/upgrades/oversizedmagazines.png",
+			"Kingslayer": "graphics/icons/upgrades/kingslayer.png"
 		},
 		"overlays": {
 			"Corrupted": "graphics/icons/overlays/corrupted.png",

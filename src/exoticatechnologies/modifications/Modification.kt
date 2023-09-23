@@ -126,4 +126,8 @@ abstract class Modification(val key: String, val settings: JSONObject) {
     open fun init(engine: CombatEngineAPI) {
 
     }
+
+    open fun canDropFromFleets(): Boolean {
+        return true
+    }
 }

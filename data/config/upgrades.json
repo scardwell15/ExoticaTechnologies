@@ -117,7 +117,7 @@
     "salvageChance": 0.1,
     "hints": ["speed"],
     "showInStoreIfNotInstalled": false,
-    "chipFirstInstall": true,
+    "chipOnlyInstall": true,
     "stats": [
       { "id": "maxSpeed", "scalingEffect": 15 },
       { "id": "acceleration", "scalingEffect": 30 },
@@ -171,7 +171,7 @@
     "tag": "hypecap",
     "hints": ["flux"],
     "showInStoreIfNotInstalled": false,
-    "chipFirstInstall": true,
+    "chipOnlyInstall": true,
     "stats": [
       { "id": "fluxCapacity", "scalingEffect": 25 },
       { "id": "ventSpeed", "scalingEffect": 25 },
@@ -201,12 +201,12 @@
       {"id": "shieldFluxDam", "scalingEffect": -25},
       {"id": "shieldArc", "scalingEffect": 50},
       {"id": "shieldUnfoldRate", "scalingEffect": 75},
-      {"id": "shieldUpkeep", "scalingEffect": 200, "startingLevel": 3},
+      {"id": "shieldUpkeep", "scalingEffect": 150, "startingLevel": 3},
       {"id": "shieldTurnRate", "scalingEffect": -16, "startingLevel": 3}
     ],
     "conditions": [
       { "id": "hasShield", "operator": "==", "expected": true, "cannotApplyReason": "The ship must have a shield." },
-      { "id": "hullmods", "operator": "in", "expected": "stabilizedshieldemitter", "weightOnly": true, "weight": 1.5 }
+      { "id": "hullmods", "operator": "in", "expected": "stabilizedshieldemitter", "weightOnly": true, "weight": 2.5 }
     ],
     "resourceRatios": {
       "supplies": 2.0,
@@ -245,7 +245,7 @@
     "tag": "trc",
     "hints": ["weapons"],
     "showInStoreIfNotInstalled": false,
-    "chipFirstInstall": true,
+    "chipOnlyInstall": true,
     "stats": [
       { "id": "recoilPerShot", "scalingEffect": -30 },
       { "id": "maxRecoil", "scalingEffect": -30 },
@@ -369,7 +369,7 @@
     ],
     "conditions": [
       { "id": "minimumCrew", "operator": ">", "expected": 0, "cannotApplyReason": "The ship must have a crew." },
-      { "id": "hullmods", "operator": "in", "expected": "safetyoverrides", "weightOnly": true, "weight": 1.5 }
+      { "id": "hullmods", "operator": "in", "expected": "safetyoverrides", "weightOnly": true, "weight": 2.0 }
     ],
     "resourceRatios": {
       "supplies": 3.0,
@@ -511,6 +511,18 @@
       "heavy_machinery": 3.0,
       "metals": 2.0,
       "supplies": 2.0
+    }
+  },
+  "Kingslayer": {
+    "name": "Kingslayer",
+    "color": [ 120, 0, 0 ],
+    "bandwidthPerLevel": 0,
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.Kingslayer",
+    "showInStoreIfNotInstalled": false,
+    "resourceRatios": {
+      "heavy_machinery": 3.0,
+      "metals": 20.0,
+      "supplies": 6.0
     }
   }
 }

@@ -108,7 +108,8 @@
       "FluxInductionDrive",
       "InterceptionMatrix",
       "VelocityInjectors",
-      "OverclockedFabricators"
+      "OverclockedFabricators",
+      "OversizedMagazines"
     ],
     "rngExoticTypeWhitelist": {
       "CORRUPTED": 1,

@@ -10,7 +10,9 @@ import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.util.StringUtils
 
-open class DestroyMethod : Method {
+open class DestroyMethod : ExoticMethod {
+    override val key: String = "destroy"
+
     override fun apply(
         member: FleetMemberAPI,
         variant: ShipVariantAPI,

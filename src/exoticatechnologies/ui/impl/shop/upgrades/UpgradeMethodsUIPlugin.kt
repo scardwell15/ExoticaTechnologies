@@ -43,14 +43,6 @@ class UpgradeMethodsUIPlugin(
         return panel
     }
 
-    override fun advancePanel(amount: Float) {
-        val value = ShipModLoader.get(member, variant)!!.getValue()
-        if (value != oldValue) {
-            destroyTooltip()
-            createTooltip()
-        }
-    }
-
     fun createTooltip() {
         val mods = ShipModLoader.get(member, variant)!!
         oldValue = mods.getValue()

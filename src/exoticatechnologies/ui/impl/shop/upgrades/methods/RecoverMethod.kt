@@ -103,6 +103,10 @@ class RecoverMethod : UpgradeMethod {
         return false
     }
 
+    override fun shouldLoad(): Boolean {
+        return true
+    }
+
     companion object {
         /**
          * Sums up the floats in the map.

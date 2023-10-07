@@ -27,6 +27,9 @@ class CustomExoticaPanel {
         fun renderDefaultBackground() = true
     }
 
+    var x = 0f
+    var y = 0f
+
     fun init(backgroundPanel: CustomPanelAPI, backgroundPlugin: ExoticaPanelPlugin, width: Float, height: Float, member: FleetMemberAPI, variant: HullVariantSpec) {
 
         /*
@@ -45,6 +48,8 @@ class CustomExoticaPanel {
         var modPanel = plugin.layoutPanels()
         modPanel.position.inTL(-1f, 0f)
         plugin.showPanel(member, variant)
+
+        backgroundPanel.position.inTL(x, y)
 
         //Call this whenever you need to close the panel.
         //backgroundPlugin.close()

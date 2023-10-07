@@ -51,7 +51,8 @@ class ExoticData(key: String, var type: ExoticType = ExoticType.NORMAL) {
     }
 
     fun addExoticIcon(tooltip: TooltipMakerAPI): Pair<SpritePanelPlugin, SpritePanelPlugin?> {
-        val spritePlugin = SpritePanelPlugin(Global.getSettings().getSprite(exotic.icon))
+        val sprite = Global.getSettings().getSprite("exotics", exotic.icon)
+        val spritePlugin = SpritePanelPlugin(sprite)
         val iconPanel = Global.getSettings().createCustom(64f, 64f, spritePlugin)
         spritePlugin.panel = iconPanel
         tooltip.addCustom(iconPanel, 0f)

@@ -13,6 +13,8 @@ import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
 class RecoverMethod : DestroyMethod() {
+    override val key: String = "recover"
+
     override fun apply(
         member: FleetMemberAPI,
         variant: ShipVariantAPI,

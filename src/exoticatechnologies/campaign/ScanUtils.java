@@ -140,7 +140,7 @@ public class ScanUtils {
                 TooltipMakerAPI tooltip = textPanel.beginTooltip();
 
                 int x = 4 + ((upgs % 6) * 74);
-                tooltip.addImage(upgrade.getIcon(), 64f, lastY);
+                tooltip.addImage(upgrade.getIconPath(), 64f, lastY);
                 tooltip.getPrev().getPosition().setXAlignOffset(x);
                 if (upgs % 6 == 0) {
                     lastY = -74;
@@ -441,7 +441,7 @@ public class ScanUtils {
             CustomPanelAPI iconPanel = myPanel.createCustomPanel(panelWidth, panelHeight, null);
             for (Upgrade upgrade : mods.getUpgradeMap().keySet()) {
                 TooltipMakerAPI upgIcon = iconPanel.createUIElement(64, 64, false);
-                upgIcon.addImage(upgrade.getIcon(), 64, 0);
+                upgIcon.addImage(upgrade.getIconPath(), 64, 0);
                 UIComponentAPI imgComponent = upgIcon.getPrev();
                 upgIcon.addTooltipToPrevious(new UpgradeTooltip(upgrade, myTooltip, mods, hullSize),
                         TooltipMakerAPI.TooltipLocation.BELOW);

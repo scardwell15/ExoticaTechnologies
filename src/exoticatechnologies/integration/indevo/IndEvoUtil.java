@@ -17,27 +17,11 @@ public class IndEvoUtil {
         return Utilities.RESOURCES_LIST.contains(SHIP_COMPONENT_ITEM_ID);
     }
 
-    public static boolean isUpgradeMethodsLoaded() {
-        for(UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
-            if(method instanceof ShipComponentUpgradeMethod) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static void loadIntegration() {
-
         //already loaded?
         if(!isResourcesLoaded()) {
             Utilities.RESOURCES_LIST.add(SHIP_COMPONENT_ITEM_ID);
             Utilities.RESOURCES_LIST.add(RELIC_COMPONENT_ITEM_ID);
-        }
-
-        if(!isUpgradeMethodsLoaded()) {
-            UpgradesHandler.UPGRADE_METHODS.add(new ShipComponentUpgradeMethod());
-            UpgradesHandler.UPGRADE_METHODS.add(new RelicComponentUpgradeMethod());
         }
     }
 

@@ -6,7 +6,9 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 
-interface Method {
+interface ExoticMethod {
+    val key: String
+
     fun apply(
         member: FleetMemberAPI,
         variant: ShipVariantAPI,
@@ -22,5 +24,9 @@ interface Method {
 
     fun canUseIfMarketIsNull(): Boolean {
         return false
+    }
+
+    fun shouldLoad(): Boolean {
+        return true
     }
 }

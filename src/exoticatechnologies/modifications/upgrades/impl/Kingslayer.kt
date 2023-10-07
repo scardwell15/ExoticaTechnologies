@@ -11,6 +11,8 @@ import org.json.JSONObject
 import java.awt.Color
 
 class Kingslayer(key: String, settings: JSONObject): Upgrade(key, settings) {
+    override var canDropFromCombat: Boolean = false
+
     override fun applyUpgradeToStats(
         stats: MutableShipStatsAPI,
         fm: FleetMemberAPI,
@@ -19,10 +21,6 @@ class Kingslayer(key: String, settings: JSONObject): Upgrade(key, settings) {
     ) {
         stats.damageToCapital.modifyPercent(key, getDamageToCapitals(fm, level))
         stats.damageToCruisers.modifyPercent(key, getDamageToCruisers(fm, level))
-    }
-
-    override fun canDropFromFleets(): Boolean {
-        return false
     }
 
     private fun getDamageToCruisers(member: FleetMemberAPI, level: Int): Float {
@@ -50,7 +48,7 @@ class Kingslayer(key: String, settings: JSONObject): Upgrade(key, settings) {
         mods: ShipModifications,
         expand: Boolean
     ): TooltipMakerAPI {
-        val imageText = tooltip.beginImageWithText(icon, 64f)
+        val imageText = tooltip.beginImageWithText(iconPath, 64f)
         imageText.addPara("$name (%s)", 0f, color, mods.getUpgrade(this).toString())
         if (expand) {
             val italicsLabel = StringUtils.getTranslation(key, "italics")

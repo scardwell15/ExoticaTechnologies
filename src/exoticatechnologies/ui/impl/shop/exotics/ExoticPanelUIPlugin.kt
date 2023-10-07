@@ -34,6 +34,7 @@ class ExoticPanelUIPlugin(
     private var resourcesPlugin: ExoticResourcesUIPlugin? = null
     private var chipsPlugin: ExoticChipPanelUIPlugin? = null
     private var chipsTooltip: TooltipMakerAPI? = null
+    private var oldValue: Float = ShipModLoader.get(member, variant)!!.getValue()
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -42,19 +43,17 @@ class ExoticPanelUIPlugin(
         descriptionPlugin = ExoticDescriptionUIPlugin(panel, exotic, member, variant)
         descriptionPlugin!!.panelWidth = panelWidth / 2
         descriptionPlugin!!.panelHeight = panelHeight
-        descriptionPlugin!!.layoutPanels().position.inTL(0f, 0f)
+        descriptionPlugin!!.layoutPanels()
 
-        val methods = getMethods()
-
-        resourcesPlugin = ExoticResourcesUIPlugin(panel, exotic, member, variant, market, methods)
+        resourcesPlugin = ExoticResourcesUIPlugin(panel, exotic, member, variant, market)
         resourcesPlugin!!.panelWidth = panelWidth / 2
         resourcesPlugin!!.panelHeight = panelHeight / 2
-        resourcesPlugin!!.layoutPanels().position.inTR(0f, 0f)
+        resourcesPlugin!!.layoutPanels()
 
-        methodsPlugin = ExoticMethodsUIPlugin(panel, exotic, member, variant, market, methods)
+        methodsPlugin = ExoticMethodsUIPlugin(panel, exotic, member, variant, market)
         methodsPlugin!!.panelWidth = panelWidth / 2
         methodsPlugin!!.panelHeight = panelHeight / 2
-        methodsPlugin!!.layoutPanels().position.inBR(0f, 0f)
+        methodsPlugin!!.layoutPanels()
         methodsPlugin!!.addListener(MethodListener())
 
         parentPanel.addComponent(panel).inTR(0f, 0f)
@@ -78,18 +77,21 @@ class ExoticPanelUIPlugin(
             descriptionPlugin!!.resetDescription()
             setChipDescription = false
         }
+
+        val value = ShipModLoader.get(member, variant)!!.getValue()
+        if (value != oldValue) {
+            oldValue = value
+            if (chipsPlugin != null) {
+                killChipsPanel()
+                showChipsPanel()
+            } else {
+                methodsPlugin!!.destroyTooltip()
+                methodsPlugin!!.layoutPanels()
+            }
+        }
     }
 
-    private fun getMethods(): List<Method> {
-        return mutableListOf(
-            InstallMethod(),
-            ChipMethod(),
-            RecoverMethod(),
-            DestroyMethod()
-        )
-    }
-
-    fun checkedMethod(method: Method): Boolean {
+    fun checkedMethod(method: ExoticMethod): Boolean {
         if (method is ChipMethod) {
             //do something else.
             showChipsPanel()
@@ -100,12 +102,12 @@ class ExoticPanelUIPlugin(
         }
     }
 
-    fun highlightedMethod(method: Method?): Boolean {
+    fun highlightedMethod(method: ExoticMethod?): Boolean {
         resourcesPlugin!!.redisplayResourceCosts(method)
         return false
     }
 
-    fun applyMethod(exotic: Exotic, method: Method) {
+    fun applyMethod(exotic: Exotic, method: ExoticMethod) {
         val mods = ShipModLoader.get(member, variant)!!
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
@@ -143,7 +145,7 @@ class ExoticPanelUIPlugin(
         mainPanel!!.addUIElement(chipsTooltip).inTR(9f, 3f)
     }
 
-    fun clickedChipPanelBackButton() {
+    fun killChipsPanel() {
         chipsPlugin!!.destroyTooltip()
         chipsPlugin = null
         mainPanel!!.removeComponent(chipsTooltip)
@@ -167,22 +169,22 @@ class ExoticPanelUIPlugin(
 
 
     private inner class MethodListener : ExoticMethodsUIPlugin.Listener() {
-        override fun checked(method: Method): Boolean {
+        override fun checked(method: ExoticMethod): Boolean {
             return this@ExoticPanelUIPlugin.checkedMethod(method)
         }
 
-        override fun highlighted(method: Method): Boolean {
+        override fun highlighted(method: ExoticMethod): Boolean {
             return this@ExoticPanelUIPlugin.highlightedMethod(method)
         }
 
-        override fun unhighlighted(method: Method): Boolean {
+        override fun unhighlighted(method: ExoticMethod): Boolean {
             return this@ExoticPanelUIPlugin.highlightedMethod(null)
         }
     }
 
     private inner class ChipPanelListener : ChipPanelUIPlugin.Listener<ExoticSpecialItemPlugin>() {
         override fun checkedBackButton() {
-            this@ExoticPanelUIPlugin.clickedChipPanelBackButton()
+            this@ExoticPanelUIPlugin.killChipsPanel()
         }
 
         override fun checked(stack: CargoStackAPI, plugin: ExoticSpecialItemPlugin) {

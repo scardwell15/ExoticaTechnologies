@@ -15,6 +15,7 @@ import java.awt.Color
 
 class SubsumedGammaCore(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(0x8F5C29)
+    override var canDropFromCombat: Boolean = false
 
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
         return false
@@ -36,10 +37,6 @@ class SubsumedGammaCore(key: String, settings: JSONObject) : Exotic(key, setting
     }
 
     override fun countsTowardsExoticLimit(member: FleetMemberAPI): Boolean {
-        return false
-    }
-
-    override fun canDropFromFleets(): Boolean {
         return false
     }
 

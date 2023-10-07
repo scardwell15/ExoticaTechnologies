@@ -2,19 +2,21 @@ package exoticatechnologies.ui.impl.shop.chips
 
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.*
 import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ModSpecialItemPlugin
 import exoticatechnologies.modifications.Modification
+import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
-import exoticatechnologies.util.getMods
 
 abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
     var parentPanel: CustomPanelAPI,
     var mod: Modification,
     var member: FleetMemberAPI,
+    var variant: ShipVariantAPI,
     var market: MarketAPI
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -35,9 +37,9 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
         innerTooltip = innerPanel!!.createUIElement(panelWidth, panelHeight, false)
         val listPanel: CustomPanelAPI = innerPanel!!.createCustomPanel(panelWidth, panelHeight, null)
 
-
-        val mods = member.getMods()
-        val upgradeChips: List<CargoStackAPI> = getChipSearcher().getChips(member.fleetData.fleet.cargo, member, mods, mod)
+        val mods = ShipModLoader.get(member, variant)!!
+        val upgradeChips: List<CargoStackAPI> =
+            getChipSearcher().getChips(member.fleetData.fleet.cargo, member, mods, mod)
 
         listPlugin = getChipListPlugin(listPanel)
         listPlugin!!.panelWidth = panelWidth
@@ -111,7 +113,7 @@ abstract class ChipPanelUIPlugin<T : ModSpecialItemPlugin>(
         listeners.add(listener)
     }
 
-    abstract class Listener<T: ModSpecialItemPlugin> {
+    abstract class Listener<T : ModSpecialItemPlugin> {
         open fun checked(stack: CargoStackAPI, plugin: T) {
         }
 

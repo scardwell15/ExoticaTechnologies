@@ -14,7 +14,9 @@ import exoticatechnologies.ui.impl.shop.exotics.ExoticMethodsUIPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
-class ChipMethod : Method {
+class ChipMethod : ExoticMethod {
+    override val key: String = "chipInstall"
+
     var chipStack: CargoStackAPI? = null
 
     override fun apply(

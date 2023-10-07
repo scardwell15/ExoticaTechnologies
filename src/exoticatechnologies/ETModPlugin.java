@@ -13,6 +13,7 @@ import exoticatechnologies.campaign.market.MarketManager;
 import exoticatechnologies.cargo.CrateGlobalData;
 import exoticatechnologies.cargo.CrateSpecialData;
 import exoticatechnologies.config.FactionConfigLoader;
+import exoticatechnologies.config.VariantConfigLoader;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
 import exoticatechnologies.modifications.ShipModLoader;
@@ -53,6 +54,7 @@ public class ETModPlugin extends BaseModPlugin {
         ShopManager.addMenu(new OverviewPanelUIPlugin());
         UpgradesHandler.initialize();
         ExoticsHandler.initialize();
+        VariantConfigLoader.INSTANCE.loadConfigs();
         MarketManager.INSTANCE.initialize();
 
         if (Global.getSettings().getModManager().isModEnabled("IndEvo")) {

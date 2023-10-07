@@ -93,7 +93,7 @@ public class ExoticaTechHM extends BaseHullMod {
             upgrade.advanceInCampaign(member, mods, amount);
         }
 
-        for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
+        for (Exotic exotic : ExoticsHandler.INSTANCE.getEXOTIC_LIST()) {
             if (mods.hasExotic(exotic)) {
                 exotic.advanceInCampaign(member, mods, amount, Objects.requireNonNull(mods.getExoticData(exotic)));
             }
@@ -108,7 +108,7 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
-        for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
+        for (Exotic exotic : ExoticsHandler.INSTANCE.getEXOTIC_LIST()) {
             if (!mods.hasExotic(exotic)) continue;
 
             if (cachedCheckIsModule(ship) && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
@@ -152,7 +152,7 @@ public class ExoticaTechHM extends BaseHullMod {
             return;
         }
 
-        for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
+        for (Exotic exotic : ExoticsHandler.INSTANCE.getEXOTIC_LIST()) {
             if (!mods.hasExotic(exotic)) continue;
             if (stats.getFleetMember() != null && stats.getFleetMember().getShipName() == null && !exotic.shouldAffectModule(stats)) continue;
 
@@ -175,7 +175,7 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
-        for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
+        for (Exotic exotic : ExoticsHandler.INSTANCE.getEXOTIC_LIST()) {
             if (!mods.hasExotic(exotic)) continue;
             if (cachedCheckIsModule(ship) && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
             exotic.applyToShip(id, member, ship, mods, Objects.requireNonNull(mods.getExoticData(exotic)));
@@ -196,7 +196,7 @@ public class ExoticaTechHM extends BaseHullMod {
         ShipModifications mods = ShipModLoader.get(member, member.getVariant());
         if (mods == null) return;
 
-        for (Exotic exotic : ExoticsHandler.EXOTIC_LIST) {
+        for (Exotic exotic : ExoticsHandler.INSTANCE.getEXOTIC_LIST()) {
             if (!mods.hasExotic(exotic)) continue;
             if (cachedCheckIsModule(ship) && !exotic.shouldAffectModule(ship.getParentStation(), ship)) continue;
             exotic.applyToFighters(member, ship, fighter, mods);

@@ -84,7 +84,7 @@ class ExoticItemUIPlugin(
             panel!!.removeComponent(itemInfo)
         }
 
-        val mods = member.getMods()
+        val mods = ShipModLoader.get(member, variant)!!
         installed = mods.hasExotic(item)
         val exoticData = mods.getExoticData(item) ?: ExoticData(item)
 

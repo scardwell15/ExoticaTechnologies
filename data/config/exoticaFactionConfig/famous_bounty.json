@@ -29,6 +29,7 @@
     "InterceptionMatrix": 0.3,
     "VelocityInjectors": 1.0,
     "OverclockedFabricators": 0.8,
-    "WaspDefenseDrones": 0.4
+    "WaspDefenseDrones": 0.4,
+    "OversizedMagazines": 1.0
   }
 }

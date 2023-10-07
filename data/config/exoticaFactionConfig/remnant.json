@@ -25,6 +25,7 @@
     "VelocityInjectors": 1,
     "OverclockedFabricators": 1.0,
     "GuidanceComputers": 1,
-    "InterceptionMatrix": 0.2
+    "InterceptionMatrix": 0.2,
+    "OversizedMagazines": 0.2
   }
 }

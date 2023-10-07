@@ -29,7 +29,7 @@ class WaspDefenseDrones(key: String, settings: JSONObject) : Upgrade(key, settin
         mods: ShipModifications,
         expand: Boolean
     ): TooltipMakerAPI {
-        val imageText = tooltip.beginImageWithText(icon, 64f)
+        val imageText = tooltip.beginImageWithText(iconPath, 64f)
         imageText.addPara("$name (%s)", 0f, color, mods.getUpgrade(this).toString())
         if (expand) {
             StringUtils.getTranslation("WaspDefenseDrones", "tooltip")

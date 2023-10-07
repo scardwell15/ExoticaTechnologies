@@ -200,7 +200,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
                 }
 
                 mods.exotics.exoticData
-                    .filter { (_, data) -> data.exotic.canDropFromFleets() }
+                    .filter { (_, data) -> data.exotic.canDropFromCombat }
                     .filter { (_, data) -> ShipModFactory.random.nextFloat() >= data.exotic.getSalvageChance(4f) }
                     .forEach { (_, data) -> mods.removeExotic(data.exotic) }
 
@@ -330,7 +330,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
 
                     for (exoticData in mods.getExoticSet()) {
                         val exotic = exoticData.exotic
-                        if (!exotic.canDropFromFleets()) {
+                        if (!exotic.canDropFromCombat) {
                             continue
                         }
                         if (!exotics.containsKey(exoticData)) {

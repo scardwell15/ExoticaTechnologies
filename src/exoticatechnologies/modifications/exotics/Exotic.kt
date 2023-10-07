@@ -11,7 +11,9 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.modifications.Modification
 import exoticatechnologies.modifications.ShipModifications
+import exoticatechnologies.modifications.conditions.toList
 import exoticatechnologies.modifications.exotics.types.ExoticType
+import exoticatechnologies.ui.impl.shop.exotics.methods.ExoticMethod
 import exoticatechnologies.util.StringUtils
 import org.json.JSONObject
 import java.util.*
@@ -19,12 +21,23 @@ import java.util.*
 abstract class Exotic(key: String, settings: JSONObject) : Modification(key, settings) {
     var loreDescription: String? = null
     open val textDescription: String?
-        get() =  "$loreDescription\n\n$description"
+        get() = "$loreDescription\n\n$description"
 
-    public override val icon: String
-        get() = "graphics/icons/exotics/${key.lowercase(Locale.getDefault())}.png"
+    public override var icon: String = settings.optString("icon", key)
     val buffId: String
         get() = "ET_$key"
+    var allowedMethods: List<String>? = null
+    var blockedMethods: List<String>? = null
+
+    init {
+        if (settings.has("allowedMethods")) {
+            allowedMethods = settings.optJSONArray("allowedMethods").toList()
+        }
+
+        if (settings.has("blockedMethods")) {
+            blockedMethods = settings.optJSONArray("blockedMethods").toList()
+        }
+    }
 
     protected fun isNPC(fm: FleetMemberAPI): Boolean {
         return fm.fleetData == null || fm.fleetData.fleet == null || fm.fleetData.fleet != Global.getSector().playerFleet
@@ -106,14 +119,17 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         member: FleetMemberAPI,
         mods: ShipModifications,
         exoticData: ExoticData
-    ) {}
+    ) {
+    }
+
     open fun applyToShip(
         id: String,
         member: FleetMemberAPI,
         ship: ShipAPI,
         mods: ShipModifications,
         exoticData: ExoticData
-    ) {}
+    ) {
+    }
 
     open fun applyToFighters(member: FleetMemberAPI, ship: ShipAPI, fighter: ShipAPI, mods: ShipModifications) {
     }
@@ -124,12 +140,39 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         member: FleetMemberAPI,
         mods: ShipModifications,
         exoticData: ExoticData
-    ) {}
-    open fun advanceInCombatAlways(ship: ShipAPI, member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData) {}
-    open fun advanceInCampaign(member: FleetMemberAPI, mods: ShipModifications, amount: Float, exoticData: ExoticData) {}
+    ) {
+    }
+
+    open fun advanceInCombatAlways(
+        ship: ShipAPI,
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        exoticData: ExoticData
+    ) {
+    }
+
+    open fun advanceInCampaign(
+        member: FleetMemberAPI,
+        mods: ShipModifications,
+        amount: Float,
+        exoticData: ExoticData
+    ) {
+    }
 
     open fun getSalvageChance(chanceMult: Float): Float {
         return 0.2f * chanceMult
+    }
+
+    open fun canUseMethod(member: FleetMemberAPI?, mods: ShipModifications, method: ExoticMethod): Boolean {
+        if (blockedMethods?.contains(method.key) == true) {
+            return false
+        }
+
+        if (allowedMethods?.contains(method.key) == false) {
+            return false
+        }
+
+        return true
     }
 
     open fun canUseExoticType(type: ExoticType): Boolean {

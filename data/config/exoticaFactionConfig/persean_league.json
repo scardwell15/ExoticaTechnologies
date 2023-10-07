@@ -25,7 +25,8 @@
     "HyperactiveCapacitors": 1,
     "ForcedOvertime": 0.2,
     "GuidanceComputers": 0.5,
-    "WaspDefenseDrones": 0.2
+    "WaspDefenseDrones": 0.2,
+    "OversizedMagazines": 0.5
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

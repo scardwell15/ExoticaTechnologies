@@ -32,7 +32,7 @@ class ExoticDescriptionUIPlugin(
 
         resetDescription()
 
-        parentPanel.addComponent(panel).inTR(0f, 0f)
+        parentPanel.addComponent(panel).inTL(0f, 0f)
 
         return panel
     }

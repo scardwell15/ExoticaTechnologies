@@ -15,9 +15,9 @@ class UpgradeChipPanelUIPlugin(
     parentPanel: CustomPanelAPI,
     val upgrade: Upgrade,
     member: FleetMemberAPI,
-    val variant: ShipVariantAPI,
+    variant: ShipVariantAPI,
     market: MarketAPI
-) : ChipPanelUIPlugin<UpgradeSpecialItemPlugin>(parentPanel, upgrade, member, market) {
+) : ChipPanelUIPlugin<UpgradeSpecialItemPlugin>(parentPanel, upgrade, member, variant, market) {
     override var bgColor: Color = Color(255, 70, 255, 0)
 
     override fun getChipSearcher(): ChipSearcher<UpgradeSpecialItemPlugin> {

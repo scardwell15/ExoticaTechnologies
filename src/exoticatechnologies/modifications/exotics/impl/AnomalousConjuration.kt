@@ -32,6 +32,7 @@ import java.awt.Color
 
 class AnomalousConjuration(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(180, 255, 200)
+    override var canDropFromCombat: Boolean = false
 
     override fun modifyToolTip(
         tooltip: TooltipMakerAPI,
@@ -56,10 +57,6 @@ class AnomalousConjuration(key: String, settings: JSONObject) : Exotic(key, sett
     }
 
     override fun canUseExoticType(type: ExoticType): Boolean {
-        return false
-    }
-
-    override fun canDropFromFleets(): Boolean {
         return false
     }
 

@@ -49,4 +49,8 @@ abstract class DefaultUpgradeMethod : UpgradeMethod {
     override fun usesLevel(): Boolean {
         return true
     }
+
+    override fun shouldLoad(): Boolean {
+        return true
+    }
 }

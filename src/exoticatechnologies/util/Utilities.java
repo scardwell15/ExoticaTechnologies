@@ -497,6 +497,30 @@ public class Utilities {
         return null;
     }
 
+    public static CargoStackAPI getSpecialStackWithData(CargoAPI cargo, String data) {
+        if (cargo == null) return null;
+
+        for(CargoStackAPI stack : cargo.getStacksCopy()) {
+            if(stack.isSpecialStack()) {
+                if (stack.getPlugin() instanceof CrateItemPlugin) {
+                    CrateItemPlugin plugin = (CrateItemPlugin) stack.getPlugin();
+                    stack = getSpecialStackWithData(plugin.getCargo(), data);
+                    if (stack != null) {
+                        return stack;
+                    }
+                } else {
+                    SpecialItemData itemData = stack.getSpecialDataIfSpecial();
+                    if (Objects.equals(itemData.getData(), data)) {
+                        return stack;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+
     public static void mergeChipsIntoCrate(CargoAPI cargo) {
         if (cargo == null) return;
 

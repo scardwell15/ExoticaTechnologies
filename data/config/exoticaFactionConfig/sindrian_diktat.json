@@ -25,7 +25,8 @@
     "HyperactiveCapacitors": 0.6,
     "ForcedOvertime": 1.0,
     "GuidanceComputers": 0.75,
-    "AntimatterBoosters": 1.2
+    "AntimatterBoosters": 1.2,
+    "OversizedMagazines": 0.2
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

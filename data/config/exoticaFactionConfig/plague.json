@@ -28,6 +28,7 @@
     "FluxInductionDrive": 1.0,
     "InterceptionMatrix": 0.3,
     "VelocityInjectors": 1.0,
-    "OverclockedFabricators": 0.8
+    "OverclockedFabricators": 0.8,
+    "OversizedMagazines": 0.75
   }
 }

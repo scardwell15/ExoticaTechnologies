@@ -1,0 +1,7 @@
+name,class
+Chip,exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
+Credits,exoticatechnologies.ui.impl.shop.upgrades.methods.CreditsMethod
+Resources,exoticatechnologies.ui.impl.shop.upgrades.methods.ResourcesMethod
+Recover,exoticatechnologies.ui.impl.shop.upgrades.methods.RecoverMethod
+IndEvo Ship Components,exoticatechnologies.integration.indevo.ShipComponentUpgradeMethod
+IndEvo Relic Components,exoticatechnologies.integration.indevo.RelicComponentUpgradeMethod

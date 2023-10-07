@@ -6,7 +6,8 @@ ETMainDialog,PopulateOptions,"$hasMarket
 $menuState == main
 $tradeMode == OPEN
 RepairAvailable","SetShortcut ETMainMenu ""U"" true",,"25:ETMainMenu:Visit the local Exotica Technologies branch.",
-ETMainMenu,DialogOptionSelected,"$option==ETMainMenu","$menuState = ETMainMenu","The Exotica engineering team welcomes you!","16:ETOpenPrototypeUI:Install modifications onto your ships.
+ETMainMenu,DialogOptionSelected,"$option==ETMainMenu","$menuState = ETMainMenu
+SetShortcut ETDialogBack ""ESCAPE""","The Exotica engineering team welcomes you!","16:ETOpenPrototypeUI:Install modifications onto your ships.
 32:ETOpenMarketUI:View the market inventory of Exotica chips.
 90:ETDialogBack:Back",
 ETOpenPrototypeUI,DialogOptionSelected,"$option==ETOpenPrototypeUI","ETPrototypeUI",,,
@@ -71,7 +72,7 @@ $customType == coronal_tap","$etHasDrawnTextForOmega = true 0
 FireBest TriggerAutomatedDefenses
 ETGenerateForDefenseFleet
 $player.etScanFleetOnCommsLinkOpen = true 0
-AddText ""The sensors tell you that there are Exotica technologies present on whatever those things are, and that most of them appear to be subsumed alpha, beta and gamma-level AI cores. The sensors don't explain why you can hear the subsumed AI cores crying, or why it almost sounds like music.""
+AddText ""The sensors tell you that there are Exotica technologies present on whatever those things are, and that most of them appear to be subsumed alpha, beta and gamma-level AI cores. The sensor readings vaguely resemble distress signals from days long gone, almost as if the cores are crying.""
 Highlight ""Exotica technologies"" ""crying""
 ETScanOmegas",,,
 ETDerelictEncounterGenerated,TriggerAutomatedDefenses,"!$etHasDrawnTextForDefenses

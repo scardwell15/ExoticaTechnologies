@@ -27,7 +27,7 @@ class UpgradeListItemUIPlugin(
 ) : ListItemUIPanelPlugin<Upgrade>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
     private val opad = 6f
-    private val upgradeSprite = Global.getSettings().getSprite(item.icon)
+    private val upgradeSprite = Global.getSettings().getSprite("upgrades", item.icon)
     val selected
         get() = bgColor.alpha >= 100
 

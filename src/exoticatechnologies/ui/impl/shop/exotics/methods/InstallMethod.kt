@@ -13,7 +13,9 @@ import exoticatechnologies.ui.impl.shop.exotics.ExoticMethodsUIPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 
-class InstallMethod : Method {
+class InstallMethod : ExoticMethod {
+    override val key: String = "install"
+
     override fun apply(
         member: FleetMemberAPI,
         variant: ShipVariantAPI,
@@ -21,7 +23,7 @@ class InstallMethod : Method {
         exotic: Exotic,
         market: MarketAPI?
     ): String {
-        val stack = Utilities.getExoticChip(member.fleetData.fleet.cargo, exotic.key)
+        val stack = Utilities.getSpecialStackWithData(member.fleetData.fleet.cargo, exotic.key)
         if (stack != null) {
             Utilities.takeItem(stack)
         } else {
@@ -41,11 +43,19 @@ class InstallMethod : Method {
         return !mods.hasExotic(exotic)
                 && exotic.canApply(member, mods)
                 && ExoticMethodsUIPlugin.isUnderExoticLimit(member, mods)
-                && (exotic.canAfford(member.fleetData.fleet, market))
+                && (exotic.canAfford(
+            member.fleetData.fleet,
+            market
+        ) || Utilities.getSpecialStackWithData(member.fleetData.fleet.cargo, exotic.key) != null)
     }
 
     override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean {
-        return !ChipMethod().canUse(member, mods, exotic, market)
+        return !ChipMethod().canUse(
+            member,
+            mods,
+            exotic,
+            market
+        ) || Utilities.getSpecialStackWithData(member.fleetData.fleet.cargo, exotic.key) != null
     }
 
     override fun getButtonText(exotic: Exotic): String {

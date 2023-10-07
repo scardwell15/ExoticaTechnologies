@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.upgrades
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.SpecialItemData
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
@@ -8,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.Modification
 import exoticatechnologies.modifications.ShipModifications
+import exoticatechnologies.modifications.conditions.toList
 import exoticatechnologies.modifications.stats.UpgradeModEffect
 import exoticatechnologies.modifications.stats.impl.UpgradeModEffectDict.Companion.getStatsFromJSONArray
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
@@ -15,11 +17,10 @@ import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
 import java.awt.Color
-import java.util.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, settings) {
+open class Upgrade(key: String, settings: JSONObject) : Modification(key, settings) {
     val resourceRatios: MutableMap<String, Float> = LinkedHashMap()
     val upgradeEffects: MutableList<UpgradeModEffect> = ArrayList()
     var bandwidthUsage: Float
@@ -30,6 +31,10 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
     var chipOnlyInstall: Boolean
     var italicsText: String? = null
     open var maxLevel: Int = 10
+    public override var icon: String = settings.optString("icon", key)
+    var iconPath: String = Global.getSettings().getSpriteName("upgrades", icon)
+    var allowedMethods: List<String>? = null
+    var blockedMethods: List<String>? = null
 
     init {
         color = Utilities.colorFromJSONArray(settings.getJSONArray("color"))
@@ -59,6 +64,14 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
             }
             resourceRatios[resource] = ratio
         }
+
+        if (settings.has("allowedMethods")) {
+            allowedMethods = settings.optJSONArray("allowedMethods").toList()
+        }
+
+        if (settings.has("blockedMethods")) {
+            blockedMethods = settings.optJSONArray("blockedMethods").toList()
+        }
     }
 
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
@@ -77,6 +90,14 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
     }
 
     fun canUseUpgradeMethod(member: FleetMemberAPI?, mods: ShipModifications, method: UpgradeMethod): Boolean {
+        if (blockedMethods?.contains(method.key) == true) {
+            return false
+        }
+        
+        if (allowedMethods?.contains(method.key) == false) {
+            return false
+        }
+
         if (method.key == "recover") {
             return true
         }
@@ -88,8 +109,6 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
         return !(chipFirstInstall && !mods.hasUpgrade(this) && method.key != "chip")
     }
 
-    public override val icon: String
-        get() = "graphics/icons/upgrades/" + key.lowercase(Locale.getDefault()) + ".png"
 
     open fun applyUpgradeToStats(stats: MutableShipStatsAPI, fm: FleetMemberAPI, mods: ShipModifications, level: Int) {
         for (effect in upgradeEffects) {
@@ -140,7 +159,7 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
         mods: ShipModifications,
         expand: Boolean
     ): TooltipMakerAPI {
-        val imageText = tooltip.beginImageWithText(icon, 64f)
+        val imageText = tooltip.beginImageWithText(iconPath, 64f)
         imageText.addPara("$name (%s)", 0f, color, mods.getUpgrade(this).toString())
         if (expand) {
             for (effect in upgradeEffects) {
@@ -168,7 +187,7 @@ open class Upgrade(key: String?, settings: JSONObject) : Modification(key!!, set
         val levelToEffectMap: MutableMap<Int, MutableList<UpgradeModEffect>> = HashMap()
         for (effect in upgradeEffects) {
             val startingLevel = effect.startingLevel
-            val levelList: MutableList<UpgradeModEffect> = levelToEffectMap.getOrPut(startingLevel){ mutableListOf() }
+            val levelList: MutableList<UpgradeModEffect> = levelToEffectMap.getOrPut(startingLevel) { mutableListOf() }
             levelList.add(effect)
         }
         for (startingLevel in 0 until maxLevel) {

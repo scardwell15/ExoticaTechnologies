@@ -27,8 +27,10 @@ abstract class Modification(val key: String, val settings: JSONObject) {
     open var color: Color = Color.white
     open var description: String = ""
     open var valueMult: Float = settings.optFloat("valueMult", 1.0f)
-    protected abstract val icon: String
+    protected abstract var icon: String
     val conditions: MutableList<Condition> = mutableListOf()
+    open var canDropFromCombat = false
+    val variantScales: MutableMap<String, Float> = mutableMapOf()
 
     init {
         if (settings.has("conditions")) {
@@ -48,6 +50,8 @@ abstract class Modification(val key: String, val settings: JSONObject) {
         } else {
             hints = listOf()
         }
+
+        canDropFromCombat = settings.optBoolean("dropsFromCombat")
     }
 
     /**
@@ -84,12 +88,21 @@ abstract class Modification(val key: String, val settings: JSONObject) {
     }
 
     open fun getCalculatedWeight(member: FleetMemberAPI, mods: ShipModifications?): Float {
+        var addedWeight = 1f
+
         if (conditions.isNotEmpty()) {
-            return 1f + conditions
+            addedWeight += conditions
                 .map { it.calculateWeight(member, mods) }
                 .sum()
         }
-        return 1f
+
+        if (member.variant.hullVariantId != null) {
+            variantScales[member.variant.hullVariantId]?.let {
+                addedWeight *= it
+            }
+        }
+
+        return addedWeight
     }
 
     open fun shouldLoad(): Boolean {
@@ -127,7 +140,8 @@ abstract class Modification(val key: String, val settings: JSONObject) {
 
     }
 
+    @Deprecated("Replaced by canDropFromCombat variable. Unused.", ReplaceWith("canDropFromCombat"))
     open fun canDropFromFleets(): Boolean {
-        return true
+        return canDropFromCombat
     }
 }

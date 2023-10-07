@@ -19,7 +19,8 @@
     "OverclockedFabricators": 0.7,
     "HyperactiveCapacitors": 0.4,
     "ForcedOvertime": 1.5,
-    "GuidanceComputers": 1
+    "GuidanceComputers": 1,
+    "OversizedMagazines": 0.25
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

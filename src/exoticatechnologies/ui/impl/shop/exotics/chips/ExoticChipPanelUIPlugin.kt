@@ -15,9 +15,9 @@ class ExoticChipPanelUIPlugin(
     parentPanel: CustomPanelAPI,
     val exotic: Exotic,
     member: FleetMemberAPI,
-    val variant: ShipVariantAPI,
+    variant: ShipVariantAPI,
     market: MarketAPI
-) : ChipPanelUIPlugin<ExoticSpecialItemPlugin>(parentPanel, exotic, member, market) {
+) : ChipPanelUIPlugin<ExoticSpecialItemPlugin>(parentPanel, exotic, member, variant, market) {
     override var bgColor: Color = Color(255, 70, 255, 0)
 
     override fun getChipSearcher(): ChipSearcher<ExoticSpecialItemPlugin> {

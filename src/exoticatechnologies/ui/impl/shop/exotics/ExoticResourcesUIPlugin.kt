@@ -8,7 +8,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.ui.impl.shop.ResourcesUIPlugin
-import exoticatechnologies.ui.impl.shop.exotics.methods.Method
+import exoticatechnologies.ui.impl.shop.exotics.methods.ExoticMethod
 
 class ExoticResourcesUIPlugin(
     var parentPanel: CustomPanelAPI,
@@ -16,7 +16,6 @@ class ExoticResourcesUIPlugin(
     member: FleetMemberAPI,
     variant: ShipVariantAPI,
     market: MarketAPI?,
-    var methods: List<Method>
 ) : ResourcesUIPlugin(member, variant, market) {
     override var mainPanel: CustomPanelAPI? = null
     private var resourcesTooltip: TooltipMakerAPI? = null
@@ -38,7 +37,7 @@ class ExoticResourcesUIPlugin(
         }
     }
 
-    fun redisplayResourceCosts(activeMethod: Method?) {
+    fun redisplayResourceCosts(activeMethod: ExoticMethod?) {
         val mods = ShipModLoader.get(member, variant)!!
         destroyTooltip()
 

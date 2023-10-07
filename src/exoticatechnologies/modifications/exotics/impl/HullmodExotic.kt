@@ -41,11 +41,19 @@ open class HullmodExotic(
         println("$check has mod still")
     }
 
-    fun removeFromVariant(variant: ShipVariantAPI?) {
+    private fun removeFromVariant(variant: ShipVariantAPI?) {
         variant?.let {
-            variant.addSuppressedMod(hullmodId)
             variant.removePermaMod(hullmodId)
+            variant.removeMod(hullmodId)
+            variant.removePermaMod(hullmodId)
+            variant.addSuppressedMod(hullmodId)
+            variant.removeMod(hullmodId)
+            variant.removePermaMod(hullmodId)
+            variant.removeMod(hullmodId)
             variant.removeSuppressedMod(hullmodId)
+            variant.removePermaMod(hullmodId)
+            variant.removeMod(hullmodId)
+            variant.removePermaMod(hullmodId)
         }
     }
 

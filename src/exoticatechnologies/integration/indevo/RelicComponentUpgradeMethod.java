@@ -126,4 +126,9 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
         cargo.removeCommodity(id, taken);
         return (int) (cost - taken);
     }
+
+    @Override
+    public boolean shouldLoad() {
+        return Global.getSettings().getModManager().isModEnabled("IndEvo");
+    }
 }

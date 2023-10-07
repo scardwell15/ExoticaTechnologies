@@ -35,6 +35,7 @@ class UpgradePanelUIPlugin(
     private var methodsPlugin: UpgradeMethodsUIPlugin? = null
     private var chipsPlugin: UpgradeChipPanelUIPlugin? = null
     private var chipsTooltip: TooltipMakerAPI? = null
+    private var oldValue: Float = ShipModLoader.get(member, variant)!!.getValue()
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
@@ -93,6 +94,20 @@ class UpgradePanelUIPlugin(
         descriptionPlugin!!.resetDescription()
         resourcesPlugin!!.redisplayResourceCosts(method)
         methodsPlugin!!.createTooltip()
+    }
+
+    override fun advancePanel(amount: Float) {
+        val value = ShipModLoader.get(member, variant)!!.getValue()
+        if (value != oldValue) {
+            oldValue = value
+            if (chipsPlugin != null) {
+                killChipsPanel()
+                showChipsPanel()
+            } else {
+                methodsPlugin!!.destroyTooltip()
+                methodsPlugin!!.createTooltip()
+            }
+        }
     }
 
     fun showChipsPanel() {

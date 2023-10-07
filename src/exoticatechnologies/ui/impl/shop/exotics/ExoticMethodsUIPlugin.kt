@@ -14,10 +14,11 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
+import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.ui.StringTooltip
-import exoticatechnologies.ui.impl.shop.exotics.methods.Method
+import exoticatechnologies.ui.impl.shop.exotics.methods.ExoticMethod
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
@@ -26,8 +27,7 @@ class ExoticMethodsUIPlugin(
     var exotic: Exotic,
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
-    var market: MarketAPI?,
-    var methods: List<Method>
+    var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var methodsTooltip: TooltipMakerAPI? = null
@@ -38,7 +38,7 @@ class ExoticMethodsUIPlugin(
         mainPanel = panel
 
         showTooltip()
-        parentPanel.addComponent(panel).inTR(0f, 0f)
+        parentPanel.addComponent(panel).inBR(0f, 0f)
 
         return panel
     }
@@ -100,7 +100,7 @@ class ExoticMethodsUIPlugin(
             rowYOffset += lastComponent.position.height
         }
 
-        for (method in methods) {
+        for (method in ExoticsHandler.EXOTIC_METHODS) {
             val buttonText = method.getButtonText(exotic)
             tooltip.setButtonFontDefault()
 
@@ -111,7 +111,7 @@ class ExoticMethodsUIPlugin(
                 lastButton = null
             }
 
-            if (method.canShow(member, mods, exotic, market)) {
+            if (method.canShow(member, mods, exotic, market) && exotic.canUseMethod(member, mods, method)) {
                 val methodButton: ButtonAPI = tooltip.addButton(buttonText, "", buttonWidth, 18f, 2f)
 
                 method.getButtonTooltip(exotic)?.let {
@@ -148,7 +148,7 @@ class ExoticMethodsUIPlugin(
         listeners.add(listener)
     }
 
-    fun callListenerHighlighted(method: Method) {
+    fun callListenerHighlighted(method: ExoticMethod) {
         listeners.forEach {
             if (it.highlighted(method)) {
                 return
@@ -156,7 +156,7 @@ class ExoticMethodsUIPlugin(
         }
     }
 
-    fun callListenerUnhighlighted(method: Method) {
+    fun callListenerUnhighlighted(method: ExoticMethod) {
         listeners.forEach {
             if (it.unhighlighted(method)) {
                 return
@@ -164,7 +164,7 @@ class ExoticMethodsUIPlugin(
         }
     }
 
-    fun callListenerChecked(method: Method) {
+    fun callListenerChecked(method: ExoticMethod) {
         listeners.forEach {
             if (it.checked(method)) {
                 return
@@ -172,7 +172,7 @@ class ExoticMethodsUIPlugin(
         }
     }
 
-    open class MethodButtonHandler(val method: Method, val shopPlugin: ExoticMethodsUIPlugin) :
+    open class MethodButtonHandler(val method: ExoticMethod, val shopPlugin: ExoticMethodsUIPlugin) :
         ButtonHandler() {
         override fun checked() {
             shopPlugin.callListenerChecked(method)
@@ -191,21 +191,21 @@ class ExoticMethodsUIPlugin(
         /**
          * Return true to skip other listeners.
          */
-        open fun checked(method: Method): Boolean {
+        open fun checked(method: ExoticMethod): Boolean {
             return false
         }
 
         /**
          * Return true to skip other listeners.
          */
-        open fun highlighted(method: Method): Boolean {
+        open fun highlighted(method: ExoticMethod): Boolean {
             return false
         }
 
         /**
          * Return true to skip other listeners.
          */
-        open fun unhighlighted(method: Method): Boolean {
+        open fun unhighlighted(method: ExoticMethod): Boolean {
             return false
         }
     }

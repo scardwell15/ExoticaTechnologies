@@ -91,4 +91,10 @@ interface UpgradeMethod {
      * @return whether it cares
      */
     fun usesLevel(): Boolean
+
+    /**
+     * Whether the method can be loaded into the game.
+     * @return whether it will be loaded
+     */
+    fun shouldLoad(): Boolean
 }

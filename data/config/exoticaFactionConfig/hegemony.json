@@ -22,7 +22,8 @@
     "ForcedOvertime": 1.0,
     "GuidanceComputers": 0.75,
     "FluxInductionDrive": 0.4,
-    "InterceptionMatrix": 0.4
+    "InterceptionMatrix": 0.4,
+    "OversizedMagazines": 0.75
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

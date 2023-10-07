@@ -63,7 +63,7 @@ class GenericExoticItemPlugin : ExoticSpecialItemPlugin() {
         glowMult: Float,
         renderer: SpecialItemRendererAPI
     ) {
-        val exoticSprite = Global.getSettings().getSprite(exoticData!!.exotic.icon)
+        val exoticSprite = Global.getSettings().getSprite("exotics", exoticData!!.exotic.icon)
         val tX = 0.4f
         val tY = 0.37f
         val tW = 0.70f

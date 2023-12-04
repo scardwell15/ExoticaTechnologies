@@ -9,18 +9,5 @@ consider: Magazine reload for fire rate
 todo: update interface to use new buttonPressed methods
 todo: add Advanced Gunnery Control tags to things that deserve them (like missile spam for hacked missile forge)
 
-
-done:
-- fixed phase condition not working correctly
-- added shop music
-
-
 todo:
-
-
-"variantLoadouts": {
-  "variantID": {
-      "exotics": {"exotic1":2.0, "exotic2":0.5},
-      "upgrades": {"upgrade1":1.5, "upgrade2": 0}
-  }
-}
+- cruise drive subsystem

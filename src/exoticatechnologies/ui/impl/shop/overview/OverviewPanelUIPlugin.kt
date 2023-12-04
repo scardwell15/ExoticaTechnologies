@@ -1,5 +1,7 @@
 package exoticatechnologies.ui.impl.shop.overview
 
+import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.CoreUITabId
 import com.fs.starfarer.api.ui.Alignment
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.CutStyle
@@ -9,6 +11,7 @@ import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
+import exoticatechnologies.refit.RefitButtonAdder
 import exoticatechnologies.ui.BaseUIPanelPlugin
 import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.impl.shop.ShopMenuUIPlugin
@@ -85,7 +88,7 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
         val clearUpgradesButton = buttonTooltip.addButton(upgradeRecoverPriceText, null,
             Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.C2_MENU, buttonTooltip.computeStringWidth(upgradeRecoverPriceText) + 10f, 22F, 3F)
         clearUpgradesButton.position.rightOfMid(expandExoticsButton, 3f)
-        clearUpgradesButton.isEnabled = upgradeRecoverPrice != 0f
+        clearUpgradesButton.isEnabled = upgradeRecoverPrice != 0f && market != null
         buttons[clearUpgradesButton] = ClearUpgradesButtonHandler()
 
         val exoticRecoverPrice = mods.exotics.list.size
@@ -96,7 +99,7 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
         val clearExoticsButton = buttonTooltip.addButton(exoticRecoverPriceText, null,
             Misc.getStoryOptionColor(), Misc.getStoryDarkColor(), Alignment.MID, CutStyle.C2_MENU, buttonTooltip.computeStringWidth(exoticRecoverPriceText) + 10f, 22F, 3F)
         clearExoticsButton.position.rightOfMid(clearUpgradesButton, 3f)
-        clearExoticsButton.isEnabled = exoticRecoverPrice != 0
+        clearExoticsButton.isEnabled = exoticRecoverPrice != 0 && market != null
         buttons[clearExoticsButton] = ClearExoticsButtonHandler()
 
         innerPanel!!.addUIElement(buttonTooltip).inTL(0f, 0f)
@@ -135,6 +138,11 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
                     .forEach {
                         RecoverMethod().apply(member!!, variant!!, mods, it, market!!)
                     }
+
+                if (Global.getSector().campaignUI.currentCoreTab == CoreUITabId.REFIT) {
+                    RefitButtonAdder.requiresVariantUpdate = true
+                }
+
                 showPanel(mainPanel!!)
             }
         }
@@ -155,12 +163,15 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
                             market!!
                         )
                     }
-                expandExotics = !expandExotics
+
+                if (Global.getSector().campaignUI.currentCoreTab == CoreUITabId.REFIT) {
+                    RefitButtonAdder.requiresVariantUpdate = true
+                }
+
                 showPanel(mainPanel!!)
             }
         }
     }
-
 
     class OverviewTabUIPlugin: TabButtonUIPlugin(StringUtils.getString("OverviewDialog", "OverviewTabText")) {
         override var panelWidth = 100f

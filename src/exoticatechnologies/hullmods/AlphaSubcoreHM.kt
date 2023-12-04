@@ -4,7 +4,12 @@ import com.fs.starfarer.api.combat.BaseHullMod
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.combat.ShipAPI.HullSize
+import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize
+import com.fs.starfarer.api.combat.listeners.FighterOPCostModifier
+import com.fs.starfarer.api.combat.listeners.WeaponOPCostModifier
 import com.fs.starfarer.api.impl.campaign.ids.Stats
+import com.fs.starfarer.api.loading.FighterWingSpecAPI
+import com.fs.starfarer.api.loading.WeaponSpecAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.modifications.exotics.impl.AlphaSubcore
 import exoticatechnologies.util.StringUtils
@@ -17,20 +22,7 @@ class AlphaSubcoreHM : BaseHullMod() {
             return
         }
 
-        stats.dynamic.getMod(Stats.ALL_FIGHTER_COST_MOD).modifyFlat(id, -COST_REDUCTION_FIGHTER.toFloat())
-        stats.dynamic.getMod(Stats.BOMBER_COST_MOD).modifyFlat(id, -COST_REDUCTION_BOMBER.toFloat())
-        stats.dynamic.getMod(Stats.FIGHTER_COST_MOD).modifyFlat(id, -COST_REDUCTION_FIGHTER.toFloat())
-        stats.dynamic.getMod(Stats.INTERCEPTOR_COST_MOD).modifyFlat(id, -COST_REDUCTION_FIGHTER.toFloat())
-        stats.dynamic.getMod(Stats.SUPPORT_COST_MOD).modifyFlat(id, -COST_REDUCTION_FIGHTER.toFloat())
-        stats.dynamic.getMod(Stats.LARGE_BALLISTIC_MOD).modifyFlat(id, -COST_REDUCTION_LG.toFloat())
-        stats.dynamic.getMod(Stats.LARGE_ENERGY_MOD).modifyFlat(id, -COST_REDUCTION_LG.toFloat())
-        stats.dynamic.getMod(Stats.LARGE_MISSILE_MOD).modifyFlat(id, -COST_REDUCTION_LG.toFloat())
-        stats.dynamic.getMod(Stats.MEDIUM_BALLISTIC_MOD).modifyFlat(id, -COST_REDUCTION_MED.toFloat())
-        stats.dynamic.getMod(Stats.MEDIUM_ENERGY_MOD).modifyFlat(id, -COST_REDUCTION_MED.toFloat())
-        stats.dynamic.getMod(Stats.MEDIUM_MISSILE_MOD).modifyFlat(id, -COST_REDUCTION_MED.toFloat())
-        stats.dynamic.getMod(Stats.SMALL_BALLISTIC_MOD).modifyFlat(id, -COST_REDUCTION_SM.toFloat())
-        stats.dynamic.getMod(Stats.SMALL_ENERGY_MOD).modifyFlat(id, -COST_REDUCTION_SM.toFloat())
-        stats.dynamic.getMod(Stats.SMALL_MISSILE_MOD).modifyFlat(id, -COST_REDUCTION_SM.toFloat())
+        stats.addListener(OPCostListener())
     }
 
     override fun addPostDescriptionSection(
@@ -61,7 +53,28 @@ class AlphaSubcoreHM : BaseHullMod() {
         return true
     }
 
+    class OPCostListener : WeaponOPCostModifier,FighterOPCostModifier {
+        override fun getWeaponOPCost(stats: MutableShipStatsAPI, weapon: WeaponSpecAPI, currCost: Int): Int {
+            return currCost - (WEAPON_REDUCTIONS[weapon.size] ?: 0)
+        }
+
+        override fun getFighterOPCost(stats: MutableShipStatsAPI, fighter: FighterWingSpecAPI, currCost: Int): Int {
+            if (fighter.isBomber)
+                return currCost - BOMBER_REDUCTION
+            return FIGHTER_REDUCTION
+        }
+    }
+
     companion object {
+        val WEAPON_REDUCTIONS = mutableMapOf(
+            WeaponSize.SMALL to 1,
+            WeaponSize.MEDIUM to 2,
+            WeaponSize.LARGE to 4
+        )
+
+        const val BOMBER_REDUCTION = 2
+        const val FIGHTER_REDUCTION = 2
+
         const val COST_REDUCTION_LG = 4
         const val COST_REDUCTION_MED = 2
         const val COST_REDUCTION_SM = 1

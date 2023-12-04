@@ -372,7 +372,7 @@
 		"PURE": "Pure ${exoticName}",
 		"PureCondition": "the ship has no other upgrades or exotics",
 		"PureItemDescription": "increasing its positive effect if less bandwidth and exotics are used, and increasing its negative effect as more bandwidth and more exotics are installed",
-		"GUERILLA": "Guerilla ${exoticName}",
+		"GUERILLA": "Guerrilla ${exoticName}",
 		"GuerillaCondition": "the fleet is below ${thresholdDP} deployment points. Your fleet is currently at ${fleetDP} deployment points",
 		"GuerillaItemDescription": "increasing its positive effects if the fleet is small, and increasing its negative effects if the fleet is large"
 	},

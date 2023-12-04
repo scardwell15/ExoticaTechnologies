@@ -5,3 +5,4 @@ Resources,exoticatechnologies.ui.impl.shop.upgrades.methods.ResourcesMethod
 Recover,exoticatechnologies.ui.impl.shop.upgrades.methods.RecoverMethod
 IndEvo Ship Components,exoticatechnologies.integration.indevo.ShipComponentUpgradeMethod
 IndEvo Relic Components,exoticatechnologies.integration.indevo.RelicComponentUpgradeMethod
+Free,exoticatechnologies.ui.impl.shop.upgrades.methods.FreeMethod

@@ -56,7 +56,7 @@ class GuerillaType : ExoticType("GUERILLA", colorOverlay = Color(140, 200, 125, 
         return member.hullSpec.suppliesToRecover
     }
 
-    fun getThresholdBasedBonus(maxBonus: Float, value: Float, threshold: Float): Float {
+    private fun getThresholdBasedBonus(maxBonus: Float, value: Float, threshold: Float): Float {
         val divisor = threshold + (value.coerceAtLeast(threshold) - threshold).pow(1.4f)
         val thresholdRatio = threshold / divisor
         return maxBonus * thresholdRatio
@@ -86,6 +86,6 @@ class GuerillaType : ExoticType("GUERILLA", colorOverlay = Color(140, 200, 125, 
     }
 
     companion object {
-        val GUERILLA_CACHE_KEY = "EXOTICA_GUERILLA_DP_KEY"
+        const val GUERILLA_CACHE_KEY = "EXOTICA_GUERILLA_DP_KEY"
     }
 }

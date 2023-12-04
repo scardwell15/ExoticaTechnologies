@@ -1,5 +1,9 @@
 {
   "exoticatechnologies": {
+    #Obviously changing this has crazy and wild balance implications. If you're in this file, I'd hope that you already
+    #know that.
+    "maxExotics": 2,
+
     "exotic_HackedMissileForge_weaponBlacklist": [
       #"atropos_single"
     ],

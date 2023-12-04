@@ -3,3 +3,4 @@ Install,exoticatechnologies.ui.impl.shop.exotics.methods.InstallMethod
 Chip,exoticatechnologies.ui.impl.shop.exotics.methods.ChipMethod
 Recover,exoticatechnologies.ui.impl.shop.exotics.methods.RecoverMethod
 Destroy,exoticatechnologies.ui.impl.shop.exotics.methods.DestroyMethod
+Free,exoticatechnologies.ui.impl.shop.exotics.methods.FreeMethod

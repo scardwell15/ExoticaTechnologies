@@ -83,7 +83,7 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
     }
 
     private fun shouldAffectWeapon(weapon: WeaponAPI): Boolean {
-        return !(weapon.slot == null || weapon.slot.isSystemSlot)
+        return weapon.slot != null
                 && (weapon.spec.mountType == WeaponAPI.WeaponType.MISSILE || weapon.type == WeaponAPI.WeaponType.MISSILE || weapon.spec.type == WeaponAPI.WeaponType.MISSILE || weapon.slot.weaponType == WeaponAPI.WeaponType.MISSILE)
                 && !weapon.spec.hasTag(Tags.NO_RELOAD)
                 && weapon.spec.maxAmmo > 1

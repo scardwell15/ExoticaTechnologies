@@ -74,23 +74,33 @@ public class FleetMemberUtils {
         for(FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             if(member.isFighterWing()) continue;
 
-            if(member.getStats() == stats) {
+            MutableShipStatsAPI memberStats = member.getStats();
+            if(memberStats == stats) {
                 return member;
-            } else if (stats.getEntity() != null && member.getStats().getEntity() == stats.getEntity()) {
+            } else if (stats.getEntity() != null && memberStats.getEntity() == stats.getEntity()) {
                 return member;
-            } else if (stats.getFleetMember() != null && (stats.getFleetMember() == member || member.getStats().getFleetMember() == stats.getFleetMember())) {
+            } else if (stats.getFleetMember() != null && stats.getFleetMember() == member) {
                 return member;
             } else if (stats.getVariant() != null && member.getVariant() == stats.getVariant()) {
                 return member;
-            } else if (member.getVariant().getStatsForOpCosts() != null) {
-                if (member.getVariant().getStatsForOpCosts() == stats) {
-                    return member;
-                } else if (stats.getEntity() != null && member.getVariant().getStatsForOpCosts().getEntity() == stats.getEntity()) {
-                    return member;
-                } else if (stats.getFleetMember() != null && member.getVariant().getStatsForOpCosts().getFleetMember() == stats.getFleetMember()) {
-                    return member;
-                } else if (stats.getVariant() != null && member.getVariant().getStatsForOpCosts().getVariant() == stats.getVariant()) {
-                    return member;
+            } else {
+                MutableShipStatsAPI opStats = null;
+                try {
+                    opStats = member.getVariant().getStatsForOpCosts();
+                } catch (Throwable ex) {
+                    // do nothing
+                }
+
+                if (opStats != null) {
+                    if (opStats == stats) {
+                        return member;
+                    } else if (stats.getEntity() != null && opStats.getEntity() == stats.getEntity()) {
+                        return member;
+                    } else if (stats.getFleetMember() != null && opStats.getFleetMember() == stats.getFleetMember()) {
+                        return member;
+                    } else if (stats.getVariant() != null && opStats.getVariant() == stats.getVariant()) {
+                        return member;
+                    }
                 }
             }
 
@@ -98,12 +108,18 @@ public class FleetMemberUtils {
             for (String moduleVariantId : shipVariant.getStationModules().keySet()) {
                 ShipVariantAPI moduleVariant = shipVariant.getModuleVariant(moduleVariantId);
 
-                if (moduleVariant.getStatsForOpCosts() != null) {
-                    if (moduleVariant.getStatsForOpCosts() == stats) {
+                MutableShipStatsAPI moduleStats;
+                try {
+                    moduleStats = moduleVariant.getStatsForOpCosts();
+                } catch (Throwable ex) {
+                    continue;
+                }
+                if (moduleStats != null) {
+                    if (moduleStats == stats) {
                         return member;
-                    } else if (stats.getEntity() != null && stats.getEntity() == moduleVariant.getStatsForOpCosts().getEntity()) {
+                    } else if (stats.getEntity() != null && stats.getEntity() == moduleStats.getEntity()) {
                         return member;
-                    } else if (stats.getFleetMember() != null && moduleVariant.getStatsForOpCosts().getFleetMember() == stats.getFleetMember()) {
+                    } else if (stats.getFleetMember() != null &&moduleStats.getFleetMember() == stats.getFleetMember()) {
                         return member;
                     }
                 }

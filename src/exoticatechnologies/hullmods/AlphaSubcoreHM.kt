@@ -61,7 +61,7 @@ class AlphaSubcoreHM : BaseHullMod() {
         override fun getFighterOPCost(stats: MutableShipStatsAPI, fighter: FighterWingSpecAPI, currCost: Int): Int {
             if (fighter.isBomber)
                 return currCost - BOMBER_REDUCTION
-            return FIGHTER_REDUCTION
+            return currCost - FIGHTER_REDUCTION
         }
     }
 

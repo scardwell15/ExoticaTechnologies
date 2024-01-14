@@ -32,7 +32,7 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
         val panel = holdingPanel.createCustomPanel(panelWidth, panelHeight, this)
 
 
-        val listPlugin = UpgradeListUIPlugin(panel, member!!, variant!!, market)
+        val listPlugin = UpgradeListUIPlugin(panel, member!!, variant!!, mods!!, market)
         listPlugin.panelHeight = panelHeight - 22f
         listPanel = listPlugin.layoutPanels(UpgradesHandler.UPGRADES_LIST)
 
@@ -59,7 +59,7 @@ class UpgradeShopUIPlugin : ShopMenuUIPlugin() {
 
         activeUpgrade = upgrade
         if (activeUpgrade != null) {
-            val upgradePlugin = UpgradePanelUIPlugin(innerPanel!!, upgrade!!, member!!, variant!!, market)
+            val upgradePlugin = UpgradePanelUIPlugin(innerPanel!!, upgrade!!, member!!, variant!!, mods!!, market)
             upgradePlugin.panelWidth = innerPanel!!.position.width
             upgradePlugin.panelHeight = innerPanel!!.position.height
             activePanel = upgradePlugin.layoutPanels()

@@ -7,7 +7,6 @@ import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
-import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
@@ -17,7 +16,6 @@ import exoticatechnologies.ui.StringTooltip
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
 import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.getMods
 import java.awt.Color
 
 class UpgradeMethodsUIPlugin(
@@ -25,6 +23,7 @@ class UpgradeMethodsUIPlugin(
     var upgrade: Upgrade,
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
+    var mods: ShipModifications,
     var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -44,9 +43,7 @@ class UpgradeMethodsUIPlugin(
     }
 
     fun createTooltip() {
-        val mods = ShipModLoader.get(member, variant)!!
         oldValue = mods.getValue()
-
 
         val tooltip = mainPanel!!.createUIElement(panelWidth, panelHeight, false)
         methodsTooltip = tooltip

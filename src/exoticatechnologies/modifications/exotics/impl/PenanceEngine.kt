@@ -39,7 +39,7 @@ class PenanceEngine(key: String, settingsObj: JSONObject) :
         get() = Global.getSector().getFaction(Factions.LUDDIC_PATH).color
 
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
-        return (Utilities.hasExoticChip(member.fleetData.fleet.cargo, key)
+        return (Utilities.hasExoticChip(Global.getSector().playerFleet.cargo, key)
                 || Utilities.hasExoticChip(Misc.getStorageCargo(market), key))
     }
 

@@ -8,7 +8,8 @@ import exoticatechnologies.util.StringUtils
 import org.magiclib.kotlin.setAlpha
 import java.awt.Color
 
-class PureType : ExoticType("PURE", colorOverlay = Color(255, 200, 125, 255), sprite = "graphics/icons/overlays/pure.png") {
+class PureType :
+    ExoticType("PURE", colorOverlay = Color(255, 200, 125, 255), sprite = "graphics/icons/overlays/pure.png") {
     override fun getPositiveMult(member: FleetMemberAPI, mods: ShipModifications): Float {
         return 2.5f - 1.5f * getBandwidthRatio(member, mods) - 0.75f * getExoticRatio(member, mods)
     }
@@ -18,11 +19,11 @@ class PureType : ExoticType("PURE", colorOverlay = Color(255, 200, 125, 255), sp
     }
 
     private fun getBandwidthRatio(member: FleetMemberAPI, mods: ShipModifications): Float {
-        return ( (mods.getUsedBandwidth() / mods.getBaseBandwidth(member)) ).coerceAtMost(1f)
+        return ((mods.getUsedBandwidth() / mods.getBandwidthWithExotics(member))).coerceIn(0f..1f)
     }
 
     private fun getExoticRatio(member: FleetMemberAPI, mods: ShipModifications): Float {
-        return ( (mods.getExoticSet().size - 1f) / (mods.getMaxExotics(member) - 1f) ).coerceAtMost(1f)
+        return ((mods.getExoticSet().size - 1f) / (mods.getMaxExotics(member) - 1f)).coerceIn(0f..1f)
     }
 
     override fun getChanceMult(context: ShipModFactory.GenerationContext): Float {

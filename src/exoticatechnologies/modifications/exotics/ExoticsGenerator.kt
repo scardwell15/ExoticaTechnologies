@@ -45,6 +45,8 @@ object ExoticsGenerator {
             val exoticPicker = getExoticPicker(random, allowedExotics, member, mods)
             while (!exoticPicker.isEmpty && exotics.getCount(member) < config.getMaxExotics(member)) {
                 val exotic = exoticPicker.pick(random)!!
+                if (member.shipName == null && !exotic.shouldAffectModule(null, null)) continue
+
                 if (exotic.canApply(member, mods)) {
                     val roll = random.nextFloat()
                     val factionExoticWeight = allowedExotics[exotic]!!

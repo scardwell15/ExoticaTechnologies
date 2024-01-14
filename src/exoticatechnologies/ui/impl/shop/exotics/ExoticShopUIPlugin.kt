@@ -31,7 +31,7 @@ class ExoticShopUIPlugin: ShopMenuUIPlugin() {
         val tooltip = holdingPanel.createUIElement(panelWidth, panelHeight, false)
         val panel = holdingPanel.createCustomPanel(panelWidth, panelHeight, this)
 
-        val listPlugin = ExoticListUIPlugin(panel, member!!, variant!!, market)
+        val listPlugin = ExoticListUIPlugin(panel, member!!, variant!!, mods!!, market)
         listPlugin.panelHeight = panelHeight - 22f
         listPanel = listPlugin.layoutPanels(ExoticsHandler.EXOTIC_LIST)
 
@@ -61,7 +61,7 @@ class ExoticShopUIPlugin: ShopMenuUIPlugin() {
 
         activeExotic = exotic
         if (activeExotic != null) {
-            val exoticPlugin = ExoticPanelUIPlugin(innerPanel!!, exotic!!, member!!, variant!!, market)
+            val exoticPlugin = ExoticPanelUIPlugin(innerPanel!!, exotic!!, member!!, variant!!, mods!!, market)
             exoticPlugin.panelWidth = innerPanel!!.position.width
             exoticPlugin.panelHeight = innerPanel!!.position.height
             activePanel = exoticPlugin.layoutPanels()

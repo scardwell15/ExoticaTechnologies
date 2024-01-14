@@ -3,8 +3,11 @@ package exoticatechnologies.util
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.loading.VariantSource
+import com.fs.starfarer.api.ui.UIComponentAPI
+import com.fs.starfarer.api.ui.UIPanelAPI
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModifications
+import exoticatechnologies.util.reflect.ReflectionUtils
 
 fun FleetMemberAPI.getMods(): ShipModifications = ShipModFactory.generateForFleetMember(this)
 
@@ -37,4 +40,16 @@ fun ShipVariantAPI.fixModuleVariants() {
 
         newModuleVariant.fixModuleVariants()
     }
+}
+
+fun UIPanelAPI.getChildrenCopy() : List<UIComponentAPI> {
+    return ReflectionUtils.invoke("getChildrenCopy", this) as List<UIComponentAPI>
+}
+
+fun UIPanelAPI.getChildrenNonCopy() : List<UIComponentAPI>  {
+    return ReflectionUtils.invoke("getChildrenNonCopy", this) as List<UIComponentAPI>
+}
+
+fun UIComponentAPI.getParent() : UIPanelAPI  {
+    return ReflectionUtils.invoke("getParent", this) as UIPanelAPI
 }

@@ -1,5 +1,6 @@
 package exoticatechnologies.ui.impl.shop.exotics
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.graphics.SpriteAPI
@@ -7,7 +8,7 @@ import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.modifications.exotics.types.ExoticType
@@ -17,7 +18,6 @@ import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.RenderUtils
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
-import exoticatechnologies.util.getMods
 import org.magiclib.kotlin.setAlpha
 import java.awt.Color
 
@@ -25,6 +25,7 @@ class ExoticItemUIPlugin(
     item: Exotic,
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
+    var mods: ShipModifications,
     private val listPanel: ListUIPanelPlugin<Exotic>
 ) : ListItemUIPanelPlugin<Exotic>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
@@ -45,7 +46,6 @@ class ExoticItemUIPlugin(
     var itemInfo: TooltipMakerAPI? = null
 
     override fun advance(amount: Float) {
-        val mods = ShipModLoader.get(member, variant)!!
         if (mods.hasExotic(item) != installed) {
             if (mods.hasExotic(item) || selected) {
                 exoticSprite?.color = RenderUtils.INSTALLED_COLOR
@@ -84,7 +84,6 @@ class ExoticItemUIPlugin(
             panel!!.removeComponent(itemInfo)
         }
 
-        val mods = ShipModLoader.get(member, variant)!!
         installed = mods.hasExotic(item)
         val exoticData = mods.getExoticData(item) ?: ExoticData(item)
 
@@ -126,22 +125,22 @@ class ExoticItemUIPlugin(
                 typeText = null
             }
         } else {
-            val quantity = Utilities.countChips(member.fleetData.fleet.cargo, item.key)
+            val quantity = Utilities.countChips(Global.getSector().playerFleet.cargo, item.key)
 
             if (quantity > 0) {
                 var newText = StringUtils.getTranslation("CommonOptions", "InStockCount")
                     .format("count", quantity)
                     .toStringNoFormats()
 
-                val types = Utilities.getTypesInCargo(member.fleetData.fleet.cargo, item.key)
-                    .filter { it != ExoticType.NORMAL}
+                val types = Utilities.getTypesInCargo(Global.getSector().playerFleet.cargo, item.key)
+                    .filter { it != ExoticType.NORMAL }
 
                 if (types.isNotEmpty()) {
                     val typeLetters = types.map { it.name.substring(0, 1) }.toMutableList()
                     val typeColors = types.map { it.colorOverlay.setAlpha(255) }.toMutableList()
                     typeColors.add(0, Color(150, 150, 150))
 
-                    val newLabelText = newText + " | " + typeLetters.joinToString ( separator = " " )
+                    val newLabelText = newText + " | " + typeLetters.joinToString(separator = " ")
 
                     typeLetters.add(0, newText)
 
@@ -159,7 +158,7 @@ class ExoticItemUIPlugin(
 
         UIUtils.autoResize(itemInfo!!)
 
-        rowPanel.addUIElement(itemInfo).rightOfMid(itemImage,9f)
+        rowPanel.addUIElement(itemInfo).rightOfMid(itemImage, 9f)
     }
 
     override fun processInput(events: List<InputEventAPI>) {

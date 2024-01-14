@@ -8,7 +8,6 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.LabelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
-import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.ui.SpritePanelPlugin
@@ -23,6 +22,7 @@ class UpgradeListItemUIPlugin(
     item: Upgrade,
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
+    var mods: ShipModifications,
     private val listPanel: ListUIPanelPlugin<Upgrade>
 ) : ListItemUIPanelPlugin<Upgrade>(item) {
     override var bgColor: Color = Color(200, 200, 200, 0)
@@ -40,17 +40,14 @@ class UpgradeListItemUIPlugin(
     var lastValue = 0f
 
     override fun advance(amount: Float) {
-        val mods = ShipModLoader.get(member, variant)!!
-
         val newValue = mods.getValue()
         if (newValue != lastValue) {
             lastValue = newValue
-            valueUpdated(mods)
+            valueUpdated()
         }
     }
 
     override fun layoutPanel(tooltip: TooltipMakerAPI): CustomPanelAPI {
-        val mods = ShipModLoader.get(member, variant)!!
         val rowPanel: CustomPanelAPI =
             listPanel.parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         val imagePanel = rowPanel.createCustomPanel(iconSize, panelHeight, SpritePanelPlugin(upgradeSprite))
@@ -82,14 +79,14 @@ class UpgradeListItemUIPlugin(
         tooltip.addCustom(rowPanel, opad)
 
         lastValue = mods.getValue()
-        valueUpdated(mods)
+        valueUpdated()
 
         panel = rowPanel
 
         return panel!!
     }
 
-    fun valueUpdated(mods: ShipModifications) {
+    private fun valueUpdated() {
         if (mods.hasUpgrade(item) || selected) {
             upgradeSprite.color = RenderUtils.INSTALLED_COLOR
         } else if (!item.canApply(member, mods)) {
@@ -114,7 +111,7 @@ class UpgradeListItemUIPlugin(
                 levelText!!.setHighlightColor(Color(200,100,100))
                 levelText!!.setHighlight(newText)
             } else {
-                val quantity = Utilities.countChips(member.fleetData.fleet.cargo, item.key)
+                val quantity = Utilities.countChips(Global.getSector().playerFleet.cargo, item.key)
 
                 if (quantity > 0) {
                     val newText = StringUtils.getTranslation("CommonOptions", "InStockCount")

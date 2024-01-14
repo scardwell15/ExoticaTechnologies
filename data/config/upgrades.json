@@ -484,14 +484,14 @@
     "tag": "drones",
     "color": [ 100, 100, 255 ],
     "hints": ["drones"],
-    "bandwidthPerLevel": 50,
+    "bandwidthPerLevel": 30,
     "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.WaspDefenseDrones",
     "resourceRatios": {
-      "volatiles": 100.0,
-      "heavy_machinery": 100.0,
-      "metals": 300.0,
-      "rare_metals": 100.0,
-      "supplies": 200.0
+      "volatiles": 75.0,
+      "heavy_machinery": 75.0,
+      "metals": 200.0,
+      "rare_metals": 75.0,
+      "supplies": 100.0
     }
   },
   "OverclockedFabricators": {
@@ -505,12 +505,26 @@
       { "id": "fighterRefitTime", "scalingEffect": 20, "startingLevel": 3 }
     ],
     "conditions": [
-      { "id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay." }
+      { "id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay.", "weight": 1.25 }
     ],
     "resourceRatios": {
       "heavy_machinery": 3.0,
       "metals": 2.0,
       "supplies": 2.0
+    }
+  },
+  "QuickJets": {
+    "name": "Quick Jets",
+    "color": [ 225, 100, 130 ],
+    "hints": ["speed"],
+    "bandwidthPerLevel": 30,
+    "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.QuickJets",
+    "resourceRatios": {
+      "volatiles": 150.0,
+      "heavy_machinery": 25.0,
+      "metals": 100.0,
+      "rare_metals": 25.0,
+      "supplies": 75.0
     }
   },
   "Kingslayer": {

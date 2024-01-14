@@ -1,5 +1,6 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
@@ -23,11 +24,11 @@ class InstallMethod : ExoticMethod {
         exotic: Exotic,
         market: MarketAPI?
     ): String {
-        val stack = Utilities.getSpecialStackWithData(member.fleetData.fleet.cargo, exotic.key)
+        val stack = Utilities.getSpecialStackWithData(Global.getSector().playerFleet.cargo, exotic.key)
         if (stack != null) {
             Utilities.takeItem(stack)
         } else {
-            exotic.removeItemsFromFleet(member.fleetData.fleet, member, market)
+            exotic.removeItemsFromFleet(Global.getSector().playerFleet, member, market)
         }
 
         mods.putExotic(ExoticData(exotic.key))
@@ -44,9 +45,9 @@ class InstallMethod : ExoticMethod {
                 && exotic.canApply(member, mods)
                 && ExoticMethodsUIPlugin.isUnderExoticLimit(member, mods)
                 && (exotic.canAfford(
-            member.fleetData.fleet,
+            Global.getSector().playerFleet,
             market
-        ) || Utilities.getSpecialStackWithData(member.fleetData.fleet.cargo, exotic.key) != null)
+        ) || Utilities.getSpecialStackWithData(Global.getSector().playerFleet.cargo, exotic.key) != null)
     }
 
     override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean {
@@ -55,7 +56,7 @@ class InstallMethod : ExoticMethod {
             mods,
             exotic,
             market
-        ) || Utilities.getSpecialStackWithData(member.fleetData.fleet.cargo, exotic.key) != null
+        ) || Utilities.getSpecialStackWithData(Global.getSector().playerFleet.cargo, exotic.key) != null
     }
 
     override fun getButtonText(exotic: Exotic): String {

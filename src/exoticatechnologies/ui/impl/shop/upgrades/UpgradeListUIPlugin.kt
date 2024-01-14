@@ -5,11 +5,10 @@ import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
-import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.ui.lists.filtered.FilteredListPanelPlugin
 import exoticatechnologies.util.StringUtils
 import java.awt.Color
@@ -18,14 +17,14 @@ class UpgradeListUIPlugin(
     parentPanel: CustomPanelAPI,
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
+    var mods: ShipModifications,
     var market: MarketAPI?
 ): FilteredListPanelPlugin<Upgrade>(parentPanel) {
     override val listHeader = StringUtils.getTranslation("UpgradesDialog", "OpenUpgradeOptions").toString()
     override var bgColor: Color = Color(255, 70, 255, 0)
-    private var modsValue: Float = ShipModLoader.get(member, variant)!!.getValue()
+    private var modsValue: Float = mods.getValue()
 
     override fun advancePanel(amount: Float) {
-        val mods = ShipModLoader.get(member, variant)!!
         val newValue = mods.getValue()
         if (modsValue != newValue) {
             modsValue = newValue
@@ -34,7 +33,7 @@ class UpgradeListUIPlugin(
     }
 
     override fun createPanelForItem(tooltip: TooltipMakerAPI, item: Upgrade): ListItemUIPanelPlugin<Upgrade> {
-        val rowPlugin = UpgradeListItemUIPlugin(item, member, variant, this)
+        val rowPlugin = UpgradeListItemUIPlugin(item, member, variant, mods, this)
         rowPlugin.panelWidth = panelWidth
         rowPlugin.panelHeight = rowHeight
         rowPlugin.layoutPanel(tooltip)
@@ -42,7 +41,6 @@ class UpgradeListUIPlugin(
     }
 
     override fun sortMembers(items: List<Upgrade>): List<Upgrade> {
-        val mods = ShipModLoader.get(member, variant)!!
         return items.sortedWith { a, b ->
             if (mods.hasUpgrade(a))
                 if (mods.hasUpgrade(b))
@@ -67,11 +65,11 @@ class UpgradeListUIPlugin(
     override fun shouldMakePanelForItem(item: Upgrade): Boolean {
         if (!super.shouldMakePanelForItem(item)) return false
 
-        val mods = ShipModLoader.get(member, variant)!!
-
         if (mods.hasUpgrade(item)) {
             return true
         }
+
+        if (member.shipName == null && !item.shouldAffectModule(null, null)) return false
 
         if (market == null) {
             return false

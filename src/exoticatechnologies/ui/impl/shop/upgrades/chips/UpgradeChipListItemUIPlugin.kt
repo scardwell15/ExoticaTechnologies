@@ -7,7 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.util.Misc
-import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
@@ -15,17 +15,16 @@ import exoticatechnologies.ui.impl.shop.chips.ChipListItemUIPlugin
 import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
 import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.getMods
 
 class UpgradeChipListItemUIPlugin(
     item: CargoStackAPI,
     member: FleetMemberAPI,
     val variant: ShipVariantAPI,
+    val mods: ShipModifications,
     listPanel: ListUIPanelPlugin<CargoStackAPI>
 ) : ChipListItemUIPlugin(item, member, listPanel) {
 
     override fun showChip(rowPanel: CustomPanelAPI) {
-        val mods = ShipModLoader.get(member, variant)!!
         val upgrade = getUpgrade()
 
         val itemImage = rowPanel.createUIElement(iconSize, iconSize, false)

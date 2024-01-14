@@ -87,7 +87,8 @@
 			"HelDrives": "graphics/icons/upgrades/heldrives.png",
 			"WaspDefenseDrones": "graphics/icons/upgrades/waspdefensedrones.png",
 			"OversizedMagazines": "graphics/icons/upgrades/oversizedmagazines.png",
-			"Kingslayer": "graphics/icons/upgrades/kingslayer.png"
+			"Kingslayer": "graphics/icons/upgrades/kingslayer.png",
+			"QuickJets": "graphics/icons/upgrades/quickjets.png"
 		},
 		"overlays": {
 			"Corrupted": "graphics/icons/overlays/corrupted.png",

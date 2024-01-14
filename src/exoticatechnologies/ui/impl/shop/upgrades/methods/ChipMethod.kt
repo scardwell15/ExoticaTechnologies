@@ -44,12 +44,12 @@ class ChipMethod : DefaultUpgradeMethod() {
             return Global.getSector().playerFleet.cargo.credits.get() >= creditCost
         }
 
-        return (UpgradeChipSearcher().getChips(member.fleetData.fleet.cargo, member, mods, upgrade).isNotEmpty()
+        return (UpgradeChipSearcher().getChips(Global.getSector().playerFleet.cargo, member, mods, upgrade).isNotEmpty()
                 && super.canUse(member, mods, upgrade, market))
     }
 
     override fun canShow(member: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade, market: MarketAPI?): Boolean {
-        return Utilities.hasUpgradeChip(member.fleetData.fleet.cargo, upgrade.key)
+        return Utilities.hasUpgradeChip(Global.getSector().playerFleet.cargo, upgrade.key)
     }
 
     override fun apply(
@@ -109,7 +109,7 @@ class ChipMethod : DefaultUpgradeMethod() {
          * @return the stack
          */
         fun getDesiredChip(fm: FleetMemberAPI, mods: ShipModifications, upgrade: Upgrade): CargoStackAPI? {
-            return Utilities.getUpgradeChip(fm.fleetData.fleet.cargo, fm, mods, upgrade)
+            return Utilities.getUpgradeChip(Global.getSector().playerFleet.cargo, fm, mods, upgrade)
         }
 
         /**

@@ -16,9 +16,7 @@ import exoticatechnologies.util.StringUtils
 
 class AlphaSubcoreHM : BaseHullMod() {
     override fun applyEffectsBeforeShipCreation(hullSize: HullSize, stats: MutableShipStatsAPI, id: String) {
-        if(stats.variant.hullMods
-            .any { AlphaSubcore.BLOCKED_HULLMODS.contains(it) }
-            ) {
+        if(stats.variant.hullMods.any { AlphaSubcore.BLOCKED_HULLMODS.contains(it) }) {
             return
         }
 

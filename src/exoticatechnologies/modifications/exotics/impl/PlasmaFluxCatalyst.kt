@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
+import exoticatechnologies.util.FleetMemberUtils
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
@@ -51,15 +52,15 @@ class PlasmaFluxCatalyst(key: String, settings: JSONObject) : Exotic(key, settin
     }
 
     fun getMaxCaps(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Int {
-        return member.fleetCommander.stats.maxCapacitorsBonus.computeEffective(
-            MAX_FLUX_EQUIPMENT[member.hullSpec.hullSize]!!.toFloat() / getNegativeMult(member, mods, exoticData)
-        ).toInt()
+        return ((FleetMemberUtils.getFleetCommander(member)?.stats?.maxCapacitorsBonus?.computeEffective(MAX_FLUX_EQUIPMENT[member.hullSpec.hullSize]!!.toFloat())
+            ?: MAX_FLUX_EQUIPMENT[member.hullSpec.hullSize]!!)
+            .toFloat() / getNegativeMult(member, mods, exoticData)).toInt()
     }
 
     fun getMaxVents(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Int {
-        return member.fleetCommander.stats.maxVentsBonus.computeEffective(
-            MAX_FLUX_EQUIPMENT[member.hullSpec.hullSize]!!.toFloat() / getNegativeMult(member, mods, exoticData)
-        ).toInt()
+        return ((FleetMemberUtils.getFleetCommander(member)?.stats?.maxVentsBonus?.computeEffective(MAX_FLUX_EQUIPMENT[member.hullSpec.hullSize]!!.toFloat())
+        ?: MAX_FLUX_EQUIPMENT[member.hullSpec.hullSize]!!)
+        .toFloat() / getNegativeMult(member, mods, exoticData)).toInt()
     }
 
     override fun applyExoticToStats(
@@ -69,7 +70,7 @@ class PlasmaFluxCatalyst(key: String, settings: JSONObject) : Exotic(key, settin
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        if (member.fleetCommander == null) {
+        if (FleetMemberUtils.getFleetCommander(member) == null) {
             return
         }
         if (isNPC(member)) {

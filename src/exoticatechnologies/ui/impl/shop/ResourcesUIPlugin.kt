@@ -10,7 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
-import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.bandwidth.BandwidthUtil
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
@@ -21,8 +21,9 @@ import kotlin.math.absoluteValue
 abstract class ResourcesUIPlugin(
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
+    var mods: ShipModifications,
     val market: MarketAPI?
-): InteractiveUIPanelPlugin() {
+) : InteractiveUIPanelPlugin() {
     abstract var mainPanel: CustomPanelAPI?
 
     fun displayResourceCosts(resourceCosts: MutableMap<String, Float>): TooltipMakerAPI {
@@ -54,7 +55,6 @@ abstract class ResourcesUIPlugin(
     }
 
     fun addBandwidthString(tooltip: TooltipMakerAPI, bandwidth: Float) {
-        val mods = ShipModLoader.get(member, variant)!!
         val used = mods.getUsedBandwidth()
 
         if (bandwidth != 0f) {
@@ -99,7 +99,7 @@ abstract class ResourcesUIPlugin(
 
     fun addCreditCost(tooltip: TooltipMakerAPI, cost: Float) {
         val name: String = Global.getSector().economy.getCommoditySpec(Commodities.CREDITS).name
-        val credits: Float = member.fleetData.fleet.cargo.credits.get()
+        val credits: Float = Global.getSector().playerFleet.cargo.credits.get()
 
         if (cost > 0) {
             StringUtils.getTranslation("UpgradesDialog", "ResourceTextWithCost")

@@ -2,26 +2,23 @@ package exoticatechnologies.ui.impl.shop.exotics
 
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.modifications.exotics.types.ExoticTypeTooltip
-import exoticatechnologies.ui.ButtonHandler
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.getMods
 import org.magiclib.kotlin.setAlpha
 
 class ExoticDescriptionUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     var member: FleetMemberAPI,
-    var variant: ShipVariantAPI
+    var variant: ShipVariantAPI,
+    var mods: ShipModifications
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
@@ -38,13 +35,11 @@ class ExoticDescriptionUIPlugin(
     }
 
     fun resetDescription() {
-        val mods = ShipModLoader.get(member, variant)!!
         val exoticData = mods.getExoticData(exotic) ?: ExoticData(exotic)
-
-        resetDescription(mods, exoticData)
+        resetDescription(exoticData)
     }
 
-    fun resetDescription(mods: ShipModifications = ShipModLoader.get(member, variant)!!, exoticData: ExoticData) {
+    fun resetDescription(exoticData: ExoticData) {
         if (descriptionTooltip != null) {
             mainPanel!!.removeComponent(descriptionTooltip)
         }

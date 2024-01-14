@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.exotics.impl
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.CombatEntityAPI
@@ -26,7 +27,7 @@ import java.awt.Color
 class ReactiveDamperField(key: String, settings: JSONObject) : Exotic(key, settings) {
     override var color = Color(200, 60, 20)
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
-        return (Utilities.hasExoticChip(member.fleetData.fleet.cargo, key)
+        return (Utilities.hasExoticChip(Global.getSector().playerFleet.cargo, key)
                 || Utilities.hasExoticChip(Misc.getStorageCargo(market), key))
     }
 

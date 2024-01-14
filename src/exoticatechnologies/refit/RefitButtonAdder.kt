@@ -61,6 +61,13 @@ class RefitButtonAdder : EveryFrameScript {
 
     override fun advance(amount: Float) {
         if (Global.getSector().campaignUI.currentCoreTab != CoreUITabId.REFIT) {
+            refitPanel = null
+            shipDisplay = null
+            modWidget = null
+            openButtonPanel = null
+            closeButtonPanel = null
+            member = null
+            variant = null
             return
         }
 
@@ -91,7 +98,7 @@ class RefitButtonAdder : EveryFrameScript {
                     if (child3 is UIPanelAPI) {
                         refitPanel = child3
                         member = getMember()
-                        if (member == null || member?.shipName == null) //shipName check catches modules
+                        if (member == null) //shipName check catches modules
                         {
                             removeExoticaButton()
                             return
@@ -148,7 +155,6 @@ class RefitButtonAdder : EveryFrameScript {
                 buildButton.position.height
             ).apply {
                 enableTransparency = true
-
             }
 
             openElement.setParaFont(Fonts.ORBITRON_20AA)

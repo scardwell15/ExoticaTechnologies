@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipListItemUIPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
@@ -14,6 +15,7 @@ class ExoticChipListItemUIPlugin(
     item: CargoStackAPI,
     member: FleetMemberAPI,
     val variant: ShipVariantAPI,
+    val mods: ShipModifications,
     listPanel: ListUIPanelPlugin<CargoStackAPI>
 ) : ChipListItemUIPlugin(item, member, listPanel) {
 

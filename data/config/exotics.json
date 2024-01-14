@@ -1,9 +1,12 @@
 {
   "SpooledFeeders": {
-      "name": "Spooled Feeders",
-      "tag": "weaponFeeders",
-      "hints": ["weapons"],
-      "exoticClass": "exoticatechnologies.modifications.exotics.impl.SpooledFeeders"
+    "name": "Spooled Feeders",
+    "tag": "weaponFeeders",
+    "hints": [ "weapons" ],
+    "exoticClass": "exoticatechnologies.modifications.exotics.impl.SpooledFeeders",
+    "conditions": [
+      { "id": "hullmods", "operator": "in", "expected": "safetyoverrides", "weightOnly":true, "weight": 2 }
+    ]
   },
   "FullMetalSalvo": {
     "name": "Full Metal Salvo",

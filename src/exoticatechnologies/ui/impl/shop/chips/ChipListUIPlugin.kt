@@ -4,9 +4,7 @@ import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
-import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
 abstract class ChipListUIPlugin(parentPanel: CustomPanelAPI,

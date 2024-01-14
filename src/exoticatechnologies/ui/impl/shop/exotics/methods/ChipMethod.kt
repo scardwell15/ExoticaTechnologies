@@ -1,5 +1,6 @@
 package exoticatechnologies.ui.impl.shop.exotics.methods
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
@@ -43,7 +44,7 @@ class ChipMethod : ExoticMethod {
         return !mods.hasExotic(exotic)
                 && exotic.canApply(member, mods)
                 && ExoticMethodsUIPlugin.isUnderExoticLimit(member, mods)
-                && (Utilities.hasExoticChip(member.fleetData.fleet.cargo, exotic.key))
+                && (Utilities.hasExoticChip(Global.getSector().playerFleet.cargo, exotic.key))
     }
 
     override fun canShow(member: FleetMemberAPI, mods: ShipModifications, exotic: Exotic, market: MarketAPI?): Boolean {
@@ -67,7 +68,7 @@ class ChipMethod : ExoticMethod {
     ): Map<String, Float>? {
         if (hovered) {
             val resourceCosts: MutableMap<String, Float>
-            val stacks: List<CargoStackAPI> = ExoticMethodsUIPlugin.getExoticChips(member.fleetData.fleet.cargo, member, mods, exotic)
+            val stacks: List<CargoStackAPI> = ExoticMethodsUIPlugin.getExoticChips(Global.getSector().playerFleet.cargo, member, mods, exotic)
             if (stacks.isNotEmpty()) {
                 resourceCosts = mutableMapOf()
                 resourceCosts[Utilities.formatSpecialItem(exotic.newSpecialItemData)] = 1f

@@ -59,7 +59,8 @@
 		"UpgradeHeader": "Upgrades",
 		"NotableShipsHeader": "Notable ships",
 		"ModsMissingText": "Upon a closer inspection by your intelligence officer, a small anomaly within the search results indicates to both of you now that =the ship has no Exotica technologies= installed. They aren't able to give a clear explanation why this was missed, only mentioning that a faint humming may have distracted them.",
-		"DebrisFieldScanOption": "Scan the debris field for Exotica technologies."
+		"FleetScanOption": "Scan the fleet for Exotica technologies",
+		"DebrisFieldScanOption": "Scan the debris field for Exotica technologies"
 	},
 	"MarketMenu": {
 		"Title": "Exotica Chip Market",
@@ -360,6 +361,10 @@
 		"italics": "Cut them down to size.",
 		"description": "This ship poses an extreme threat to cruisers and capital ships.",
 		"tooltip": "*+${damageToCruisers}%%* damage to cruisers. *+${damageToCapitals}%%* damage to capital ships."
+	},
+	"QuickJets": {
+		"description": "Installed auxiliary jets can be activated to provide an extreme boost to maneuverability for even the most sluggish ships.",
+		"tooltip": "Adds an ability that makes a ship turn faster. This includes a flat bonus to turn speed, so even slow ships will benefit greatly."
 	},
 	"ExoticTypes": {
 		"TooltipText": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways.",

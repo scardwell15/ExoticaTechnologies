@@ -107,7 +107,7 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
         }
 
         override fun getBaseActiveDuration(): Float {
-            return 0.6f
+            return 0.8f
         }
 
         override fun getBaseOutDuration(): Float {
@@ -298,7 +298,7 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                 if (ship.engineController.isAcceleratingBackwards || ship.engineController.isDecelerating) {
                     boostScale *= 0.2f
                 }
-                stats.maxSpeed.modifyPercent(buffId, 150f * boostScale)
+                stats.maxSpeed.modifyPercent(buffId, 200f * boostScale)
 
                 val speed = ship.velocity.length()
                 if (speed <= 0.1f) {
@@ -310,7 +310,7 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                     }
 
                     ship.velocity.normalise()
-                    ship.velocity.scale(speed + amount * 3600f * boostScale)
+                    ship.velocity.scale(speed + amount * 4500f * boostScale)
                 }
             } else if (state == State.OUT) {
                 val speed = ship.velocity.length()
@@ -318,7 +318,7 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                     ship.velocity.set(VectorUtils.getDirectionalVector(ship.location, ship.velocity))
                 }
 
-                stats.maxSpeed.modifyFlat(buffId, (speed.coerceAtMost(200f) - amount * 3600f).coerceAtLeast(0f))
+                stats.maxSpeed.modifyFlat(buffId, (speed.coerceAtMost(200f) - amount * 4500f).coerceAtLeast(0f))
 
                 if (speed > ship.mutableStats.maxSpeed.modifiedValue) {
                     if (ship.velocity.equals(Misc.ZERO)) {
@@ -326,7 +326,7 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                     }
 
                     ship.velocity.normalise()
-                    ship.velocity.scale(speed - amount * 3600f)
+                    ship.velocity.scale(speed - amount * 4500f)
                 }
             }
 
@@ -353,14 +353,12 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
             return color
         }
 
-        override fun onStateSwitched(oldState: State) {
-            if (state == State.COOLDOWN) {
-                stats.maxSpeed.unmodify(buffId)
-                stats.maxTurnRate.unmodify(buffId)
-                stats.turnAcceleration.unmodify(buffId)
-                stats.acceleration.unmodify(buffId)
-                stats.deceleration.unmodify(buffId)
-            }
+        override fun onFinished() {
+            stats.maxSpeed.unmodify(buffId)
+            stats.maxTurnRate.unmodify(buffId)
+            stats.turnAcceleration.unmodify(buffId)
+            stats.acceleration.unmodify(buffId)
+            stats.deceleration.unmodify(buffId)
         }
     }
 

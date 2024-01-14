@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipListUIPlugin
@@ -16,7 +16,8 @@ import java.awt.Color
 class UpgradeChipListUIPlugin(
     parentPanel: CustomPanelAPI,
     member: FleetMemberAPI,
-    val variant: ShipVariantAPI
+    val variant: ShipVariantAPI,
+    val mods: ShipModifications
 ) : ChipListUIPlugin(parentPanel, member) {
     override val listHeader = StringUtils.getTranslation("UpgradesDialog", "UpgradeChipsHeader").toString()
     override var bgColor: Color = Color(255, 70, 255, 0)
@@ -25,7 +26,7 @@ class UpgradeChipListUIPlugin(
         tooltip: TooltipMakerAPI,
         item: CargoStackAPI
     ): ListItemUIPanelPlugin<CargoStackAPI> {
-        val rowPlugin = UpgradeChipListItemUIPlugin(item, member, variant, this)
+        val rowPlugin = UpgradeChipListItemUIPlugin(item, member, variant, mods, this)
         rowPlugin.panelWidth = panelWidth
         rowPlugin.panelHeight = rowHeight
         rowPlugin.layoutPanel(tooltip)
@@ -33,7 +34,6 @@ class UpgradeChipListUIPlugin(
     }
 
     override fun sortMembers(items: List<CargoStackAPI>): List<CargoStackAPI> {
-        val mods = ShipModLoader.get(member, variant)!!
         val usableBandwidth = mods.getUsableBandwidth(member)
         return items.sortedWith { stackA, stackB ->
             val a = getUpgrade(stackA)

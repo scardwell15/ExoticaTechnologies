@@ -26,7 +26,7 @@ class TierIIIDriveSystem(key: String, settings: JSONObject) : Exotic(key, settin
         return true
     }
 
-    fun getCargoToFuelPercent(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
+    private fun getCargoToFuelPercent(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
         return CARGO_TO_FUEL_PERCENT + (100 - CARGO_TO_FUEL_PERCENT) * (getNegativeMult(member, mods, exoticData) - 1f)
     }
 

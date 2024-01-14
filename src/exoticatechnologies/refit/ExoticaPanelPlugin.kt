@@ -7,14 +7,10 @@ import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.UIPanelAPI
 import com.fs.starfarer.api.util.Misc
-import exoticatechnologies.refit.CustomExoticaPanel
 import exoticatechnologies.util.MusicController
-import exoticatechnologies.util.RenderUtils
-import exoticatechnologies.util.StringUtils
 import org.lazywizard.lazylib.MathUtils
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.GL11
-import org.lwjgl.util.vector.Vector2f
 import java.awt.Color
 
 class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: FleetMemberAPI, private var buttonAdder: RefitButtonAdder) : CustomUIPanelPlugin {
@@ -133,7 +129,6 @@ class ExoticaPanelPlugin(private var parent: UIPanelAPI, private var member: Fle
 
     fun close() {
         MusicController.stopMusic()
-
         panel?.removeComponent(closeButtonPanel)
         parent.removeComponent(panel)
         buttonAdder.syncVariantIfNeeded()

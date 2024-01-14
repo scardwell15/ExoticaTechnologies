@@ -81,8 +81,9 @@ class ShipModUIPlugin(
 
     private fun showMember(member: FleetMemberAPI, variant: ShipVariantAPI): TooltipMakerAPI {
         val tooltip = innerPanel!!.createUIElement(panelWidth, panelHeight, false)
+        val mods = ShipModLoader.get(member, variant) ?: ShipModFactory.generateForFleetMember(member)
 
-        val rowPlugin = ShipHeaderUIPlugin(dialog, member, variant, innerPanel!!)
+        val rowPlugin = ShipHeaderUIPlugin(dialog, member, variant, mods, innerPanel!!)
         rowPlugin.panelWidth = panelWidth
         rowPlugin.panelHeight = max(panelHeight * 0.1f, Global.getSettings().screenHeight * 0.16f)
         shipHeaderPanel = rowPlugin.layoutPanel(tooltip)
@@ -110,6 +111,7 @@ class ShipModUIPlugin(
             if (plugin is ShopMenuUIPlugin) {
                 plugin.member = member
                 plugin.variant = variant
+                plugin.mods = mods
                 plugin.market = dialog?.interactionTarget?.market
             }
         }

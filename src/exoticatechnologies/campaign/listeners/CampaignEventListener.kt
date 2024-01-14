@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.EngagementResultAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.fleet.FleetMemberType
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin
+import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin.DerelictShipData
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl
 import com.fs.starfarer.api.impl.campaign.ids.Entities
@@ -17,12 +18,12 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets
 import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireAll
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial.PerShipData
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial.ShipRecoverySpecialData
 import com.fs.starfarer.api.impl.campaign.shared.SharedData
 import com.fs.starfarer.api.util.IntervalUtil
 import com.fs.starfarer.api.util.Misc
 import com.fs.starfarer.api.util.Pair
-import com.fs.starfarer.campaign.CampaignState
 import exoticatechnologies.ETModSettings
 import exoticatechnologies.campaign.market.MarketManager
 import exoticatechnologies.hullmods.ExoticaTechHM
@@ -37,6 +38,7 @@ import exoticatechnologies.util.Utilities
 import lombok.extern.log4j.Log4j
 import org.apache.log4j.Logger
 import kotlin.math.roundToInt
+
 
 @Log4j
 class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(permaRegister), EveryFrameScript,
@@ -55,13 +57,13 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
             allFleets
                 .filterNot { it == Global.getSector().playerFleet }
                 .forEach {
-                if (activeFleets.contains(it)) {
-                    return
+                    if (activeFleets.contains(it)) {
+                        return
+                    }
+                    dlog("Generating modifications for fleet.")
+                    activeFleets.add(it)
+                    applyExtraSystemsToFleet(it)
                 }
-                dlog("Generating modifications for fleet.")
-                activeFleets.add(it)
-                applyExtraSystemsToFleet(it)
-            }
 
             FireAll.fire(null, dialog, dialog.plugin.memoryMap, "GeneratedESForFleet")
         }
@@ -96,8 +98,8 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
                 return
             }
             val plugin = interactionTarget.customPlugin as DerelictShipEntityPlugin
-            val data = plugin.data
-            val shipData = data.ship
+            val data: DerelictShipData = plugin.data
+            val shipData: PerShipData = data.ship
 
             shipData.getVariant() ?: return
 
@@ -158,10 +160,6 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
         }
     }
 
-    fun checkInteractionDialog(dialog: InteractionDialogAPI = Global.getSector().campaignUI.currentInteractionDialog) {
-
-    }
-
     override fun reportFleetSpawned(fleet: CampaignFleetAPI) {
         if (fleet.isPlayerFleet) {
             return
@@ -214,8 +212,11 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
         }
 
         val potentialDrops = getDrops(result, npcMembers)
-        result.battle.getPrimary(result.battle.nonPlayerSide).memoryWithoutUpdate["\$exotica_drops", potentialDrops] =
-            0f
+        result.battle.getPrimary(result.battle.nonPlayerSide).memoryWithoutUpdate.set(
+            "\$exotica_drops",
+            potentialDrops,
+            1f
+        )
 
         val playerResult = if (result.didPlayerWin()) result.winnerResult else result.loserResult
         if (!ETModSettings.getBoolean(ETModSettings.SHIPS_KEEP_UPGRADES_ON_DEATH)) {
@@ -223,7 +224,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
             playerMembers.addAll(playerResult.disabled)
             playerMembers.addAll(playerResult.destroyed)
             for (member in playerMembers) {
-                val mods = ShipModLoader.get(member,  member.variant)
+                val mods = ShipModLoader.get(member, member.variant)
                 if (mods != null) {
                     ExoticaTechHM.removeFromFleetMember(member)
                     ShipModLoader.remove(member, member.variant)
@@ -263,6 +264,10 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
                     shipModificationMap.remove(fmId)
                 }
             }
+        }
+
+        if (!Global.getSector().hasTransientScript(DialogEFScript::class.java)) {
+            Global.getSector().addTransientScript(DialogEFScript())
         }
     }
 
@@ -305,6 +310,8 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
         private val submarketIdsToCheckForSpecialItems: MutableList<String> =
             mutableListOf(Submarkets.SUBMARKET_BLACK, Submarkets.SUBMARKET_OPEN, Submarkets.GENERIC_MILITARY)
         val activeFleets: MutableList<CampaignFleetAPI> = ArrayList()
+            get() = ArrayList(field).also { it.add(Global.getSector().playerFleet) }
+
         var mergeCheck = false
 
         private fun getDrops(

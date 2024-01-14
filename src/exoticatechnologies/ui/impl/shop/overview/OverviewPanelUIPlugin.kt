@@ -7,8 +7,6 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.CutStyle
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
-import exoticatechnologies.modifications.ShipModLoader
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.ExoticsHandler
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
 import exoticatechnologies.refit.RefitButtonAdder
@@ -57,8 +55,6 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
             innerPanel = null
         }
 
-        val mods: ShipModifications = ShipModLoader.get(member!!, variant!!)!!
-
         val panelPlugin = BaseUIPanelPlugin()
         panelPlugin.bgColor = Color(255, 0, 0, 0)
         innerPanel = panel.createCustomPanel(panelWidth, panelHeight, panelPlugin)
@@ -76,9 +72,9 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
         expandExoticsButton.position.rightOfMid(expandUpgradesButton, 3f)
         buttons[expandExoticsButton] = ExpandExoticsButtonHandler()
 
-        val upgradeRecoverPrice = mods.upgrades.map.keys
+        val upgradeRecoverPrice = mods!!.upgrades.map.keys
             .mapNotNull { UpgradesHandler.UPGRADES[it] }
-            .sumOf { RecoverMethod.getCreditCost(member!!, mods, it) }
+            .sumOf { RecoverMethod.getCreditCost(member!!, mods!!, it) }
             .toFloat()
 
         val upgradeRecoverPriceText = StringUtils.getTranslation("OverviewDialog", "ClearUpgrades")
@@ -91,7 +87,7 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
         clearUpgradesButton.isEnabled = upgradeRecoverPrice != 0f && market != null
         buttons[clearUpgradesButton] = ClearUpgradesButtonHandler()
 
-        val exoticRecoverPrice = mods.exotics.list.size
+        val exoticRecoverPrice = mods!!.exotics.list.size
         val exoticRecoverPriceText = StringUtils.getTranslation("OverviewDialog", "ClearExotics")
             .format("storyPoints", exoticRecoverPrice)
             .toStringNoFormats()
@@ -105,7 +101,7 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
         innerPanel!!.addUIElement(buttonTooltip).inTL(0f, 0f)
 
         val statsTooltip = innerPanel!!.createUIElement(panelWidth, panelHeight - 56f, false)
-        mods.populateTooltip(member!!, statsTooltip, panelWidth, panelHeight - 56f, expandUpgrades, expandExotics, false)
+        mods!!.populateTooltip(member!!, statsTooltip, panelWidth, panelHeight - 56f, expandUpgrades, expandExotics, false)
         innerPanel!!.addUIElement(statsTooltip).belowMid(buttonTooltip, -70f)
 
         panel.addComponent(innerPanel).inTL(0f, 0f)
@@ -132,11 +128,10 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
     inner class ClearUpgradesButtonHandler: ButtonHandler() {
         override fun checked() {
             this@OverviewPanelUIPlugin.apply {
-                val mods = ShipModLoader.get(member!!, variant!!)!!
-                mods.upgrades.map.keys
+                mods!!.upgrades.map.keys
                     .mapNotNull { UpgradesHandler.UPGRADES[it] }
                     .forEach {
-                        RecoverMethod().apply(member!!, variant!!, mods, it, market!!)
+                        RecoverMethod().apply(member!!, variant!!, mods!!, it, market!!)
                     }
 
                 if (Global.getSector().campaignUI.currentCoreTab == CoreUITabId.REFIT) {
@@ -151,14 +146,13 @@ class OverviewPanelUIPlugin: ShopMenuUIPlugin() {
     inner class ClearExoticsButtonHandler: ButtonHandler() {
         override fun checked() {
             this@OverviewPanelUIPlugin.apply {
-                val mods = ShipModLoader.get(member!!, variant!!)!!
-                mods.exotics.list
+                mods!!.exotics.list
                     .map { ExoticsHandler.EXOTICS[it] }
                     .forEach {
                         exoticatechnologies.ui.impl.shop.exotics.methods.RecoverMethod().apply(
                             member!!,
                             variant!!,
-                            mods,
+                            mods!!,
                             it!!,
                             market!!
                         )

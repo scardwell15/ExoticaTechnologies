@@ -30,6 +30,10 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
         return true
     }
 
+    override fun getSalvageChance(chanceMult: Float): Float {
+        return 0.025f * chanceMult
+    }
+
     override fun modifyToolTip(
         tooltip: TooltipMakerAPI,
         title: UIComponentAPI,
@@ -96,7 +100,7 @@ class HackedMissileForge(key: String, settings: JSONObject) : Exotic(key, settin
         private const val ITEM = "et_hangarforge"
         private const val COST_CREDITS = 150000f
         private const val SECONDS_PER_RELOAD = 60f
-        private const val DAMAGE_DECREASE = 25f
+        private const val DAMAGE_DECREASE = 40f
         private val blacklistedWeapons: Set<String> = HashSet()
     }
 }

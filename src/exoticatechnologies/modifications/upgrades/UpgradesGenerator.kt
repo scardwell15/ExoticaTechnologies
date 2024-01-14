@@ -98,6 +98,7 @@ object UpgradesGenerator {
     }
 
     private fun canPickUpgrade(member: FleetMemberAPI, mods: ShipModifications, upgrades: ETUpgrades, upgrade: Upgrade, usableBandwidth: Float): Boolean {
+        if (member.shipName == null && !upgrade.shouldAffectModule(null, null)) return false
         return upgrade.maxLevel > upgrades.getUpgrade(upgrade)
                 && upgrade.canApply(member, mods)
                 && (usableBandwidth - upgrade.bandwidthUsage) >= 0f

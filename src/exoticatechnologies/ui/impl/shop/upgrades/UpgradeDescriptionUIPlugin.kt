@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
 import exoticatechnologies.util.StringUtils
@@ -14,7 +14,8 @@ class UpgradeDescriptionUIPlugin(
     var parentPanel: CustomPanelAPI,
     var upgrade: Upgrade,
     var member: FleetMemberAPI,
-    var variant: ShipVariantAPI
+    var variant: ShipVariantAPI,
+    var mods: ShipModifications
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
     private var descriptionTooltip: TooltipMakerAPI? = null
@@ -31,8 +32,6 @@ class UpgradeDescriptionUIPlugin(
     }
 
     fun resetDescription() {
-        val mods = ShipModLoader.get(member, variant)!!
-
         if (descriptionTooltip != null) {
             mainPanel!!.removeComponent(descriptionTooltip)
         }

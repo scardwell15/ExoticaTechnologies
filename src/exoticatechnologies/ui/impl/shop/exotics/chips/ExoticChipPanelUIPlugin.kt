@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipListUIPlugin
@@ -16,8 +17,9 @@ class ExoticChipPanelUIPlugin(
     val exotic: Exotic,
     member: FleetMemberAPI,
     variant: ShipVariantAPI,
+    mods: ShipModifications,
     market: MarketAPI
-) : ChipPanelUIPlugin<ExoticSpecialItemPlugin>(parentPanel, exotic, member, variant, market) {
+) : ChipPanelUIPlugin<ExoticSpecialItemPlugin>(parentPanel, exotic, member, variant, mods, market) {
     override var bgColor: Color = Color(255, 70, 255, 0)
 
     override fun getChipSearcher(): ChipSearcher<ExoticSpecialItemPlugin> {
@@ -25,6 +27,6 @@ class ExoticChipPanelUIPlugin(
     }
 
     override fun getChipListPlugin(listPanel: CustomPanelAPI): ChipListUIPlugin {
-        return ExoticChipListUIPlugin(parentPanel, member, variant, market)
+        return ExoticChipListUIPlugin(parentPanel, member, variant, mods, market)
     }
 }

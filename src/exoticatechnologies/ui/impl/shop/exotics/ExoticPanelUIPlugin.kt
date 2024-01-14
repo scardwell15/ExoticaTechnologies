@@ -7,25 +7,23 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
-import com.fs.starfarer.api.ui.PositionAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
 import exoticatechnologies.refit.RefitButtonAdder
 import exoticatechnologies.ui.InteractiveUIPanelPlugin
-import exoticatechnologies.ui.TimedUIPlugin
 import exoticatechnologies.ui.impl.shop.chips.ChipPanelUIPlugin
 import exoticatechnologies.ui.impl.shop.exotics.chips.ExoticChipPanelUIPlugin
-import exoticatechnologies.ui.impl.shop.exotics.methods.*
-import exoticatechnologies.util.RenderUtils
-import java.awt.Color
+import exoticatechnologies.ui.impl.shop.exotics.methods.ChipMethod
+import exoticatechnologies.ui.impl.shop.exotics.methods.ExoticMethod
 
 class ExoticPanelUIPlugin(
     var parentPanel: CustomPanelAPI,
     var exotic: Exotic,
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
+    var mods: ShipModifications,
     var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -34,23 +32,23 @@ class ExoticPanelUIPlugin(
     private var resourcesPlugin: ExoticResourcesUIPlugin? = null
     private var chipsPlugin: ExoticChipPanelUIPlugin? = null
     private var chipsTooltip: TooltipMakerAPI? = null
-    private var oldValue: Float = ShipModLoader.get(member, variant)!!.getValue()
+    private var oldValue: Float = mods.getValue()
 
     fun layoutPanels(): CustomPanelAPI {
         val panel = parentPanel.createCustomPanel(panelWidth, panelHeight, this)
         mainPanel = panel
 
-        descriptionPlugin = ExoticDescriptionUIPlugin(panel, exotic, member, variant)
+        descriptionPlugin = ExoticDescriptionUIPlugin(panel, exotic, member, variant, mods)
         descriptionPlugin!!.panelWidth = panelWidth / 2
         descriptionPlugin!!.panelHeight = panelHeight
         descriptionPlugin!!.layoutPanels()
 
-        resourcesPlugin = ExoticResourcesUIPlugin(panel, exotic, member, variant, market)
+        resourcesPlugin = ExoticResourcesUIPlugin(panel, exotic, member, variant, mods, market)
         resourcesPlugin!!.panelWidth = panelWidth / 2
         resourcesPlugin!!.panelHeight = panelHeight / 2
         resourcesPlugin!!.layoutPanels()
 
-        methodsPlugin = ExoticMethodsUIPlugin(panel, exotic, member, variant, market)
+        methodsPlugin = ExoticMethodsUIPlugin(panel, exotic, member, variant, mods, market)
         methodsPlugin!!.panelWidth = panelWidth / 2
         methodsPlugin!!.panelHeight = panelHeight / 2
         methodsPlugin!!.layoutPanels()
@@ -67,7 +65,6 @@ class ExoticPanelUIPlugin(
             if (it.highlightedItem != null) {
                 setChipDescription = true
                 descriptionPlugin!!.resetDescription(
-                    ShipModLoader.get(member, variant)!!,
                     it.highlightedItem!!.exoticData!!
                 )
             }
@@ -78,7 +75,7 @@ class ExoticPanelUIPlugin(
             setChipDescription = false
         }
 
-        val value = ShipModLoader.get(member, variant)!!.getValue()
+        val value = mods.getValue()
         if (value != oldValue) {
             oldValue = value
             if (chipsPlugin != null) {
@@ -108,7 +105,6 @@ class ExoticPanelUIPlugin(
     }
 
     fun applyMethod(exotic: Exotic, method: ExoticMethod) {
-        val mods = ShipModLoader.get(member, variant)!!
         methodsPlugin!!.destroyTooltip()
         resourcesPlugin!!.destroyTooltip()
 
@@ -134,7 +130,7 @@ class ExoticPanelUIPlugin(
         chipsTooltip = mainPanel!!.createUIElement(pW, pH, false)
         val innerPanel = mainPanel!!.createCustomPanel(pW, pH, null)
 
-        chipsPlugin = ExoticChipPanelUIPlugin(innerPanel, exotic, member, variant, market!!)
+        chipsPlugin = ExoticChipPanelUIPlugin(innerPanel, exotic, member, variant, mods, market!!)
         chipsPlugin!!.panelWidth = pW
         chipsPlugin!!.panelHeight = pH
         chipsPlugin!!.layoutPanels().position.inTR(0f, 0f)
@@ -167,7 +163,6 @@ class ExoticPanelUIPlugin(
         applyMethod(exotic, method)
     }
 
-
     private inner class MethodListener : ExoticMethodsUIPlugin.Listener() {
         override fun checked(method: ExoticMethod): Boolean {
             return this@ExoticPanelUIPlugin.checkedMethod(method)
@@ -189,36 +184,6 @@ class ExoticPanelUIPlugin(
 
         override fun checked(stack: CargoStackAPI, plugin: ExoticSpecialItemPlugin) {
             this@ExoticPanelUIPlugin.clickedChipStack(stack)
-        }
-    }
-
-    private class AppliedUIListener(val mainPlugin: ExoticPanelUIPlugin, val tooltip: TooltipMakerAPI) :
-        TimedUIPlugin.Listener {
-        override fun end() {
-            mainPlugin.mainPanel!!.removeComponent(tooltip)
-            mainPlugin.resourcesPlugin!!.redisplayResourceCosts(null)
-            mainPlugin.methodsPlugin!!.showTooltip()
-        }
-
-        override fun render(pos: PositionAPI, alphaMult: Float, currLife: Float, endLife: Float) {
-
-        }
-
-        override fun renderBelow(pos: PositionAPI, alphaMult: Float, currLife: Float, endLife: Float) {
-            RenderUtils.pushUIRenderingStack()
-            val panelX = pos.x
-            val panelY = pos.y
-            val panelW = pos.width
-            val panelH = pos.height
-            RenderUtils.renderBox(
-                panelX,
-                panelY,
-                panelW,
-                panelH,
-                Color.yellow,
-                alphaMult * (endLife - currLife) / endLife
-            )
-            RenderUtils.popUIRenderingStack()
         }
     }
 }

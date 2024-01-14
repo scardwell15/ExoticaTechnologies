@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.exotics.impl
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.CombatEntityAPI
@@ -28,9 +29,9 @@ class DaemonCore(key: String, settingsObj: JSONObject) :
     }
 
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
-        return (canAfford(member.fleetData.fleet, market)
+        return (canAfford(Global.getSector().playerFleet, market)
                 || Utilities.hasExoticChip(
-            member.fleetData.fleet.cargo,
+            Global.getSector().playerFleet.cargo,
             key
         ) || Misc.getStorageCargo(market) != null && Utilities.hasExoticChip(Misc.getStorageCargo(market), key))
     }

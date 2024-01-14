@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.ShipModLoader
+import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.ui.impl.shop.ResourcesUIPlugin
 import exoticatechnologies.ui.impl.shop.exotics.methods.ExoticMethod
@@ -15,8 +15,9 @@ class ExoticResourcesUIPlugin(
     var exotic: Exotic,
     member: FleetMemberAPI,
     variant: ShipVariantAPI,
+    mods: ShipModifications,
     market: MarketAPI?,
-) : ResourcesUIPlugin(member, variant, market) {
+) : ResourcesUIPlugin(member, variant, mods, market) {
     override var mainPanel: CustomPanelAPI? = null
     private var resourcesTooltip: TooltipMakerAPI? = null
 
@@ -38,7 +39,6 @@ class ExoticResourcesUIPlugin(
     }
 
     fun redisplayResourceCosts(activeMethod: ExoticMethod?) {
-        val mods = ShipModLoader.get(member, variant)!!
         destroyTooltip()
 
         //gather resource costs first, across all upgrade methods

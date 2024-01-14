@@ -10,7 +10,6 @@ import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.cargo.CrateItemPlugin
-import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
@@ -27,6 +26,7 @@ class ExoticMethodsUIPlugin(
     var exotic: Exotic,
     var member: FleetMemberAPI,
     var variant: ShipVariantAPI,
+    var mods: ShipModifications,
     var market: MarketAPI?
 ) : InteractiveUIPanelPlugin() {
     private var mainPanel: CustomPanelAPI? = null
@@ -44,7 +44,6 @@ class ExoticMethodsUIPlugin(
     }
 
     fun showTooltip() {
-        val mods = ShipModLoader.get(member, variant)!!
         val tooltip = mainPanel!!.createUIElement(panelWidth, panelHeight, false)
         methodsTooltip = tooltip
 
@@ -66,7 +65,6 @@ class ExoticMethodsUIPlugin(
         } else {
             tooltip.addTitle(StringUtils.getString("UpgradeMethods", "UpgradeMethodsTitle"))
         }
-
 
         showMethods(tooltip, mods, prev)
 

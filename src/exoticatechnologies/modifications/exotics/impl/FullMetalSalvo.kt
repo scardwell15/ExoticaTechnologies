@@ -6,22 +6,17 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.MutableStat
 import com.fs.starfarer.api.combat.ShipAPI
-import com.fs.starfarer.api.combat.WeaponAPI.AIHints
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import com.fs.starfarer.api.util.Misc
-import com.fs.starfarer.combat.entities.Missile
 import exoticatechnologies.combat.ExoticaCombatUtils
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.reflect.ReflectionUtil
 import org.json.JSONObject
 import java.awt.Color
-import java.lang.invoke.MethodHandles
-import java.lang.invoke.MethodType
 import kotlin.math.abs
 
 class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) {
@@ -60,33 +55,7 @@ class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) 
     fun gigaProjectiles(source: ShipAPI) {
         for (proj in Global.getCombatEngine().projectiles) {
             if (proj.source == source && proj.elapsed <= Global.getCombatEngine().elapsedInLastFrame) {
-                if (proj is Missile) {
-                    try {
-                        val missileSpeed =
-                            ReflectionUtil.getObjectFieldWrapper(proj, "maxSpeed", Float::class.javaPrimitiveType)
-                        missileSpeed.value = missileSpeed.value * (1 + DAMAGE_BUFF / 100f)
-                        val engineStatsField =
-                            ReflectionUtil.getObjectFieldWrapper(proj, "engineStats", Any::class.java)
-                        val engineStats = engineStatsField.value
-                        val speedStat = MethodHandles.lookup().findVirtual(
-                            engineStats.javaClass, "getMaxSpeed", MethodType.methodType(
-                                MutableStat::class.java
-                            )
-                        ).invoke(engineStats) as MutableStat
-                        speedStat.modifyMult(buffId, 1 + DAMAGE_BUFF / 100f)
-                        val accelStat = MethodHandles.lookup().findVirtual(
-                            engineStats.javaClass, "getAcceleration", MethodType.methodType(
-                                MutableStat::class.java
-                            )
-                        ).invoke(engineStats) as MutableStat
-                        accelStat.modifyMult(buffId, 1 + DAMAGE_BUFF / 100f)
-                    } catch (ex: Throwable) {
-                        throw RuntimeException(ex)
-                    }
-                } else {
-                    proj.damage.modifier.modifyMult(buffId, 1 + DAMAGE_BUFF / 100f * 0.33f)
-                    proj.velocity.scale(1 + DAMAGE_BUFF / 100f)
-                }
+                proj.damage.modifier.modifyMult(buffId, 1 + DAMAGE_BUFF / 100f * 0.33f)
             }
         }
     }
@@ -98,11 +67,18 @@ class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) 
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        val activator = SalvoActivator(ship, member, mods, exoticData)
-        ActivatorManager.addActivator(ship, activator)
+        if (ActivatorManager.getActivators(ship)?.filterIsInstance<SalvoActivator>()?.isEmpty() != false) {
+            val activator = SalvoActivator(ship, member, mods, exoticData)
+            ActivatorManager.addActivator(ship, activator)
+        }
     }
 
-    inner class SalvoActivator(ship: ShipAPI, val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData) :
+    inner class SalvoActivator(
+        ship: ShipAPI,
+        val member: FleetMemberAPI,
+        val mods: ShipModifications,
+        val exoticData: ExoticData
+    ) :
         CombatActivator(ship) {
         override fun getDisplayText(): String {
             return Global.getSettings().getString(exoticData.key, "systemText")
@@ -124,6 +100,10 @@ class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) 
 
         override fun onStateSwitched(oldState: State) {
             if (state == State.ACTIVE) {
+                ship.mutableStats.ballisticProjectileSpeedMult.modifyMult(this.toString(), 1 + DAMAGE_BUFF / 100f)
+                ship.mutableStats.energyProjectileSpeedMult.modifyMult(this.toString(), 1 + DAMAGE_BUFF / 100f)
+                ship.mutableStats.missileMaxSpeedBonus.modifyMult(this.toString(), 1 + DAMAGE_BUFF / 100f)
+
                 ship.addAfterimage(
                     Color(255, 125, 0, 150),
                     0f,
@@ -138,6 +118,10 @@ class FullMetalSalvo(key: String, settings: JSONObject) : Exotic(key, settings) 
                     false,
                     true
                 )
+            } else {
+                ship.mutableStats.ballisticProjectileSpeedMult.unmodify(this.toString())
+                ship.mutableStats.energyProjectileSpeedMult.unmodify(this.toString())
+                ship.mutableStats.missileMaxSpeedBonus.unmodify(this.toString())
             }
         }
 

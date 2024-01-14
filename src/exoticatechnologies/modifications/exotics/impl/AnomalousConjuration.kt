@@ -312,7 +312,7 @@ class AnomalousConjuration(key: String, settings: JSONObject) : Exotic(key, sett
 
         private fun getReplacementInterval(ship: ShipAPI): IntervalUtil? {
             if (!ship.customData.containsKey(REPLACEMENT_INTERVAL_ID)) {
-                ship.setCustomData(REPLACEMENT_INTERVAL_ID, IntervalUtil(60f, 60f))
+                ship.setCustomData(REPLACEMENT_INTERVAL_ID, IntervalUtil(45f, 60f))
             }
             return ship.customData[REPLACEMENT_INTERVAL_ID] as IntervalUtil?
         }

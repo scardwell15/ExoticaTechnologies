@@ -79,8 +79,8 @@ open class Upgrade(key: String, settings: JSONObject) : Modification(key, settin
             return true
         }
         if (!showInStoreIfNotInstalled) {
-            if (member.fleetData.fleet.isPlayerFleet) {
-                if (Utilities.hasUpgradeChip(member.fleetData.fleet.cargo, key)) {
+            if (Global.getSector().playerFleet.isPlayerFleet) {
+                if (Utilities.hasUpgradeChip(Global.getSector().playerFleet.cargo, key)) {
                     return super.shouldShow(member, mods, market)
                 }
             }

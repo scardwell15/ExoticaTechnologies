@@ -42,14 +42,6 @@ public class ExoticaTechHM extends BaseHullMod {
             ExtensionsKt.fixVariant(member);
             variant.addPermaMod("exoticatech");
 
-            for (String moduleVariantId : variant.getStationModules().keySet()) {
-                ShipVariantAPI moduleVariant = variant.getModuleVariant(moduleVariantId);
-
-                if (moduleVariant != null) {
-                    moduleVariant.addPermaMod("exoticatech");
-                }
-            }
-
             member.updateStats();
         }
     }
@@ -105,7 +97,7 @@ public class ExoticaTechHM extends BaseHullMod {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if (member == null) return;
 
-        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
+        ShipModifications mods = ShipModLoader.get(member, ship.getVariant());
         if (mods == null) return;
 
         for (Exotic exotic : ExoticsHandler.INSTANCE.getEXOTIC_LIST()) {
@@ -145,7 +137,7 @@ public class ExoticaTechHM extends BaseHullMod {
             log.info("Failed to get modules", e);
         }
 
-        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
+        ShipModifications mods = ShipModLoader.get(member, stats.getVariant());
 
         if (mods == null) {
             member.getVariant().removePermaMod("exoticatech");
@@ -172,7 +164,7 @@ public class ExoticaTechHM extends BaseHullMod {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if (member == null) return;
 
-        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
+        ShipModifications mods = ShipModLoader.get(member, ship.getVariant());
         if (mods == null) return;
 
         for (Exotic exotic : ExoticsHandler.INSTANCE.getEXOTIC_LIST()) {
@@ -193,7 +185,7 @@ public class ExoticaTechHM extends BaseHullMod {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if (member == null) return;
 
-        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
+        ShipModifications mods = ShipModLoader.get(member, ship.getVariant());
         if (mods == null) return;
 
         for (Exotic exotic : ExoticsHandler.INSTANCE.getEXOTIC_LIST()) {
@@ -222,12 +214,8 @@ public class ExoticaTechHM extends BaseHullMod {
     public void addPostDescriptionSection(TooltipMakerAPI hullmodTooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         FleetMemberAPI member = FleetMemberUtils.findMemberFromShip(ship);
         if (member == null) return;
-        if (member.getShipName() == null) {
-            hullmodTooltip.addPara("Ship modules do not support tooltips.", 0);
-            return;
-        }
 
-        ShipModifications mods = ShipModLoader.get(member, member.getVariant());
+        ShipModifications mods = ShipModLoader.get(member, ship.getVariant());
         if (mods == null) return;
 
 
@@ -238,16 +226,6 @@ public class ExoticaTechHM extends BaseHullMod {
         v.removePermaMod("exoticatech");
         v.removeMod("exoticatech");
         v.removeSuppressedMod("exoticatech");
-
-        List<String> slots = v.getModuleSlots();
-        if (slots == null || slots.isEmpty()) return;
-
-        for (String slot : slots) {
-            ShipVariantAPI module = v.getModuleVariant(slot);
-            if (module != null) {
-                removeHullModFromVariant(module);
-            }
-        }
     }
 
     private static boolean checkIsModuleInternal(ShipAPI ship) {

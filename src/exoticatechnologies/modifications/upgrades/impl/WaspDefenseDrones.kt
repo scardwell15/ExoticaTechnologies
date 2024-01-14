@@ -50,10 +50,10 @@ class WaspDefenseDrones(key: String, settings: JSONObject) : Upgrade(key, settin
     class WaspDroneActivator(ship: ShipAPI) : DroneActivator(ship) {
         companion object {
             val maxDronesMap: Map<ShipAPI.HullSize, Int> = mapOf(
-                ShipAPI.HullSize.FRIGATE to 2,
-                ShipAPI.HullSize.DESTROYER to 3,
-                ShipAPI.HullSize.CRUISER to 4,
-                ShipAPI.HullSize.CAPITAL_SHIP to 5
+                ShipAPI.HullSize.FRIGATE to 4,
+                ShipAPI.HullSize.DESTROYER to 4,
+                ShipAPI.HullSize.CRUISER to 5,
+                ShipAPI.HullSize.CAPITAL_SHIP to 6
             )
         }
 

@@ -38,7 +38,7 @@ class NanotechArmor(key: String, settingsObj: JSONObject) :
         get() = Global.getSector().getFaction(Factions.DERELICT).color
 
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
-        return (Utilities.hasExoticChip(member.fleetData.fleet.cargo, key)
+        return (Utilities.hasExoticChip(Global.getSector().playerFleet.cargo, key)
                 || Utilities.hasExoticChip(Misc.getStorageCargo(market), key))
     }
 
@@ -242,7 +242,7 @@ class NanotechArmor(key: String, settingsObj: JSONObject) :
 
         override fun reportDamageApplied(source: Any?, target: CombatEntityAPI, result: ApplyDamageResultAPI) {
             if (target === ship && !ship.fluxTracker.isOverloaded) {
-                val damageToShip = result.damageToHull + result.totalDamageToArmor;
+                val damageToShip = result.damageToHull + result.totalDamageToArmor
                 if (damageToShip > 0) {
                     damage += damageToShip
                 }
@@ -274,7 +274,7 @@ class NanotechArmor(key: String, settingsObj: JSONObject) :
             thresh = modifiedArmor * 1.75f
         }
 
-        return (thresh / getNegativeMult(member, mods, exoticData)).coerceAtLeast(100f)
+        return (thresh / getNegativeMult(member, mods, exoticData)).coerceIn(400f..2000f)
     }
 
     companion object {

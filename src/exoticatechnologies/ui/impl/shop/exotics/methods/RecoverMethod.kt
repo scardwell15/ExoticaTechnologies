@@ -22,7 +22,7 @@ class RecoverMethod : DestroyMethod() {
         exotic: Exotic,
         market: MarketAPI?
     ): String {
-        val fleet: CampaignFleetAPI = member.fleetData.fleet
+        val fleet: CampaignFleetAPI = Global.getSector().playerFleet
         
         val exoticData = mods.getExoticData(exotic)
         val exoticType = exoticData?.type ?: ExoticType.NORMAL
@@ -66,7 +66,7 @@ class RecoverMethod : DestroyMethod() {
             val resourceCosts: MutableMap<String, Float> = mutableMapOf()
             resourceCosts[Utilities.STORY_POINTS] = 1f
 
-            val stack = Utilities.getExoticChip(member.fleetData.fleet.cargo, exotic.key)
+            val stack = Utilities.getExoticChip(Global.getSector().playerFleet.cargo, exotic.key)
             if (stack != null) {
                 resourceCosts.put(Utilities.formatSpecialItem(stack.specialDataIfSpecial), -1f)
             } else {

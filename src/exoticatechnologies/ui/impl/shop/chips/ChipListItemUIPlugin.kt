@@ -5,14 +5,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import exoticatechnologies.modifications.bandwidth.BandwidthUtil
-import exoticatechnologies.modifications.upgrades.Upgrade
-import exoticatechnologies.modifications.upgrades.UpgradeSpecialItemPlugin
-import exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
 import exoticatechnologies.ui.lists.ListItemUIPanelPlugin
 import exoticatechnologies.ui.lists.ListUIPanelPlugin
-import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.getMods
 import java.awt.Color
 
 abstract class ChipListItemUIPlugin(item: CargoStackAPI,

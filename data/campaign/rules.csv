@@ -34,35 +34,18 @@ ETFleetEncounterDialog,BeginFleetEncounter,"!$player.etBeganFleetEncounter
 ETHasUpgrades score:9999998","$player.etBeganFleetEncounter = true 0
 $etBeganFleetEncounter = true 0
 FireBest BeginFleetEncounter
-FireBest GeneratedESForFleet",,,
+FireAll GeneratedESForFleet",,,
 ETFleetEncounterDialogZiggurat,BeginFleetEncounter2,"ETHasUpgrades score:9999998
 $ziggurat
 !$etHasDrawnTextForZigg","$etHasDrawnTextForZigg = true 0
 FireBest BeginFleetEncounter2
 AddText ""Your sensor lead informs you that, whatever that thing is, it has the trace signature of some kind of Exotica technologies. They can be scanned through a small change to how a comms link is initialized.""
-Highlight ""Exotica technologies""
-$player.etScanFleetOnCommsLinkOpen = true 0",,,
+Highlight ""Exotica technologies""",,,
 ETFleetEncounterGenerated,GeneratedESForFleet,"ETHasUpgrades score:9999998
 !$ziggurat
-$customType != coronal_tap","$player.etScanFleetOnCommsLinkOpen = true 0
+$customType != coronal_tap
+!$etScanOptionDisplayed","$etScanOptionDisplayed = true 1
 Highlight ""Exotica technologies""","The other fleet appears to have modified some of their ships with Exotica technologies. They can be scanned through a small change to how a comms link is initialized.",,
-ETOpenScanDialog,OpenCommLink,"$player.etScanFleetOnCommsLinkOpen score:9999998","FireAll PreCommLinkOption
-Highlight ""Exotica technologies""","The Exotica technologies can be scanned before the communications link is fully established.",,
-ETReopenScanDialog,OpenCommLink,"$player.etReopenScanDialog score:9999998","unset $player.etReopenScanDialog
-FireAll PreCommLinkOption",,,
-ETScanFleetOption,PreCommLinkOption,,"AddOption 1 ETScanFleet ""Scan the other fleet for Exotica technologies.""",,,
-ETScanFleet,DialogOptionSelected,"$option==ETScanFleet","$player.etReopenScanDialog = true 0
-ETScanFleet",,,
-ETCutCommLink,DialogOptionSelected,"$option==ETCutCommLink","unset $player.etReopenScanDialog
-$option=cutCommLink
-FireBest DialogOptionSelected
-FireAll UpdateEngagementChoice",,,
-ETOpenCommsLinkOption,PreCommLinkOption,,"AddOption 98 ETOpenCommsLink ""Continue opening the comms link.""
-AddOption 99 ETCutCommLink ""Cut the comms link.""
-SetShortcut ETCutCommLink ""ESCAPE""",,,
-ETOpenCommsLink,DialogOptionSelected,"$option==ETOpenCommsLink","unset $player.etReopenScanDialog
-unset $player.etScanFleetOnCommsLinkOpen
-FireBest OpenCommLink",,,
 "#END Fleets",,,,,,
 ,,,,,,
 # Defenses,,,,,,
@@ -71,7 +54,6 @@ ETHasUpgrades score:9999998
 $customType == coronal_tap","$etHasDrawnTextForOmega = true 0
 FireBest TriggerAutomatedDefenses
 ETGenerateForDefenseFleet
-$player.etScanFleetOnCommsLinkOpen = true 0
 AddText ""The sensors tell you that there are Exotica technologies present on whatever those things are, and that most of them appear to be subsumed alpha, beta and gamma-level AI cores. The sensor readings vaguely resemble distress signals from days long gone, almost as if the cores are crying.""
 Highlight ""Exotica technologies"" ""crying""
 ETScanOmegas",,,

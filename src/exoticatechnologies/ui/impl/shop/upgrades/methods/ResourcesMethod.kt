@@ -1,5 +1,6 @@
 package exoticatechnologies.ui.impl.shop.upgrades.methods
 
+import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
@@ -10,12 +11,8 @@ import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import lombok.Getter
-import kotlin.collections.HashMap
-import kotlin.collections.Map
-import kotlin.collections.MutableMap
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.iterator
 import kotlin.collections.set
 
 class ResourcesMethod : DefaultUpgradeMethod() {
@@ -47,7 +44,7 @@ class ResourcesMethod : DefaultUpgradeMethod() {
     ): Boolean {
         if (upgrade.resourceRatios.isEmpty()) return false
         val upgradeCosts = upgrade.getResourceCosts(member, mods.getUpgrade(upgrade))
-        val totalStacks = Utilities.getTotalResources(member.fleetData.fleet, market, upgradeCosts.keys)
+        val totalStacks = Utilities.getTotalResources(Global.getSector().playerFleet, market, upgradeCosts.keys)
         var canUpgrade = true
         for ((key, value) in upgradeCosts) {
             var remaining = totalStacks[key]!! - value
@@ -69,7 +66,7 @@ class ResourcesMethod : DefaultUpgradeMethod() {
         market: MarketAPI?
     ): String {
         val upgradeCosts = upgrade.getResourceCosts(member, mods.getUpgrade(upgrade))
-        Utilities.takeResources(member.fleetData.fleet, market, upgradeCosts)
+        Utilities.takeResources(Global.getSector().playerFleet, market, upgradeCosts)
 
         mods.putUpgrade(upgrade)
         ShipModLoader.set(member, variant, mods)

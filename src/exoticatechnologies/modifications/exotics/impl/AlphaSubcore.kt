@@ -73,11 +73,11 @@ class AlphaSubcore(key: String, settingsObj: JSONObject) :
     override fun applyExoticToStats(
         id: String,
         stats: MutableShipStatsAPI,
-        fm: FleetMemberAPI,
+        member: FleetMemberAPI,
         mods: ShipModifications,
-        data: ExoticData
+        exoticData: ExoticData
     ) {
-        onInstall(fm)
+        onInstall(member)
     }
 
     /**

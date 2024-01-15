@@ -19,7 +19,7 @@ class PureType :
     }
 
     private fun getBandwidthRatio(member: FleetMemberAPI, mods: ShipModifications): Float {
-        return ((mods.getUsedBandwidth() / mods.getBandwidthWithExotics(member))).coerceIn(0f..1f)
+        return ((mods.getUsedBandwidth() / mods.getBaseBandwidth(member))).coerceIn(0f..1f)
     }
 
     private fun getExoticRatio(member: FleetMemberAPI, mods: ShipModifications): Float {

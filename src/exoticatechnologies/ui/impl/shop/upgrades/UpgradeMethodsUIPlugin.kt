@@ -108,6 +108,8 @@ class UpgradeMethodsUIPlugin(
         }
 
         for (method in UpgradesHandler.UPGRADE_METHODS) {
+            if (!method.canShow(member, mods, upgrade, market)) continue
+
             val buttonText = method.getOptionText(member, mods, upgrade, market)
             tooltip.setButtonFontDefault()
 

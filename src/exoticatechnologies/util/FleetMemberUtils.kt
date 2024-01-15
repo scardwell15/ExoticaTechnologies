@@ -110,10 +110,22 @@ object FleetMemberUtils {
         return null
     }
 
-    fun findFleetForVariant(variant: ShipVariantAPI): CampaignFleetAPI? {
+    fun findFleetForVariant(variant: ShipVariantAPI, member: FleetMemberAPI): CampaignFleetAPI? {
         val id = variant.hullVariantId
         if (moduleMap.containsKey(id)) {
             return moduleMap[id]!!.fleetData.fleet
+        }
+
+        member.fleetData?.fleet?.let {
+            return it
+        }
+
+        member.fleetCommander?.fleet?.let {
+            return it
+        }
+
+        member.captain?.fleet?.let {
+            return it
         }
 
         return activeFleets //do not remove the filterNotNull
@@ -132,7 +144,7 @@ object FleetMemberUtils {
             fleetCommander = if (member.fleetData != null) {
                 member.fleetData.commander
             } else {
-                findFleetForVariant(member.variant)?.commander
+                findFleetForVariant(member.variant, member)?.commander
             }
         }
 
@@ -142,5 +154,5 @@ object FleetMemberUtils {
 }
 
 fun FleetMemberAPI.getFleetModuleSafe(): CampaignFleetAPI? {
-    return findFleetForVariant(this.variant)
+    return findFleetForVariant(this.variant, this)
 }

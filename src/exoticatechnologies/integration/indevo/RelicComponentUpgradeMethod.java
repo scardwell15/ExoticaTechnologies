@@ -12,6 +12,7 @@ import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.ui.impl.shop.upgrades.methods.DefaultUpgradeMethod;
 import exoticatechnologies.modifications.ShipModifications;
+import exoticatechnologies.util.FleetMemberUtils;
 import exoticatechnologies.util.StringUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
     @Override
     public String getOptionTooltip(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market) {
         return StringUtils.getTranslation("UpgradeMethods", "IndEvoRelicsTooltip")
-                .format("relics", getTotalComponents(member.getFleetData().getFleet(), market))
+                .format("relics", getTotalComponents(FleetMemberUtils.INSTANCE.findFleetForVariant(member.getVariant()), market))
                 .toString();
     }
 
@@ -45,7 +46,7 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
     public boolean canUse(@NotNull FleetMemberAPI member, ShipModifications mods, @NotNull Upgrade upgrade, MarketAPI market) {
         int level = mods.getUpgrade(upgrade);
         int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(member, upgrade, level);
-        int totalComponents = getTotalComponents(member.getFleetData().getFleet(), market);
+        int totalComponents = getTotalComponents(FleetMemberUtils.INSTANCE.findFleetForVariant(member.getVariant()), market);
 
         return (totalComponents - upgradeCost) >= 0
                 && super.canUse(member, mods, upgrade, market);
@@ -66,7 +67,7 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
             upgradeCost = removeCommodityAndReturnRemainingCost(storageCargo, IndEvoUtil.RELIC_COMPONENT_ITEM_ID, upgradeCost);
         }
 
-        CargoAPI fleetCargo = member.getFleetData().getFleet().getCargo();
+        CargoAPI fleetCargo = FleetMemberUtils.INSTANCE.findFleetForVariant(member.getVariant()).getCargo();
         if (upgradeCost > 0) {
             removeCommodity(fleetCargo, IndEvoUtil.RELIC_COMPONENT_ITEM_ID, upgradeCost);
         }

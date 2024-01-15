@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.campaign.listeners.CampaignEventListener.Companion.activeFleets
-import org.apache.log4j.Logger
+import exoticatechnologies.util.FleetMemberUtils.findFleetForVariant
 
 object FleetMemberUtils {
     @JvmField
@@ -139,4 +139,8 @@ object FleetMemberUtils {
         return fleetCommander
     }
 
+}
+
+fun FleetMemberAPI.getFleetModuleSafe(): CampaignFleetAPI? {
+    return findFleetForVariant(this.variant)
 }

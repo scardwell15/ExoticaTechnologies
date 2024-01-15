@@ -117,10 +117,10 @@ object FleetMemberUtils {
         }
 
         return activeFleets.firstOrNull { fleet ->
-            fleet.membersWithFightersCopy.any { member ->
+            fleet.membersWithFightersCopy?.any { member ->
                 member.variant.stationModules.keys.any {
                     member.variant.getModuleVariant(it) == variant }
-            }
+            } ?: false
         }
     }
 

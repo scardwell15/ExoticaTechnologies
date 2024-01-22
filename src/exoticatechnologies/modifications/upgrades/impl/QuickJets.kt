@@ -90,14 +90,18 @@ class QuickJets(key: String, settings: JSONObject) : Upgrade(key, settings) {
 
         override fun advance(amount: Float) {
             if (state == State.OUT) {
-                var speed = ship.angularVelocity
-                if (speed <= 0.1f) {
-                    speed = 0.1f
-                }
+                val speed = ship.angularVelocity
 
-                stats.maxTurnRate.modifyFlat(buffId, (speed.coerceAtMost(200f) - amount * 4500f).coerceAtLeast(0f))
-                if (speed > ship.mutableStats.maxTurnRate.modifiedValue) {
-                    ship.angularVelocity = speed - amount * 4500f
+                stats.maxTurnRate.modifyFlat(buffId, (stats.maxTurnRate.getFlatStatMod(buffId).value - (15f / outDuration) * amount).coerceAtLeast(0f))
+                stats.maxTurnRate.modifyPercent(buffId, (stats.maxTurnRate.getPercentStatMod(buffId).value - (100f / outDuration) * amount).coerceAtLeast(0f))
+
+                if (speed.absoluteValue > ship.mutableStats.maxTurnRate.modifiedValue) {
+                    val negative = speed < 0
+                    if (negative) {
+                        ship.angularVelocity = (speed + amount * 4500f).coerceIn(-ship.mutableStats.maxTurnRate.modifiedValue..0f)
+                    } else {
+                        ship.angularVelocity = (speed - amount * 4500f).coerceIn(0f..ship.mutableStats.maxTurnRate.modifiedValue)
+                    }
                 }
             }
         }

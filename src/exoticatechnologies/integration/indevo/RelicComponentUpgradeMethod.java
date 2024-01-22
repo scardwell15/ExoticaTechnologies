@@ -74,7 +74,7 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
 
         mods.putUpgrade(upgrade);
         ShipModLoader.set(member, variant, mods);
-        ExoticaTechHM.addToFleetMember(member);
+        ExoticaTechHM.addToFleetMember(member, variant);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")

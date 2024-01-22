@@ -23,6 +23,7 @@ import org.lazywizard.lazylib.VectorUtils
 import org.lwjgl.util.vector.Vector2f
 import java.awt.Color
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.sin
 
 class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
@@ -287,10 +288,27 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                 stats.acceleration.modifyFlat(buffId, 5000f)
                 stats.deceleration.modifyFlat(buffId, 5000f)
                 stats.turnAcceleration.modifyFlat(buffId, 5000f)
-                stats.maxTurnRate.modifyFlat(buffId, 15f)
-                stats.maxTurnRate.modifyPercent(buffId, 100f)
 
                 ship.fluxTracker.currFlux -= amount / getTotalActiveDuration() * getFluxVented()
+            }
+
+            if (state == State.IN) {
+                stats.maxTurnRate.modifyFlat(buffId, 15f)
+                stats.maxTurnRate.modifyPercent(buffId, 100f)
+            } else if (state == State.OUT) {
+                val speed = ship.angularVelocity
+
+                stats.maxTurnRate.modifyFlat(buffId, (stats.maxTurnRate.getFlatStatMod(buffId).value - (15f / outDuration) * amount).coerceAtLeast(0f))
+                stats.maxTurnRate.modifyPercent(buffId, (stats.maxTurnRate.getPercentStatMod(buffId).value - (100f / outDuration) * amount).coerceAtLeast(0f))
+
+                if (speed.absoluteValue > ship.mutableStats.maxTurnRate.modifiedValue) {
+                    val negative = speed < 0
+                    if (negative) {
+                        ship.angularVelocity = (speed + amount * 4500f).coerceIn(-ship.mutableStats.maxTurnRate.modifiedValue..0f)
+                    } else {
+                        ship.angularVelocity = (speed - amount * 4500f).coerceIn(0f..ship.mutableStats.maxTurnRate.modifiedValue)
+                    }
+                }
             }
 
             if (state == State.ACTIVE) {

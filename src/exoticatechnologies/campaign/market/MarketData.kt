@@ -9,6 +9,9 @@ import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.exotics.ExoticsGenerator
 import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.modifications.upgrades.UpgradesGenerator
+import org.lazywizard.lazylib.campaign.CampaignUtils
+import org.magiclib.kotlin.elapsedDaysSinceGameStart
+import org.magiclib.util.MagicCampaign
 import kotlin.math.roundToInt
 
 class MarketData(market: MarketAPI) {
@@ -19,6 +22,7 @@ class MarketData(market: MarketAPI) {
         get() = Global.getSector().economy.getMarket(marketId)
     val faction: FactionAPI
         get() = Global.getSector().getFaction(factionId)
+    val generatedTimestamp: Float = Global.getSector().clock.elapsedDaysSinceGameStart()
 
     var cargo: CargoAPI = Global.getFactory().createCargo(true)
 

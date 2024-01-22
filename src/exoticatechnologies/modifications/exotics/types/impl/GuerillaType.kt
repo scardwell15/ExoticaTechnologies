@@ -14,13 +14,13 @@ import kotlin.math.pow
 
 class GuerillaType : ExoticType("GUERILLA", colorOverlay = Color(140, 200, 125, 255), sprite = "graphics/icons/overlays/guerilla.png") {
     override fun getPositiveMult(member: FleetMemberAPI, mods: ShipModifications): Float {
-        val thresholdScale = 0.5f - getThresholdScale(member, 0.5f)
-        return 2f - thresholdScale.coerceAtMost(0f)
+        val thresholdScale = 1.25f - getThresholdScale(member, 1.25f)
+        return 2f - thresholdScale.coerceAtLeast(0f)
     }
 
     override fun getNegativeMult(member: FleetMemberAPI, mods: ShipModifications): Float {
-        val thresholdScale = getThresholdScale(member, 0.5f)
-        return 1f + (0.5f - thresholdScale).coerceAtMost(0f)
+        val thresholdScale = getThresholdScale(member, 1.25f)
+        return 1f + (0.75f - thresholdScale).coerceAtLeast(-0.5f)
     }
 
     private fun getThreshold(): Float {
@@ -57,7 +57,7 @@ class GuerillaType : ExoticType("GUERILLA", colorOverlay = Color(140, 200, 125, 
     }
 
     private fun getThresholdBasedBonus(maxBonus: Float, value: Float, threshold: Float): Float {
-        val divisor = threshold + (value.coerceAtLeast(threshold) - threshold).pow(1.4f)
+        val divisor = threshold + (value.coerceAtLeast(threshold) - threshold).pow(1.25f)
         val thresholdRatio = threshold / divisor
         return maxBonus * thresholdRatio
     }

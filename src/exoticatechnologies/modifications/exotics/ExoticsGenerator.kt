@@ -2,6 +2,7 @@ package exoticatechnologies.modifications.exotics
 
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.impl.campaign.ids.Stats
 import com.fs.starfarer.api.util.WeightedRandomPicker
 import exoticatechnologies.config.FactionConfig
 import exoticatechnologies.config.FactionConfigLoader
@@ -72,14 +73,7 @@ object ExoticsGenerator {
     }
 
     private fun getExoticChance(member: FleetMemberAPI): Float {
-        val sizeFactor: Float = when (member.hullSpec.hullSize) {
-            ShipAPI.HullSize.CAPITAL_SHIP -> 1.5f
-            ShipAPI.HullSize.CRUISER -> 1.25f
-            ShipAPI.HullSize.DESTROYER -> 1.1f
-            else -> 1.0f
-        }
-
-        return sizeFactor
+        return member.stats.dynamic.getMod(Stats.DEPLOYMENT_POINTS_MOD).computeEffective(member.hullSpec.suppliesToRecover) / 100
     }
 
     fun getExoticPicker(random: Random, allowedExotics: Map<Exotic, Float>, member: FleetMemberAPI, mods: ShipModifications): WeightedRandomPicker<Exotic> {

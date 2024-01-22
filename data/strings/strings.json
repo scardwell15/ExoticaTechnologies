@@ -370,7 +370,7 @@
 		"TooltipText": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways.",
 		"TooltipTextCondition": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways, and is strongest when *${condition}*.",
 		"ItemTypeText": "This chip is a *${typeName}-type*, which affects the exotic by ${typeDescription}.",
-		"NotInstalledText": "${typeName} - Preview",
+		"NotInstalledText": "${typeName} - Hover for description",
 		"NORMAL": "${exoticName}",
 		"CORRUPTED": "Corrupted ${exoticName}",
 		"CorruptedItemDescription": "multiplying both its positive and negative effects",

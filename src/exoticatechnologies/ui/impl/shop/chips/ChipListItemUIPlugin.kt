@@ -26,6 +26,7 @@ abstract class ChipListItemUIPlugin(item: CargoStackAPI,
 
         // done, add row to TooltipMakerAPI
         tooltip.addCustom(rowPanel, 0f)
+        addedChip(tooltip, rowPanel)
 
         panel = rowPanel
 
@@ -33,6 +34,13 @@ abstract class ChipListItemUIPlugin(item: CargoStackAPI,
     }
 
     abstract fun showChip(rowPanel: CustomPanelAPI)
+
+    /**
+     * Mostly useful for tooltips.
+     */
+    open fun addedChip(tooltip: TooltipMakerAPI, rowPanel: CustomPanelAPI) {
+
+    }
 
     override fun processInput(events: List<InputEventAPI>) {
         if (isHovered(events)) {

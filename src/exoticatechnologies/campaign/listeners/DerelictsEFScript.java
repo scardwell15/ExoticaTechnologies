@@ -31,8 +31,8 @@ public class DerelictsEFScript implements EveryFrameScript {
         fleetSnapshot.addAll(Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy());
     }
 
-    public DerelictsEFScript(String derelictVariantId, ShipModifications es) {
-        derelictVariantMap.put(derelictVariantId, es);
+    public DerelictsEFScript(String derelictVariantId, ShipModifications mods) {
+        derelictVariantMap.put(derelictVariantId, mods);
         fleetSnapshot.addAll(Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy());
     }
 
@@ -48,7 +48,6 @@ public class DerelictsEFScript implements EveryFrameScript {
 
     @Override
     public void advance(float amount) {
-
         if (!Global.getSector().getCampaignUI().isShowingDialog()) {
             done = true;
 

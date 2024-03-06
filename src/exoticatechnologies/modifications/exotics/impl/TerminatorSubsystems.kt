@@ -1,19 +1,18 @@
 package exoticatechnologies.modifications.exotics.impl
 
-import activators.ActivatorManager
-import activators.drones.DroneActivator
 import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.combat.*
+import com.fs.starfarer.api.combat.GuidedMissileAI
+import com.fs.starfarer.api.combat.MissileAPI
+import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.combat.ShipAPI.HullSize
 import com.fs.starfarer.api.combat.ShipwideAIFlags.AIFlags
+import com.fs.starfarer.api.combat.WeaponAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.combat.DroneStrikeStats
 import com.fs.starfarer.api.impl.combat.DroneStrikeStats.DroneMissileScript
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
-import com.fs.starfarer.api.util.IntervalUtil
 import com.fs.starfarer.api.util.Misc
-import exoticatechnologies.combat.ExoticaCombatUtils
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
@@ -22,9 +21,9 @@ import exoticatechnologies.util.StringUtils
 import org.json.JSONObject
 import org.lwjgl.util.vector.Vector2f
 import org.magiclib.kotlin.getDistanceSq
+import org.magiclib.subsystems.MagicSubsystemsManager
+import org.magiclib.subsystems.drones.MagicDroneSubsystem
 import java.awt.Color
-import java.util.*
-import kotlin.math.abs
 import kotlin.math.sign
 
 class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, settings) {
@@ -52,7 +51,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        ActivatorManager.addActivator(ship, TerminatorDroneActivator(ship))
+        MagicSubsystemsManager.addSubsystemToShip(ship, TerminatorDroneActivator(ship))
     }
 
     override fun canUseExoticType(type: ExoticType): Boolean {
@@ -63,7 +62,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
         return false
     }
 
-    class TerminatorDroneActivator(ship: ShipAPI) : DroneActivator(ship) {
+    class TerminatorDroneActivator(ship: ShipAPI) : MagicDroneSubsystem(ship) {
         private val droneStrikeStats = DroneStrikeStats()
         private var weaponBackingField: WeaponAPI? = null
         private val weapon: WeaponAPI
@@ -100,7 +99,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
         }
 
         override fun canActivate(): Boolean {
-            return activeWings.isNotEmpty() && canUseFlux()
+            return activeWings.isNotEmpty()
         }
 
         override fun hasSeparateDroneCharges(): Boolean {
@@ -136,10 +135,9 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
         }
 
         override fun onActivate() {
-            val target: ShipAPI? = findTarget(ship)
+            val target: ShipAPI? = findTarget()
             if (target != null) {
                 convertDrone(ship, target)
-                ship.fluxTracker.increaseFlux(ship.currFlux * getFluxCost(), false)
             }
         }
 
@@ -167,7 +165,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
             //missile.setHitpoints(missile.getHitpoints() * drone.getHullLevel());
             missile.empResistance = 10000
             val base = missile.maxRange
-            val max: Float = getSystemRange(ship)
+            val max: Float = range
             missile.maxRange = max
             missile.maxFlightTime = missile.maxFlightTime * max / base
 
@@ -193,25 +191,23 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
             arc.setSingleFlickerMode()
         }
 
-        override fun getStateText(): String {
-            if (state == State.READY) {
-                if (findTarget(ship) == null) {
-                    return StringUtils.getString("TerminatorSubsystems", "outOfRange")
-                }
-
-                if (!canUseFlux()) {
-                    return StringUtils.getString("TerminatorSubsystems", "noFlux")
-                }
-            }
-            return super.getStateText()
+        override fun requiresTarget(): Boolean {
+            return true
         }
 
-        fun findTarget(ship: ShipAPI): ShipAPI? {
+        override fun getRange(): Float {
+            return droneStrikeStats.getMaxRange(ship) * 0.66f
+        }
+
+        override fun getFluxCostPercentOnActivation(): Float {
+            return 0.1f
+        }
+
+        fun findTarget(): ShipAPI? {
             if (activeWings.isEmpty()) {
                 return null
             }
 
-            val range: Float = getSystemRange(ship)
             val player = ship === Global.getCombatEngine().playerShip
             var target: ShipAPI? = null
 
@@ -252,8 +248,6 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
             return target
         }
 
-        private fun getSystemRange(ship: ShipAPI) = droneStrikeStats.getMaxRange(ship) * 0.66f
-
         private val goodAiFlags = setOf(
             AIFlags.PHASE_ATTACK_RUN_FROM_BEHIND_DIST_CRITICAL,
             AIFlags.PHASE_ATTACK_RUN_IN_GOOD_SPOT,
@@ -261,7 +255,7 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
         )
 
         override fun shouldActivateAI(amount: Float): Boolean {
-            var target = findTarget(ship)
+            var target = findTarget()
             if (target != null) {
                 var score = 0f
                 score += (target.currFlux / target.maxFlux) * 10f
@@ -289,21 +283,6 @@ class TerminatorSubsystems(key: String, settings: JSONObject) : Exotic(key, sett
                 }
             }
             return false
-        }
-
-        fun getFluxCost(): Float {
-            return 0.1f
-        }
-
-        fun canUseFlux(): Boolean {
-            return (1f - ship.fluxLevel) > getFluxCost()
-        }
-
-        override fun getHUDColor(): Color {
-            if (!canUseFlux()) {
-                return Misc.getNegativeHighlightColor()
-            }
-            return super.getHUDColor()
         }
     }
 }

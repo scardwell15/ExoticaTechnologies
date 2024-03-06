@@ -2,35 +2,41 @@ package exoticatechnologies.refit
 
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.fleet.FleetMemberAPI
-import com.fs.starfarer.api.impl.campaign.ids.HullMods
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import com.fs.starfarer.loading.specs.HullVariantSpec
 import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModLoader
-import exoticatechnologies.ui.impl.shop.ShipModUIPlugin
+import exoticatechnologies.ui2.impl.ExoticaMenu
+import exoticatechnologies.ui2.impl.ExoticaMenuContext
 import exoticatechnologies.util.MusicController
-import exoticatechnologies.util.RenderUtils
 
 class CustomExoticaPanel {
     companion object {
         //Overwrite for Background Panel Width
-        fun getWidth() : Float {
-            return (Global.getSettings().screenWidth * 0.66f)
+        fun getWidth(): Float {
+            return (Global.getSettings().screenWidth * 0.8f).coerceAtMost(1600f)
         }
 
         //Overwrite for Background Panel Height
-        fun getHeight() : Float {
-            return (Global.getSettings().screenHeight * 0.65f)
+        fun getHeight(): Float {
+            return (Global.getSettings().screenHeight * 0.75f).coerceAtMost(900f)
         }
 
-        fun renderDefaultBorder() = true
-        fun renderDefaultBackground() = true
+        fun renderDefaultBorder() = false
+        fun renderDefaultBackground() = false
     }
 
     var x = 0f
     var y = 0f
 
-    fun init(backgroundPanel: CustomPanelAPI, backgroundPlugin: ExoticaPanelPlugin, width: Float, height: Float, member: FleetMemberAPI, variant: HullVariantSpec) {
+    fun init(
+        backgroundPanel: CustomPanelAPI,
+        backgroundPlugin: ExoticaPanelPlugin,
+        width: Float,
+        height: Float,
+        member: FleetMemberAPI,
+        variant: HullVariantSpec
+    ) {
 
         /*
         var panel = backgroundPanel.createCustomPanel(width, height, null)
@@ -42,12 +48,22 @@ class CustomExoticaPanel {
 
         MusicController.startMusic()
 
-        ShipModLoader.get(member, variant) ?: ShipModLoader.set(member, variant, ShipModFactory.generateForFleetMember(member))
+        ShipModLoader.get(member, variant) ?: ShipModLoader.set(
+            member,
+            variant,
+            ShipModFactory.generateForFleetMember(member)
+        )
 
-        var plugin = ShipModUIPlugin(Global.getSector().campaignUI.currentInteractionDialog, backgroundPanel, width, height)
+        val market = Global.getSector().campaignUI.currentInteractionDialog?.interactionTarget?.market
+        /*var plugin = ShipModUIPlugin(market, backgroundPanel, width, height)
         var modPanel = plugin.layoutPanels()
         modPanel.position.inTL(-1f, 0f)
-        plugin.showPanel(member, variant)
+        plugin.showPanel(member, variant)*/
+
+        val panel = ExoticaMenu(ExoticaMenuContext(member, variant, ShipModLoader.get(member, variant), market))
+        panel.panelWidth = width - panel.outerPadding * 2f
+        panel.panelHeight = height - panel.outerPadding * 2f
+        panel.layoutPanel(backgroundPanel, null)
 
         backgroundPanel.position.inTL(x, y)
 
@@ -57,7 +73,4 @@ class CustomExoticaPanel {
         //Set to true whenever you make a change that needs to be reflected in the refit screen, like adding a hullmod or a stat change.
         //RefitButtonAdder.requiresVariantUpdate = true
     }
-
-
-
 }

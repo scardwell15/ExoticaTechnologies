@@ -2,9 +2,7 @@ package exoticatechnologies.modifications.exotics
 
 import com.fs.starfarer.api.Global
 import exoticatechnologies.modifications.exotics.impl.HullmodExotic
-import exoticatechnologies.ui.impl.shop.ShopManager.Companion.addMenu
-import exoticatechnologies.ui.impl.shop.exotics.ExoticShopUIPlugin
-import exoticatechnologies.ui.impl.shop.exotics.methods.ExoticMethod
+import exoticatechnologies.ui2.impl.mods.exotics.methods.ExoticMethod
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import lombok.extern.log4j.Log4j
@@ -35,7 +33,6 @@ object ExoticsHandler {
     fun initialize() {
         populateExotics()
         populateMethods()
-        addMenu(ExoticShopUIPlugin())
     }
 
     fun populateExotics() {

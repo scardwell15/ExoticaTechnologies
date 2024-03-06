@@ -24,11 +24,22 @@ public class et_addexotic implements BaseCommand {
 
             try {
                 String exoticKey = args[0];
+                if (!ExoticsHandler.EXOTICS.containsKey(exoticKey)) {
+                    Console.showMessage("That exotic key doesn't exist. Use the `et_listmods` command to find the exotic keys (not the names). This command is case-sensitive.");
+                    return CommandResult.BAD_SYNTAX;
+                }
+
                 Exotic exotic = ExoticsHandler.EXOTICS.get(exoticKey);
 
                 ExoticType exoticType = ExoticType.Companion.getNORMAL();
                 if (args.length > 1) {
                     String exoticTypeString = args[1];
+
+                    if (!ExoticType.Companion.getTypes().containsKey(exoticTypeString)) {
+                        Console.showMessage("That exotic type key doesn't exist. It must be all capital letters. This command is case-sensitive.");
+                        return CommandResult.BAD_SYNTAX;
+                    }
+
                     exoticType = ExoticType.Companion.valueOf(exoticTypeString);
                 }
 

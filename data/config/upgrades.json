@@ -1,15 +1,15 @@
 {
   "WeldedArmor": {
     "name": "Welded Armor",
-    "color": [90, 225, 60],
+    "color": [ 90, 225, 60 ],
     "bandwidthPerLevel": 15,
     "tag": "weldedarmor",
-    "hints": ["durability"],
+    "hints": [ "durability" ],
     "stats": [
-      {"id": "hull", "scalingEffect": 30},
-      {"id": "armor", "scalingEffect": 30},
-      {"id": "engineHealth", "scalingEffect": -20, "startingLevel": 3},
-      {"id": "weaponHealth", "scalingEffect": -20, "startingLevel": 3}
+      { "id": "hull", "scalingEffect": 30 },
+      { "id": "armor", "scalingEffect": 30 },
+      { "id": "engineHealth", "scalingEffect": -20, "startingLevel": 3 },
+      { "id": "weaponHealth", "scalingEffect": -20, "startingLevel": 3 }
     ],
     "resourceRatios": {
       "volatiles": 1.0,
@@ -24,15 +24,15 @@
   },
   "PinataConfig": {
     "name": "Piñata Config",
-    "color": [225, 120, 200],
+    "color": [ 225, 120, 200 ],
     "bandwidthPerLevel": 15,
     "tag": "weldedarmor",
-    "hints": ["durability"],
+    "hints": [ "durability" ],
     "stats": [
-      {"id": "hull", "scalingEffect": 50},
-      {"id": "empDamageTaken", "scalingEffect": -50},
-      {"id": "explosionRadius", "scalingEffect": 100},
-      {"id": "armor", "scalingEffect": -20, "startingLevel": 3}
+      { "id": "hull", "scalingEffect": 50 },
+      { "id": "empDamageTaken", "scalingEffect": -50 },
+      { "id": "explosionRadius", "scalingEffect": 100 },
+      { "id": "armor", "scalingEffect": -20, "startingLevel": 3 }
     ],
     "resourceRatios": {
       "volatiles": 1.0,
@@ -47,7 +47,7 @@
     "bandwidthPerLevel": 5,
     "spawnChance": 3.0,
     "salvageChance": 0.1,
-    "hints": ["durability"],
+    "hints": [ "durability" ],
     "showInStoreIfNotInstalled": false,
     "chipFirstInstall": true,
     "stats": [
@@ -67,17 +67,17 @@
   },
   "InfernalEngines": {
     "name": "Infernal Engines",
-    "color": [255, 225, 95],
+    "color": [ 255, 225, 95 ],
     "bandwidthPerLevel": 10,
     "tag": "infengines",
-    "hints": ["speed"],
+    "hints": [ "speed" ],
     "stats": [
-      {"id": "maxSpeed", "scalingEffect": 20},
-      {"id": "acceleration", "scalingEffect": 30},
-      {"id": "turnRate", "scalingEffect": 30},
-      {"id": "burnLevel", "scalingEffect": 1, "flat": true},
-      {"id": "deceleration", "scalingEffect": -24, "startingLevel": 3},
-      {"id": "fuelUse", "scalingEffect": 16, "startingLevel": 3}
+      { "id": "maxSpeed", "scalingEffect": 20 },
+      { "id": "acceleration", "scalingEffect": 30 },
+      { "id": "turnRate", "scalingEffect": 30 },
+      { "id": "burnLevel", "scalingEffect": 1, "flat": true },
+      { "id": "deceleration", "scalingEffect": -24, "startingLevel": 3 },
+      { "id": "fuelUse", "scalingEffect": 16, "startingLevel": 3 }
     ],
     "resourceRatios": {
       "volatiles": 3.0,
@@ -87,20 +87,20 @@
       "heavy_machinery": 1.5
     },
     "conditions": [
-      { "id": "maxSpeed", "operator": ">=", "expected": 100, "weightOnly": true, "weight": 1.25},
-      { "id": "hullmods", "operator": "in", "expected": "unstable_injector", "weightOnly": true, "weight": 1.5}
+      { "id": "maxSpeed", "operator": ">=", "expected": 100, "weightOnly": true, "weight": 1.25 },
+      { "id": "hullmods", "operator": "in", "expected": "unstable_injector", "weightOnly": true, "weight": 1.5 }
     ]
   },
   "FluxInductionDrive": {
     "name": "Flux-Induction Drive",
-    "color": [150, 140, 240],
+    "color": [ 150, 140, 240 ],
     "bandwidthPerLevel": 10,
     "tag": "infengines",
-    "hints": ["speed"],
+    "hints": [ "speed" ],
     "stats": [
-      {"id": "zeroFluxSpeed", "scalingEffect": 80},
-      {"id": "acceleration", "scalingEffect": 30},
-      {"id": "maxSpeed", "scalingEffect": -20}
+      { "id": "zeroFluxSpeed", "scalingEffect": 80 },
+      { "id": "acceleration", "scalingEffect": 30 },
+      { "id": "maxSpeed", "scalingEffect": -20 }
     ],
     "resourceRatios": {
       "volatiles": 2.0,
@@ -115,7 +115,7 @@
     "tag": "infengines",
     "spawnChance": 3.0,
     "salvageChance": 0.1,
-    "hints": ["speed"],
+    "hints": [ "speed" ],
     "showInStoreIfNotInstalled": false,
     "chipOnlyInstall": true,
     "stats": [
@@ -140,14 +140,14 @@
   },
   "HyperactiveCapacitors": {
     "name": "Hyperactive Capacitors",
-    "color": [143, 86, 182],
+    "color": [ 143, 86, 182 ],
     "bandwidthPerLevel": 15,
     "tag": "hypecap",
-    "hints": ["flux"],
+    "hints": [ "flux" ],
     "stats": [
-      {"id": "fluxCapacity", "scalingEffect": 25},
-      {"id": "ventSpeed", "scalingEffect": 50},
-      {"id": "weaponFluxCost", "scalingEffect": 24, "startingLevel": 3}
+      { "id": "fluxCapacity", "scalingEffect": 25 },
+      { "id": "ventSpeed", "scalingEffect": 50 },
+      { "id": "weaponFluxCost", "scalingEffect": 24, "startingLevel": 3 }
     ],
     "conditions": [
       { "id": "fluxCapacity", "operator": ">=", "expected": 5000, "weightOnly": true, "weight": 1.25 },
@@ -166,10 +166,10 @@
     "name": "Advanced Flux Coils",
     "bandwidthPerLevel": 20,
     "spawnChance": 3.0,
-    "salvageChance": 0.1,
+    "salvageChance": 0.33,
     "color": [ 105, 74, 227 ],
     "tag": "hypecap",
-    "hints": ["flux"],
+    "hints": [ "flux" ],
     "showInStoreIfNotInstalled": false,
     "chipOnlyInstall": true,
     "stats": [
@@ -194,15 +194,15 @@
   },
   "OverchargedShields": {
     "name": "Overcharged Shields",
-    "color": [60, 200, 170],
+    "color": [ 60, 200, 170 ],
     "bandwidthPerLevel": 15,
-    "hints": ["durability"],
+    "hints": [ "durability" ],
     "stats": [
-      {"id": "shieldFluxDam", "scalingEffect": -25},
-      {"id": "shieldArc", "scalingEffect": 50},
-      {"id": "shieldUnfoldRate", "scalingEffect": 75},
-      {"id": "shieldUpkeep", "scalingEffect": 150, "startingLevel": 3},
-      {"id": "shieldTurnRate", "scalingEffect": -16, "startingLevel": 3}
+      { "id": "shieldFluxDam", "scalingEffect": -25 },
+      { "id": "shieldArc", "scalingEffect": 50 },
+      { "id": "shieldUnfoldRate", "scalingEffect": 75 },
+      { "id": "shieldUpkeep", "scalingEffect": 150, "startingLevel": 3 },
+      { "id": "shieldTurnRate", "scalingEffect": -16, "startingLevel": 3 }
     ],
     "conditions": [
       { "id": "hasShield", "operator": "==", "expected": true, "cannotApplyReason": "The ship must have a shield." },
@@ -219,15 +219,15 @@
   },
   "TracerRecoilCalculator": {
     "name": "Tracer Recoil Calculator",
-    "color": [215, 130, 60],
+    "color": [ 215, 130, 60 ],
     "bandwidthPerLevel": 5,
     "tag": "trc",
-    "hints": ["weapons"],
+    "hints": [ "weapons" ],
     "stats": [
-      {"id": "recoilPerShot", "scalingEffect": -30},
-      {"id": "maxRecoil", "scalingEffect": -20},
-      {"id": "weaponHealth", "scalingEffect": 16},
-      {"id": "weaponTurnRate", "scalingEffect": -20, "startingLevel": 3}
+      { "id": "recoilPerShot", "scalingEffect": -30 },
+      { "id": "maxRecoil", "scalingEffect": -20 },
+      { "id": "weaponHealth", "scalingEffect": 16 },
+      { "id": "weaponTurnRate", "scalingEffect": -20, "startingLevel": 3 }
     ],
     "resourceRatios": {
       "hand_weapons": 2.5,
@@ -241,9 +241,9 @@
     "color": [ 170, 200, 75 ],
     "bandwidthPerLevel": 10,
     "spawnChance": 3.0,
-    "salvageChance": 0.1,
+    "salvageChance": 0.33,
     "tag": "trc",
-    "hints": ["weapons"],
+    "hints": [ "weapons" ],
     "showInStoreIfNotInstalled": false,
     "chipOnlyInstall": true,
     "stats": [
@@ -269,8 +269,8 @@
     "tag": "mags",
     "hints": [ "weapons" ],
     "stats": [
-      { "id": "ballisticMagazines", "scalingEffect": 25 },
-      { "id": "energyMagazines", "scalingEffect": 25 },
+      { "id": "ballisticMagazines", "scalingEffect": 40 },
+      { "id": "energyMagazines", "scalingEffect": 40 },
       { "id": "ballisticFireRate", "scalingEffect": -40 },
       { "id": "energyFireRate", "scalingEffect": -40 }
     ],
@@ -284,7 +284,7 @@
     "name": "Interception Matrix",
     "color": [ 240, 120, 210 ],
     "bandwidthPerLevel": 5,
-    "hints": ["weapons"],
+    "hints": [ "weapons" ],
     "stats": [
       { "id": "damageToMissiles", "scalingEffect": 100 },
       { "id": "damageToFighters", "scalingEffect": 100 },
@@ -307,7 +307,7 @@
     "tag": "guidancecomputers",
     "color": [ 120, 220, 110 ],
     "bandwidthPerLevel": 7.5,
-    "hints": ["weapons"],
+    "hints": [ "weapons" ],
     "stats": [
       { "id": "missileSpeed", "scalingEffect": 25 },
       { "id": "missileHealth", "scalingEffect": 20 },
@@ -331,9 +331,9 @@
     "color": [ 220, 120, 180 ],
     "bandwidthPerLevel": 5,
     "spawnChance": 3.0,
-    "salvageChance": 0.1,
+    "salvageChance": 0.33,
     "tag": "guidancecomputers",
-    "hints": ["weapons"],
+    "hints": [ "weapons" ],
     "showInStoreIfNotInstalled": false,
     "chipFirstInstall": true,
     "stats": [
@@ -359,10 +359,10 @@
     "color": [ 124, 124, 124 ],
     "bandwidthPerLevel": 5,
     "spawnChance": 0.6,
-    "hints": ["readiness"],
+    "hints": [ "readiness" ],
     "stats": [
       { "id": "crRecoveryRate", "scalingEffect": 30 },
-      { "id": "peakPerformanceTime", "scalingEffect": 30 },
+      { "id": "peakPerformanceTime", "scalingEffect": 40 },
       { "id": "crLossRate", "scalingEffect": -24 },
       { "id": "crToDeploy", "scalingEffect": 15, "startingLevel": 3 },
       { "id": "minCrew", "scalingEffect": 25, "startingLevel": 3 }
@@ -379,14 +379,14 @@
   },
   "AuxiliarySensors": {
     "name": "Auxiliary Sensors",
-    "color": [178, 178, 178],
+    "color": [ 178, 178, 178 ],
     "bandwidthPerLevel": 2.5,
     "spawnChance": 0.75,
-    "hints": ["logistics"],
+    "hints": [ "logistics" ],
     "stats": [
-      {"id": "sensorStrength", "scalingEffect": 50},
-      {"id": "sensorProfile", "scalingEffect": 12, "startingLevel": 3},
-      {"id": "minCrew", "scalingEffect": 16, "startingLevel": 3}
+      { "id": "sensorStrength", "scalingEffect": 50 },
+      { "id": "sensorProfile", "scalingEffect": 12, "startingLevel": 3 },
+      { "id": "minCrew", "scalingEffect": 16, "startingLevel": 3 }
     ],
     "resourceRatios": {
       "rare_metals": 3.0,
@@ -396,13 +396,13 @@
   },
   "InterferenceShielding": {
     "name": "Interference Shielding",
-    "color": [93, 59, 210],
+    "color": [ 93, 59, 210 ],
     "bandwidthPerLevel": 2.5,
     "spawnChance": 0.75,
-    "hints": ["logistics"],
+    "hints": [ "logistics" ],
     "stats": [
-      {"id": "sensorProfile", "scalingEffect": -50},
-      {"id": "suppliesPerMonth", "scalingEffect": 16, "startingLevel": 3}
+      { "id": "sensorProfile", "scalingEffect": -50 },
+      { "id": "suppliesPerMonth", "scalingEffect": 16, "startingLevel": 3 }
     ],
     "resourceRatios": {
       "rare_metals": 3.0,
@@ -416,7 +416,7 @@
     "color": [ 230, 200, 25 ],
     "bandwidthPerLevel": 5,
     "spawnChance": 0,
-    "hints": ["logistics"],
+    "hints": [ "logistics" ],
     "stats": [
       { "id": "crewSalary", "scalingEffect": 15, "flat": true },
       { "id": "suppliesPerMonth", "scalingEffect": -30 },
@@ -437,15 +437,15 @@
   },
   "AssaultWings": {
     "name": "Assault Wings",
-    "color": [230, 75, 75],
+    "color": [ 230, 75, 75 ],
     "bandwidthPerLevel": 7.5,
-    "hints": ["fighters"],
+    "hints": [ "fighters" ],
     "stats": [
-      {"id": "hull", "scalingEffect": 25, "appliesToFighters": true},
-      {"id": "armor", "scalingEffect": 25, "appliesToFighters": true},
-      {"id": "fluxCapacity", "scalingEffect": 25, "appliesToFighters": true},
-      {"id": "maxSpeed", "scalingEffect": 25, "appliesToFighters": true},
-      {"id": "fighterWingRange", "scalingEffect": -33, "startingLevel": 3}
+      { "id": "hull", "scalingEffect": 25, "appliesToFighters": true },
+      { "id": "armor", "scalingEffect": 25, "appliesToFighters": true },
+      { "id": "fluxCapacity", "scalingEffect": 25, "appliesToFighters": true },
+      { "id": "maxSpeed", "scalingEffect": 25, "appliesToFighters": true },
+      { "id": "fighterWingRange", "scalingEffect": -33, "startingLevel": 3 }
     ],
     "conditions": [
       { "id": "launchBays", "operator": ">=", "expected": 1, "cannotApplyReason": "The ship needs at least one fighter bay.", "weight": 1.25 }
@@ -461,7 +461,7 @@
     "name": "Velocity Injectors",
     "color": [ 75, 180, 230 ],
     "bandwidthPerLevel": 7.5,
-    "hints": ["speed"],
+    "hints": [ "speed" ],
     "stats": [
       { "id": "maxSpeed", "scalingEffect": 50, "appliesToFighters": true },
       { "id": "acceleration", "scalingEffect": 50, "appliesToFighters": true },
@@ -483,25 +483,25 @@
     "name": "Wasp Defense Drones",
     "tag": "drones",
     "color": [ 100, 100, 255 ],
-    "hints": ["drones"],
-    "bandwidthPerLevel": 30,
+    "hints": [ "drones" ],
+    "bandwidthPerLevel": 25,
     "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.WaspDefenseDrones",
     "resourceRatios": {
-      "volatiles": 75.0,
-      "heavy_machinery": 75.0,
+      "volatiles": 30.0,
+      "heavy_machinery": 30.0,
       "metals": 200.0,
       "rare_metals": 75.0,
-      "supplies": 100.0
+      "supplies": 30.0
     }
   },
   "OverclockedFabricators": {
     "name": "Overclocked Fabricators",
     "color": [ 200, 255, 210 ],
     "bandwidthPerLevel": 5,
-    "hints": ["fighters"],
+    "hints": [ "fighters" ],
     "stats": [
-      { "id": "replacementRateRegen", "scalingEffect": 40},
-      { "id": "replacementRateDegen", "scalingEffect": -20},
+      { "id": "replacementRateRegen", "scalingEffect": 40 },
+      { "id": "replacementRateDegen", "scalingEffect": -20 },
       { "id": "fighterRefitTime", "scalingEffect": 20, "startingLevel": 3 }
     ],
     "conditions": [
@@ -516,15 +516,20 @@
   "QuickJets": {
     "name": "Quick Jets",
     "color": [ 225, 100, 130 ],
-    "hints": ["speed"],
-    "bandwidthPerLevel": 30,
+    "hints": [ "speed" ],
+    "bandwidthPerLevel": 25,
     "upgradeClass": "exoticatechnologies.modifications.upgrades.impl.QuickJets",
+    "spawnChance": 0.1,
+    "salvageChance": 0.33,
+    "conditions": [
+      { "id": "turnRate", "operator": "<=", "expected": 10, "weightOnly": true, "weight": 3 }
+    ],
     "resourceRatios": {
-      "volatiles": 150.0,
+      "volatiles": 50.0,
       "heavy_machinery": 25.0,
       "metals": 100.0,
       "rare_metals": 25.0,
-      "supplies": 75.0
+      "supplies": 25.0
     }
   },
   "Kingslayer": {
@@ -538,5 +543,101 @@
       "metals": 20.0,
       "supplies": 6.0
     }
+  },
+  "HegemonStrength": {
+    "name": "Hegemon Strength",
+    "color": [ 255, 200, 100 ],
+    "bandwidthPerLevel": 15,
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
+    "tag": "faction",
+    "hints": [ "durability", "weapons" ],
+    "stats": [
+      { "id": "armorDamageTaken", "scalingEffect": -10 },
+      { "id": "ballisticFireRate", "scalingEffect": 15 },
+      { "id": "armor", "scalingEffect": 25, "startingLevel": 10 },
+      { "id": "suppliesPerMonth", "scalingEffect": 25, "startingLevel": 5 }
+    ],
+    "resourceRatios": {
+      "heavy_machinery": 3.0,
+      "metals": 2.0,
+      "rare_metals": 2.0,
+      "supplies": 2.0
+    },
+    "spawnChance": 2.0,
+    "salvageChance": 0.33,
+    "valueMult": 2.0
+  },
+  "TechSupremacy": {
+    "name": "Technological Supremacy",
+    "color": [ 75, 130, 255 ],
+    "bandwidthPerLevel": 15,
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
+    "tag": "faction",
+    "hints": [ "flux", "weapons" ],
+    "stats": [
+      { "id": "fluxCapacity", "scalingEffect": 10 },
+      { "id": "weaponMagazines", "scalingEffect": 25 },
+      { "id": "fluxDissipation", "scalingEffect": 25, "startingLevel": 10 },
+      { "id": "suppliesPerMonth", "scalingEffect": 25, "startingLevel": 5 }
+    ],
+    "resourceRatios": {
+      "heavy_machinery": 1.0,
+      "rare_metals": 2.0,
+      "volatiles": 1.0,
+      "supplies": 2.0
+    },
+    "spawnChance": 2.0,
+    "salvageChance": 0.33,
+    "valueMult": 2.0
+  },
+  "KnightsShield": {
+    "name": "Knight's Shield",
+    "color": [ 255, 200, 100 ],
+    "bandwidthPerLevel": 15,
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
+    "tag": "faction",
+    "hints": [ "speed", "weapons" ],
+    "stats": [
+      { "id": "missileDamage", "scalingEffect": 10 },
+      { "id": "missileSpeed", "scalingEffect": 25 },
+      { "id": "maxSpeed", "scalingEffect": 25, "startingLevel": 10, "flat": true },
+      { "id": "suppliesPerMonth", "scalingEffect": 25, "startingLevel": 5 }
+    ],
+    "resourceRatios": {
+      "heavy_machinery": 1.0,
+      "metals": 5.0,
+      "rare_metals": 3.0,
+      "supplies": 2.0
+    },
+    "spawnChance": 2.0,
+    "salvageChance": 0.33,
+    "valueMult": 2.0
+  },
+  "PerseanUnity": {
+    "name": "Persean Unity",
+    "color": [ 75, 200, 205 ],
+    "bandwidthPerLevel": 15,
+    "showInStoreIfNotInstalled": false,
+    "chipFirstInstall": true,
+    "tag": "faction",
+    "hints": [ "speed", "weapons" ],
+    "stats": [
+      { "id": "weaponTurnRate", "scalingEffect": 50 },
+      { "id": "turnRate", "scalingEffect": 25 },
+      { "id": "weaponFluxCost", "scalingEffect": -15, "startingLevel": 10 },
+      { "id": "suppliesPerMonth", "scalingEffect": 25, "startingLevel": 5 }
+    ],
+    "resourceRatios": {
+      "heavy_machinery": 2.0,
+      "volatiles": 1.0,
+      "rare_metals": 1.0,
+      "supplies": 4.0
+    },
+    "spawnChance": 2.0,
+    "salvageChance": 0.33,
+    "valueMult": 2.0
   }
 }

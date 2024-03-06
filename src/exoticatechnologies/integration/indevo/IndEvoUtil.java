@@ -3,8 +3,6 @@ package exoticatechnologies.integration.indevo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exoticatechnologies.modifications.upgrades.Upgrade;
-import exoticatechnologies.modifications.upgrades.UpgradesHandler;
-import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod;
 import exoticatechnologies.util.Utilities;
 
 import java.util.Map;

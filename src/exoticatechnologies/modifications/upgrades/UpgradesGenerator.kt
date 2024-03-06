@@ -5,7 +5,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.util.WeightedRandomPicker
 import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.ShipModFactory
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.util.Utilities
 import lombok.extern.log4j.Log4j
 import java.util.*
@@ -13,7 +12,9 @@ import java.util.*
 @Log4j
 object UpgradesGenerator {
     @JvmStatic
-    fun generate(member: FleetMemberAPI, mods: ShipModifications, context: ShipModFactory.GenerationContext): ETUpgrades {
+    fun generate(context: ShipModFactory.GenerationContext): ETUpgrades {
+        val member = context.member
+        val mods = context.mods
         val config = context.factionConfig!!
         val allowedUpgrades = config.allowedUpgrades
         var upgradeChance = config.upgradeChance.toFloat() * getUpgradeChance(member)
@@ -31,16 +32,15 @@ object UpgradesGenerator {
 
         val random = ShipModFactory.random
         if (random.nextFloat() < upgradeChance) {
-
             var usableBandwidth = mods.getBandwidthWithExotics(member)
             val perUpgradeMult = 2f + smodCount * 0.5f
-            val upgradePicker = getPicker(random, allowedUpgrades, member, mods, upgrades, usableBandwidth)
+            val upgradePicker = getPicker(random, allowedUpgrades, context, usableBandwidth)
             while (random.nextFloat() < usableBandwidth / 100f * perUpgradeMult && !upgradePicker.isEmpty) {
                 var upgrade: Upgrade? = null
                 while (upgrade == null && !upgradePicker.isEmpty) {
                     upgrade = upgradePicker.pick()
 
-                    if (!canPickUpgrade(member, mods, upgrades, upgrade, usableBandwidth)) {
+                    if (!canPickUpgrade(context, upgrade, usableBandwidth)) {
                         upgradePicker.remove(upgrade)
                         upgrade = null
                     }
@@ -78,12 +78,12 @@ object UpgradesGenerator {
         return upgradePicker
     }
 
-    fun getPicker(random: Random, allowedUpgrades: Map<Upgrade, Float>, member: FleetMemberAPI, mods: ShipModifications, upgrades: ETUpgrades, usableBandwidth: Float): WeightedRandomPicker<Upgrade> {
+    fun getPicker(random: Random, allowedUpgrades: Map<Upgrade, Float>, context: ShipModFactory.GenerationContext, usableBandwidth: Float): WeightedRandomPicker<Upgrade> {
         val upgradePicker = WeightedRandomPicker<Upgrade>(random)
         allowedUpgrades
-            .filterKeys { canPickUpgrade(member, mods, upgrades, it, usableBandwidth) }
+            .filterKeys { canPickUpgrade(context, it, usableBandwidth) }
             .forEach { (upgrade, factionChance) ->
-            upgradePicker.add(upgrade, upgrade.spawnChance * factionChance * upgrade.getCalculatedWeight(member, mods))
+            upgradePicker.add(upgrade, upgrade.spawnChance * factionChance * upgrade.getCalculatedWeight(context.member, context.mods, context.variant))
         }
         return upgradePicker
     }
@@ -97,10 +97,12 @@ object UpgradesGenerator {
         return upgradePicker
     }
 
-    private fun canPickUpgrade(member: FleetMemberAPI, mods: ShipModifications, upgrades: ETUpgrades, upgrade: Upgrade, usableBandwidth: Float): Boolean {
+    private fun canPickUpgrade(context: ShipModFactory.GenerationContext, upgrade: Upgrade, usableBandwidth: Float): Boolean {
+        val member = context.member
         if (member.shipName == null && !upgrade.shouldAffectModule(null, null)) return false
-        return upgrade.maxLevel > upgrades.getUpgrade(upgrade)
-                && upgrade.canApply(member, mods)
+        return upgrade.maxLevel > context.mods.getUpgrade(upgrade)
+                && upgrade.canApply(member, context.variant, context.mods)
+                && upgrade.canApplyConditionsAndTags(member, context.variant, context.mods)
                 && (usableBandwidth - upgrade.bandwidthUsage) >= 0f
     }
 

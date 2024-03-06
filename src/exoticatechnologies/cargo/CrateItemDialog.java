@@ -25,13 +25,16 @@ public class CrateItemDialog implements InteractionDialogPlugin {
         showCratePickerDialog();
     }
 
+    public static boolean canBeStoredInCrate(CargoStackAPI stack) {
+        SpecialItemPlugin plugin = stack.getPlugin();
+        return plugin instanceof GenericExoticItemPlugin || plugin instanceof UpgradeSpecialItemPlugin;
+    }
+
     public void showCratePickerDialog() {
         final CargoAPI availableCargo = Global.getFactory().createCargo(false);
 
-
         for (CargoStackAPI stack : this.playerCargo.getStacksCopy()) {
-            SpecialItemPlugin plugin = stack.getPlugin();
-            if (plugin instanceof GenericExoticItemPlugin || plugin instanceof UpgradeSpecialItemPlugin) {
+            if (canBeStoredInCrate(stack)) {
                 availableCargo.addSpecial(stack.getSpecialDataIfSpecial(), stack.getSize());
                 playerCargo.removeStack(stack);
             }

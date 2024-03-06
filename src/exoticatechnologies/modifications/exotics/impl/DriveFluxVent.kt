@@ -1,12 +1,13 @@
 package exoticatechnologies.modifications.exotics.impl
 
-import activators.ActivatorManager
-import activators.CombatActivator
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
-import com.fs.starfarer.api.combat.*
+import com.fs.starfarer.api.combat.CombatAssignmentType
+import com.fs.starfarer.api.combat.CombatEntityAPI
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI.AssignmentInfo
+import com.fs.starfarer.api.combat.MutableShipStatsAPI
+import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.combat.ShipwideAIFlags.AIFlags
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
@@ -21,6 +22,8 @@ import org.json.JSONObject
 import org.lazywizard.lazylib.MathUtils
 import org.lazywizard.lazylib.VectorUtils
 import org.lwjgl.util.vector.Vector2f
+import org.magiclib.subsystems.MagicSubsystem
+import org.magiclib.subsystems.MagicSubsystemsManager
 import java.awt.Color
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -73,7 +76,7 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        ActivatorManager.addActivator(ship, BigVentActivator(ship, member, mods, exoticData))
+        MagicSubsystemsManager.addSubsystemToShip(ship, BigVentActivator(ship, member, mods, exoticData))
     }
 
     fun getSystemCooldown(member: FleetMemberAPI, mods: ShipModifications, exoticData: ExoticData): Float {
@@ -88,8 +91,17 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
         return DAMAGE_TAKEN_INCREASE * getNegativeMult(member, mods, exoticData)
     }
 
-    inner class BigVentActivator(ship: ShipAPI, val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData): CombatActivator(ship) {
+    inner class BigVentActivator(
+        ship: ShipAPI,
+        val member: FleetMemberAPI,
+        val mods: ShipModifications,
+        val exoticData: ExoticData
+    ) : MagicSubsystem(ship) {
         private var lastActivation: Float = -1f
+
+        override fun getOrder(): Int {
+            return ORDER_SHIP_MODULAR
+        }
 
         override fun canActivate(): Boolean {
             return ship.currFlux >= getFluxVented() && !ship.engineController.isFlamedOut
@@ -139,11 +151,11 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
             var assignment: AssignmentInfo? =
                 Global.getCombatEngine().getFleetManager(ship.owner).getTaskManager(ship.isAlly).getAssignmentFor(ship)
             val targetSpot: Vector2f? =
-                    if (assignment != null && assignment.target != null && assignment.type != CombatAssignmentType.AVOID) {
-                        assignment.target.location
-                    } else {
-                        null
-                    }
+                if (assignment != null && assignment.target != null && assignment.type != CombatAssignmentType.AVOID) {
+                    assignment.target.location
+                } else {
+                    null
+                }
 
             var desire = 0f
             if (flags.hasFlag(AIFlags.RUN_QUICKLY)) {
@@ -203,7 +215,11 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
             }
 
             var immediateTargetInRange = false
-            if (immediateTarget != null && MathUtils.getDistance(immediateTarget, ship) < engageRange - ship.collisionRadius) {
+            if (immediateTarget != null && MathUtils.getDistance(
+                    immediateTarget,
+                    ship
+                ) < engageRange - ship.collisionRadius
+            ) {
                 immediateTargetInRange = true
             }
 
@@ -239,10 +255,10 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
             }
 
             val targetDesire: Float = if (charges <= 1) {
-                    1f
-                } else { // 2
-                    0.5f
-                }
+                1f
+            } else { // 2
+                0.5f
+            }
 
             return desire >= targetDesire
         }
@@ -280,7 +296,9 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
             stats.armorDamageTakenMult.modifyPercent(buffId, getDamageTakenIncrease(member, mods, exoticData))
         }
 
-        override fun advance(amount: Float) {
+        override fun advance(amount: Float, isPaused: Boolean) {
+            if (isPaused) return
+
             if (state == State.IN || state == State.ACTIVE || state == State.OUT) {
                 ship.engineController.fadeToOtherColor(this, engineColor, Color(0, 0, 0, 0), effectLevel, 0.67f)
                 ship.engineController.extendFlame(this, 2f * effectLevel, 0f * effectLevel, 0f * effectLevel)
@@ -298,15 +316,23 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
             } else if (state == State.OUT) {
                 val speed = ship.angularVelocity
 
-                stats.maxTurnRate.modifyFlat(buffId, (stats.maxTurnRate.getFlatStatMod(buffId).value - (15f / outDuration) * amount).coerceAtLeast(0f))
-                stats.maxTurnRate.modifyPercent(buffId, (stats.maxTurnRate.getPercentStatMod(buffId).value - (100f / outDuration) * amount).coerceAtLeast(0f))
+                stats.maxTurnRate.modifyFlat(
+                    buffId,
+                    (stats.maxTurnRate.getFlatStatMod(buffId).value - (15f / outDuration) * amount).coerceAtLeast(0f)
+                )
+                stats.maxTurnRate.modifyPercent(
+                    buffId,
+                    (stats.maxTurnRate.getPercentStatMod(buffId).value - (100f / outDuration) * amount).coerceAtLeast(0f)
+                )
 
                 if (speed.absoluteValue > ship.mutableStats.maxTurnRate.modifiedValue) {
                     val negative = speed < 0
                     if (negative) {
-                        ship.angularVelocity = (speed + amount * 4500f).coerceIn(-ship.mutableStats.maxTurnRate.modifiedValue..0f)
+                        ship.angularVelocity =
+                            (speed + amount * 4500f).coerceIn(-ship.mutableStats.maxTurnRate.modifiedValue..0f)
                     } else {
-                        ship.angularVelocity = (speed - amount * 4500f).coerceIn(0f..ship.mutableStats.maxTurnRate.modifiedValue)
+                        ship.angularVelocity =
+                            (speed - amount * 4500f).coerceIn(0f..ship.mutableStats.maxTurnRate.modifiedValue)
                     }
                 }
             }
@@ -316,7 +342,9 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
                 if (ship.engineController.isAcceleratingBackwards || ship.engineController.isDecelerating) {
                     boostScale *= 0.2f
                 }
-                stats.maxSpeed.modifyPercent(buffId, 200f * boostScale)
+
+                stats.maxSpeed.modifyFlat(buffId, 15f * boostScale)
+                stats.maxSpeed.modifyPercent(buffId, 250f * boostScale)
 
                 val speed = ship.velocity.length()
                 if (speed <= 0.1f) {
@@ -389,6 +417,6 @@ class DriveFluxVent(key: String, settings: JSONObject) : Exotic(key, settings) {
         private const val FLUX_VENTED = 20f
         private const val FLUX_VENTED_MAX = 4000f
         private const val COOLDOWN = 10f
-        private const val DAMAGE_TAKEN_INCREASE = 20f
+        private const val DAMAGE_TAKEN_INCREASE = 15f
     }
 }

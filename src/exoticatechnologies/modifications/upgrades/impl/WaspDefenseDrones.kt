@@ -1,7 +1,5 @@
 package exoticatechnologies.modifications.upgrades.impl
 
-import activators.ActivatorManager
-import activators.drones.DroneActivator
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
@@ -10,12 +8,15 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.util.StringUtils
 import org.json.JSONObject
+import org.magiclib.subsystems.MagicSubsystem
+import org.magiclib.subsystems.MagicSubsystemsManager
+import org.magiclib.subsystems.drones.MagicDroneSubsystem
 
 class WaspDefenseDrones(key: String, settings: JSONObject) : Upgrade(key, settings) {
     override var maxLevel: Int = 1
 
     override fun applyToShip(member: FleetMemberAPI, ship: ShipAPI, mods: ShipModifications) {
-        ActivatorManager.addActivator(ship, WaspDroneActivator(ship))
+        MagicSubsystemsManager.addSubsystemToShip(ship, WaspDroneActivator(ship))
     }
 
     override fun shouldAffectModule(ship: ShipAPI?, module: ShipAPI?): Boolean {
@@ -47,7 +48,7 @@ class WaspDefenseDrones(key: String, settings: JSONObject) : Upgrade(key, settin
             .addToTooltip(tooltip)
     }
 
-    class WaspDroneActivator(ship: ShipAPI) : DroneActivator(ship) {
+    class WaspDroneActivator(ship: ShipAPI) : MagicDroneSubsystem(ship) {
         companion object {
             val maxDronesMap: Map<ShipAPI.HullSize, Int> = mapOf(
                 ShipAPI.HullSize.FRIGATE to 4,

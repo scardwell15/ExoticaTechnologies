@@ -5,12 +5,10 @@ id,trigger,conditions,script,text,options,notes
 ETMainDialog,PopulateOptions,"$hasMarket
 $menuState == main
 $tradeMode == OPEN
-RepairAvailable","SetShortcut ETMainMenu ""U"" true",,"25:ETMainMenu:Visit the local Exotica Technologies branch.",
+RepairAvailable","SetShortcut ETOpenMarketUI ""U"" true",,"25:ETOpenMarketUI:Visit the local Exotica Technologies branch.",
 ETMainMenu,DialogOptionSelected,"$option==ETMainMenu","$menuState = ETMainMenu
-SetShortcut ETDialogBack ""ESCAPE""","The Exotica engineering team welcomes you!","16:ETOpenPrototypeUI:Install modifications onto your ships.
-32:ETOpenMarketUI:View the market inventory of Exotica chips.
+SetShortcut ETDialogBack ""ESCAPE""","The Exotica engineering team welcomes you!","32:ETOpenMarketUI:View the market inventory of Exotica chips.
 90:ETDialogBack:Back",
-ETOpenPrototypeUI,DialogOptionSelected,"$option==ETOpenPrototypeUI","ETPrototypeUI",,,
 ETOpenMarketUI,DialogOptionSelected,"$option==ETOpenMarketUI","ETMarketUI",,,
 ETDialogBack,DialogOptionSelected,"$option==ETDialogBack","ShowDefaultVisual
 $menuState = main 0

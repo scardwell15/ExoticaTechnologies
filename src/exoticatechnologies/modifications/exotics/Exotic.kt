@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SpecialItemData
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
@@ -13,7 +14,7 @@ import exoticatechnologies.modifications.Modification
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.conditions.toList
 import exoticatechnologies.modifications.exotics.types.ExoticType
-import exoticatechnologies.ui.impl.shop.exotics.methods.ExoticMethod
+import exoticatechnologies.ui2.impl.mods.exotics.methods.ExoticMethod
 import exoticatechnologies.util.StringUtils
 import org.json.JSONObject
 import java.util.*
@@ -24,6 +25,8 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         get() = "$loreDescription\n\n$description"
 
     public override var icon: String = settings.optString("icon", key)
+    var iconPath: String = Global.getSettings().getSpriteName("exotics", icon)
+
     val buffId: String
         get() = "ET_$key"
     var allowedMethods: List<String>? = null
@@ -43,8 +46,8 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         return fm.fleetData == null || fm.fleetData.fleet == null || fm.fleetData.fleet != Global.getSector().playerFleet
     }
 
-    open fun onInstall(member: FleetMemberAPI) {}
-    open fun onDestroy(member: FleetMemberAPI) {}
+    open fun onInstall(member: FleetMemberAPI, variant: ShipVariantAPI) {}
+    open fun onDestroy(member: FleetMemberAPI, variant: ShipVariantAPI) {}
     open fun canAfford(fleet: CampaignFleetAPI, market: MarketAPI?): Boolean {
         return false
     }
@@ -61,12 +64,12 @@ abstract class Exotic(key: String, settings: JSONObject) : Modification(key, set
         return false
     }
 
-    fun printDescriptionToTooltip(fm: FleetMemberAPI, tooltip: TooltipMakerAPI) {
+    fun printDescriptionToTooltip(member: FleetMemberAPI, tooltip: TooltipMakerAPI) {
         StringUtils.getTranslation(key, "description")
             .addToTooltip(tooltip)
     }
 
-    fun printStatInfoToTooltip(fm: FleetMemberAPI, tooltip: TooltipMakerAPI) {
+    fun printStatInfoToTooltip(member: FleetMemberAPI, tooltip: TooltipMakerAPI) {
         StringUtils.getTranslation(key, "longDescription")
             .addToTooltip(tooltip)
     }

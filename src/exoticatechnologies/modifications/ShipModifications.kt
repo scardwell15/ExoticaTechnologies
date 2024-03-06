@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications
 
+import com.fs.starfarer.api.EveryFrameScript
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
@@ -16,7 +17,7 @@ import exoticatechnologies.modifications.exotics.*
 import exoticatechnologies.modifications.upgrades.ETUpgrades
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.modifications.upgrades.UpgradesHandler
-import exoticatechnologies.ui.UIUtils
+import exoticatechnologies.ui2.util.UIUtils
 import exoticatechnologies.util.StringUtils
 import org.apache.log4j.Logger
 import org.json.JSONException
@@ -26,6 +27,8 @@ import java.awt.Color
 
 class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exotics: ETExotics) {
     constructor() : this(-1f, ETUpgrades(), ETExotics())
+
+    private val listeners: MutableMap<String, () -> Unit> = mutableMapOf()
 
     @Throws(JSONException::class)
     constructor(obj: JSONObject) : this() {
@@ -61,6 +64,11 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
     }
 
     //bandwidth
+    fun setBaseBandwidth(newBandwidth: Float) {
+        bandwidth = newBandwidth
+        runListeners()
+    }
+
     /**
      * Use this only if bandwidth has already been generated. The Exotica dialog WILL generate bandwidth.
      * @return
@@ -149,10 +157,12 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
 
     fun putExotic(exoticData: ExoticData) {
         exotics.putExotic(exoticData)
+        runListeners()
     }
 
     fun removeExotic(exotic: Exotic) {
         exotics.removeExotic(exotic)
+        runListeners()
     }
 
     fun getExoticData(exotic: Exotic): ExoticData? {
@@ -167,6 +177,11 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         return ETModSettings.MAX_EXOTICS
     }
 
+
+    fun isUnderExoticLimit(member: FleetMemberAPI): Boolean {
+        return getMaxExotics(member) > exotics.getCount(member)
+    }
+
     //upgrades
 
     fun getUpgradeMap(): Map<Upgrade, Int> {
@@ -179,10 +194,17 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
 
     fun putUpgrade(upgrade: Upgrade) {
         upgrades.putUpgrade(upgrade)
+        runListeners()
     }
 
     fun putUpgrade(upgrade: Upgrade, level: Int) {
         upgrades.putUpgrade(upgrade, level)
+        runListeners()
+    }
+
+    fun removeUpgrade(upgrade: Upgrade) {
+        upgrades.removeUpgrade(upgrade)
+        runListeners()
     }
 
     fun getUpgrade(key: String): Int {
@@ -191,10 +213,6 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
 
     fun getUpgrade(upgrade: Upgrade): Int {
         return getUpgrade(upgrade.key)
-    }
-
-    fun removeUpgrade(upgrade: Upgrade) {
-        upgrades.removeUpgrade(upgrade)
     }
 
     fun hasUpgrade(upgrade: Upgrade): Boolean {
@@ -270,13 +288,11 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         }
 
         var addedExoticSection = false
-        if (!expandUpgrades) {
-            try {
-                addedExoticSection = addExoticSection(tooltip, width, member, expandExotics)
-            } catch (th: Throwable) {
-                log.info("Caught exotic description exception", th)
-                tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
-            }
+        try {
+            addedExoticSection = addExoticSection(tooltip, width, member, expandExotics)
+        } catch (th: Throwable) {
+            log.info("Caught exotic description exception", th)
+            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
         }
 
 
@@ -285,13 +301,11 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         }
 
         var addedUpgradeSection = false
-        if (!expandExotics) {
-            try {
-                addedUpgradeSection = addUpgradeSection(tooltip, stats, member, expandUpgrades)
-            } catch (th: Throwable) {
-                log.info("Caught upgrade description exception", th)
-                tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
-            }
+        try {
+            addedUpgradeSection = addUpgradeSection(tooltip, stats, member, expandUpgrades)
+        } catch (th: Throwable) {
+            log.info("Caught upgrade description exception", th)
+            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0f)
         }
 
         scrollerParentPanel?.apply {
@@ -404,5 +418,45 @@ class ShipModifications(var bandwidth: Float, var upgrades: ETUpgrades, var exot
         }
 
         return obj
+    }
+
+    /**
+     * UTIL
+     */
+    private var clearingScript: ClearListenersScript? = null
+    fun addListener(key: String, handler: () -> Unit) {
+        listeners[key] = handler
+
+        if (clearingScript == null) {
+            clearingScript = ClearListenersScript(this).also {
+                Global.getSector().addScript(it)
+            }
+        }
+    }
+
+    private fun runListeners() {
+        listeners.values.forEach {
+            it.invoke()
+        }
+    }
+
+    private class ClearListenersScript(private val mods: ShipModifications) : EveryFrameScript {
+        var shouldCleanUp = false
+        override fun runWhilePaused(): Boolean {
+            return true
+        }
+
+        override fun isDone(): Boolean {
+            return shouldCleanUp
+        }
+
+        override fun advance(amount: Float) {
+            if (Global.getSector().campaignUI.isShowingDialog) return
+            if (Global.getSector().campaignUI.isShowingMenu) return
+
+            shouldCleanUp = true
+            mods.listeners.clear()
+            mods.clearingScript = null
+        }
     }
 }

@@ -29,7 +29,6 @@ import exoticatechnologies.campaign.market.MarketManager
 import exoticatechnologies.hullmods.ExoticaTechHM
 import exoticatechnologies.modifications.PersistentDataProvider.Companion.shipModificationMap
 import exoticatechnologies.modifications.ShipModFactory
-import exoticatechnologies.modifications.ShipModFactory.generateRandom
 import exoticatechnologies.modifications.ShipModLoader
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.ExoticData
@@ -97,31 +96,9 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
             if (interactionTarget.hasTag(Tags.UNRECOVERABLE)) {
                 return
             }
-            val plugin = interactionTarget.customPlugin as DerelictShipEntityPlugin
-            val data: DerelictShipData = plugin.data
-            val shipData: PerShipData = data.ship
 
-            shipData.getVariant() ?: return
-
-            val fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, shipData.getVariant())
-            if (shipData.fleetMemberId == null) {
-                shipData.fleetMemberId = fm.id
-            } else {
-                fm.id = shipData.fleetMemberId
-            }
-            if (shipData.shipName != null) {
-                fm.shipName = shipData.shipName
-            }
-
-            fm.updateStats()
-            val seed = shipData.fleetMemberId.hashCode().toLong()
-            ShipModFactory.random.setSeed(seed)
-
-            //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
-            //it will never find one.
-            val mods = generateRandom(fm)
-            ShipModLoader.set(fm, fm.variant, mods)
-            Global.getSector().addTransientScript(DerelictsEFScript(shipData.fleetMemberId, mods))
+            val derelictPlugin = interactionTarget.customPlugin as DerelictShipEntityPlugin
+            ShipModFactory.generateModsForDerelict(derelictPlugin)
             return
         }
 
@@ -129,34 +106,8 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
             && interactionTarget.memoryWithoutUpdate.contains(MemFlags.SALVAGE_SPECIAL_DATA)
             && interactionTarget.memoryWithoutUpdate[MemFlags.SALVAGE_SPECIAL_DATA] is ShipRecoverySpecialData
         ) {
-
             val data = interactionTarget.memoryWithoutUpdate[MemFlags.SALVAGE_SPECIAL_DATA] as ShipRecoverySpecialData
-            if (data.ships != null
-                && data.ships.isNotEmpty()
-            ) {
-
-                val derelictVariantMap: MutableMap<String, ShipModifications> = LinkedHashMap()
-                for (shipData in data.ships) {
-                    val variant = shipData.getVariant() ?: continue
-                    val fm = Global.getFactory().createFleetMember(FleetMemberType.SHIP, variant)
-                    if (shipData.fleetMemberId != null) {
-                        fm.id = shipData.fleetMemberId
-                    } else {
-                        shipData.fleetMemberId = fm.id
-                    }
-                    if (shipData.shipName != null) {
-                        fm.shipName = shipData.shipName
-                    }
-                    val seed = shipData.fleetMemberId.hashCode().toLong()
-                    ShipModFactory.random.setSeed(seed)
-                    val mods = generateRandom(fm)
-                    //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
-                    //it will never find one.
-                    ShipModLoader.set(fm, fm.variant, mods)
-                    derelictVariantMap[shipData.fleetMemberId] = mods
-                }
-                Global.getSector().addTransientScript(DerelictsEFScript(derelictVariantMap))
-            }
+            ShipModFactory.generateModsForRecoveryData(data)
         }
     }
 
@@ -164,6 +115,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
         if (fleet.isPlayerFleet) {
             return
         }
+
         if (Global.getSector().campaignUI.isShowingDialog) {
             dlog("Fleet spawned in dialog.")
             if (activeFleets.contains(fleet)) {
@@ -444,7 +396,7 @@ class CampaignEventListener(permaRegister: Boolean) : BaseCampaignEventListener(
                 if (member.isFighterWing) continue
 
                 //generate random extra system
-                val mods = generateRandom(member)
+                val mods = ShipModFactory.generateRandom(member, member.variant)
                 ShipModLoader.set(member, member.variant, mods)
                 ExoticaTechHM.addToFleetMember(member)
                 dlog(String.format("Added modifications to member %s", member.shipName))

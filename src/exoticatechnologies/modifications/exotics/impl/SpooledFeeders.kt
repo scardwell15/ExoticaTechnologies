@@ -1,7 +1,5 @@
 package exoticatechnologies.modifications.exotics.impl
 
-import activators.ActivatorManager
-import activators.CombatActivator
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
@@ -17,6 +15,9 @@ import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
+import org.magiclib.subsystems.MagicSubsystem
+import org.magiclib.subsystems.MagicSubsystemsManager
+
 import java.awt.Color
 import kotlin.math.abs
 
@@ -57,11 +58,16 @@ class SpooledFeeders(key: String, settings: JSONObject) : Exotic(key, settings) 
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        ActivatorManager.addActivator(ship, SpooledActivator(ship, member, mods, exoticData))
+        MagicSubsystemsManager.addSubsystemToShip(ship, SpooledActivator(ship, member, mods, exoticData))
     }
 
-    inner class SpooledActivator(ship: ShipAPI, val member: FleetMemberAPI, val mods: ShipModifications, val exoticData: ExoticData) :
-        CombatActivator(ship) {
+    inner class SpooledActivator(
+        ship: ShipAPI,
+        val member: FleetMemberAPI,
+        val mods: ShipModifications,
+        val exoticData: ExoticData
+    ) :
+        MagicSubsystem(ship) {
         override fun getDisplayText(): String {
             return Global.getSettings().getString(this@SpooledFeeders.key, "systemText")
         }

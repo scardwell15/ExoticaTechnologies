@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import lombok.Getter;
 
 public class CrateGlobalData {
-    @Getter private final CargoAPI cargo;
+    private final CargoAPI cargo;
 
     public CrateGlobalData() {
         this.cargo = Global.getFactory().createCargo(true);
@@ -13,6 +13,10 @@ public class CrateGlobalData {
 
     public CrateGlobalData(CargoAPI cargo) {
         this.cargo = cargo;
+    }
+
+    public CargoAPI getCargo() {
+        return cargo;
     }
 
     private static String GLOBAL_KEY = "exoticaCrateData";

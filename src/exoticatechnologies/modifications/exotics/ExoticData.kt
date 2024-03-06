@@ -1,14 +1,12 @@
 package exoticatechnologies.modifications.exotics
 
 import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
 import exoticatechnologies.modifications.ShipModFactory
-import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.modifications.exotics.types.ExoticTypePanelPlugin
-import exoticatechnologies.ui.SpritePanelPlugin
+import exoticatechnologies.ui2.SpritePanelPlugin
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.StringUtils.Translation
 import org.json.JSONException

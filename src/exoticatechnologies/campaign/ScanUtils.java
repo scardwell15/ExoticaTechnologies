@@ -16,10 +16,8 @@ import exoticatechnologies.modifications.bandwidth.BandwidthUtil;
 import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
-import exoticatechnologies.ui.SpritePanelPlugin;
-import exoticatechnologies.ui.UIUtils;
-import exoticatechnologies.ui.java.TabbedCustomUIPanelPlugin;
-import exoticatechnologies.util.RomanNumeral;
+import exoticatechnologies.ui2.SpritePanelPlugin;
+import exoticatechnologies.ui2.util.UIUtils;
 import exoticatechnologies.util.StringUtils;
 import kotlin.Pair;
 import lombok.AccessLevel;
@@ -241,8 +239,9 @@ public class ScanUtils {
             float textWidth = 240;
             Color f = member.getCaptain().getFaction().getBaseUIColor();
 
-            ShipModifications mods = ShipModFactory.generateForFleetMember(member);
+            ShipModifications mods = ShipModFactory.generateForFleetMember(member, member.getVariant());
 
+            /*
             ScanCustomUIPanelPlugin scanMemberPanelPlugin = new ScanCustomUIPanelPlugin(tooltip, panelWidth - 340, mods, member.getHullSpec().getHullSize());
             CustomPanelAPI rowHolder = outer.createCustomPanel(panelWidth, NOTABLE_SHIPS_ROW_HEIGHT, scanMemberPanelPlugin);
             scanMemberPanelPlugin.setMyPanel(rowHolder);
@@ -269,7 +268,7 @@ public class ScanUtils {
 
             if (mods.hasExotics() && !mods.hasUpgrades()) {
                 scanMemberPanelPlugin.switchToPanel(ScanCustomUIPanelPlugin.EXOTICS_INDEX);
-            }
+            }*/
         }
 
         @Override
@@ -343,6 +342,7 @@ public class ScanUtils {
         }
     }
 
+    /*
     protected static class ScanCustomUIPanelPlugin extends TabbedCustomUIPanelPlugin {
         private static final int UPGRADES_INDEX = 0;
         private static final int EXOTICS_INDEX = 1;
@@ -459,5 +459,5 @@ public class ScanUtils {
 
             return iconPanel;
         }
-    }
+    }*/
 }

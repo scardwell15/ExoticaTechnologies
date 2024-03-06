@@ -39,7 +39,10 @@
 			"flux_smoke": "graphics/fx/particlealpha_textured.png",
 		},
 		"ui": {
-			"shimmer": "graphics/fx/shimmer.png"
+			"shimmer": "graphics/fx/shimmer.png",
+			"credits_24x24": "graphics/ui/icons/fleettab/credits_24x24.png",
+			"supplies_24x24": "graphics/ui/icons/fleettab/supplies_24x24.png",
+			"32x_crossed_circle2": "graphics/ui/icons/32x_crossed_circle2.png"
 		},
 		"exotics": {
 			"PlasmaFluxCatalyst": "graphics/icons/exotics/plasmafluxcatalyst.png",
@@ -88,7 +91,11 @@
 			"WaspDefenseDrones": "graphics/icons/upgrades/waspdefensedrones.png",
 			"OversizedMagazines": "graphics/icons/upgrades/oversizedmagazines.png",
 			"Kingslayer": "graphics/icons/upgrades/kingslayer.png",
-			"QuickJets": "graphics/icons/upgrades/quickjets.png"
+			"QuickJets": "graphics/icons/upgrades/quickjets.png",
+			"PerseanUnity": "graphics/icons/upgrades/perseanunity.png",
+			"HegemonStrength": "graphics/icons/upgrades/hegemonstrength.png",
+			"TechSupremacy": "graphics/icons/upgrades/techsupremacy.png",
+			"KnightsShield": "graphics/icons/upgrades/knightsshield.png"
 		},
 		"overlays": {
 			"Corrupted": "graphics/icons/overlays/corrupted.png",

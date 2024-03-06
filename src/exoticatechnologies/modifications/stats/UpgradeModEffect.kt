@@ -72,7 +72,7 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
     }
 
     open fun getPerLevelEffect(member: FleetMemberAPI, mods: ShipModifications, mod: Upgrade): Float {
-        val effect = scalingEffect / mod.maxLevel
+        val effect = scalingEffect / getEffectiveMaxLevel(mod)
         if (handleAsMult()) {
             return effect / 100
         } else {
@@ -90,6 +90,11 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
     open fun handleAsMult(): Boolean {
         return !flat && (positiveAlsoMult || scalingEffect < 0)
     }
+
+    open fun getEffectiveMaxLevel(mod: Upgrade): Float {
+        return (mod.maxLevel - (startingLevel - 1)).toFloat()
+    }
+
 
     open fun shouldHide(member: FleetMemberAPI): Boolean {
         return false
@@ -255,7 +260,7 @@ abstract class UpgradeModEffect : ModEffect<Upgrade>() {
             return null
         }
 
-        if (handleAsMult()) {
+            if (handleAsMult()) {
             if (scalingEffect > 0 || negativeIsBuff) {
                 return addMultBenefitToShop(tooltip, member, mods, mod)
             } else {

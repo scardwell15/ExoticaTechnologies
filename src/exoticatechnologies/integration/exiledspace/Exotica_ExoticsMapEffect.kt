@@ -1,5 +1,5 @@
 package exoticatechnologies.integration.exiledspace
-
+/*
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import data.world.systems.ptes_baseSystemScript
 
@@ -14,4 +14,4 @@ class Exotica_ExoticsMapEffect : data.scripts.plugins.ptes_baseEffectPlugin {
             it.memoryWithoutUpdate["\$exotica_exoticTypeMult"] = 2f
         }
     }
-}
+}*/

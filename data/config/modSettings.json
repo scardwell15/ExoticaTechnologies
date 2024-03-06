@@ -17,7 +17,10 @@
       "ms_modularFac": 0.25,
       "ms_massIndustry": 0.25,
       "ms_militaryProduction": 0.5,
-      "ms_orbitalShipyard": 1.0
+      "ms_orbitalShipyard": 1.0,
+      "triheavy": 2.0,
+      "hegeheavy": 2.0,
+      "orbitalheavy": 1.5
     },
 
     #uses highest for when ships are produced at a market
@@ -29,7 +32,10 @@
       "ms_modularFac": 1.0,
       "ms_massIndustry": 1.0,
       "ms_militaryProduction": 1.0,
-      "ms_orbitalShipyard": 1.0
+      "ms_orbitalShipyard": 1.0,
+      "triheavy": 2.0,
+      "hegeheavy": 2.0,
+      "orbitalheavy": 1.5
     },
 
     "factionsWithConfigs": [
@@ -39,7 +45,7 @@
       "hegemony",
       "luddic_church",
       "luddic_path",
-      "persean_league",
+      "persean",
       "pirates",
       "sindrian_diktat",
       "tritachyon",
@@ -113,7 +119,8 @@
       "InterceptionMatrix",
       "VelocityInjectors",
       "OverclockedFabricators",
-      "OversizedMagazines"
+      "OversizedMagazines",
+      "QuickJets"
     ],
     "rngExoticTypeWhitelist": {
       "CORRUPTED": 1,

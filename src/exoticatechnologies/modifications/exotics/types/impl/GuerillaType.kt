@@ -8,6 +8,7 @@ import exoticatechnologies.modifications.ShipModFactory
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.exotics.types.ExoticType
 import exoticatechnologies.util.StringUtils
+import exoticatechnologies.util.getFleetModuleSafe
 import org.magiclib.kotlin.setAlpha
 import java.awt.Color
 import kotlin.math.pow
@@ -32,13 +33,13 @@ class GuerillaType : ExoticType("GUERILLA", colorOverlay = Color(140, 200, 125, 
     }
 
     private fun getUnmodifiedFleetDP(member: FleetMemberAPI): Float {
-        if (member.fleetData == null) return 0f
+        val fleet = member.getFleetModuleSafe() ?: return 0f
 
-        if (member.fleetData.cacheClearedOnSync.containsKey(GUERILLA_CACHE_KEY))
-            return member.fleetData.cacheClearedOnSync[GUERILLA_CACHE_KEY] as Float
+        if (fleet.fleetData.cacheClearedOnSync.containsKey(GUERILLA_CACHE_KEY))
+            return fleet.fleetData.cacheClearedOnSync[GUERILLA_CACHE_KEY] as Float
 
-        val dpOfFleet = getTotalUnmodifiedCombatDP(member.fleetData)
-        member.fleetData.cacheClearedOnSync[GUERILLA_CACHE_KEY] = dpOfFleet
+        val dpOfFleet = getTotalUnmodifiedCombatDP(fleet.fleetData)
+        fleet.fleetData.cacheClearedOnSync[GUERILLA_CACHE_KEY] = dpOfFleet
         return dpOfFleet
     }
 
@@ -63,7 +64,7 @@ class GuerillaType : ExoticType("GUERILLA", colorOverlay = Color(140, 200, 125, 
     }
 
     override fun getChanceMult(context: ShipModFactory.GenerationContext): Float {
-        if (context.member.fleetData != null) {
+        if (context.fleet?.fleetData != null) {
             return getThresholdScale(context.member, 0.75f)
         }
         return 0.25f

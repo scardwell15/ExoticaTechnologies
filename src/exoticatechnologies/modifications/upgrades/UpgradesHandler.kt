@@ -1,9 +1,7 @@
 package exoticatechnologies.modifications.upgrades
 
 import com.fs.starfarer.api.Global
-import exoticatechnologies.ui.impl.shop.ShopManager.Companion.addMenu
-import exoticatechnologies.ui.impl.shop.upgrades.UpgradeShopUIPlugin
-import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
+import exoticatechnologies.ui2.impl.mods.upgrades.methods.UpgradeMethod
 import lombok.extern.log4j.Log4j
 import org.apache.log4j.Logger
 import org.json.JSONException
@@ -33,7 +31,6 @@ object UpgradesHandler {
     fun initialize() {
         populateUpgrades()
         populateMethods()
-        addMenu(UpgradeShopUIPlugin())
     }
 
     fun populateUpgrades() {

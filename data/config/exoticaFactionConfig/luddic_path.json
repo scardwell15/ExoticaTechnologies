@@ -18,7 +18,9 @@
     "VelocityInjectors": 1,
     "HyperactiveCapacitors": 0.3,
     "ForcedOvertime": 1,
-    "GuidanceComputers": 2.0
+    "GuidanceComputers": 2.0,
+    "QuickJets": 0.75,
+    "KnightsShield": 0.9
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

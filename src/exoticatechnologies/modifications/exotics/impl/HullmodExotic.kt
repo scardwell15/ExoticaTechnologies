@@ -11,7 +11,6 @@ import exoticatechnologies.modifications.exotics.Exotic
 import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.refit.checkRefitVariant
 import exoticatechnologies.util.StringUtils
-import exoticatechnologies.util.getRefitVariant
 import org.json.JSONObject
 import java.awt.Color
 
@@ -22,7 +21,8 @@ open class HullmodExotic(
     private val statDescriptionKey: String,
     override var color: Color
 ) : Exotic(key, settingsObj) {
-    override fun onInstall(member: FleetMemberAPI) {
+    override fun onInstall(member: FleetMemberAPI, variant: ShipVariantAPI) {
+        installOnVariant(variant)
         installOnVariant(member.variant)
         installOnVariant(member.checkRefitVariant())
     }
@@ -33,7 +33,8 @@ open class HullmodExotic(
         }
     }
 
-    override fun onDestroy(member: FleetMemberAPI) {
+    override fun onDestroy(member: FleetMemberAPI, variant: ShipVariantAPI) {
+        removeFromVariant(variant)
         removeFromVariant(member.variant)
         removeFromVariant(member.checkRefitVariant())
 
@@ -66,7 +67,7 @@ open class HullmodExotic(
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        onInstall(member)
+        onInstall(member, stats.variant)
     }
 
     override fun applyToShip(
@@ -76,7 +77,7 @@ open class HullmodExotic(
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        onInstall(member)
+        onInstall(member, ship.variant)
     }
 
     override fun modifyToolTip(

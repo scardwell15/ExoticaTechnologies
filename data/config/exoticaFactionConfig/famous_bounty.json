@@ -30,6 +30,7 @@
     "VelocityInjectors": 1.0,
     "OverclockedFabricators": 0.8,
     "WaspDefenseDrones": 0.4,
-    "OversizedMagazines": 1.0
+    "OversizedMagazines": 1.0,
+    "QuickJets": 0.75
   }
 }

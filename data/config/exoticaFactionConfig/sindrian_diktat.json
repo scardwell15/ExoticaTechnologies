@@ -24,9 +24,10 @@
     "VelocityInjectors": 0.25,
     "HyperactiveCapacitors": 0.6,
     "ForcedOvertime": 1.0,
-    "GuidanceComputers": 0.75,
+    "GuidanceComputers": 0.3,
     "AntimatterBoosters": 1.2,
-    "OversizedMagazines": 0.2
+    "OversizedMagazines": 0.2,
+    "QuickJets": 0.75
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

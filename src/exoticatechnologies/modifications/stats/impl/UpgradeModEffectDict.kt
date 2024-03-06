@@ -11,6 +11,7 @@ import exoticatechnologies.modifications.stats.impl.fighters.FighterRefitTimeEff
 import exoticatechnologies.modifications.stats.impl.fighters.ReplacementRateDegenEffect
 import exoticatechnologies.modifications.stats.impl.fighters.ReplacementRateRegenEffect
 import exoticatechnologies.modifications.stats.impl.flux.FluxCapacityEffect
+import exoticatechnologies.modifications.stats.impl.flux.FluxDissipationEffect
 import exoticatechnologies.modifications.stats.impl.flux.VentSpeedEffect
 import exoticatechnologies.modifications.stats.impl.health.*
 import exoticatechnologies.modifications.stats.impl.logistics.*
@@ -50,6 +51,7 @@ abstract class UpgradeModEffectDict {
                         ReplacementRateDegenEffect(),
                         //flux
                         FluxCapacityEffect(),
+                        FluxDissipationEffect(),
                         VentSpeedEffect(),
                         //health
                         HullEffect(),

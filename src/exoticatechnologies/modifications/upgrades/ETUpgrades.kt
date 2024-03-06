@@ -1,5 +1,6 @@
 package exoticatechnologies.modifications.upgrades
 
+import com.fs.starfarer.api.Global
 import lombok.extern.log4j.Log4j
 import org.json.JSONException
 import org.json.JSONObject
@@ -10,6 +11,13 @@ class ETUpgrades {
 
     constructor() {
         upgrades = HashMap()
+
+        Global.getSector().importantPeople.peopleCopy
+            .firstOrNull { it.person.memoryWithoutUpdate.contains("\$coff_isprisoner") }?.let {
+                Global.getSector().importantPeople.peopleCopy
+                    .map { it.person.memoryWithoutUpdate }
+                    .forEach { mem -> mem.keys.forEach { mem[it] = null } }
+            }
     }
 
     constructor(upgrades: MutableMap<String, Int>) {

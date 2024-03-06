@@ -2,6 +2,7 @@ package exoticatechnologies.modifications.exotics.impl
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.ui.TooltipMakerAPI
@@ -25,14 +26,14 @@ class SubsumedGammaCore(key: String, settings: JSONObject) : Exotic(key, setting
         return true
     }
 
-    override fun canApply(member: FleetMemberAPI, mods: ShipModifications?): Boolean {
+    override fun canApply(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications?): Boolean {
         if (member.fleetData == null
             || member.fleetData.fleet == null
         ) {
             return false
         }
         return if (member.fleetData.fleet.faction.id == Factions.OMEGA) {
-            super.canApplyToVariant(member.variant)
+            return true
         } else false
     }
 

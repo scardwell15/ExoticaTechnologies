@@ -10,10 +10,9 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
 import exoticatechnologies.campaign.market.MarketManager;
-import exoticatechnologies.cargo.CrateGlobalData;
-import exoticatechnologies.cargo.CrateSpecialData;
 import exoticatechnologies.config.FactionConfigLoader;
 import exoticatechnologies.config.VariantConfigLoader;
+import exoticatechnologies.crafting.RecipeManager;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.integration.indevo.IndEvoUtil;
 import exoticatechnologies.modifications.ShipModLoader;
@@ -21,8 +20,9 @@ import exoticatechnologies.modifications.exotics.ExoticsHandler;
 import exoticatechnologies.modifications.stats.impl.logistics.CrewSalaryEffect;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.refit.RefitButtonAdder;
-import exoticatechnologies.ui.impl.shop.ShopManager;
-import exoticatechnologies.ui.impl.shop.overview.OverviewPanelUIPlugin;
+import exoticatechnologies.ui2.impl.ExoticaMenuManager;
+import exoticatechnologies.ui2.impl.crafting.CraftingPanelTabContext;
+import exoticatechnologies.ui2.impl.mods.ModsPanelTabContext;
 import exoticatechnologies.util.FleetMemberUtils;
 import exoticatechnologies.util.Utilities;
 import lombok.extern.log4j.Log4j;
@@ -41,19 +41,24 @@ public class ETModPlugin extends BaseModPlugin {
 
         UpgradesHandler.initialize();
         ExoticsHandler.initialize();
+
         FactionConfigLoader.load();
     }
 
     @Override
     public void onGameLoad(boolean newGame) {
         FleetMemberUtils.moduleMap.clear();
-        ShopManager.getShopMenuUIPlugins().clear();
 
         ETModSettings.loadModSettings();
 
-        ShopManager.addMenu(new OverviewPanelUIPlugin());
         UpgradesHandler.initialize();
         ExoticsHandler.initialize();
+        RecipeManager.initialize();
+
+        ExoticaMenuManager.getModMenuPanels().clear();
+        ExoticaMenuManager.addMenu(new ModsPanelTabContext());
+        ExoticaMenuManager.addMenu(new CraftingPanelTabContext());
+
         VariantConfigLoader.INSTANCE.loadConfigs();
         MarketManager.INSTANCE.initialize();
 

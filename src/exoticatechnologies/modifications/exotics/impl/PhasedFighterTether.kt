@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.ui.UIComponentAPI
@@ -27,10 +28,10 @@ class PhasedFighterTether(key: String, settings: JSONObject) : Exotic(key, setti
         return Utilities.hasItem(fleet.cargo, ITEM)
     }
 
-    override fun canApply(member: FleetMemberAPI, mods: ShipModifications?): Boolean {
+    override fun canApply(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications?): Boolean {
         if (member.stats != null) {
             if (member.stats.numFighterBays.modifiedInt > 0) {
-                return canApplyToVariant(member.variant)
+                return true
             }
         }
         return false

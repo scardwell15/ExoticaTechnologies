@@ -12,10 +12,11 @@ import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.conditions.toList
 import exoticatechnologies.modifications.stats.UpgradeModEffect
 import exoticatechnologies.modifications.stats.impl.UpgradeModEffectDict.Companion.getStatsFromJSONArray
-import exoticatechnologies.ui.impl.shop.upgrades.methods.UpgradeMethod
+import exoticatechnologies.ui2.impl.mods.upgrades.methods.UpgradeMethod
 import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.json.JSONObject
+import org.lazywizard.lazylib.ext.json.optFloat
 import java.awt.Color
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -50,8 +51,8 @@ open class Upgrade(key: String, settings: JSONObject) : Modification(key, settin
             upgradeEffects.addAll(getStatsFromJSONArray(settings.getJSONArray("stats")))
         }
 
-        spawnChance = settings.optDouble("spawnChance", 1.0).toFloat()
-        salvageChance = settings.optDouble("salvageChance", spawnChance.toDouble()).toFloat()
+        spawnChance = settings.optFloat("spawnChance", 1f)
+        salvageChance = settings.optFloat("salvageChance", spawnChance)
         showInStoreIfNotInstalled = settings.optBoolean("showInStoreIfNotInstalled", true)
         chipFirstInstall = settings.optBoolean("chipFirstInstall")
         chipOnlyInstall = settings.optBoolean("chipOnlyInstall")
@@ -72,6 +73,15 @@ open class Upgrade(key: String, settings: JSONObject) : Modification(key, settin
         if (settings.has("blockedMethods")) {
             blockedMethods = settings.optJSONArray("blockedMethods").toList()
         }
+    }
+
+    open fun getIndex(): Int {
+        UpgradesHandler.UPGRADES_LIST.forEachIndexed { index, upgrade ->
+            if (upgrade.key == this.key) {
+                return index
+            }
+        }
+        return -1
     }
 
     override fun shouldShow(member: FleetMemberAPI, mods: ShipModifications, market: MarketAPI?): Boolean {
@@ -152,6 +162,7 @@ open class Upgrade(key: String, settings: JSONObject) : Modification(key, settin
         }
     }
 
+
     open fun modifyToolTip(
         tooltip: TooltipMakerAPI,
         stats: MutableShipStatsAPI,
@@ -190,7 +201,7 @@ open class Upgrade(key: String, settings: JSONObject) : Modification(key, settin
             val levelList: MutableList<UpgradeModEffect> = levelToEffectMap.getOrPut(startingLevel) { mutableListOf() }
             levelList.add(effect)
         }
-        for (startingLevel in 0 until maxLevel) {
+        for (startingLevel in 0..maxLevel) {
             if (levelToEffectMap.containsKey(startingLevel)) {
                 val levelList: List<UpgradeModEffect> = levelToEffectMap[startingLevel]!!
                 if (startingLevel > 1) {

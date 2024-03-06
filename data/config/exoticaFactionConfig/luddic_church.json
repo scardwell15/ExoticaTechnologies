@@ -20,7 +20,9 @@
     "HyperactiveCapacitors": 0.4,
     "ForcedOvertime": 1.5,
     "GuidanceComputers": 1,
-    "OversizedMagazines": 0.25
+    "OversizedMagazines": 0.25,
+    "QuickJets": 0.75,
+    "KnightsShield": 0.9
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

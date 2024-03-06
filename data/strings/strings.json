@@ -21,6 +21,7 @@
 		"unknown":"(???)"
 	},
 	"CommonOptions": {
+		"Credits": "Credits",
 		"ExpandExotics": "Press &F1& to show more exotic information.",
 		"ExpandUpgrades": "Press *F2* to show more upgrade information.",
 		"UnexpandInfo": "Press *any key* to show less information.",

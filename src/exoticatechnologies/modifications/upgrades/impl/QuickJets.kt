@@ -1,27 +1,24 @@
 package exoticatechnologies.modifications.upgrades.impl
 
-import activators.ActivatorManager
-import activators.CombatActivator
-import activators.drones.DroneActivator
 import com.fs.starfarer.api.combat.MutableShipStatsAPI
 import com.fs.starfarer.api.combat.ShipAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import com.fs.starfarer.api.util.Misc
 import exoticatechnologies.modifications.ShipModifications
 import exoticatechnologies.modifications.upgrades.Upgrade
 import exoticatechnologies.util.StringUtils
 import org.json.JSONObject
 import org.lazywizard.lazylib.MathUtils
 import org.lazywizard.lazylib.VectorUtils
-import org.lwjgl.util.vector.Vector2f
+import org.magiclib.subsystems.MagicSubsystem
+import org.magiclib.subsystems.MagicSubsystemsManager
 import kotlin.math.absoluteValue
 
 class QuickJets(key: String, settings: JSONObject) : Upgrade(key, settings) {
     override var maxLevel: Int = 1
 
     override fun applyToShip(member: FleetMemberAPI, ship: ShipAPI, mods: ShipModifications) {
-        ActivatorManager.addActivator(ship, QuickTurnJets(ship))
+        MagicSubsystemsManager.addSubsystemToShip(ship, QuickTurnJets(ship))
     }
 
     override fun shouldAffectModule(ship: ShipAPI?, module: ShipAPI?): Boolean {
@@ -51,7 +48,7 @@ class QuickJets(key: String, settings: JSONObject) : Upgrade(key, settings) {
             .addToTooltip(tooltip)
     }
 
-    inner class QuickTurnJets(ship: ShipAPI) : CombatActivator(ship) {
+    inner class QuickTurnJets(ship: ShipAPI) : MagicSubsystem(ship) {
         override fun getBaseActiveDuration(): Float {
             return 1.5f
         }
@@ -88,19 +85,29 @@ class QuickJets(key: String, settings: JSONObject) : Upgrade(key, settings) {
             stats.maxTurnRate.unmodify(buffId)
         }
 
-        override fun advance(amount: Float) {
+        override fun advance(amount: Float, isPaused: Boolean) {
+            if (isPaused) return
+
             if (state == State.OUT) {
                 val speed = ship.angularVelocity
 
-                stats.maxTurnRate.modifyFlat(buffId, (stats.maxTurnRate.getFlatStatMod(buffId).value - (15f / outDuration) * amount).coerceAtLeast(0f))
-                stats.maxTurnRate.modifyPercent(buffId, (stats.maxTurnRate.getPercentStatMod(buffId).value - (100f / outDuration) * amount).coerceAtLeast(0f))
+                stats.maxTurnRate.modifyFlat(
+                    buffId,
+                    (stats.maxTurnRate.getFlatStatMod(buffId).value - (15f / outDuration) * amount).coerceAtLeast(0f)
+                )
+                stats.maxTurnRate.modifyPercent(
+                    buffId,
+                    (stats.maxTurnRate.getPercentStatMod(buffId).value - (100f / outDuration) * amount).coerceAtLeast(0f)
+                )
 
                 if (speed.absoluteValue > ship.mutableStats.maxTurnRate.modifiedValue) {
                     val negative = speed < 0
                     if (negative) {
-                        ship.angularVelocity = (speed + amount * 4500f).coerceIn(-ship.mutableStats.maxTurnRate.modifiedValue..0f)
+                        ship.angularVelocity =
+                            (speed + amount * 4500f).coerceIn(-ship.mutableStats.maxTurnRate.modifiedValue..0f)
                     } else {
-                        ship.angularVelocity = (speed - amount * 4500f).coerceIn(0f..ship.mutableStats.maxTurnRate.modifiedValue)
+                        ship.angularVelocity =
+                            (speed - amount * 4500f).coerceIn(0f..ship.mutableStats.maxTurnRate.modifiedValue)
                     }
                 }
             }

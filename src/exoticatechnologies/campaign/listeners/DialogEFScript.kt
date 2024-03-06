@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.BaseStoryPointActionDelegate
 import com.fs.starfarer.api.campaign.OptionPanelAPI
 import com.fs.starfarer.api.campaign.StoryPointActionDelegate
+import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl
 import com.fs.starfarer.api.ui.ButtonAPI
@@ -55,27 +56,63 @@ class DialogEFScript : EveryFrameScript {
             if (dialog != null) {
                 val plugin = dialog.plugin
                 if (plugin is FleetInteractionDialogPluginImpl) {
-                    if (!dialog.optionPanel.hasOption(FleetInteractionDialogPluginImpl.OptionId.ENGAGE)) return
                     if (dialog.optionPanel.hasOption("scan")) return
-                    val context = plugin.context as FleetEncounterContext
-                    if (context.battle.nonPlayerCombined.fleetData.membersListCopy.none { ShipModLoader.get(it, it.variant) != null }) return
+                    if (dialog.optionPanel.hasOption(FleetInteractionDialogPluginImpl.OptionId.ENGAGE)) {
+                        val context = plugin.context as FleetEncounterContext
+                        if (context.battle.nonPlayerCombined.fleetData.membersListCopy.none { ShipModLoader.get(it, it.variant) != null }) return
 
-                    //put above LEAVE, or at end of list.
-                    var optionIndex = dialog.optionPanel.savedOptionList.size - 1
-                    if (!dialog.optionPanel.hasOption(FleetInteractionDialogPluginImpl.OptionId.LEAVE)) {
-                        optionIndex = dialog.optionPanel.savedOptionList.size
+                        //put above LEAVE, or at end of list.
+                        var optionIndex = dialog.optionPanel.savedOptionList.size - 1
+                        if (!dialog.optionPanel.hasOption(FleetInteractionDialogPluginImpl.OptionId.LEAVE)) {
+                            optionIndex = dialog.optionPanel.savedOptionList.size
+                        }
+
+                        dialog.optionPanel.addOptionAtIndexWithHandler(
+                            optionIndex,
+                            StringUtils.getString("FleetScanner", "FleetScanOption"),
+                            "scan",
+                            tooltip = null
+                        ) {
+                            ScanUtils.showNotableShipsPanel(
+                                dialog,
+                                context.battle.nonPlayerCombined.fleetData.membersListCopy
+                            )
+                        }
                     }
 
-                    dialog.optionPanel.addOptionAtIndexWithHandler(
-                        optionIndex,
-                        StringUtils.getString("FleetScanner", "FleetScanOption"),
-                        "scan",
-                        tooltip = null
-                    ) {
-                        ScanUtils.showNotableShipsPanel(
-                            dialog,
-                            context.battle.nonPlayerCombined.fleetData.membersListCopy
-                        )
+                    if (dialog.optionPanel.hasOption(FleetInteractionDialogPluginImpl.OptionId.RECOVERY_SELECT)) {
+                        val shipsToDisplay = mutableListOf<FleetMemberAPI>()
+                        if (ReflectionUtils.hasFieldOfName("recoverableShips", plugin)) {
+                            (ReflectionUtils.get("recoverableShips", plugin) as List<FleetMemberAPI>?)?.let { recoverableShips ->
+                                shipsToDisplay.addAll(recoverableShips)
+                            }
+                        }
+
+                        if (ReflectionUtils.hasFieldOfName("storyRecoverableShips", plugin)) {
+                            (ReflectionUtils.get("storyRecoverableShips", plugin) as List<FleetMemberAPI>?)?.let { storyRecoverableShips ->
+                                shipsToDisplay.addAll(storyRecoverableShips)
+                            }
+                        }
+
+                        if (shipsToDisplay.isEmpty() || shipsToDisplay.none { ShipModLoader.get(it, it.variant) != null }) return
+
+                        //put above LEAVE, or at end of list.
+                        var optionIndex = dialog.optionPanel.savedOptionList.size - 1
+                        if (!dialog.optionPanel.hasOption(FleetInteractionDialogPluginImpl.OptionId.LEAVE)) {
+                            optionIndex = dialog.optionPanel.savedOptionList.size
+                        }
+
+                        dialog.optionPanel.addOptionAtIndexWithHandler(
+                            optionIndex,
+                            StringUtils.getString("FleetScanner", "FleetScanOption"),
+                            "scan",
+                            tooltip = null
+                        ) {
+                            ScanUtils.showNotableShipsPanel(
+                                dialog,
+                                shipsToDisplay
+                            )
+                        }
                     }
                 }
             }

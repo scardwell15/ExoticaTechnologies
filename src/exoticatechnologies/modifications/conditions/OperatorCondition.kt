@@ -70,10 +70,10 @@ abstract class OperatorCondition : Condition {
 
     abstract fun getActual(member: FleetMemberAPI, mods: ShipModifications?, variant: ShipVariantAPI = member.checkRefitVariant()): Any?
 
-    override fun calculateWeight(member: FleetMemberAPI, mods: ShipModifications?): Float {
+    override fun calculateWeight(member: FleetMemberAPI, mods: ShipModifications?, variant: ShipVariantAPI): Float {
         var calculatedWeight = weight
         if (weightScales) {
-            val actual = getActual(member, mods)
+            val actual = getActual(member, mods, variant)
 
             if (actual != null) {
                 calculatedWeight *= operator.calculateWeight(actual, expected, extra)

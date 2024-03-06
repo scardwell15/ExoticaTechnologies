@@ -14,15 +14,17 @@
   },
   "allowedUpgrades": {
     "OverchargedShields": 1.25,
-    "InfernalEngines": 0.8,
+    "InfernalEngines": 0.75,
     "FluxInductionDrive": 1.0,
     "TracerRecoilCalculator": 0.4,
-    "AssaultWings": 1.5,
+    "AssaultWings": 0.75,
     "VelocityInjectors": 1.5,
-    "OverclockedFabricators": 0.25,
+    "OverclockedFabricators": 0.5,
     "HyperactiveCapacitors": 1.5,
-    "GuidanceComputers": 0.75,
-    "WaspDefenseDrones": 1.0
+    "GuidanceComputers": 0.5,
+    "WaspDefenseDrones": 0.75,
+    "QuickJets": 0.75,
+    "TechSupremacy": 0.9
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

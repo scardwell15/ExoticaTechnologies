@@ -1,8 +1,8 @@
 name,class
-Chip,exoticatechnologies.ui.impl.shop.upgrades.methods.ChipMethod
-Credits,exoticatechnologies.ui.impl.shop.upgrades.methods.CreditsMethod
-Resources,exoticatechnologies.ui.impl.shop.upgrades.methods.ResourcesMethod
-Recover,exoticatechnologies.ui.impl.shop.upgrades.methods.RecoverMethod
+Chip,exoticatechnologies.ui2.impl.mods.upgrades.methods.ChipMethod
+Credits,exoticatechnologies.ui2.impl.mods.upgrades.methods.CreditsMethod
+Resources,exoticatechnologies.ui2.impl.mods.upgrades.methods.ResourcesMethod
+Recover,exoticatechnologies.ui2.impl.mods.upgrades.methods.RecoverMethod
 IndEvo Ship Components,exoticatechnologies.integration.indevo.ShipComponentUpgradeMethod
 IndEvo Relic Components,exoticatechnologies.integration.indevo.RelicComponentUpgradeMethod
-Free,exoticatechnologies.ui.impl.shop.upgrades.methods.FreeMethod
+Free,exoticatechnologies.ui2.impl.mods.upgrades.methods.FreeMethod

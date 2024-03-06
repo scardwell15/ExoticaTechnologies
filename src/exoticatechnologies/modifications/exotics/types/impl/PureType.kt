@@ -34,7 +34,7 @@ class PureType :
     }
 
     override fun mutateGenerationContext(context: ShipModFactory.GenerationContext) {
-        context.upgradeChanceMult *= 0.1f
+        context.upgradeChanceMult *= 0.05f
         context.exoticChanceMult *= 0.01f
     }
 

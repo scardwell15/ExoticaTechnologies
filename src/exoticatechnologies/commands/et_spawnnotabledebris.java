@@ -48,12 +48,12 @@ public class et_spawnnotabledebris implements BaseCommand {
             FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, perShipData.getVariant());
             perShipData.fleetMemberId = member.getId();
 
-            ShipModifications mods = ShipModFactory.generateRandom(member, Factions.HEGEMONY);
+            ShipModifications mods = ShipModFactory.generateRandom(member, Factions.HEGEMONY, member.getVariant());
             ShipModFactory.GenerationContext generationContext =
-                    new ShipModFactory.GenerationContext(member, mods, Factions.HEGEMONY, 100f, 100f);
+                    new ShipModFactory.GenerationContext(member, member.getVariant(), mods, Factions.HEGEMONY, 100f, 100f, 100f);
 
-            ExoticsGenerator.generate(member, mods, generationContext);
-            UpgradesGenerator.generate(member, mods, generationContext);
+            ExoticsGenerator.generate(generationContext);
+            UpgradesGenerator.generate(generationContext);
 
             ShipModLoader.set(member, member.getVariant(), mods);
             data.addShip(perShipData);

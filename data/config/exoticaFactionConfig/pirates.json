@@ -25,7 +25,8 @@
     "ForcedOvertime": 0.1,
     "GuidanceComputers": 0.8,
     "WaspDefenseDrones": 0.1,
-    "OversizedMagazines": 0.75
+    "OversizedMagazines": 0.75,
+    "QuickJets": 1.0
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

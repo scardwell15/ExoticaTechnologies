@@ -17,9 +17,9 @@ open class VariantTagProvider : ShipModLoader.Provider {
     }
 
     var currGets: Int = 0
-    val maxGetsPerMember: Int = 10
+    val maxGetsPerMember: Int = 5
 
-    val cache: MutableMap<FleetMemberAPI, ShipModifications> = WeakHashMap()
+    val cache: MutableMap<ShipVariantAPI, ShipModifications> = WeakHashMap()
     val EXOTICA_INDICATOR = "$\$EXOTICA$$"
 
     override fun get(member: FleetMemberAPI, variant: ShipVariantAPI): ShipModifications? {
@@ -30,7 +30,7 @@ open class VariantTagProvider : ShipModLoader.Provider {
         }
 
         val cacheMods: ShipModifications? = cache.keys
-            .filter { it == member }
+            .filter { it == variant }
             .firstNotNullOfOrNull { cache[it] }
 
         if (cacheMods != null) {
@@ -45,7 +45,7 @@ open class VariantTagProvider : ShipModLoader.Provider {
             if (Global.getSector().campaignUI.currentCoreTab == CoreUITabId.REFIT || Global.getSector().campaignUI.currentCoreTab == CoreUITabId.FLEET) {
                 return it
             } else {
-                cache[member] = it
+                cache[variant] = it
             }
             return it
         }
@@ -61,11 +61,8 @@ open class VariantTagProvider : ShipModLoader.Provider {
 
         val tag = EXOTICA_INDICATOR + convertToJson(member, mods)
         variant.addTag(tag)
-        if (variant != member.variant) {
-            member.variant.addTag(tag)
-        }
 
-        cache[member] = mods
+        cache[variant] = mods
     }
 
     override fun remove(member: FleetMemberAPI, variant: ShipVariantAPI) {

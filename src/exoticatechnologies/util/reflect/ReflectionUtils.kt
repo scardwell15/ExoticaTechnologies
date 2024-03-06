@@ -85,34 +85,58 @@ object ReflectionUtils {
             .map { (fieldObj, fieldClass) -> ReflectedField(fieldObj) }
     }
 
-    fun set(fieldName: String, instanceToModify: Any, newValue: Any?) {
+    /**
+     * Will search superclasses until it finds what it wants.
+     */
+    fun findFieldByName(fieldName: String, instance: Any): Any? {
         var field: Any? = null
-        try {
-            field = instanceToModify.javaClass.getField(fieldName)
-        } catch (e: Throwable) {
+        var currClass: Class<Any> = instance.javaClass
+        while (currClass.superclass != null) {
             try {
-                field = instanceToModify.javaClass.getDeclaredField(fieldName)
+                field = currClass.getField(fieldName)
             } catch (e: Throwable) {
+                try {
+                    field = currClass.getDeclaredField(fieldName)
+                } catch (e: Throwable) {
+                }
             }
+
+            if (field != null) break
+            else currClass = currClass.superclass
         }
+
+        if (field == null)
+            throw NullPointerException("Field $fieldName not found in class or superclasses of $instance")
+
+        setFieldAccessibleHandle.invoke(field, true)
+        return field
+    }
+
+    fun set(fieldName: String, instanceToModify: Any, newValue: Any?) {
+        val field: Any? = findFieldByName(fieldName, instanceToModify)
 
         setFieldAccessibleHandle.invoke(field, true)
         setFieldHandle.invoke(field, instanceToModify, newValue)
     }
 
     fun get(fieldName: String, instanceToGetFrom: Any): Any? {
-        var field: Any? = null
-        try {
-            field = instanceToGetFrom.javaClass.getField(fieldName)
-        } catch (e: Throwable) {
-            try {
-                field = instanceToGetFrom.javaClass.getDeclaredField(fieldName)
-            } catch (e: Throwable) {
-            }
-        }
+        val field: Any? = findFieldByName(fieldName, instanceToGetFrom)
 
         setFieldAccessibleHandle.invoke(field, true)
         return getFieldHandle.invoke(field, instanceToGetFrom)
+    }
+
+    fun getMethodOfNameInClass(name: String, instance: Class<Any>, contains: Boolean = false): ReflectedMethod? {
+        val instancesOfMethods: Array<out Any> = instance.declaredMethods
+
+        val method: Any? = if (!contains) {
+            instancesOfMethods.firstOrNull { getMethodNameHandle.invoke(it) == name }
+        } else {
+            instancesOfMethods.firstOrNull { (getMethodNameHandle.invoke(it) as String).contains(name) }
+        }
+
+        if (method == null) return null
+        return ReflectedMethod(method)
     }
 
     fun hasMethodOfNameInClass(name: String, instance: Class<Any>, contains: Boolean = false): Boolean {
@@ -135,10 +159,8 @@ object ReflectionUtils {
         }
     }
 
-    fun hasVariableOfName(name: String, instance: Any): Boolean {
-
-        val instancesOfFields: Array<out Any> = instance.javaClass.getDeclaredFields()
-        return instancesOfFields.any { getFieldNameHandle.invoke(it) == name }
+    fun hasFieldOfName(name: String, instance: Any): Boolean {
+        return findFieldByName(name, instance) != null
     }
 
     fun instantiate(clazz: Class<*>, vararg arguments: Any?): Any? {

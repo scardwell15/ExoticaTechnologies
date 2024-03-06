@@ -1,16 +1,25 @@
 package exoticatechnologies.modifications
 
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
+import com.fs.starfarer.api.fleet.FleetMemberType
+import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin
 import com.fs.starfarer.api.impl.campaign.ids.Factions
+import com.fs.starfarer.api.impl.campaign.intel.PersonBountyIntel
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial.PerShipData
 import exoticatechnologies.ETModSettings
+import exoticatechnologies.campaign.listeners.DerelictsEFScript
 import exoticatechnologies.config.FactionConfig
 import exoticatechnologies.config.FactionConfigLoader
 import exoticatechnologies.modifications.bandwidth.Bandwidth
 import exoticatechnologies.modifications.exotics.ExoticsGenerator
 import exoticatechnologies.modifications.upgrades.UpgradesGenerator
 import exoticatechnologies.util.Utilities
+import exoticatechnologies.util.getFleetModuleSafe
 import org.apache.log4j.Logger
 import org.magiclib.util.MagicSettings
 import java.util.*
@@ -22,8 +31,8 @@ object ShipModFactory {
     val random = Random()
 
     @JvmStatic
-    fun generateForFleetMember(member: FleetMemberAPI): ShipModifications {
-        var mods = ShipModLoader.get(member, member.variant)
+    fun generateForFleetMember(member: FleetMemberAPI, variant: ShipVariantAPI = member.variant): ShipModifications {
+        var mods = ShipModLoader.get(member, variant)
         if (mods != null) {
             return mods
         }
@@ -33,7 +42,7 @@ object ShipModFactory {
         mods = ShipModifications()
         mods.bandwidth = generateBandwidth(member)
 
-        ShipModLoader.set(member, member.variant, mods)
+        ShipModLoader.set(member, variant, mods)
         return mods
     }
 
@@ -58,55 +67,65 @@ object ShipModFactory {
             return "omega"
         }
 
-        if (fm.fleetData == null
-            || fm.fleetData.fleet == null) {
-            return null
-        }
+        val fleet: CampaignFleetAPI = fm.getFleetModuleSafe() ?: return null
+        var faction = fleet.faction?.id
 
         try {
-            if (fm.fleetData.fleet.memoryWithoutUpdate.contains("\$faction")) {
-                return fm.fleetData.fleet.memoryWithoutUpdate["\$faction"] as String
+            if (fleet.memoryWithoutUpdate.contains("\$faction")) {
+                faction = fleet.memoryWithoutUpdate["\$faction"] as String
             }
         } catch (th: Throwable) {
             return null
         }
 
-        return fm.fleetData.fleet.faction?.id
+        Global.getSector().intelManager.getIntel(PersonBountyIntel::class.java)
+            .map { it as PersonBountyIntel }
+            .filter { it.bountyType == PersonBountyIntel.BountyType.DESERTER && it.fleet == fleet && it.faction != null }
+            .randomOrNull()
+            ?.let { bounty ->
+                faction = bounty.faction.id
+            }
+
+        return faction
     }
 
     @JvmStatic
-    fun generateRandom(member: FleetMemberAPI): ShipModifications {
-        val mods = ShipModLoader.get(member, member.variant)
+    fun generateRandom(member: FleetMemberAPI, variant: ShipVariantAPI = member.variant): ShipModifications {
+        val mods = ShipModLoader.get(member, variant)
         if (mods != null) {
             return mods
         }
 
-        return generateRandom(member, getFaction(member))
+        return generateRandom(member, getFaction(member), variant)
     }
 
     data class GenerationContext(
         var member: FleetMemberAPI,
-        var mods: ShipModifications,
-        var factionId: String?,
+        var variant: ShipVariantAPI = member.variant,
+        var mods: ShipModifications = ShipModifications(),
+        var factionId: String? = member.getFleetModuleSafe()?.faction?.id,
         var exoticChanceMult: Float = 1f,
-        var upgradeChanceMult: Float = 1f) {
+        var upgradeChanceMult: Float = 1f,
+        var bandwidthMult: Float = 1f) {
 
         val factionConfig: FactionConfig?
             get() = factionId?.let { return@let FactionConfigLoader.getFactionConfig(factionId!!) }
+        val fleet: CampaignFleetAPI?
+            get() = member.getFleetModuleSafe()
     }
 
     @JvmStatic
-    fun generateRandom(member: FleetMemberAPI, faction: String?): ShipModifications {
+    fun generateRandom(member: FleetMemberAPI, faction: String?, variant: ShipVariantAPI = member.variant): ShipModifications {
         if (faction == Global.getSector().playerFaction.id) {
             println("generateRandom was just used on a player faction ship, which should not happen.")
         }
         val mods = ShipModifications()
-        val context = GenerationContext(member = member, mods = mods, factionId = faction)
+        val context = GenerationContext(member = member, variant = variant, mods = mods, factionId = faction)
 
-        mods.bandwidth = generateBandwidth(member, faction)
+        mods.bandwidth = generateBandwidth(member, faction, context)
         faction?.let {
-            mods.exotics = ExoticsGenerator.generate(member, mods, context)
-            mods.upgrades = UpgradesGenerator.generate(member, mods, context)
+            mods.exotics = ExoticsGenerator.generate(context)
+            mods.upgrades = UpgradesGenerator.generate(context)
         }
 
         ShipModLoader.set(member, member.variant, mods)
@@ -114,7 +133,29 @@ object ShipModFactory {
         return mods
     }
 
-    fun generateBandwidth(member: FleetMemberAPI, faction: String?): Float {
+    /**
+     *
+     */
+    @JvmStatic
+    fun generateRandom(context: GenerationContext): ShipModifications {
+        val faction = context.factionId
+        if (faction == Global.getSector().playerFaction.id) {
+            println("generateRandom was just used on a player faction ship, which should not happen.")
+        }
+
+        val mods = ShipModifications()
+        mods.bandwidth = generateBandwidth(context.member, faction, context)
+        faction?.let {
+            mods.exotics = ExoticsGenerator.generate(context)
+            mods.upgrades = UpgradesGenerator.generate(context)
+        }
+
+        ShipModLoader.set(context.member, context.variant, mods)
+
+        return mods
+    }
+
+    fun generateBandwidth(member: FleetMemberAPI, faction: String?, context: GenerationContext?): Float {
         if (!ETModSettings.getBoolean(ETModSettings.RANDOM_BANDWIDTH)) {
             return ETModSettings.getFloat(ETModSettings.STARTING_BANDWIDTH)
         }
@@ -148,6 +189,10 @@ object ShipModFactory {
             }
         }
 
+        context?.let {
+            mult *= context.bandwidthMult
+        }
+
         mult += Utilities.getSModCount(member).toFloat()
         return Bandwidth.generate(mult).randomInRange
     }
@@ -161,7 +206,7 @@ object ShipModFactory {
 
         val faction = getFaction(fm)
         return if (faction != null) {
-            generateBandwidth(fm, faction)
+            generateBandwidth(fm, faction, null)
         } else Bandwidth.generate().randomInRange
     }
 
@@ -219,5 +264,79 @@ object ShipModFactory {
         } else {
             random.nextInt(max - min + 1) + min
         }
+    }
+
+    @JvmStatic
+    fun createGenerationContextForMemberAndVariant(member: FleetMemberAPI, variant: ShipVariantAPI): GenerationContext {
+        var faction: String? =  member.getFleetModuleSafe()?.faction?.id
+
+        if (faction == null) {
+            val validFactions = Global.getSector().allFactions
+                .filter { it.knowsShip(member.hullId) }
+                .map { translateFactionId(it.id) }
+                .toSet()
+
+            faction = validFactions.randomOrNull()
+        }
+
+        val generationContext = GenerationContext(member)
+        generationContext.factionId = faction
+        return generationContext
+    }
+
+    @JvmStatic
+    fun translateFactionId(factionId: String): String {
+        if (factionId.equals("domain") || factionId.equals("sector") || factionId.equals("domain")) {
+            return "independent"
+        }
+        return factionId
+    }
+
+    @JvmStatic
+    fun generateModsForDerelict(plugin: DerelictShipEntityPlugin) {
+        val data: DerelictShipEntityPlugin.DerelictShipData = plugin.data
+        data.ship?.let {
+            generateModsForPerShipData(it)
+        }
+    }
+
+    @JvmStatic
+    fun generateModsForRecoveryData(data: ShipRecoverySpecial.ShipRecoverySpecialData) {
+        data.ships?.forEach { generateModsForPerShipData(it) }
+    }
+
+    @JvmStatic
+    fun generateModsForPerShipData(shipData: PerShipData) {
+        shipData.getVariant() ?: return
+        if (ShipModLoader.getForSpecialData(shipData) != null) return
+
+        val derelictVariant = shipData.getVariant()
+        val member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, derelictVariant)
+        if (shipData.fleetMemberId == null) {
+            shipData.fleetMemberId = member.id
+        } else {
+            member.id = shipData.fleetMemberId
+        }
+        if (shipData.shipName != null) {
+            member.shipName = shipData.shipName
+        }
+
+        member.setVariant(derelictVariant, false, false)
+        member.updateStats()
+
+        if (ShipModLoader.get(member, derelictVariant) != null) return
+
+        val seed = shipData.fleetMemberId.hashCode().toLong()
+        random.setSeed(seed)
+
+        val generationContext = createGenerationContextForMemberAndVariant(member, derelictVariant)
+        generationContext.upgradeChanceMult = 3f
+        generationContext.exoticChanceMult = 3f
+
+        //note: saving here isn't really an issue because the cleanup script searches for fleet members with this ID.
+        //it will never find one.
+        val mods = generateRandom(generationContext)
+        ShipModLoader.set(member, derelictVariant, mods)
+        Global.getSector().addTransientScript(DerelictsEFScript(shipData.fleetMemberId, mods))
     }
 }

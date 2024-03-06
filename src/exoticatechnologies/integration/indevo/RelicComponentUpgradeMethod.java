@@ -10,7 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exoticatechnologies.hullmods.ExoticaTechHM;
 import exoticatechnologies.modifications.ShipModLoader;
 import exoticatechnologies.modifications.upgrades.Upgrade;
-import exoticatechnologies.ui.impl.shop.upgrades.methods.DefaultUpgradeMethod;
+import exoticatechnologies.ui2.impl.mods.upgrades.methods.DefaultUpgradeMethod;
 import exoticatechnologies.modifications.ShipModifications;
 import exoticatechnologies.util.FleetMemberUtils;
 import exoticatechnologies.util.StringUtils;
@@ -36,20 +36,20 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
 
     @Nullable
     @Override
-    public String getOptionTooltip(@NotNull FleetMemberAPI member, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market) {
+    public String getOptionTooltip(@NotNull FleetMemberAPI member, @NotNull ShipVariantAPI variant, @NotNull ShipModifications mods, @NotNull Upgrade upgrade, @Nullable MarketAPI market) {
         return StringUtils.getTranslation("UpgradeMethods", "IndEvoRelicsTooltip")
-                .format("relics", getTotalComponents(FleetMemberUtils.INSTANCE.findFleetForVariant(member.getVariant(), member), market))
+                .format("relics", getTotalComponents(FleetMemberUtils.INSTANCE.findFleetForVariant(variant, member), market))
                 .toString();
     }
 
     @Override
-    public boolean canUse(@NotNull FleetMemberAPI member, ShipModifications mods, @NotNull Upgrade upgrade, MarketAPI market) {
+    public boolean canUse(@NotNull FleetMemberAPI member, @NotNull ShipVariantAPI variant, ShipModifications mods, @NotNull Upgrade upgrade, MarketAPI market) {
         int level = mods.getUpgrade(upgrade);
         int upgradeCost = IndEvoUtil.getUpgradeRelicComponentPrice(member, upgrade, level);
-        int totalComponents = getTotalComponents(FleetMemberUtils.INSTANCE.findFleetForVariant(member.getVariant(), member), market);
+        int totalComponents = getTotalComponents(FleetMemberUtils.INSTANCE.findFleetForVariant(variant, member), market);
 
         return (totalComponents - upgradeCost) >= 0
-                && super.canUse(member, mods, upgrade, market);
+                && super.canUse(member, variant, mods, upgrade, market);
     }
 
     @NotNull
@@ -67,7 +67,7 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
             upgradeCost = removeCommodityAndReturnRemainingCost(storageCargo, IndEvoUtil.RELIC_COMPONENT_ITEM_ID, upgradeCost);
         }
 
-        CargoAPI fleetCargo = FleetMemberUtils.INSTANCE.findFleetForVariant(member.getVariant(), member).getCargo();
+        CargoAPI fleetCargo = FleetMemberUtils.INSTANCE.findFleetForVariant(variant, member).getCargo();
         if (upgradeCost > 0) {
             removeCommodity(fleetCargo, IndEvoUtil.RELIC_COMPONENT_ITEM_ID, upgradeCost);
         }
@@ -76,7 +76,6 @@ public class RelicComponentUpgradeMethod extends DefaultUpgradeMethod {
         ShipModLoader.set(member, variant, mods);
         ExoticaTechHM.addToFleetMember(member, variant);
 
-        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
         return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
                 .format("name", upgrade.getName())
                 .format("level", mods.getUpgrade(upgrade))

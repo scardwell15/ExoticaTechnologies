@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI
 import exoticatechnologies.modifications.conditions.Condition
 import exoticatechnologies.modifications.conditions.ConditionDict
 import exoticatechnologies.modifications.conditions.toList
+import exoticatechnologies.refit.checkRefitVariant
 import org.apache.log4j.Logger
 import org.json.JSONObject
 import org.lazywizard.lazylib.ext.json.optFloat
@@ -87,17 +88,17 @@ abstract class Modification(val key: String, val settings: JSONObject) {
             .mapNotNull { it.cannotApplyReason }
     }
 
-    open fun getCalculatedWeight(member: FleetMemberAPI, mods: ShipModifications?): Float {
+    open fun getCalculatedWeight(member: FleetMemberAPI, mods: ShipModifications?, variant: ShipVariantAPI = member.checkRefitVariant()): Float {
         var addedWeight = 1f
 
         if (conditions.isNotEmpty()) {
             addedWeight += conditions
-                .map { it.calculateWeight(member, mods) }
+                .map { it.calculateWeight(member, mods, variant) }
                 .sum()
         }
 
-        if (member.variant.hullVariantId != null) {
-            variantScales[member.variant.hullVariantId]?.let {
+        if (variant.hullVariantId != null) {
+            variantScales[variant.hullVariantId]?.let {
                 addedWeight *= it
             }
         }
@@ -121,18 +122,20 @@ abstract class Modification(val key: String, val settings: JSONObject) {
         return true
     }
 
-    open fun canApply(member: FleetMemberAPI, mods: ShipModifications?): Boolean {
-        return canApply(member, member.variant, mods)
+    /**
+     * Checks both canApplyConditionAndTags and canApply (which can be overridden.)
+     */
+    fun canApplyImpl(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications?): Boolean {
+        return canApply(member, variant, mods) && canApplyConditionsAndTags(member, variant, mods)
+    }
+
+    fun canApplyConditionsAndTags(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications?): Boolean {
+        val condCheck = checkConditions(member, mods)
+        val tagsCheck = checkTags(member, mods, tags)
+        return condCheck && tagsCheck
     }
 
     open fun canApply(member: FleetMemberAPI, variant: ShipVariantAPI, mods: ShipModifications?): Boolean {
-        val condCheck = checkConditions(member, mods)
-        val tagsCheck = checkTags(member, mods, tags)
-        val varCheck = canApplyToVariant(member.variant)
-        return condCheck && tagsCheck && varCheck
-    }
-
-    open fun canApplyToVariant(variant: ShipVariantAPI): Boolean {
         return true
     }
 

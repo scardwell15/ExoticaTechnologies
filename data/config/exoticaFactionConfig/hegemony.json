@@ -12,18 +12,20 @@
   "allowedUpgrades": {
     "OverchargedShields": 0.6,
     "InfernalEngines": 0.66,
-    "TracerRecoilCalculator": 1.6,
+    "TracerRecoilCalculator": 1.4,
     "WeldedArmor": 1.0,
     "PinataConfig": 0.4,
     "AssaultWings": 0.66,
     "VelocityInjectors": 0.3,
     "OverclockedFabricators": 0.3,
-    "HyperactiveCapacitors": 0.6,
+    "HyperactiveCapacitors": 0.5,
     "ForcedOvertime": 1.0,
     "GuidanceComputers": 0.75,
     "FluxInductionDrive": 0.4,
     "InterceptionMatrix": 0.4,
-    "OversizedMagazines": 0.75
+    "OversizedMagazines": 0.6,
+    "QuickJets": 0.75,
+    "HegemonStrength": 0.9
   },
   "exoticTurnIn": {
     "PlasmaFluxCatalyst": {"credit": 1.0, "rep": 1.0},

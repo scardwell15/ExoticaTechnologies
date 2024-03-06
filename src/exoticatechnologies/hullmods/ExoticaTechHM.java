@@ -31,11 +31,7 @@ public class ExoticaTechHM extends BaseHullMod {
             return;
         }
 
-        ShipModifications mods = ShipModFactory.generateForFleetMember(member);
-
-        if (variant.hasHullMod("exoticatech")) {
-            variant.removePermaMod("exoticatech");
-        }
+        ShipModifications mods = ShipModFactory.generateForFleetMember(member, variant);
 
         if (mods.shouldApplyHullmod()) {
 

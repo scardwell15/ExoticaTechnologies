@@ -77,7 +77,7 @@ class AlphaSubcore(key: String, settingsObj: JSONObject) :
         mods: ShipModifications,
         exoticData: ExoticData
     ) {
-        onInstall(member)
+        onInstall(member, stats.variant)
     }
 
     /**

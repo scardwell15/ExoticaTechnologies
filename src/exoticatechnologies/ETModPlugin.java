@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exoticatechnologies.campaign.ExoticaFleetInflationListener;
 import exoticatechnologies.campaign.listeners.CampaignEventListener;
 import exoticatechnologies.campaign.listeners.SalvageListener;
 import exoticatechnologies.campaign.market.MarketManager;
@@ -96,6 +97,7 @@ public class ETModPlugin extends BaseModPlugin {
         Global.getSector().addTransientScript(campaignListener);
         Global.getSector().addTransientScript(new RefitButtonAdder());
         Global.getSector().addListener(campaignListener);
+        Global.getSector().getListenerManager().addListener(new ExoticaFleetInflationListener(), true);
     }
 
     public static void removeListeners() {

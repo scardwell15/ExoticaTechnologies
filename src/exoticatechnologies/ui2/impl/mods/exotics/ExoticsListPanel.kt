@@ -24,18 +24,7 @@ class ExoticsListPanel(context: ExoticsListContext) :
         super.refresh(menuPanel, context)
 
         (context as ExoticsListContext).mods?.addListener("${this::class}") {
-            listItems
-                .filter { this.shouldAllowItem(it.item) }
-                .forEach {
-                    if (it.getPanel() == null) {
-                        listInnerPanel?.let { innerPanel ->
-                            it.layoutPanel(innerPanel, ExoticItemContext(it.item, it.panelContext))
-                        }
-                    } else {
-                        it.refreshPanel()
-                    }
-                }
-            super.finishedRefresh(menuPanel, context, listItems)
+            this.refreshPanel()
         }
     }
 }

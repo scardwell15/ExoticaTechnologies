@@ -35,9 +35,9 @@ class CraftingPanel(context: ExoticaPanelContext) : RefreshablePanel<ExoticaPane
 }
 
 class CraftingPanelTabContext :
-    ExoticaTabContext(CraftingPanel(ExoticaPanelContext()), "crafting", "Crafting", Color(100, 220, 130, 255)) {
+    ExoticaTabContext(CraftingPanel(ExoticaPanelContext()), "crafting", "Crafting", Color(100, 180, 130, 255)) {
     override val highlightedColor: Color
-        get() = Color(150, 240, 180, 255)
+        get() = Color(130, 225, 160, 255)
 }
 
 open class CraftingPanelContext(val fleet: CampaignFleetAPI, val market: MarketAPI?) : PanelContext

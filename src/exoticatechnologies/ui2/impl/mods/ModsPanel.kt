@@ -29,7 +29,7 @@ class ModsPanel(context: ExoticaPanelContext) : ExoticaPanel(context) {
 }
 
 class ModsPanelTabContext :
-    ExoticaTabContext(ModsPanel(ExoticaPanelContext()), "mods", "Mods", Color(240, 140, 100, 255)) {
+    ExoticaTabContext(ModsPanel(ExoticaPanelContext()), "mods", "Mods", Color(200, 110, 100, 255)) {
     override val highlightedColor: Color
-        get() = Color(255, 160, 120, 255)
+        get() = Color(230, 140, 120, 255)
 }

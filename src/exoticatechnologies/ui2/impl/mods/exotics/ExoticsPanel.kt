@@ -22,5 +22,9 @@ class ExoticsTabContext : ModTabContext(
     ExoticsPanel(ExoticaPanelContext()),
     "exotics",
     StringUtils.getString("ExoticsDialog", "OpenExoticOptions"),
-    Color(120, 150, 200, 255)
-)
+    TAB_COLOR
+) {
+    companion object {
+        val TAB_COLOR = Color(100, 120, 160, 255)
+    }
+}

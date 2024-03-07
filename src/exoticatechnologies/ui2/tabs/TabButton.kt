@@ -8,13 +8,12 @@ import org.lazywizard.lazylib.opengl.ColorUtils
 import org.lazywizard.lazylib.ui.LazyFont
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_POLYGON
-import org.magiclib.bounty.ui.drawOutlined
 import java.awt.Color
 import kotlin.math.max
 
 open class TabButton<T : PanelContext>(context: TabContext<T>) :
     RefreshablePanel<TabContext<T>>(context) {
-    override var panelWidth: Float = max(getTextWidth(context.tabText) + 4f, 96f)
+    override var panelWidth: Float = max(getTabTextWidth(context.tabText) + 4f, 96f)
     override var panelHeight: Float = 28f
     var button: ButtonAPI? = null
 
@@ -84,7 +83,10 @@ open class TabButton<T : PanelContext>(context: TabContext<T>) :
 
             drawableString.text = currContext.tabText
             drawableString.anchor = LazyFont.TextAnchor.CENTER
-            drawableString.drawOutlined(x + width / 2f, y + height / 2f)
+            drawableString.baseColor = Color.BLACK
+            drawableString.draw(x + width / 2f + 1f, y + height / 2f - 1f)
+            drawableString.baseColor = currContext.activeHighlightedColor.brighter()
+            drawableString.draw(x + width / 2f, y + height / 2f)
         }
     }
 
@@ -96,7 +98,7 @@ open class TabButton<T : PanelContext>(context: TabContext<T>) :
             return@let it.createText("")
         }
 
-        private fun getTextWidth(text: String): Float {
+        fun getTabTextWidth(text: String): Float {
             val oldText = drawableString.text
             drawableString.text = text
             val width = drawableString.width

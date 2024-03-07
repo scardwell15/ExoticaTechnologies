@@ -59,7 +59,9 @@ class DialogEFScript : EveryFrameScript {
                     if (dialog.optionPanel.hasOption("scan")) return
                     if (dialog.optionPanel.hasOption(FleetInteractionDialogPluginImpl.OptionId.ENGAGE)) {
                         val context = plugin.context as FleetEncounterContext
-                        if (context.battle.nonPlayerCombined.fleetData.membersListCopy.none { ShipModLoader.get(it, it.variant) != null }) return
+                        val membersToShow = context.battle.nonPlayerCombined.fleetData.membersListCopy
+                            .filter { ShipModLoader.get(it, it.variant) != null && ScanUtils.doesEntityHaveNotableMods(ShipModLoader.get(it, it.variant)) }
+                        if (membersToShow.isEmpty()) return
 
                         //put above LEAVE, or at end of list.
                         var optionIndex = dialog.optionPanel.savedOptionList.size - 1
@@ -75,7 +77,7 @@ class DialogEFScript : EveryFrameScript {
                         ) {
                             ScanUtils.showNotableShipsPanel(
                                 dialog,
-                                context.battle.nonPlayerCombined.fleetData.membersListCopy
+                                membersToShow
                             )
                         }
                     }

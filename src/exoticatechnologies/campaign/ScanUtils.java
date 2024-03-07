@@ -17,6 +17,8 @@ import exoticatechnologies.modifications.exotics.ExoticData;
 import exoticatechnologies.modifications.upgrades.Upgrade;
 import exoticatechnologies.modifications.upgrades.UpgradesHandler;
 import exoticatechnologies.ui2.SpritePanelPlugin;
+import exoticatechnologies.ui2.impl.scanner.ScannedFleetPanel;
+import exoticatechnologies.ui2.impl.scanner.ScannedFleetPanelContext;
 import exoticatechnologies.ui2.util.UIUtils;
 import exoticatechnologies.util.StringUtils;
 import kotlin.Pair;
@@ -219,15 +221,17 @@ public class ScanUtils {
 
         @Override
         public void createCustomDialog(CustomPanelAPI panel, CustomDialogCallback callback) {
-            TooltipMakerAPI tt = panel.createUIElement(panelWidth, panelHeight - 16, true);
+            TooltipMakerAPI tt = panel.createUIElement(panelWidth, 22f, false);
             String headerStr = StringUtils.getTranslation("FleetScanner", "NotableShipsHeader").toString();
             tt.addSectionHeading(headerStr, Alignment.MID, 0);
-
-            for (FleetMemberAPI member : members) {
-                addRow(panel, tt, member);
-            }
-
             panel.addUIElement(tt).inTL(0, 0);
+
+            ScannedFleetPanel fleetPanel = new ScannedFleetPanel(new ScannedFleetPanelContext(members));
+            fleetPanel.setPanelWidth(panelWidth);
+            fleetPanel.setPanelHeight(panelHeight - 30f);
+            fleetPanel.setItemWidth(panelWidth);
+            fleetPanel.setItemHeight(80f);
+            fleetPanel.layoutPanel(panel, null).getPosition().inTMid(30f);
         }
 
         /**

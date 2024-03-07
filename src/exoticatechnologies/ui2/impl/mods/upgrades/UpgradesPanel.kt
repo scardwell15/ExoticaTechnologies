@@ -22,5 +22,9 @@ class UpgradesTabContext : ModTabContext(
     UpgradesPanel(ExoticaPanelContext()),
     "upgrades",
     StringUtils.getString("UpgradesDialog", "OpenUpgradeOptions"),
-    Color(200, 130, 130, 255)
-)
+    TAB_COLOR
+) {
+    companion object {
+        val TAB_COLOR = Color(160, 100, 100, 255)
+    }
+}

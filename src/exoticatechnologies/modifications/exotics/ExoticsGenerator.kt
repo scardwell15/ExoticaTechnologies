@@ -54,7 +54,7 @@ object ExoticsGenerator {
                     val factionExoticWeight = allowedExotics[exotic]!!
                     val calculatedWeight = perExoticMult * factionExoticWeight * context.exoticChanceMult
 
-                    if (roll < calculatedWeight) {
+                    if (exotics.list.isEmpty() || roll < calculatedWeight) {
                         val data: ExoticData
                         if (random.nextFloat() <= exoticTypeChance) {
                             data = ExoticData(exotic, getTypePicker(random, context, exotic, config.allowedExoticTypes).pick() ?: ExoticType.NORMAL)
@@ -74,7 +74,7 @@ object ExoticsGenerator {
     }
 
     private fun getExoticChance(member: FleetMemberAPI): Float {
-        return member.stats.dynamic.getMod(Stats.DEPLOYMENT_POINTS_MOD).computeEffective(member.hullSpec.suppliesToRecover) / 40
+        return 1f + member.stats.dynamic.getMod(Stats.DEPLOYMENT_POINTS_MOD).computeEffective(member.hullSpec.suppliesToRecover) / 30
     }
 
     fun getExoticPicker(random: Random, allowedExotics: Map<Exotic, Float>, context: ShipModFactory.GenerationContext): WeightedRandomPicker<Exotic> {

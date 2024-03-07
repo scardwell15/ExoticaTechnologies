@@ -19,7 +19,8 @@ open class PanelWithTabs<T: PanelContext>(context: PanelWithTabsContext<T>) :
         val innerTooltip = menuPanel.createUIElement(innerWidth, innerHeight, false)
         val extraPadding = getTabPanelPositionPadding()
 
-        tabsContainer = menuPanel.createCustomPanel(innerWidth - extraPadding.x, tabHeight, context.tabsContainerPlugin)
+        val tabsSize = getTabPanelSizeOverride() ?: Vector2f(context.tabs.sumOf { TabButton.getTabTextWidth(it.tabText).toDouble() + innerPadding }.toFloat() - extraPadding.x, tabHeight)
+        tabsContainer = menuPanel.createCustomPanel(tabsSize.x, tabsSize.y, context.tabsContainerPlugin)
         context.tabsContainerPlugin.panelWidth = innerWidth - extraPadding.x
         context.tabsContainerPlugin.panelHeight = tabHeight
         tabsContainer?.let { tabsContainer ->
@@ -29,11 +30,7 @@ open class PanelWithTabs<T: PanelContext>(context: PanelWithTabsContext<T>) :
                 tabButton.currContext.tabbedPanel = this
                 val buttonPanel = tabButton.layoutPanel(tabsContainer, null)
 
-                if (lastButtonPanel != null) {
-                    buttonPanel.position.rightOfMid(lastButtonPanel, tabPadding)
-                } else {
-                    buttonPanel.position.inTL(tabPadding, 0f)
-                }
+                positionTabButton(lastButtonPanel, buttonPanel)
 
                 lastButtonPanel = buttonPanel
             }
@@ -41,8 +38,16 @@ open class PanelWithTabs<T: PanelContext>(context: PanelWithTabsContext<T>) :
 
         innerTooltip.addCustom(tabsContainer, 0f).position.inTL(extraPadding.x + innerPadding, extraPadding.y + innerPadding)
 
-        activeTabHolder = menuPanel.createCustomPanel(innerWidth - extraPadding.x, innerHeight - tabHeight - innerPadding - extraPadding.y, context.panelHolderPlugin)
-        innerTooltip.addCustom(activeTabHolder, 0f).position.belowMid(tabsContainer, innerPadding)
+        var panelHolderWidth = innerWidth - extraPadding.x
+        var panelHolderHeight = innerHeight - tabHeight - innerPadding - extraPadding.y
+        getPanelHolderSizeOverride()?.let {
+            panelHolderWidth = it.x
+            panelHolderHeight = it.y
+        }
+
+        activeTabHolder = menuPanel.createCustomPanel(panelHolderWidth, panelHolderHeight, context.panelHolderPlugin)
+        innerTooltip.addCustom(activeTabHolder, 0f)
+        positionPanelHolder(activeTabHolder!!, tabsContainer!!)
 
         menuPanel.addUIElement(innerTooltip).inTL(0f, 0f)
 
@@ -55,8 +60,31 @@ open class PanelWithTabs<T: PanelContext>(context: PanelWithTabsContext<T>) :
         finishedRefresh(menuPanel, context)
     }
 
+    protected open fun positionTabButton(
+        lastButtonPanel: CustomPanelAPI?,
+        buttonPanel: CustomPanelAPI
+    ) {
+        if (lastButtonPanel != null) {
+            buttonPanel.position.rightOfMid(lastButtonPanel, tabPadding)
+        } else {
+            buttonPanel.position.inTL(tabPadding, 0f)
+        }
+    }
+
+    open fun getTabPanelSizeOverride(): Vector2f? {
+        return null
+    }
+
     open fun getTabPanelPositionPadding(): Vector2f {
         return Vector2f()
+    }
+
+    open fun positionPanelHolder(activeTabHolder: CustomPanelAPI, tabsContainer: CustomPanelAPI) {
+        activeTabHolder.position.inTL(innerPadding, tabHeight + innerPadding)
+    }
+
+    open fun getPanelHolderSizeOverride(): Vector2f? {
+        return null
     }
 
     open fun finishedRefresh(menuPanel: CustomPanelAPI, context: PanelWithTabsContext<T>) {

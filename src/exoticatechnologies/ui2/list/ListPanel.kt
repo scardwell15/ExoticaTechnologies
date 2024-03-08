@@ -88,6 +88,7 @@ open class ListPanel<I>(context: ListPanelContext<I>) : RefreshablePanel<ListPan
                 lastItem = tooltip
             }
 
+
         var xOffset = 0f
         var yOffset = 0f
         preRefresh { tabListContext, customPanelAPI ->
@@ -96,6 +97,9 @@ open class ListPanel<I>(context: ListPanelContext<I>) : RefreshablePanel<ListPan
         }
 
         postRefresh { tabListContext, customPanelAPI ->
+            if (yOffset >= listScrollPanel!!.position.height) {
+                yOffset = 0f
+            }
             UIUtils.scrollTo(listScrollPanel!!, xOffset, yOffset)
         }
     }

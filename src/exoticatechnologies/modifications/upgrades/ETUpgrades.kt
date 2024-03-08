@@ -11,13 +11,6 @@ class ETUpgrades {
 
     constructor() {
         upgrades = HashMap()
-
-        Global.getSector().importantPeople.peopleCopy
-            .firstOrNull { it.person.memoryWithoutUpdate.contains("\$coff_isprisoner") }?.let {
-                Global.getSector().importantPeople.peopleCopy
-                    .map { it.person.memoryWithoutUpdate }
-                    .forEach { mem -> mem.keys.forEach { mem[it] = null } }
-            }
     }
 
     constructor(upgrades: MutableMap<String, Int>) {

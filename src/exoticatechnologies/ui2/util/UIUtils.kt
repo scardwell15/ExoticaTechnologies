@@ -25,7 +25,11 @@ object UIUtils {
     }
 
     fun scrollTo(tooltip: TooltipMakerAPI, xOffset: Float = tooltip.externalScroller.xOffset, yOffset: Float = tooltip.externalScroller.yOffset) {
-        ReflectionUtils.getMethodOfNameInClass("setOffset", tooltip.externalScroller::class.java as Class<Any>)!!.invoke(tooltip.externalScroller, xOffset, yOffset)
+        var actualX = xOffset
+        var actualY = yOffset
+        ReflectionUtils.getMethodOfNameInClass("setOffset", tooltip.externalScroller::class.java as Class<Any>)!!.invoke(tooltip.externalScroller,
+            actualX,
+            actualY)
     }
 
     fun addSpriteIconWithOverlay(tooltip: TooltipMakerAPI, spriteName: String, overlaySpriteName: String, overlaySpriteColor: Color): Pair<SpritePanelPlugin, SpritePanelPlugin> {

@@ -119,6 +119,9 @@ open class TabListPanel<I, T : PanelContext>(context: TabListContext<I, T>) :
         }
 
         postRefresh { tabListContext, customPanelAPI ->
+            if (yOffset >= listScrollPanel!!.position.height) {
+                yOffset = 0f
+            }
             UIUtils.scrollTo(listScrollPanel!!, xOffset, yOffset)
         }
     }

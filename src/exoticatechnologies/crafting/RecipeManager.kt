@@ -1,6 +1,7 @@
 package exoticatechnologies.crafting
 
 import exoticatechnologies.crafting.impl.CombineChipsRecipe
+import exoticatechnologies.crafting.impl.ExoticTypeSwitchRecipe
 
 object RecipeManager {
     private val recipes: MutableList<Recipe> = mutableListOf()
@@ -27,6 +28,7 @@ object RecipeManager {
     @JvmStatic
     fun loadRecipes() {
         addRecipe(CombineChipsRecipe())
+        addRecipe(ExoticTypeSwitchRecipe())
     }
 
     @JvmStatic

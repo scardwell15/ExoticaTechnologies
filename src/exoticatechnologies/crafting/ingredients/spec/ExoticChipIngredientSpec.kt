@@ -12,7 +12,7 @@ open class ExoticChipIngredientSpec(specialId: String, specialData: String?, req
 
     override fun getIconSprite(ingredient: CargoMaterial?): String {
         ingredient?.let {
-            return (ingredient.stack.plugin as ExoticSpecialItemPlugin).exotic!!.iconPath
+            return (ingredient.stack.plugin as ExoticSpecialItemPlugin).exoticData!!.exotic.iconPath
         }
         return super.getIconSprite(ingredient)
     }
@@ -20,7 +20,7 @@ open class ExoticChipIngredientSpec(specialId: String, specialData: String?, req
     override fun getFiltersForIngredient(ingredient: Ingredient): List<String> {
         ingredient as CargoMaterial
         val filters: MutableList<String> = mutableListOf()
-        filters.add((ingredient.stack.plugin as ExoticSpecialItemPlugin).exotic!!.name)
+        filters.add((ingredient.stack.plugin as ExoticSpecialItemPlugin).exoticData!!.exotic.name)
         (ingredient.stack.plugin as ExoticSpecialItemPlugin).exoticData?.type?.let {
             filters.add(it.name)
         }

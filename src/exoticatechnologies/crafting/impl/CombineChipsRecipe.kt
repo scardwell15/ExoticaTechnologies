@@ -97,7 +97,7 @@ class CombineChipsRecipe : ItemRecipe() {
                     )
                 }
         }
-        return mutableListOf(UpgradeChipIngredientSpec("/.*", 1f), UpgradeChipIngredientSpec("/.*", 1f))
+        return mutableListOf(UpgradeChipIngredientSpec("/.*", 1f), UpgradeChipIngredientSpec("-", 1f))
     }
 
     override fun getOutputItemStack(ingredients: List<List<Ingredient>>): CargoStackAPI? {

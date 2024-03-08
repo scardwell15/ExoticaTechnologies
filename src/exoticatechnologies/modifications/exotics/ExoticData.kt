@@ -29,14 +29,15 @@ class ExoticData(key: String, var type: ExoticType = ExoticType.NORMAL) {
             }
         }
 
-    constructor(key:String) : this(key, ExoticType.NORMAL)
-    constructor(exotic:Exotic, type: ExoticType) : this(exotic.key, type)
-    constructor(exotic:Exotic) : this(exotic, ExoticType.NORMAL)
+    constructor(key: String) : this(key, ExoticType.NORMAL)
+    constructor(exotic: Exotic, type: ExoticType) : this(exotic.key, type)
+    constructor(exotic: Exotic) : this(exotic, ExoticType.NORMAL)
+
     @Throws(JSONException::class)
     constructor(obj: JSONObject) : this(obj.getString("key"), ExoticType.valueOf(obj.getString("type")))
 
     val exotic: Exotic
-        get () {
+        get() {
             if (checkUpdateExotic(key) != key) {
                 key = checkUpdateExotic(key)
             }
@@ -65,7 +66,8 @@ class ExoticData(key: String, var type: ExoticType = ExoticType.NORMAL) {
 
         if (type.sprite != null) {
             typeOverlay = ExoticTypePanelPlugin(type)
-            val overlayPanel = Global.getSettings().createCustom(exoticIcon.position.width, exoticIcon.position.height, typeOverlay)
+            val overlayPanel =
+                Global.getSettings().createCustom(exoticIcon.position.width, exoticIcon.position.height, typeOverlay)
             tooltip.addCustom(overlayPanel, -exoticIcon.position.height)
         }
 
@@ -106,8 +108,10 @@ class ExoticData(key: String, var type: ExoticType = ExoticType.NORMAL) {
     }
 
     companion object {
-        val updateMap = mutableMapOf("HangarForge" to "PhasedFighterTether",
-            "HangarForgeMissiles" to "HackedMissileForge")
+        val updateMap = mutableMapOf(
+            "HangarForge" to "PhasedFighterTether",
+            "HangarForgeMissiles" to "HackedMissileForge"
+        )
 
         fun checkUpdateExotic(exoticKey: String): String {
             return updateMap[exoticKey] ?: exoticKey

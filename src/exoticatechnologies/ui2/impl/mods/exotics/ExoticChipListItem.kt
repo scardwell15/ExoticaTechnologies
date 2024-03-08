@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
 import com.fs.starfarer.api.ui.CustomPanelAPI
 import exoticatechnologies.modifications.ShipModifications
-import exoticatechnologies.modifications.exotics.ExoticData
 import exoticatechnologies.modifications.exotics.ExoticSpecialItemPlugin
 import exoticatechnologies.ui2.impl.ExoticaPanelContext
 import exoticatechnologies.ui2.list.ListItem

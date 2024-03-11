@@ -49,7 +49,7 @@ class UpgradeChipListItem(context: UpgradeChipListItemContext): ListItem<CargoSt
                 val hasBandwidth = usableBandwidth >= upgradeBandwidth
                 val bandwidthColor = if (hasBandwidth) Misc.getTextColor() else Misc.getNegativeHighlightColor()
 
-                StringUtils.getTranslation("CommonOptions", "BandwidthUsedByUpgrade")
+                StringUtils.getTranslation("Bandwidth", "BandwidthUsed")
                     .format("upgradeBandwidth", BandwidthUtil.getFormattedBandwidth(upgradeBandwidth), bandwidthColor)
                     .addToTooltip(itemInfo, itemInfo.prev)
 

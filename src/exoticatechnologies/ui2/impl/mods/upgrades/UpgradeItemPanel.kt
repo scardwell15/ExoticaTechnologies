@@ -24,7 +24,7 @@ class UpgradeItemPanel(val upgrade: Upgrade, context: ExoticaPanelContext) : Exo
             tooltip.addPara(upgrade.name, color, 0f)
             tooltip.setParaFontDefault()
 
-            val levelText = StringUtils.getTranslation("UpgradesDialog", "UpgradeLevel")
+            val levelText = StringUtils.getTranslation("Upgrades", "UpgradeLevel")
                 .format("level", mods.getUpgrade(upgrade))
                 .toStringNoFormats()
             tooltip?.addPara(levelText, color, 3f)

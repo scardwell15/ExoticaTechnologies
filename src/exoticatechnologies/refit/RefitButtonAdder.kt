@@ -2,6 +2,7 @@ package exoticatechnologies.refit
 
 import com.fs.starfarer.api.EveryFrameScript
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.CoreUITabId
 import com.fs.starfarer.api.combat.ShipVariantAPI
 import com.fs.starfarer.api.fleet.FleetMemberAPI
@@ -71,7 +72,7 @@ class RefitButtonAdder : EveryFrameScript {
             return
         }
 
-        var state = AppDriver.getInstance().currentState
+        val state = AppDriver.getInstance().currentState
 
         //Makes sure that the current state is the campaign state.
         if (state !is CampaignState) return
@@ -81,15 +82,15 @@ class RefitButtonAdder : EveryFrameScript {
 
         var core = invokeMethod("getCore", state)
 
-        var dialog = invokeMethod("getEncounterDialog", state)
+        val dialog = invokeMethod("getEncounterDialog", state)
         if (dialog != null) {
             core = invokeMethod("getCoreUI", dialog)
         }
 
         if (core is UIPanelAPI) {
-            var child1 = core.getChildrenCopy().find { hasMethodOfName("setBorderInsetLeft", it) }
+            val child1 = core.getChildrenCopy().find { hasMethodOfName("setBorderInsetLeft", it) }
             if (child1 is UIPanelAPI) {
-                var child2 = child1.getChildrenCopy().find { hasMethodOfName("goBackToParentIfNeeded", it) }
+                val child2 = child1.getChildrenCopy().find { hasMethodOfName("goBackToParentIfNeeded", it) }
 
                 if (child2 is UIPanelAPI) {
                     var child3 =

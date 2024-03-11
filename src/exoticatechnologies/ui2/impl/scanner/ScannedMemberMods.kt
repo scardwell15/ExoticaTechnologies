@@ -21,7 +21,7 @@ class ScannedMemberMods(context: ScannedMemberModsContext) :
     override var bgColor: Color = Color(0, 0, 0, 255)
 
     override fun getTabPanelSizeOverride(): Vector2f? {
-        return Vector2f(TabButton.getTabTextWidth(StringUtils.getString("UpgradesDialog", "OpenUpgradeOptions")) + innerPadding * 2f, tabHeight)
+        return Vector2f(TabButton.getTabTextWidth(StringUtils.getString("Upgrades", "Title")) + innerPadding * 2f, tabHeight)
     }
 
     override fun getTabPanelPositionPadding(): Vector2f {

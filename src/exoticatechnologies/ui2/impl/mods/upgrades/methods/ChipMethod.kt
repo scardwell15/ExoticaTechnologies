@@ -85,7 +85,7 @@ class ChipMethod : DefaultUpgradeMethod() {
         ExoticaTechHM.addToFleetMember(member, variant)
         upgradeChipStack = null
 
-        return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
+        return StringUtils.getTranslation("Upgrades", "UpgradePerformedSuccessfully")
             .format("name", upgrade.name)
             .format("level", mods.getUpgrade(upgrade))
             .toString()
@@ -101,7 +101,7 @@ class ChipMethod : DefaultUpgradeMethod() {
         val resourceCosts: MutableMap<String, Float> = HashMap()
         if (hovered) {
             if (upgradeChipStack == null) {
-                val resourceName = StringUtils.getTranslation("ShipListDialog", "ChipName")
+                val resourceName = StringUtils.getTranslation("Chips", "ChipName")
                     .format("name", upgrade.name)
                     .toString()
                 resourceCosts[String.format("&%s", resourceName)] = 1f

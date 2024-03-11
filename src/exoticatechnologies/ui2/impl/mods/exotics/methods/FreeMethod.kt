@@ -27,7 +27,7 @@ class FreeMethod : ExoticMethod {
         ExoticaTechHM.addToFleetMember(member, variant)
         exotic.onInstall(member, variant)
 
-        return StringUtils.getString("ExoticsDialog", "ExoticInstalled")
+        return StringUtils.getString("Exotics", "ExoticInstalled")
     }
 
     override fun canUse(

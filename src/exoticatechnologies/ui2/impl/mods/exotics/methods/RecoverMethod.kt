@@ -41,7 +41,7 @@ class RecoverMethod : DestroyMethod() {
          */
         super.apply(member, variant, mods, exotic, market)
 
-        return StringUtils.getString("ExoticsDialog", "ExoticRecovered")
+        return StringUtils.getString("Exotics", "ExoticRecovered")
     }
 
     override fun canUse(
@@ -58,7 +58,7 @@ class RecoverMethod : DestroyMethod() {
     }
 
     override fun getButtonText(exotic: Exotic): String {
-        return StringUtils.getString("ExoticsDialog", "RecoverExotic")
+        return StringUtils.getString("Exotics", "RecoverExotic")
     }
 
     override fun getResourceMap(
@@ -77,7 +77,7 @@ class RecoverMethod : DestroyMethod() {
                 resourceCosts.put(Utilities.formatSpecialItem(stack.specialDataIfSpecial), -1f)
             } else {
                 resourceCosts.put(
-                    "&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                    "&" + StringUtils.getTranslation("Chips", "ChipName")
                         .format("name", exotic.name)
                         .toStringNoFormats(), -1f)
             }

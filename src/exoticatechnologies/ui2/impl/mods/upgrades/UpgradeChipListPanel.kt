@@ -18,7 +18,7 @@ class UpgradeChipListPanel(context: UpgradeChipListContext) :
 
 class UpgradeChipListContext(val upgrade: Upgrade, val exoticaContext: ExoticaPanelContext) :
     ListPanelContext<CargoStackAPI>() {
-    override var listTitle: String = StringUtils.getString("ExoticsDialog", "ChipsHeader")
+    override var listTitle: String = StringUtils.getString("Chips", "ChipsHeader")
 
     init {
         val chipSearcher = UpgradeChipSearcher()

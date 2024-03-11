@@ -2,6 +2,7 @@ package exoticatechnologies.crafting.ingredients
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
+import exoticatechnologies.util.StringUtils
 import org.magiclib.kotlin.getRoundedValue
 
 interface Ingredient {
@@ -13,6 +14,6 @@ interface Ingredient {
     fun getQuantity(): Float
 
     fun getQuantityText(): String {
-        return "Have: ${getQuantity().getRoundedValue()}"
+        return StringUtils.getTranslation("Recipes", "QuantityText").format("quantity", getQuantity().getRoundedValue()).toStringNoFormats()
     }
 }

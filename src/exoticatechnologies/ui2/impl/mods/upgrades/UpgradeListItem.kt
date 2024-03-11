@@ -38,7 +38,7 @@ class UpgradeListItem(upgrade: Upgrade, context: TabListItemContext<Upgrade, Exo
         if (mods.hasUpgrade(item)) {
             val levelText = itemInfo.addPara("", 0f)
             val upgradeLevel = mods.getUpgrade(item)
-            StringUtils.getTranslation("UpgradesDialog", "UpgradeLevel")
+            StringUtils.getTranslation("Upgrades", "UpgradeLevel")
                 .format("level", upgradeLevel, Misc.getHighlightColor())
                 .setLabelText(levelText!!)
 

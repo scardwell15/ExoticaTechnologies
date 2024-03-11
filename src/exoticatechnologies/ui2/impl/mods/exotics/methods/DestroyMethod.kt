@@ -26,7 +26,7 @@ open class DestroyMethod : ExoticMethod {
         ShipModLoader.set(member, variant, mods)
         ExoticaTechHM.addToFleetMember(member, variant)
 
-        return StringUtils.getString("ExoticsDialog", "ExoticDestroyed")
+        return StringUtils.getString("Exotics", "ExoticDestroyed")
     }
 
     override fun canUse(
@@ -64,7 +64,7 @@ open class DestroyMethod : ExoticMethod {
     }
 
     override fun getButtonText(exotic: Exotic): String {
-        return StringUtils.getString("ExoticsDialog", "DestroyExotic")
+        return StringUtils.getString("Exotics", "DestroyExotic")
     }
 
     override fun getButtonTooltip(exotic: Exotic): String? {

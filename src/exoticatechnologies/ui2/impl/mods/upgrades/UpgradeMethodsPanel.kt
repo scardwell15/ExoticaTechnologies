@@ -30,7 +30,7 @@ class UpgradeMethodsPanel(
         var prev: UIComponentAPI? = null
         safeLet(member, variant, mods) { member, variant, mods ->
             if (mods.isMaxLevel(member, upgrade)) {
-                tooltip.addTitle(StringUtils.getString("UpgradesDialog", "MaxLevelTitle"))
+                tooltip.addTitle(StringUtils.getString("Upgrades", "MaxLevelTitle"))
             } else if (!upgrade.canApplyImpl(member, variant, mods)) {
                 tooltip.addTitle(StringUtils.getString("Conditions", "CannotApplyTitle"), Color(200, 100, 100))
                 showCannotApply(member, mods, tooltip)

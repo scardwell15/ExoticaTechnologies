@@ -60,7 +60,7 @@ class BandwidthHeader(context: ExoticaPanelContext) : ExoticaPanel(context) {
         placeHelpTextNextToThisComponent = shipText.prev
 
         bandwidthHelpText = shipText.addPara("[?]", Misc.getDarkHighlightColor(), 3f)
-        val bandwidthHelpString = StringUtils.getTranslation("BandwidthDialog", "BandwidthHelp")
+        val bandwidthHelpString = StringUtils.getTranslation("Bandwidth", "BandwidthHelp")
             .format("bandwidthLimit", BandwidthUtil.getFormattedBandwidth(Bandwidth.MAX_BANDWIDTH))
             .toStringNoFormats()
 
@@ -78,7 +78,7 @@ class BandwidthHeader(context: ExoticaPanelContext) : ExoticaPanel(context) {
             .also { tooltip ->
                 bandwidthUpgradeLabel = tooltip.addPara("", 0f)
                 bandwidthButton = tooltip.addButton(
-                    StringUtils.getString("BandwidthDialog", "BandwidthPurchase"), "test",
+                    StringUtils.getString("Bandwidth", "BandwidthPurchase"), "test",
                     Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.C2_MENU, 72F, 22F, 3F
                 ).also {
                     onClick(it) {
@@ -105,7 +105,7 @@ class BandwidthHeader(context: ExoticaPanelContext) : ExoticaPanel(context) {
 
         if (baseBandwidth != bandwidthWithExotics) {
             //something installed that increases bandwidth. bandwidth value is exotic bandwidth
-            StringUtils.getTranslation("CommonOptions", "BandwidthWithExoticsForShip")
+            StringUtils.getTranslation("Bandwidth", "BandwidthWithExoticsForShip")
                 .format(
                     "shipBandwidth",
                     BandwidthUtil.getFormattedBandwidth(baseBandwidth),
@@ -118,7 +118,7 @@ class BandwidthHeader(context: ExoticaPanelContext) : ExoticaPanel(context) {
                 )
                 .setLabelText(shipBandwidthText)
         } else {
-            StringUtils.getTranslation("CommonOptions", "BandwidthForShip")
+            StringUtils.getTranslation("Bandwidth", "BandwidthForShip")
                 .format(
                     "shipBandwidth",
                     BandwidthUtil.getFormattedBandwidth(baseBandwidth),
@@ -127,7 +127,7 @@ class BandwidthHeader(context: ExoticaPanelContext) : ExoticaPanel(context) {
                 .setLabelText(shipBandwidthText)
         }
 
-        StringUtils.getTranslation("CommonOptions", "UsedBandwidthForShip")
+        StringUtils.getTranslation("Bandwidth", "BandwidthUsedWithMax")
             .format(
                 "usedBandwidth",
                 BandwidthUtil.getFormattedBandwidth(usedBandwidth),
@@ -160,7 +160,7 @@ class BandwidthHeader(context: ExoticaPanelContext) : ExoticaPanel(context) {
         mods?.let { mods ->
             bandwidthUpgradeLabel?.let {
                 if (mods.getBaseBandwidth() >= Bandwidth.MAX_BANDWIDTH) {
-                    modifyBandwidthUpgradeLabel(it, -1f, -1f, "BandwidthDialog", "BandwidthUpgradePeak")
+                    modifyBandwidthUpgradeLabel(it, -1f, -1f, "Bandwidth", "BandwidthUpgradePeak")
                     bandwidthButton?.isEnabled = false
                 } else {
                     val marketMult = BandwidthHandler.getMarketBandwidthMult(market)
@@ -173,7 +173,7 @@ class BandwidthHeader(context: ExoticaPanelContext) : ExoticaPanel(context) {
                             it,
                             newBandwidth,
                             upgradePrice,
-                            "BandwidthDialog",
+                            "Bandwidth",
                             "BandwidthUpgradeCostCannotAfford"
                         )
                         bandwidthButton?.isEnabled = false
@@ -182,7 +182,7 @@ class BandwidthHeader(context: ExoticaPanelContext) : ExoticaPanel(context) {
                             it,
                             newBandwidth,
                             upgradePrice,
-                            "BandwidthDialog",
+                            "Bandwidth",
                             "BandwidthUpgradeCost"
                         )
                         bandwidthButton?.isEnabled = true

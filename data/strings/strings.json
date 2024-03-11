@@ -1,13 +1,4 @@
 {
-	"Options":{
-		"leave":"Leave",
-		"back":"Back",
-		"confirm":"Confirm",
-		"cancel":"Cancel",
-		"previouspage":"Previous Page",
-		"nextpage":"Next Page",
-		"repurchase": "Purchase the upgrade again"
-	},
 	"BandwidthName":{
 		"terrible":"(terrible)",
 		"crude":"(crude)",
@@ -21,34 +12,16 @@
 		"unknown":"(???)"
 	},
 	"CommonOptions": {
-		"Credits": "Credits",
-		"ExpandExotics": "Press &F1& to show more exotic information.",
-		"ExpandUpgrades": "Press *F2* to show more upgrade information.",
-		"UnexpandInfo": "Press *any key* to show less information.",
-		"PreviousPage": "Previous page",
-		"NextPage": "Next page",
-		"ResourcesHeader": "Resources",
-		"CreditsText": "*${credits}*",
-		"CreditsTextWithCost": "*${credits}* (=${cost}=)",
-		"CreditsCost": "=${credits}= credits",
 		"CreditsPay": "*${credits}* credits",
 		"ResourceText": "${name}: *${amount}*",
 		"ResourceTextWithCost": "${name}: *${amount}* (=${cost}=)",
-		"SpecialItemText": "&${name}&: ${amount}",
 		"SpecialItemTextWithCost": "&${name}&: ${amount} (=${cost}=)",
 		"SpecialItemTextWithPay": "&${name}&: ${amount} (*${cost}*)",
-
-		"BandwidthWithExoticsForShip": "Ship bandwidth: *${shipBandwidth}* (*${exoticBandwidth}* from exotics)",
-		"BandwidthForShip": "Ship bandwidth: *${shipBandwidth}*",
-		"UsedBandwidthForShip": "Used bandwidth: *${usedBandwidth}* of ${allBandwidth}",
-
-		"BandwidthUsed": "*${usedBandwidth}* used",
-		"BandwidthUsedByUpgrade": "*${upgradeBandwidth}*",
 		"StoryPointCost": "*${storyPoints} story points*",
 
 		"MustBeDockedAtMarket": "=Must be docked at market=",
 		"InStockCount": "${count} in cargo",
-		"ESCToClose": "Press ESC to close."
+		"CostTitle": "Price",
 	},
 	"FleetScanner": {
 		"ShipBandwidthShort": "Bandwidth: *${bandwidth}*",
@@ -68,24 +41,14 @@
 		"CreditsText": "You have *${credits}*.",
 		"MenuText": "Purchasing the selected chips will cost *${credits}*.",
 		"MenuTextCannotAfford": "Purchasing the selected chips will cost *${credits}*, which you cannot afford.",
-		"PurchasedText": "You purchased Exotica chips for *${credits}*."
+		"PurchasedText": "You purchased Exotica chips for *${credits}*.",
+		"Confirm":"Confirm",
+		"Cancel":"Cancel",
 	},
-	"MainMenu": {
-		"UpgradeShips": "Consider upgrading a ship.",
-		"ShipModMenu": "Modification Menu",
-		"BackToMainMenu": "Return to the main market."
-	},
-	"ShipDialog": {
-		"BackToShip": "Consider other options to modify the ship.",
-		"OpenedDialog": "The on-site engineering team is ready to assist you with this ship."
-	},
-	"ShipListDialog": {
-		"ShipListHeader": "Your Fleet",
-		"OpenModOptions": "Select",
-		"SelectPanelText": "Upgrades: *${numUpgrades}* | Exotics: &${numExotics}&",
+	"Chips": {
 		"ChipName": "${name} Chip",
-		"UpgradeChipWithLevelText": "${upgradeName} Chip (${level})",
-		"ShopHeader": "Exotica Technologies"
+    	"UpgradeChipWithLevelText": "${upgradeName} Chip (${level})",
+		"ChipsHeader": "Chips - Hover to preview",
 	},
 	"CrateText": {
 		"TitleText": "\"Big Create\" Crate",
@@ -104,19 +67,23 @@
 		"ClearExotics": "Recover exotics (${storyPoints} SP)",
 		"ClearUpgrades": "Recover upgrades (${creditsText})"
 	},
-	"BandwidthDialog": {
-		"OpenBandwidthOptions": "Bandwidth",
+	"Bandwidth": {
 		"BandwidthUpgradeCost": "Ship bandwidth can be increased by &${bonusBandwidth}& for *${costCredits}* credits. You have *${credits}* credits.",
 		"BandwidthUpgradeCostCannotAfford": "Ship bandwidth can be increased by &${bonusBandwidth}& but you need *${costCredits}* credits. You have *${credits}* credits.",
 		"BandwidthUpgradePeak": "This ship has reached its maximum bandwidth.",
 		"BandwidthPurchase": "Purchase",
-		"BandwidthHelp": "A ship's bandwidth is its capacity for upgrades. Bandwidth can be raised for a price up to ${bandwidthLimit}, and can be raised beyond that by certain exotics."
+		"BandwidthHelp": "A ship's bandwidth is its capacity for upgrades. Bandwidth can be raised for a price up to ${bandwidthLimit}, and can be raised beyond that by certain exotics.",
+		"BandwidthUsed": "*${usedBandwidth}* used",
+		"BandwidthWithExoticsForShip": "Ship bandwidth: *${shipBandwidth}* (*${exoticBandwidth}* from exotics)",
+        "BandwidthForShip": "Ship bandwidth: *${shipBandwidth}*",
+        "BandwidthUsedWithMax": "Used bandwidth: *${usedBandwidth}* of ${allBandwidth}",
+        "BandwidthUsedByUpgrade": "*${upgradeBandwidth}*",
+		"BandwidthUsedWithCost": "*${usedBandwidth}* used (=${upgradeBandwidth}=)",
+		"BandwidthGiven": "Max bandwidth: *${bandwidth}* (*${exoticBandwidth}*)",
 	},
-	"ExoticsDialog": {
-		"OpenExoticOptions": "Exotics",
-		"ChipsHeader": "Chips - Hover to preview",
+	"Exotics": {
+		"Title": "Exotics",
 		"Installed": "Installed",
-		"ExoticHelp": "Exotics have very strong effects and don't cost bandwidth, but most of them come with very strong drawbacks. They can help to completely change the way a ship operates. The chips to install them are much more rare than upgrades.",
 		"ExoticInstalled": "Exotic installed!",
 		"ExoticRecovered": "Exotic recovered!",
 		"ExoticDestroyed": "Exotic destroyed!",
@@ -126,28 +93,13 @@
 		"DestroyExotic": "Destroy",
 		"InstalledTitle": "INSTALLED"
 	},
-	"ExoticCosts": {
-		"BandwidthGivenByExotic": "Max bandwidth: *${bandwidth}* (*${exoticBandwidth}*)"
-	},
-	"UpgradesDialog": {
-		"OpenUpgradeOptions": "Upgrades",
-		"UpgradeHelp": "Upgrades are incremental changes to the stats of a ship. They cost bandwidth, have a limited number of levels, and installing one without a chip costs credits or resources.",
+	"Upgrades": {
+		"Title": "Upgrades",
 		"UpgradeLevel": "Level ${level}",
 		"UpgradePerformedSuccessfully": "Your chief engineer reports that the *${name}* upgrade was a success. It is now *level ${level}*.",
 		"UpgradeRecoveredSuccessfully": "Your chief engineer reports that your plan to remove the modification from the ship worked. They say this with the slightest disbelief, as if surprised that the plan worked at all.",
-		"ModDescriptionButtonText": "Description",
-		"ModStatsButtonText": "Stats",
-		"ResourceText": "${name}: *${amount}*",
-		"ResourceTextWithCost": "${name}: *${amount}* (=${cost}=)",
-		"ResourceTextWithPay": "${name}: *${amount}* (^${cost}^)",
-		"UpgradeChipsHeader": "Chips",
 		"UpgradeDrawbackAfterLevel": "Starting at =level ${level}=:",
 		"MaxLevelTitle": "MAXIMUM LEVEL"
-	},
-	"UpgradeCosts": {
-		"UpgradeCostTitle": "Price",
-		"BandwidthUsedWithUpgrade": "*${usedBandwidth}* used (=${upgradeBandwidth}=)",
-		"BandwidthUsed": "*${usedBandwidth}* used"
 	},
 	"UpgradeMethods": {
 		"UpgradeMethodsTitle": "Installation",
@@ -162,6 +114,18 @@
 		"RecoverOptionTooltip": "This option recovers a schematic of the upgrade that can be used to apply it to another ship. Installing the chip will incur another cost, and the total cost of recovering and using any chip is always less than any other method.",
 		"ChipOption": "Upgrade Chip",
 		"ChipOptionTooltip": "This option uses an existing ship modification chip to upgrade the ship. It will prioritize using the one with the highest level. The total cost of recovering and using any chip is always less than any other method."
+	},
+	"Crafting": {
+	    "Title": "Crafting",
+	    "InputsTitle": "Inputs - Click to pick ingredients",
+	    "OutputsTitle": "Outputs",
+	    "CraftButton": "CRAFT"
+	},
+	"Recipes": {
+	    "QuantityText": "Have: ${quantity}",
+	    "QuantityInCargoText": "Have: ${quantity} in ${cargo}",
+	    "RequiredText": "Required: ${quantity}",
+        "SelectedText": "Selected: ${quantity}"
 	},
 	"SpooledFeeders": {
 		"description": "Although unable to be used for the same purpose as a full-size Fullerene spool, this much-smaller chain can be used instead to replace many of the moving mechanical parts within a ship. The chain notably increases the rate of fire of weapons upon being disturbed, generating some kind of intense field that crew members can only describe as \"bloodthirsty\". The chain slows down considerably after a couple seconds, with an effect on the ship that matches its slower speed.",
@@ -367,6 +331,18 @@
 		"description": "Installed auxiliary jets can be activated to provide an extreme boost to maneuverability for even the most sluggish ships.",
 		"tooltip": "Adds an ability that makes a ship turn faster. This includes a flat bonus to turn speed, so even slow ships will benefit greatly."
 	},
+	"HegemonStrength": {
+		"description": "Stand for the Domain and you shall know strength like no other."
+	},
+	"TechSupremacy": {
+		"description": "Our technology will leave the others in the dust, or rendered to dust."
+	},
+	"KnightsShield": {
+		"description": "He protects us, guides us, and lends his might to us, for we are the devoted and loyal."
+	},
+	"PerseanUnity": {
+		"description": "The common man rises above all. The despots will no longer hold their power over us."
+	},
 	"ExoticTypes": {
 		"TooltipText": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways.",
 		"TooltipTextCondition": "Exotics of this type have a ^positive effect multiplier^ of *${positiveMult}x* and a =negative effect multiplier= of *${negativeMult}x*. This affects exotics in differing ways, and is strongest when *${condition}*.",
@@ -382,6 +358,46 @@
 		"GuerillaCondition": "the fleet is below ${thresholdDP} deployment points. Your fleet is currently at ${fleetDP} deployment points",
 		"GuerillaItemDescription": "increasing its positive effects if the fleet is small, and increasing its negative effects if the fleet is large"
 	},
+    "Conditions": {
+        "CannotApplyTitle": "CANNOT INSTALL",
+        "CannotApplyBecauseTags": "Conflicts with ${conflictMods}.",
+        "CannotApplyBecauseBandwidth": "The ship does not have enough bandwidth.",
+        "CannotApplyBecauseLevel": "The ship has the max level for this upgrade.",
+        "CannotApplyBecauseTooManyExotics": "The ship has reached its capacity for exotics, which is 2, increased by 1 if the *Best of the Best* skill is unlocked."
+    },
+    "Filters": {
+        "durability": "Durability",
+        "speed": "Speed",
+        "flux": "Flux",
+        "weapons": "Weapons",
+        "Weapons": "Weapons",
+        "phase": "Phase",
+        "readiness": "Readiness",
+        "logistics": "Logistics",
+        "fighters": "Fighters",
+        "Fighters": "Fighters",
+        "drones": "Drones",
+        "special": "Special",
+        "Special": "Special",
+        "upgrades": "Upgrades",
+        "exotics": "Exotics"
+    },
+    "CombineChipsRecipe": {
+        "Name": "Combine upgrade chips",
+        "Description": "Combine two chips with the same upgrade and level to make one with a higher level.",
+        "OutputName": "Upgrade Chip",
+        "OutputDesc1": "Creates an upgrade chip of a higher level.",
+        "OutputDesc2": "Lower chance for additional levels.",
+        "OutputNameWithUpgrade": "Upgrade Chip - ${upgradeName}",
+    },
+    "ExoticTypeSwitchRecipe": {
+        "Name": "Transfer exotic type",
+        "Description": "Transfer the exotic type from the first exotic to the second exotic. Destroys the first exotic chip.",
+        "OutputName": "Exotic Chip",
+        "OutputDesc1": "Has the exotic type of the first chip.",
+        "OutputDesc2": "Copies the exotic of the second chip.",
+        "OutputNameWithType": "${exoticType} ${exoticName}",
+    },
 	"ModEffects": {
 		"FighterStatName": "Fighter ${stat}",
 		"StatBenefit": "${stat}: *${percent}*",
@@ -416,7 +432,8 @@
 		"shieldUnfoldRate": "Shield unfold rate",
 		"shieldTurnRate": "Shield turn rate",
 		"fluxCapacity": "Flux capacity",
-		"ventSpeed": "Vent speed",
+		"fluxDissipation": "Flux dissipation",
+		"ventSpeed": "Active vent speed",
 		"hull": "Hull durability",
 		"armor": "Armor durability",
 		"empDamageTaken": "EMP damage taken",
@@ -453,24 +470,5 @@
 		"crewSalary": "Crew salary increased to =${salaryIncrease} credits= for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=.",
 		"crewSalaryShop": "Salary increased to =${salaryIncrease} credits= (=${perLevel}=/lvl) for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=.",
 		"crewSalaryShopIronShell": "Salary increased to =${salaryIncrease} credits= (=${perLevel}=/lvl) for the required crew of this ship. The effective increased cost per month is =${finalValue} credits=. This is refundable under Hegemony tax regulation."
-	},
-	"Conditions": {
-		"CannotApplyTitle": "CANNOT INSTALL",
-		"CannotApplyBecauseTags": "Conflicts with ${conflictMods}.",
-		"CannotApplyBecauseBandwidth": "The ship does not have enough bandwidth.",
-		"CannotApplyBecauseLevel": "The ship has the max level for this upgrade.",
-		"CannotApplyBecauseTooManyExotics": "The ship has reached its capacity for exotics, which is 2, increased by 1 if the *Best of the Best* skill is unlocked."
-	},
-	"Filters": {
-		"durability": "Durability",
-		"speed": "Speed",
-		"flux": "Flux",
-		"weapons": "Weapons",
-		"phase": "Phase",
-		"readiness": "Readiness",
-		"logistics": "Logistics",
-		"fighters": "Fighters",
-		"drones": "Drones",
-		"special": "Special"
 	}
 }

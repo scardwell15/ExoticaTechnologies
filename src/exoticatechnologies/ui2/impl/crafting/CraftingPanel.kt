@@ -8,6 +8,7 @@ import exoticatechnologies.ui2.PanelContext
 import exoticatechnologies.ui2.RefreshablePanel
 import exoticatechnologies.ui2.impl.ExoticaPanelContext
 import exoticatechnologies.ui2.impl.ExoticaTabContext
+import exoticatechnologies.util.StringUtils
 import java.awt.Color
 import java.lang.Math.min
 
@@ -17,7 +18,7 @@ class CraftingPanel(context: ExoticaPanelContext) : RefreshablePanel<ExoticaPane
     override fun refresh(menuPanel: CustomPanelAPI, context: ExoticaPanelContext) {
         val titleTooltip = menuPanel.createUIElement(innerWidth, 22f, false)
         titleTooltip.setParaOrbitronLarge()
-        titleTooltip.addPara("Crafterino", innerPadding)
+        titleTooltip.addPara(StringUtils.getString("Crafting", "Title"), innerPadding)
         menuPanel.addUIElement(titleTooltip).inTL(innerPadding, innerPadding)
 
         context.fleet?.let {
@@ -35,7 +36,7 @@ class CraftingPanel(context: ExoticaPanelContext) : RefreshablePanel<ExoticaPane
 }
 
 class CraftingPanelTabContext :
-    ExoticaTabContext(CraftingPanel(ExoticaPanelContext()), "crafting", "Crafting", Color(100, 180, 130, 255)) {
+    ExoticaTabContext(CraftingPanel(ExoticaPanelContext()), "crafting", StringUtils.getString("Crafting", "Title"), Color(100, 180, 130, 255)) {
     override val highlightedColor: Color
         get() = Color(130, 225, 160, 255)
 }

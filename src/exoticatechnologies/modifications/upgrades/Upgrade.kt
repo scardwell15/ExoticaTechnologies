@@ -205,7 +205,7 @@ open class Upgrade(key: String, settings: JSONObject) : Modification(key, settin
             if (levelToEffectMap.containsKey(startingLevel)) {
                 val levelList: List<UpgradeModEffect> = levelToEffectMap[startingLevel]!!
                 if (startingLevel > 1) {
-                    StringUtils.getTranslation("UpgradesDialog", "UpgradeDrawbackAfterLevel")
+                    StringUtils.getTranslation("Upgrades", "UpgradeDrawbackAfterLevel")
                         .format("level", startingLevel)
                         .addToTooltip(tooltip).position.setYAlignOffset(-10f)
                 }

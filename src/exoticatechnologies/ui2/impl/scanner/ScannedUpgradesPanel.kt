@@ -51,7 +51,7 @@ class ScannedUpgradesTabContext(
 ) : ScannedModsTabContext(
     panel,
     "upgrades",
-    StringUtils.getString("UpgradesDialog", "OpenUpgradeOptions"),
+    StringUtils.getString("Upgrades", "Title"),
     UpgradesTabContext.TAB_COLOR
 )
 

@@ -39,7 +39,7 @@ class ChipMethod : ExoticMethod {
         Utilities.takeItem(chipStack)
         chipStack = null
 
-        return StringUtils.getString("ExoticsDialog", "ExoticInstalled")
+        return StringUtils.getString("Exotics", "ExoticInstalled")
     }
 
     override fun canUse(
@@ -66,7 +66,7 @@ class ChipMethod : ExoticMethod {
     }
 
     override fun getButtonText(exotic: Exotic): String {
-        return StringUtils.getString("ExoticsDialog", "InstallExoticChip")
+        return StringUtils.getString("Exotics", "InstallExoticChip")
     }
 
     override fun getButtonTooltip(exotic: Exotic): String? {
@@ -87,7 +87,7 @@ class ChipMethod : ExoticMethod {
                 resourceCosts = mutableMapOf()
                 resourceCosts[Utilities.formatSpecialItem(exotic.newSpecialItemData)] = 1f
             } else {
-                resourceCosts = mutableMapOf("&" + StringUtils.getTranslation("ShipListDialog", "ChipName")
+                resourceCosts = mutableMapOf("&" + StringUtils.getTranslation("Chips", "ChipName")
                     .format("name", exotic.name)
                     .toStringNoFormats()
                         to 1f)

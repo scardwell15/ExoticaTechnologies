@@ -18,6 +18,7 @@ import exoticatechnologies.ui2.impl.crafting.RecipeOutputPreviewPanel
 import exoticatechnologies.ui2.impl.crafting.RecipeOutputPreviewPanelContext
 import exoticatechnologies.ui2.impl.crafting.RecipeResultContext
 import exoticatechnologies.ui2.impl.crafting.RecipeResultPanel
+import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.lazywizard.lazylib.ui.LazyFont
 import org.magiclib.kotlin.setAlpha
@@ -25,7 +26,7 @@ import java.awt.Color
 
 class CombineChipsRecipe : ItemRecipe() {
     override fun getName(): String {
-        return "Combine upgrade chips"
+        return StringUtils.getString("CombineChipsRecipe", "Name")
     }
 
     override fun getHints(): List<String> {
@@ -33,7 +34,7 @@ class CombineChipsRecipe : ItemRecipe() {
     }
 
     override fun getDescription(): String {
-        return "Combine two chips with the same upgrade and level to make one with a higher level."
+        return StringUtils.getString("CombineChipsRecipe", "Description")
     }
 
     override fun postCraft(
@@ -166,13 +167,13 @@ class CombineChipsRecipe : ItemRecipe() {
             iconElement.position.inTL(4f, 16f)
 
             tooltip.setParaFontVictor14()
-            tooltip.addPara("Upgrade Chip", 0f).position.rightOfTop(iconElement, 4f)
+            tooltip.addPara(StringUtils.getString("CombineChipsRecipe", "OutputName"), 0f).position.rightOfTop(iconElement, 4f)
             val nameElement = tooltip.prev
             tooltip.setParaFontDefault()
-            val gigaLabel = tooltip.addPara("Creates an upgrade chip of a higher level.", 0f)
+            val gigaLabel = tooltip.addPara(StringUtils.getString("CombineChipsRecipe", "OutputDesc1"), 0f)
             gigaLabel.position.belowLeft(nameElement, 2f)
             val labelElement = tooltip.prev
-            val gigaLabel2 = tooltip.addPara("Lower chance for additional levels.", 0f)
+            val gigaLabel2 = tooltip.addPara(StringUtils.getString("CombineChipsRecipe", "OutputDesc2"), 0f)
             gigaLabel2.position.belowLeft(labelElement, 2f)
         } else {
             val plugin = (pickedIngredients[0].first() as CargoMaterial).stack.plugin as UpgradeSpecialItemPlugin
@@ -183,13 +184,18 @@ class CombineChipsRecipe : ItemRecipe() {
             iconElement.position.inTL(4f, 16f)
 
             tooltip.setParaFontVictor14()
-            tooltip.addPara("Upgrade Chip - ${upgrade.name}", 0f).position.rightOfTop(iconElement, 4f)
+
+            val upgradeName = StringUtils.getTranslation("CombineChipsRecipe", "OutputNameWithUpgrade")
+                .format("upgradeName", upgrade.name)
+                .toStringNoFormats()
+
+            tooltip.addPara(upgradeName, 0f).position.rightOfTop(iconElement, 4f)
             val nameElement = tooltip.prev
             tooltip.setParaFontDefault()
-            val gigaLabel = tooltip.addPara("Creates an upgrade chip of a higher level.", 0f)
+            val gigaLabel = tooltip.addPara(StringUtils.getString("CombineChipsRecipe", "OutputDesc1"), 0f)
             gigaLabel.position.belowLeft(nameElement, 2f)
             val labelElement = tooltip.prev
-            val gigaLabel2 = tooltip.addPara("Lower chance for additional levels.", 0f)
+            val gigaLabel2 = tooltip.addPara(StringUtils.getString("CombineChipsRecipe", "OutputDesc2"), 0f)
             gigaLabel2.position.belowLeft(labelElement, 2f)
         }
     }

@@ -6,6 +6,7 @@ import exoticatechnologies.crafting.Recipe
 import exoticatechnologies.crafting.ingredients.Ingredient
 import exoticatechnologies.ui2.BasePanelContext
 import exoticatechnologies.ui2.RefreshablePanel
+import exoticatechnologies.util.StringUtils
 import java.awt.Color
 
 class RecipeOutputPreviewPanel(context: RecipeOutputPreviewPanelContext) :
@@ -23,7 +24,7 @@ class RecipeOutputPreviewPanel(context: RecipeOutputPreviewPanelContext) :
     override fun refresh(menuPanel: CustomPanelAPI, context: RecipeOutputPreviewPanelContext) {
         val tooltip = menuPanel.createUIElement(innerWidth, 24f, false)
         tooltip.setTitleOrbitronLarge()
-        tooltip.addTitle("Output", Misc.getBasePlayerColor())
+        tooltip.addTitle(StringUtils.getString("Crafting", "OutputsTitle"), Misc.getBasePlayerColor())
         menuPanel.addUIElement(tooltip).inTMid(0f)
 
         val outputTooltip =
@@ -41,7 +42,7 @@ class RecipeOutputPreviewPanel(context: RecipeOutputPreviewPanelContext) :
         actualPanel.position.belowMid(outputTooltip, innerPadding).setXAlignOffset(-innerPadding)
 
         val craftButtonTooltip = actualPanel.createUIElement(innerWidth, 32f, false)
-        val craftButton = craftButtonTooltip.addButton("CRAFT", null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), innerWidth, 32f, 0f)
+        val craftButton = craftButtonTooltip.addButton(StringUtils.getString("Crafting", "CraftButton"), null, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), innerWidth, 32f, 0f)
         if (!recipe.canCraft(currContext.recipePanelContext.pickedIngredientsBySpec)) {
             craftButton.setClickable(false)
             craftButton.isEnabled = false

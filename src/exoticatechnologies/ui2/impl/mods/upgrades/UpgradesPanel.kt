@@ -21,7 +21,7 @@ class UpgradesPanel(context: ExoticaPanelContext) : ExoticaPanel(context) {
 class UpgradesTabContext : ModTabContext(
     UpgradesPanel(ExoticaPanelContext()),
     "upgrades",
-    StringUtils.getString("UpgradesDialog", "OpenUpgradeOptions"),
+    StringUtils.getString("Upgrades", "Title"),
     TAB_COLOR
 ) {
     companion object {

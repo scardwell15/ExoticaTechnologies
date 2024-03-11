@@ -81,7 +81,7 @@ class RecoverMethod : UpgradeMethod {
         ShipModLoader.set(member, variant, mods)
         ExoticaTechHM.addToFleetMember(member, variant)
 
-        return StringUtils.getString("UpgradesDialog", "UpgradeRecoveredSuccessfully")
+        return StringUtils.getString("Upgrades", "UpgradeRecoveredSuccessfully")
     }
 
     override fun getResourceCostMap(
@@ -94,11 +94,11 @@ class RecoverMethod : UpgradeMethod {
         val resourceCosts: MutableMap<String, Float> = HashMap()
         if (hovered) {
             resourceCosts[Commodities.CREDITS] = getCreditCost(member, mods, upgrade).toFloat()
-            var resourceName = StringUtils.getTranslation("ShipListDialog", "ChipName")
+            var resourceName = StringUtils.getTranslation("Chips", "ChipName")
                 .format("name", upgrade.name)
                 .toString()
             if (mods.hasUpgrade(upgrade)) {
-                resourceName = StringUtils.getTranslation("ShipListDialog", "UpgradeChipWithLevelText")
+                resourceName = StringUtils.getTranslation("Chips", "UpgradeChipWithLevelText")
                     .format("upgradeName", upgrade.name)
                     .format("level", mods.getUpgrade(upgrade))
                     .toString()

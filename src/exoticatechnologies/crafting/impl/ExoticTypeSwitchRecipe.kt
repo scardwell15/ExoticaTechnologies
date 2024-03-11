@@ -26,6 +26,7 @@ import exoticatechnologies.ui2.impl.crafting.RecipeResultContext
 import exoticatechnologies.ui2.impl.crafting.RecipeResultPanel
 import exoticatechnologies.ui2.impl.scanner.ExoticTooltip
 import exoticatechnologies.ui2.util.UIUtils
+import exoticatechnologies.util.StringUtils
 import exoticatechnologies.util.Utilities
 import org.lazywizard.lazylib.ui.LazyFont
 import org.magiclib.kotlin.setAlpha
@@ -33,7 +34,7 @@ import java.awt.Color
 
 class ExoticTypeSwitchRecipe : ItemRecipe() {
     override fun getName(): String {
-        return "Transfer exotic type"
+        return StringUtils.getString("ExoticTypeSwitchRecipe", "Name")
     }
 
     override fun getHints(): List<String> {
@@ -41,7 +42,7 @@ class ExoticTypeSwitchRecipe : ItemRecipe() {
     }
 
     override fun getDescription(): String {
-        return "Transfer the exotic type from the first exotic to the second exotic."
+        return StringUtils.getString("ExoticTypeSwitchRecipe", "Description")
     }
 
     override fun postCraft(
@@ -161,13 +162,13 @@ class ExoticTypeSwitchRecipe : ItemRecipe() {
             iconElement.position.inTL(4f, 16f)
 
             tooltip.setParaFontVictor14()
-            tooltip.addPara("Exotic Chip", 0f).position.rightOfTop(iconElement, 4f)
+            tooltip.addPara(StringUtils.getString("ExoticTypeSwitchRecipe", "OutputName"), 0f).position.rightOfTop(iconElement, 4f)
             val nameElement = tooltip.prev
             tooltip.setParaFontDefault()
-            val gigaLabel = tooltip.addPara("Transfers the type from one exotic chip to another.", 0f)
+            val gigaLabel = tooltip.addPara(StringUtils.getString("ExoticTypeSwitchRecipe", "OutputDesc1"), 0f)
             gigaLabel.position.belowLeft(nameElement, 2f)
             val labelElement = tooltip.prev
-            val gigaLabel2 = tooltip.addPara("Destroys the original chip.", 0f)
+            val gigaLabel2 = tooltip.addPara(StringUtils.getString("ExoticTypeSwitchRecipe", "OutputDesc2"), 0f)
             gigaLabel2.position.belowLeft(labelElement, 2f)
         } else if (pickedIngredients[1].isEmpty()) {
             val plugin = (pickedIngredients[0].first() as CargoMaterial).stack.plugin as ExoticSpecialItemPlugin
@@ -179,13 +180,19 @@ class ExoticTypeSwitchRecipe : ItemRecipe() {
             UIUtils.addSpriteOverlayOver(tooltip, iconElement, exoticData.type.sprite!!, exoticData.type.colorOverlay)
 
             tooltip.setParaFontVictor14()
-            tooltip.addPara("${exoticData.type.name} Exotic Chip", exoticData.type.colorOverlay,0f).position.rightOfTop(iconElement, 4f)
+
+            val exoticName = StringUtils.getTranslation("ExoticTypeSwitchRecipe", "OutputNameWithType")
+                .format("exoticType", exoticData.type.name)
+                .format("exoticName", StringUtils.getString("ExoticTypeSwitchRecipe", "OutputName"))
+                .toStringNoFormats()
+
+            tooltip.addPara(exoticName, exoticData.type.colorOverlay,0f).position.rightOfTop(iconElement, 4f)
             val nameElement = tooltip.prev
             tooltip.setParaFontDefault()
-            val gigaLabel = tooltip.addPara("Transfers the type from one exotic chip to another.", 0f)
+            val gigaLabel = tooltip.addPara(StringUtils.getString("ExoticTypeSwitchRecipe", "OutputDesc1"), 0f)
             gigaLabel.position.belowLeft(nameElement, 2f)
             val labelElement = tooltip.prev
-            val gigaLabel2 = tooltip.addPara("Destroys the original chip.", 0f)
+            val gigaLabel2 = tooltip.addPara(StringUtils.getString("ExoticTypeSwitchRecipe", "OutputDesc2"), 0f)
             gigaLabel2.position.belowLeft(labelElement, 2f)
         } else {
             val firstIngredient = pickedIngredients[0].first() as CargoMaterial
@@ -210,10 +217,10 @@ class ExoticTypeSwitchRecipe : ItemRecipe() {
                     exoticData.getColor(),0f).position.rightOfTop(iconElement, 4f)
                 val nameElement = tooltip.prev
                 tooltip.setParaFontDefault()
-                val gigaLabel = tooltip.addPara("Transfers the type from one exotic chip to another.", 0f)
+                val gigaLabel = tooltip.addPara(StringUtils.getString("ExoticTypeSwitchRecipe", "OutputDesc1"), 0f)
                 gigaLabel.position.belowLeft(nameElement, 2f)
                 val labelElement = tooltip.prev
-                val gigaLabel2 = tooltip.addPara("Destroys the original chip.", 0f)
+                val gigaLabel2 = tooltip.addPara(StringUtils.getString("ExoticTypeSwitchRecipe", "OutputDesc2"), 0f)
                 gigaLabel2.position.belowLeft(labelElement, 2f)
             }
         }

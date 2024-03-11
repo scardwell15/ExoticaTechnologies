@@ -21,7 +21,7 @@ class ExoticsPanel(context: ExoticaPanelContext) : ExoticaPanel(context) {
 class ExoticsTabContext : ModTabContext(
     ExoticsPanel(ExoticaPanelContext()),
     "exotics",
-    StringUtils.getString("ExoticsDialog", "OpenExoticOptions"),
+    StringUtils.getString("Exotics", "Title"),
     TAB_COLOR
 ) {
     companion object {

@@ -26,7 +26,7 @@ open class ResourcesPanel(context: ResourcePanelContext) : ExoticaPanel(context)
 
     override fun refresh(menuPanel: CustomPanelAPI, context: ExoticaPanelContext) {
         val tooltip = menuPanel.createUIElement(panelWidth, panelHeight, false)
-        tooltip.addTitle(StringUtils.getString("UpgradeCosts", "UpgradeCostTitle"))
+        tooltip.addTitle(StringUtils.getString("CommonOptions", "CostTitle"))
 
         safeLet(member, variant, mods) { member, variant, mods ->
             context as ResourcePanelContext

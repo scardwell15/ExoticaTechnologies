@@ -18,9 +18,9 @@ object MarketMenu {
         val marketData = MarketManager.getDataForMarket(market)
 
         dialog.showCargoPickerDialog(
-            "Exotica Market",
-            StringUtils.getString("Options", "confirm"),
-            StringUtils.getString("Options", "cancel"),
+            StringUtils.getString("MarketMenu", "Title"),
+            StringUtils.getString("MarketMenu", "Confirm"),
+            StringUtils.getString("MarketMenu", "Cancel"),
             false,
             400f,
             marketData.cargo,

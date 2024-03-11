@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.CargoStackAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import exoticatechnologies.crafting.ingredients.spec.IngredientSource
+import exoticatechnologies.util.StringUtils
 import org.magiclib.kotlin.getRoundedValue
 import org.magiclib.kotlin.ucFirst
 import kotlin.math.min
@@ -23,7 +24,10 @@ open class CargoMaterial(val stack: CargoStackAPI, val source: IngredientSource)
     }
 
     override fun getQuantityText(): String {
-        return "Have: ${getQuantity().getRoundedValue()} in ${source.name.lowercase().ucFirst()}"
+        return StringUtils.getTranslation("Recipes", "QuantityInCargoText")
+            .format("quantity", getQuantity().getRoundedValue())
+            .format("cargo", source.name.lowercase().ucFirst())
+            .toStringNoFormats()
     }
 
     override fun equals(other: Any?): Boolean {

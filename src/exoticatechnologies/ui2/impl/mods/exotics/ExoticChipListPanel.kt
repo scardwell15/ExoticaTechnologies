@@ -23,7 +23,7 @@ class ExoticChipListPanel(context: ExoticChipListContext) :
 
 class ExoticChipListContext(val exotic: Exotic, val exoticaContext: ExoticaPanelContext) :
     ListPanelContext<CargoStackAPI>() {
-    override var listTitle: String = StringUtils.getString("ExoticsDialog", "ChipsHeader")
+    override var listTitle: String = StringUtils.getString("Chips", "ChipsHeader")
     private val market: MarketAPI? = exoticaContext.market
 
     init {

@@ -50,7 +50,7 @@ class ScannedExoticsTabContext(
 ) : ScannedModsTabContext(
     panel,
     "exotics",
-    StringUtils.getString("ExoticsDialog", "OpenExoticOptions"),
+    StringUtils.getString("Exotics", "Title"),
     ExoticsTabContext.TAB_COLOR
 )
 

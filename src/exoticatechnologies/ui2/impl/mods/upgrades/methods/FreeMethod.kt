@@ -47,7 +47,7 @@ class FreeMethod : DefaultUpgradeMethod() {
         ShipModLoader.set(member, variant, mods)
         ExoticaTechHM.addToFleetMember(member, variant)
 
-        return StringUtils.getTranslation("UpgradesDialog", "UpgradePerformedSuccessfully")
+        return StringUtils.getTranslation("Upgrades", "UpgradePerformedSuccessfully")
             .format("name", upgrade.name)
             .format("level", mods.getUpgrade(upgrade))
             .toString()

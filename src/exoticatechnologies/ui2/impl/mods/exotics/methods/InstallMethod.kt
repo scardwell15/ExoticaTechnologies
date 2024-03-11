@@ -36,7 +36,7 @@ class InstallMethod : ExoticMethod {
         ExoticaTechHM.addToFleetMember(member, variant)
         exotic.onInstall(member, variant)
 
-        return StringUtils.getString("ExoticsDialog", "ExoticInstalled")
+        return StringUtils.getString("Exotics", "ExoticInstalled")
     }
 
     override fun canUse(
@@ -72,7 +72,7 @@ class InstallMethod : ExoticMethod {
     }
 
     override fun getButtonText(exotic: Exotic): String {
-        return StringUtils.getString("ExoticsDialog", "InstallExotic")
+        return StringUtils.getString("Exotics", "InstallExotic")
     }
 
     override fun getButtonTooltip(exotic: Exotic): String? {

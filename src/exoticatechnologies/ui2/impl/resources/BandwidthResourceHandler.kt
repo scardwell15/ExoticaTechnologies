@@ -24,18 +24,18 @@ class BandwidthResourceHandler: ResourceStringHandler {
         if (value != 0f) {
             val bandwidthString = "+${BandwidthUtil.getFormattedBandwidth(value.absoluteValue)}"
             if (value > 0f) {
-                StringUtils.getTranslation("UpgradeCosts", "BandwidthUsedWithUpgrade")
+                StringUtils.getTranslation("Bandwidth", "BandwidthUsedWithCost")
                     .format("usedBandwidth", BandwidthUtil.getFormattedBandwidth(used))
                     .format("upgradeBandwidth", bandwidthString)
                     .addToTooltip(tooltip)
             } else if (value < 0) {
-                StringUtils.getTranslation("ExoticCosts", "BandwidthGivenByExotic")
+                StringUtils.getTranslation("Bandwidth", "BandwidthGiven")
                     .format("bandwidth", BandwidthUtil.getFormattedBandwidth(used))
                     .format("exoticBandwidth", bandwidthString)
                     .addToTooltip(tooltip)
             }
         } else {
-            StringUtils.getTranslation("UpgradeCosts", "BandwidthUsed")
+            StringUtils.getTranslation("Bandwidth", "BandwidthUsed")
                 .format("usedBandwidth", BandwidthUtil.getFormattedBandwidth(used))
                 .addToTooltip(tooltip)
         }

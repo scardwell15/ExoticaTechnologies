@@ -42,7 +42,7 @@ class ExoticListItem(exotic: Exotic, context: TabListItemContext<Exotic, Exotica
         val nameElement = itemInfo.prev
         val installed = mods.hasExotic(item)
         if (installed) {
-            val installedText = StringUtils.getTranslation("ExoticsDialog", "Installed")
+            val installedText = StringUtils.getTranslation("Exotics", "Installed")
                 .addToTooltip(itemInfo)
             installedText.position.belowLeft(nameElement, 0f)
             val installedComponent = itemInfo.prev

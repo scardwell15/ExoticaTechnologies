@@ -23,19 +23,19 @@ class CreditsResourceHandler : ResourceStringHandler {
         val credits: Float = Global.getSector().playerFleet.cargo.credits.get()
 
         if (value > 0) {
-            StringUtils.getTranslation("UpgradesDialog", "ResourceTextWithCost")
+            StringUtils.getTranslation("CommonOptions", "ResourceTextWithCost")
                 .format("name", name)
                 .format("amount", credits)
                 .format("cost", value * -1)
                 .addToTooltip(tooltip)
         } else if (value < 0) {
-            StringUtils.getTranslation("UpgradesDialog", "ResourceTextWithPay")
+            StringUtils.getTranslation("CommonOptions", "ResourceTextWithPay")
                 .format("name", name)
                 .format("amount", credits)
                 .format("cost", value)
                 .addToTooltip(tooltip)
         } else {
-            StringUtils.getTranslation("UpgradesDialog", "ResourceText")
+            StringUtils.getTranslation("CommonOptions", "ResourceText")
                 .format("name", name)
                 .format("amount", credits)
                 .addToTooltip(tooltip)

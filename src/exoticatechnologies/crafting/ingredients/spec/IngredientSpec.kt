@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import exoticatechnologies.crafting.ingredients.Ingredient
+import exoticatechnologies.util.StringUtils
 import org.magiclib.kotlin.getRoundedValue
 
 interface IngredientSpec<T : Ingredient> {
@@ -45,9 +46,16 @@ interface IngredientSpec<T : Ingredient> {
 
         tooltip.addPara(getItemName(ingredients), 0f).position.rightOfMid(sprite, 4f).setYAlignOffset(16f)
         val name = tooltip.prev
-        tooltip.addPara("Required: ${ getRequired().getRoundedValue() }", 0f).position.belowLeft(name, 2f)
+
+        tooltip.addPara(StringUtils.getTranslation("Recipes", "SelectedText")
+            .format("quantity", getRequired().getRoundedValue())
+            .toStringNoFormats(), 0f).position.belowLeft(name, 2f)
+
         val required = tooltip.prev
-        tooltip.addPara("Selected: ${ ingredients.sumOf{ it.getQuantity().toDouble() }.toFloat().getRoundedValue() }", 0f).position.belowLeft(required, 2f)
+
+        tooltip.addPara(StringUtils.getTranslation("Recipes", "SelectedText")
+            .format("quantity", ingredients.sumOf{ it.getQuantity().toDouble() }.toFloat().getRoundedValue())
+            .toStringNoFormats(), 0f).position.belowLeft(required, 2f)
     }
 
     fun decorateSelector(tooltip: TooltipMakerAPI, ingredient: Ingredient, quantity: Float) {

@@ -28,7 +28,7 @@ class ExoticMethodsPanel(
 
         safeLet(member, variant, mods) { member, variant, mods ->
             if (mods.hasExotic(exotic)) {
-                tooltip.addTitle(StringUtils.getString("ExoticsDialog", "InstalledTitle"))
+                tooltip.addTitle(StringUtils.getString("Exotics", "InstalledTitle"))
             } else if (!exotic.canApplyImpl(member, variant, mods)) {
                 tooltip.addTitle(StringUtils.getString("Conditions", "CannotApplyTitle"), Color(200, 100, 100))
                 showCannotApply(member, mods, tooltip)
